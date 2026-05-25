@@ -349,17 +349,14 @@ fn foo(x):
   print_err("Foo!", x)
   return error(out)
 ### STDERR ###
-Foo! 1
-error[RAD20028]: Undefined variable: out
+error[RAD20028]: Undefined identifier 'out'
   --> <script>:6:16
   |
 5 |   print_err("Foo!", x)
 6 |   return error(out)
   |                ^^^
   |
-   = stack:
-     at foo (TestCase:2:1)
-   = help: variables with similar names exist: count, int, sort
+   = help: did you mean one of 'count', 'int', 'sort'?
    = info: rad explain RAD20028
 
 

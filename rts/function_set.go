@@ -53,3 +53,15 @@ func (fs *FunctionSet) Contains(name string) bool {
 	_, exists := fs.names[name]
 	return exists
 }
+
+// Names returns a snapshot of the function set as a name -> bool
+// map. Callers (the static checker's did-you-mean suggester) walk
+// every name; returning the map directly would let them mutate
+// the singleton, so we copy. Cheap relative to a Levenshtein pass.
+func (fs *FunctionSet) Names() map[string]bool {
+	out := make(map[string]bool, len(fs.names))
+	for n := range fs.names {
+		out[n] = true
+	}
+	return out
+}

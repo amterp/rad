@@ -80,3 +80,5 @@ b = 5
 # Diagnostics
   [error] RAD10020 @ 1:5 - Unterminated string literal (missing closing double quote)
     help: add closing " before end of line
+  [error] RAD20028 @ 1:6 - Undefined identifier 'hello'
+    help: did you mean one of 'yellow', 'ceil'?

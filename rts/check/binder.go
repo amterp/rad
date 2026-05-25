@@ -120,13 +120,11 @@ func (b *binder) ensureBuiltin(name string) *Symbol {
 // resolveIdentifier records the use of `ident` and returns the Symbol
 // it resolves to, or nil if the name is unknown.
 //
-// Unresolved identifier uses are NOT surfaced as diagnostics here. The
-// runtime emits a rich undefined-variable error with "did you mean"
-// suggestions; emitting a static-time error of the same kind would
-// short-circuit the runtime path that drives several test scenarios
-// (defer behavior, suggestion strings, scoping snapshots). A future
-// commit can broaden the static check to cover all uses, with the
-// runtime-side test migration that goes with it.
+// On miss, emits a static Error-severity diagnostic with a did-you-
+// mean suggestion drawn from the same Levenshtein-threshold logic
+// the runtime uses (findSimilarNames mirrors core/env.go's
+// FindSimilarVars). This gates broken scripts at check time and
+// gives LSP an actionable signal for quick-fix code actions.
 func (b *binder) resolveIdentifier(ident *rl.Identifier) *Symbol {
 	if sym := b.current.Lookup(ident.Name); sym != nil {
 		b.resolved.Uses[ident] = sym
@@ -137,7 +135,51 @@ func (b *binder) resolveIdentifier(ident *rl.Identifier) *Symbol {
 		b.resolved.Uses[ident] = sym
 		return sym
 	}
+	// Internal `_rad_*` builtins are registered in FnSignaturesByName
+	// but deliberately excluded from FunctionSet (and from completion
+	// / hover). They're still legal calls - the runtime needs them
+	// for the embedded `check`, `explain`, etc. scripts - so accept
+	// them silently here. User scripts that hit a `_rad_*` typo will
+	// still get the diagnostic via the lookup below.
+	if _, ok := rts.FnSignaturesByName[ident.Name]; ok {
+		sym := b.ensureBuiltin(ident.Name)
+		b.resolved.Uses[ident] = sym
+		return sym
+	}
+	b.emitUndefinedIdentifier(ident)
 	return nil
+}
+
+// emitUndefinedIdentifier records the diagnostic and attaches a
+// "did you mean: X" suggestion when one of the visible names is
+// close enough to be worth showing. The threshold matches the
+// runtime's FindSimilarVars so the static and runtime suggestion
+// sets line up.
+func (b *binder) emitUndefinedIdentifier(ident *rl.Identifier) {
+	var builtinNames map[string]bool
+	if b.builtins != nil {
+		builtinNames = b.builtins.Names()
+	}
+	similar := findSimilarNames(b.current, builtinNames, ident.Name, 3)
+	suggestion := ""
+	if len(similar) > 0 {
+		if len(similar) == 1 {
+			suggestion = "did you mean '" + similar[0] + "'?"
+		} else {
+			joined := similar[0]
+			for _, n := range similar[1:] {
+				joined += "', '" + n
+			}
+			suggestion = "did you mean one of '" + joined + "'?"
+		}
+	}
+	b.resolved.Issues = append(b.resolved.Issues, BindIssue{
+		Span:       ident.Span(),
+		Severity:   IssueError,
+		Code:       rl.ErrUndefinedVariable,
+		Message:    "Undefined identifier '" + ident.Name + "'",
+		Suggestion: suggestion,
+	})
 }
 
 // addIssue appends a structural binder finding to the resolved view.
@@ -261,6 +303,10 @@ func (b *binder) visit(n rl.Node) {
 		b.visitDefer(v)
 	case *rl.CmdBlock:
 		b.visitCmdBlock(v)
+	case *rl.Shell:
+		b.visitShell(v)
+	case *rl.RadBlock:
+		b.visitRadBlock(v)
 	default:
 		// Generic descent for unhandled node kinds. Subsequent commits
 		// in this phase replace more of these with scope-aware cases
@@ -341,6 +387,71 @@ func (b *binder) visitAssign(a *rl.Assign) {
 	}
 	if a.Catch != nil {
 		b.visitCatch(a.Catch)
+	}
+}
+
+// visitRadBlock walks a rad block, treating field-name identifiers
+// as declarations rather than references. Field names come from the
+// data source (e.g. CSV columns, JSON keys) and aren't variables in
+// the script's lexical scope - they're injected into the rad-block
+// body by the runtime. Without this special case, every `fields
+// Name age` would emit RAD20028 for each field name.
+//
+// Field names declared in `fields`, `sort`, and field-modifier
+// statements all flow through the same path. Other rad-block stmts
+// (RadIf, RadOption, etc.) descend normally so any user code inside
+// the block (e.g. expressions in an option) gets the usual check.
+func (b *binder) visitRadBlock(rb *rl.RadBlock) {
+	if rb.Source != nil {
+		b.visit(rb.Source)
+	}
+	for _, stmt := range rb.Stmts {
+		switch s := stmt.(type) {
+		case *rl.RadField:
+			for _, ident := range s.Identifiers {
+				if id, ok := ident.(*rl.Identifier); ok {
+					b.declareLocal(id, false)
+				}
+			}
+		case *rl.RadFieldMod:
+			// Fields[] are target field-name identifiers; treat as
+			// uses but resolve through declared field names rather
+			// than emitting RAD20028 on a miss. For commit 17 the
+			// simplest is to skip resolution on these.
+			for _, arg := range s.Args {
+				b.visit(arg)
+			}
+		default:
+			b.visit(stmt)
+		}
+	}
+}
+
+// declareLocal introduces a fresh local for an identifier, dual-
+// registering it as both decl and use so hover/find-refs work. Used
+// for synthesized declarations (rad-block field names, etc.) where
+// the runtime injects the binding implicitly.
+func (b *binder) declareLocal(ident *rl.Identifier, updateEnclosing bool) {
+	sym := b.declare(ident.Name, SymLocal, ident.Span(), ident)
+	b.resolved.Uses[ident] = sym
+}
+
+// visitShell handles shell statements like `code = $\"echo hi\"`.
+// The targets on the LHS are declarations (an exit-code variable,
+// stdout/stderr captures), not references - same shape as Assign.
+// Without explicit handling the generic descent would walk the
+// target identifiers and resolveIdentifier would flag them as
+// undefined. Visit the command expression and any catch block as
+// normal.
+func (b *binder) visitShell(s *rl.Shell) {
+	if s.Cmd != nil {
+		b.visit(s.Cmd)
+	}
+	for _, target := range s.Targets {
+		b.declareTarget(target, false)
+	}
+	if s.Catch != nil {
+		b.visitCatch(s.Catch)
 	}
 }
 

@@ -58,14 +58,14 @@ StringInterpolation_ErrorsIfUnknownVariable
 
 print("hello, {var}")
 ### STDERR ###
-error[RAD20028]: Undefined variable: var
+error[RAD20028]: Undefined identifier 'var'
   --> <script>:2:16
   |
 1 |
 2 | print("hello, {var}")
   |                ^^^
   |
-   = help: variables with similar names exist: map, max, str
+   = help: did you mean one of 'map', 'max', 'str'?
    = info: rad explain RAD20028
 
 

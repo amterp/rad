@@ -484,14 +484,14 @@ Misc_UndefinedVariableSuggestsSimilar
 username = "alice"
 print(usernme)
 ### STDERR ###
-error[RAD20028]: Undefined variable: usernme
+error[RAD20028]: Undefined identifier 'usernme'
   --> <script>:3:7
   |
 2 | username = "alice"
 3 | print(usernme)
   |       ^^^^^^^
   |
-   = help: a variable with a similar name exists: username
+   = help: did you mean 'username'?
    = info: rad explain RAD20028
 
 
@@ -505,14 +505,14 @@ user_name = "alice"
 username = "bob"
 print(usernme)
 ### STDERR ###
-error[RAD20028]: Undefined variable: usernme
+error[RAD20028]: Undefined identifier 'usernme'
   --> <script>:4:7
   |
 3 | username = "bob"
 4 | print(usernme)
   |       ^^^^^^^
   |
-   = help: variables with similar names exist: username, user_name
+   = help: did you mean one of 'username', 'user_name'?
    = info: rad explain RAD20028
 
 
@@ -525,7 +525,7 @@ Misc_UndefinedVariableNoSuggestionIfTooDistant
 foo = "bar"
 print(completely_different_name)
 ### STDERR ###
-error[RAD20028]: Undefined variable: completely_different_name
+error[RAD20028]: Undefined identifier 'completely_different_name'
   --> <script>:3:7
   |
 2 | foo = "bar"

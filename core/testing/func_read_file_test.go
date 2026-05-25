@@ -8,7 +8,7 @@ import (
 func Test_Func_ReadFile_NoExist(t *testing.T) {
 	script := `
 a = read_file("does_not_exist.txt")
-print(b)
+print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
 	// Error messages are OS-specific, so check for key parts
@@ -34,7 +34,7 @@ func Test_Func_ReadFile_NoPermission(t *testing.T) {
 
 	script := `
 a = read_file("data/no_permission.txt")
-print(b)
+print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
 	assertErrorContains(t, 1, "RAD20004",
@@ -46,7 +46,7 @@ print(b)
 func Test_Func_ReadFile_ErrorsOnDirectory(t *testing.T) {
 	script := `
 a = read_file("data/")
-print(b)
+print(a)
 `
 	setupAndRunCode(t, script, "--color=never")
 	// Error messages are OS-specific, so check for key parts

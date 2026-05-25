@@ -79,9 +79,16 @@ func globalFlagHelpWithout(s string) string {
 }
 
 func Test_Misc_StackTraceShownInNestedFunctionError(t *testing.T) {
+	// The trigger is a runtime type-mismatch on a typed function
+	// return. The previous version used an undefined variable, but
+	// that's now caught statically by the binder so the runtime
+	// stack-trace path was never exercised. Type errors that fall
+	// out of static-checkable territory (return-of-wrong-type from
+	// a typed fn) emit via emitDiagnostic, which auto-attaches the
+	// call stack.
 	script := `
-fn inner():
-    x = undefined_var
+fn inner() -> int:
+    return "not an int"
 
 fn outer():
     inner()
@@ -89,17 +96,8 @@ fn outer():
 outer()
 `
 	setupAndRunCode(t, script, "--color=never")
-	// Get the error output before it gets reset
 	output := stdErrBuffer.String()
 	t.Logf("Full error output:\n%s", output)
-	// Verify basic error
-	if !strings.Contains(output, "RAD20028") {
-		t.Errorf("Expected RAD20028 in output")
-	}
-	if !strings.Contains(output, "undefined_var") {
-		t.Errorf("Expected 'undefined_var' in output")
-	}
-	// Stack trace should show nested function calls
 	if !strings.Contains(output, "= stack:") {
 		t.Errorf("Expected '= stack:' in error output for nested function error")
 	}

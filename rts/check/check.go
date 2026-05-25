@@ -94,32 +94,13 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	}, nil
 }
 
-// addUnknownFunctionHints reimplements the old name-set hint check on
-// top of the resolved view. Behavior - severity, message text, the
-// set of identifiers it flags - is intentionally identical to the
-// previous addUnknownFunctionHintsAST so existing snapshots continue
-// to pass. The win here is structural: there's now one place where
-// "is this name defined?" is asked, and other checks will move to it
-// in subsequent commits.
+// addUnknownFunctionHints is retained as a no-op shim. The binder
+// now emits a hard RAD20028 (Undefined identifier) for every
+// unresolved name including call-site fn names, with a did-you-
+// mean suggestion. The old RAD40003 hint was a strictly weaker
+// version of the same signal; keeping both around would double-
+// surface the problem.
 func (c *RadCheckerImpl) addUnknownFunctionHints(resolved *Resolved, d *[]Diagnostic) {
-	if c.ast == nil || resolved == nil {
-		return
-	}
-	walkAST(c.ast, func(node rl.Node) {
-		call, ok := node.(*rl.Call)
-		if !ok {
-			return
-		}
-		ident, ok := call.Func.(*rl.Identifier)
-		if !ok {
-			return
-		}
-		if _, resolvedHere := resolved.Uses[ident]; resolvedHere {
-			return
-		}
-		msg := "Function '" + ident.Name + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticHintFromSpan(ident.Span(), c.src, msg, rl.ErrUnknownFunction))
-	})
 }
 
 // addTypeIssues surfaces type-checker findings (type mismatches, arg

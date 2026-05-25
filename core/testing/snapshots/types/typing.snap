@@ -221,6 +221,26 @@ foo(_x=1, _y=2).print()
 fn foo(_x: float, _y: float) -> float:
 	return x / y
 ### STDERR ###
+error[RAD20028]: Undefined identifier 'x'
+  --> <script>:3:9
+  |
+2 | fn foo(_x: float, _y: float) -> float:
+3 | 	return x / y
+  |         ^
+  |
+   = help: did you mean one of '_x', '_y', 'max'?
+   = info: rad explain RAD20028
+
+error[RAD20028]: Undefined identifier 'y'
+  --> <script>:3:13
+  |
+2 | fn foo(_x: float, _y: float) -> float:
+3 | 	return x / y
+  |             ^
+  |
+   = help: did you mean one of '_y', '_x'?
+   = info: rad explain RAD20028
+
 error[RAD30006]: Argument '_x' cannot be passed as named arg, only positionally
   --> <script>:1:5
   |
@@ -659,6 +679,16 @@ error[RAD10001]: Invalid function syntax
 3 | 	return "|{x}|"
   |
    = info: rad explain RAD10001
+
+error[RAD20028]: Undefined identifier 'x'
+  --> <script>:3:12
+  |
+2 | fn foo(x: void) -> str:
+3 | 	return "|{x}|"
+  |            ^
+  |
+   = help: did you mean 'max'?
+   = info: rad explain RAD20028
 
 
 ### EXIT ###

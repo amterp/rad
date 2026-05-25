@@ -28,14 +28,14 @@ Errors if invoking undefined symbol
 
 notarealsymbol()
 ### STDERR ###
-error[RAD40003]: Cannot invoke unknown function: notarealsymbol
+error[RAD20028]: Undefined identifier 'notarealsymbol'
   --> <script>:2:1
   |
 1 |
 2 | notarealsymbol()
   | ^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD40003
+   = info: rad explain RAD20028
 
 
 ### EXIT ###

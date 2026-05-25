@@ -82,19 +82,15 @@ rad:
 	nums:
 		map fn(i) i * 2
 print("i", i)
-### STDOUT ###
-nums 
-20    
-
 ### STDERR ###
-error[RAD20028]: Undefined variable: i
+error[RAD20028]: Undefined identifier 'i'
   --> <script>:6:12
   |
 5 | 		map fn(i) i * 2
 6 | print("i", i)
   |            ^
   |
-   = help: variables with similar names exist: dim, int, min
+   = help: did you mean one of 'dim', 'int', 'min'?
    = info: rad explain RAD20028
 
 

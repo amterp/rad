@@ -32,10 +32,22 @@ a = 2
 foo(10).print()
 a = 5
 foo(10).print()
-### STDOUT ###
-20
-50
+### STDERR ###
+error[RAD20028]: Undefined identifier 'a'
+  --> <script>:2:13
+  |
+1 |
+2 | foo = fn(b) a * b
+  |             ^
+3 | a = 2
+4 | foo(10).print()
+  |
+   = help: did you mean one of 'b', 'abs', 'map'?
+   = info: rad explain RAD20028
 
+
+### EXIT ###
+1
 ### TITLE ###
 Block
 ### INPUT ###

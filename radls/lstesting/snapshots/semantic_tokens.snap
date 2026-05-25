@@ -335,7 +335,23 @@ print(undefined_name)
   "jsonrpc": "2.0",
   "method": "textDocument/publishDiagnostics",
   "params": {
-    "diagnostics": [],
+    "diagnostics": [
+      {
+        "message": "Undefined identifier 'undefined_name'",
+        "range": {
+          "end": {
+            "character": 20,
+            "line": 0
+          },
+          "start": {
+            "character": 6,
+            "line": 0
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
     "uri": "file:///test.rad"
   }
 }

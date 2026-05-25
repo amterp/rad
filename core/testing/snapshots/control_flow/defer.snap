@@ -64,19 +64,15 @@ Runs despite error
 defer print("bye")
 print("hi")
 print(asd)
-### STDOUT ###
-hi
-bye
-
 ### STDERR ###
-error[RAD20028]: Undefined variable: asd
+error[RAD20028]: Undefined identifier 'asd'
   --> <script>:4:7
   |
 3 | print("hi")
 4 | print(asd)
   |       ^^^
   |
-   = help: variables with similar names exist: abs, hash, rand
+   = help: did you mean one of 'abs', 'hash', 'rand'?
    = info: rad explain RAD20028
 
 
@@ -90,13 +86,8 @@ defer print("bye1")
 defer print(asd)
 defer print("bye2")
 print("hi")
-### STDOUT ###
-hi
-bye2
-bye1
-
 ### STDERR ###
-error[RAD20028]: Undefined variable: asd
+error[RAD20028]: Undefined identifier 'asd'
   --> <script>:3:13
   |
 2 | defer print("bye1")
@@ -105,7 +96,7 @@ error[RAD20028]: Undefined variable: asd
 4 | defer print("bye2")
 5 | print("hi")
   |
-   = help: variables with similar names exist: abs, hash, rand
+   = help: did you mean one of 'abs', 'hash', 'rand'?
    = info: rad explain RAD20028
 
 
@@ -120,13 +111,8 @@ defer print(asd)
 defer exit(3)  // this one executed before 'asd' error, so we should use its code
 defer print("bye2")
 print("hi")
-### STDOUT ###
-hi
-bye2
-bye1
-
 ### STDERR ###
-error[RAD20028]: Undefined variable: asd
+error[RAD20028]: Undefined identifier 'asd'
   --> <script>:3:13
   |
 2 | defer print("bye1")
@@ -135,12 +121,12 @@ error[RAD20028]: Undefined variable: asd
 4 | defer exit(3)  // this one executed before 'asd' error, so we should use its code
 5 | defer print("bye2")
   |
-   = help: variables with similar names exist: abs, hash, rand
+   = help: did you mean one of 'abs', 'hash', 'rand'?
    = info: rad explain RAD20028
 
 
 ### EXIT ###
-3
+1
 ### TITLE ###
 Uses error code LIFO deferred error over later non-zero exit
 ### INPUT ###
@@ -150,13 +136,8 @@ defer exit(3)
 defer print(asd)  // this error occurs before the exit above, so we use error code 1
 defer print("bye2")
 print("hi")
-### STDOUT ###
-hi
-bye2
-bye1
-
 ### STDERR ###
-error[RAD20028]: Undefined variable: asd
+error[RAD20028]: Undefined identifier 'asd'
   --> <script>:4:13
   |
 3 | defer exit(3)
@@ -165,7 +146,7 @@ error[RAD20028]: Undefined variable: asd
 5 | defer print("bye2")
 6 | print("hi")
   |
-   = help: variables with similar names exist: abs, hash, rand
+   = help: did you mean one of 'abs', 'hash', 'rand'?
    = info: rad explain RAD20028
 
 
@@ -180,13 +161,8 @@ defer print(asd)
 defer exit(0)  // this is a clean exit, so we should use the error from 'asd'
 defer print("bye2")
 print("hi")
-### STDOUT ###
-hi
-bye2
-bye1
-
 ### STDERR ###
-error[RAD20028]: Undefined variable: asd
+error[RAD20028]: Undefined identifier 'asd'
   --> <script>:3:13
   |
 2 | defer print("bye1")
@@ -195,7 +171,7 @@ error[RAD20028]: Undefined variable: asd
 4 | defer exit(0)  // this is a clean exit, so we should use the error from 'asd'
 5 | defer print("bye2")
   |
-   = help: variables with similar names exist: abs, hash, rand
+   = help: did you mean one of 'abs', 'hash', 'rand'?
    = info: rad explain RAD20028
 
 

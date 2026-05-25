@@ -68,15 +68,15 @@ Migration_V08_GetDefault_ShowsHelpfulError
 m = {"a": 1}
 get_default(m, "b", 0)
 ### STDERR ###
-error[RAD40003]: Cannot invoke unknown function: get_default
+error[RAD20028]: Undefined identifier 'get_default'
   --> <script>:3:1
   |
 2 | m = {"a": 1}
 3 | get_default(m, "b", 0)
   | ^^^^^^^^^^^
   |
-   = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/
-   = info: rad explain RAD40003
+   = help: did you mean one of 'get_args', 'get_env', 'get_path'?
+   = info: rad explain RAD20028
 
 
 ### EXIT ###
@@ -87,15 +87,15 @@ Migration_V09_GetStashDir_ShowsHelpfulError
 
 get_stash_dir()
 ### STDERR ###
-error[RAD40003]: Cannot invoke unknown function: get_stash_dir
+error[RAD20028]: Undefined identifier 'get_stash_dir'
   --> <script>:2:1
   |
 1 |
 2 | get_stash_dir()
   | ^^^^^^^^^^^^^
   |
-   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad explain RAD40003
+   = help: did you mean one of 'get_stash_path', 'get_path', 'load_stash_file'?
+   = info: rad explain RAD20028
 
 
 ### EXIT ###
@@ -107,15 +107,15 @@ Migration_V08_GetDefault_Ufcs_ShowsHelpfulError
 m = {"a": 1}
 m.get_default("b", 0)
 ### STDERR ###
-error[RAD40003]: Cannot invoke unknown function: get_default
+error[RAD20028]: Undefined identifier 'get_default'
   --> <script>:3:3
   |
 2 | m = {"a": 1}
 3 | m.get_default("b", 0)
   |   ^^^^^^^^^^^
   |
-   = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/
-   = info: rad explain RAD40003
+   = help: did you mean one of 'get_args', 'get_env', 'get_path'?
+   = info: rad explain RAD20028
 
 
 ### EXIT ###

@@ -198,7 +198,7 @@ foo()
   "params": {
     "diagnostics": [
       {
-        "message": "Function 'foo' may not be defined (only built-in and top-level functions are tracked)",
+        "message": "Undefined identifier 'foo'",
         "range": {
           "end": {
             "character": 3,
@@ -209,7 +209,7 @@ foo()
             "line": 1
           }
         },
-        "severity": 4,
+        "severity": 1,
         "source": "Rad Language Server"
       }
     ],

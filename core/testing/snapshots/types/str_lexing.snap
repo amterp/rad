@@ -468,6 +468,16 @@ error[RAD10020]: Unterminated string literal (missing closing double quote)
    = help: add closing " at end of string
    = info: rad explain RAD10020
 
+error[RAD20028]: Undefined identifier 'text'
+  --> <script>:5:7
+  |
+4 |  ""
+5 | print(text)
+  |       ^^^^
+  |
+   = help: did you mean one of 'exit', 'ceil', 'int'?
+   = info: rad explain RAD20028
+
 
 ### EXIT ###
 1

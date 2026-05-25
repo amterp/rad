@@ -82,7 +82,7 @@ for v in unknown_thing():
   v (loop): dynamic
 
 # Diagnostics
-  [hint] RAD40003 @ 1:10 - Function 'unknown_thing' may not be defined (only built-in and top-level functions are tracked)
+  [error] RAD20028 @ 1:10 - Undefined identifier 'unknown_thing'
 ### TITLE ###
 ForOverUnionOfListsBindsUnionElement
 ### DESCRIPTION ###

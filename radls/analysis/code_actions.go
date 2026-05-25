@@ -71,8 +71,63 @@ func structuredFixFor(snap *DocumentVersion, d check.Diagnostic) (lsp.CodeAction
 		}
 		target := fromByteRange(checkRangeToLSP(d.Range), snap)
 		return lsp.NewQuickFix("Replace '|null' with '?'", snap.uri, target, replacement), true
+	case rl.ErrUndefinedVariable:
+		// The binder's emitUndefinedIdentifier puts the suggestion
+		// in the format "did you mean 'X'?" or "did you mean one
+		// of 'X', 'Y', 'Z'?". Surface ONE quick fix per candidate
+		// rather than packing them all into one action - users
+		// pick the one they meant from the menu.
+		if d.Suggestion == nil {
+			return lsp.CodeAction{}, false
+		}
+		names := extractDidYouMeanNames(*d.Suggestion)
+		if len(names) == 0 {
+			return lsp.CodeAction{}, false
+		}
+		// Code actions are returned one-per-call; return the top
+		// pick. The caller's loop visits all diagnostics, so we
+		// could grow this to fan out into multiple actions later -
+		// for now the single most-likely rename matches what
+		// users typically need.
+		target := fromByteRange(checkRangeToLSP(d.Range), snap)
+		return lsp.NewQuickFix("Rename to '"+names[0]+"'", snap.uri, target, names[0]), true
 	}
 	return lsp.CodeAction{}, false
+}
+
+// extractDidYouMeanNames parses the suggestion text produced by
+// emitUndefinedIdentifier back into the candidate names. Going
+// through structured fields on the diagnostic would be cleaner;
+// the suggestion string is the only carrier today and adding a
+// new field cascades through every BindIssue producer. Cheap
+// enough to do here at action-build time.
+func extractDidYouMeanNames(suggestion string) []string {
+	// Patterns we emit:
+	//   "did you mean 'X'?"
+	//   "did you mean one of 'X', 'Y', 'Z'?"
+	const prefix1 = "did you mean '"
+	const prefixN = "did you mean one of '"
+	if strings.HasPrefix(suggestion, prefix1) && !strings.HasPrefix(suggestion, prefixN) {
+		s := strings.TrimPrefix(suggestion, prefix1)
+		s = strings.TrimSuffix(s, "'?")
+		if s == "" {
+			return nil
+		}
+		return []string{s}
+	}
+	if strings.HasPrefix(suggestion, prefixN) {
+		s := strings.TrimPrefix(suggestion, prefixN)
+		s = strings.TrimSuffix(s, "'?")
+		parts := strings.Split(s, "', '")
+		out := make([]string, 0, len(parts))
+		for _, p := range parts {
+			if p != "" {
+				out = append(out, p)
+			}
+		}
+		return out
+	}
+	return nil
 }
 
 // buildNullUnionFix turns the tree-sitter ERROR span that covers

@@ -24,7 +24,21 @@ L3:2: ERROR
        |  ^ Unexpected 'yes'
        |  (code: RAD10009)
 
-Reported 2 diagnostics.
+L1:11: ERROR
+
+     1 | hello = 2 a
+       |           ^ Undefined identifier 'a'
+       |           (code: RAD20028)
+       = help: did you mean one of 'abs', 'map', 'max'?
+
+L3:6: ERROR
+
+     3 | 	yes no
+       |      ^ Undefined identifier 'no'
+       |      (code: RAD20028)
+       = help: did you mean one of 'now', 'int', 'pow'?
+
+Reported 4 diagnostics.
 `
 	setupAndRunArgs(t, "check", "./rad_scripts/invalid.rad", "--color=never")
 	assertOnlyOutput(t, stdOutBuffer, expected)
@@ -33,17 +47,19 @@ Reported 2 diagnostics.
 
 func Test_Check_UnknownFunctions(t *testing.T) {
 	setupAndRunArgs(t, "check", "./rad_scripts/unknown_functions.rad", "--color=never")
-	expected := `L1:1: HINT
+	expected := `L1:1: ERROR
 
      1 | foo()
-       | ^ Function 'foo' may not be defined (only built-in and top-level functions are tracked)
-       | (code: RAD40003)
+       | ^ Undefined identifier 'foo'
+       | (code: RAD20028)
+       = help: did you mean one of 'floor', 'now', 'pow'?
 
-L3:1: HINT
+L3:1: ERROR
 
      3 | qux()
-       | ^ Function 'qux' may not be defined (only built-in and top-level functions are tracked)
-       | (code: RAD40003)
+       | ^ Undefined identifier 'qux'
+       | (code: RAD20028)
+       = help: did you mean one of 'max', 'sum'?
 
 Reported 2 diagnostics.
 `
