@@ -117,3 +117,48 @@ func findSimilarNames(scope *Scope, builtins map[string]bool, target string, lim
 	}
 	return out
 }
+
+// formatDidYouMean renders a list of suggestion candidates into the
+// `did you mean ...?` line shown after a static diagnostic. Three
+// cases:
+//
+//   - 0 candidates: empty string (the caller suppresses the line).
+//   - 1 candidate:  "did you mean 'X'?"
+//   - 2 candidates: "did you mean 'X' or 'Y'?"
+//   - 3+ candidates: Oxford-or, "did you mean 'X', 'Y', or 'Z'?"
+//
+// The Oxford-or pattern matches what Rust's rustc emits and reads
+// more naturally than the pre-formatter "one of 'X', 'Y'" shape it
+// replaces. Empty entries are skipped defensively so callers don't
+// have to filter.
+func formatDidYouMean(candidates []string) string {
+	// Filter empties (defensive; findSimilarNames doesn't produce them).
+	filtered := candidates[:0:0]
+	for _, c := range candidates {
+		if c != "" {
+			filtered = append(filtered, c)
+		}
+	}
+	switch len(filtered) {
+	case 0:
+		return ""
+	case 1:
+		return "did you mean '" + filtered[0] + "'?"
+	case 2:
+		return "did you mean '" + filtered[0] + "' or '" + filtered[1] + "'?"
+	default:
+		// Oxford-or: 'A', 'B', or 'C'.
+		var b string
+		for i, n := range filtered {
+			switch {
+			case i == 0:
+				b = "'" + n + "'"
+			case i == len(filtered)-1:
+				b += ", or '" + n + "'"
+			default:
+				b += ", '" + n + "'"
+			}
+		}
+		return "did you mean " + b + "?"
+	}
+}

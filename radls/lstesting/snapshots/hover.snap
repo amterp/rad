@@ -54,7 +54,7 @@ print(1)
   "result": {
     "contents": {
       "kind": "markdown",
-      "value": "```rad\nprint: print(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void\n```\n\n---\n\nWrites its arguments to stdout, separated by a space, followed by a\nnewline. The default workhorse for output. For error output, use\n`print_err`; for structured pretty-printing, use `pprint`.\n\n```rad\nprint(\"hello\", \"world\")    // -\u003e hello world\nprint(1, 2, 3, sep=\", \")   // -\u003e 1, 2, 3\nprint(\"no newline\", end=\"\") // -\u003e no newline\n```"
+      "value": "```rad\nprint(*_items: any, *, sep: str = \" \", end: str = \"\\n\") -\u003e void\n```\n\n---\n\nWrites its arguments to stdout, separated by a space, followed by a\nnewline. The default workhorse for output. For error output, use\n`print_err`; for structured pretty-printing, use `pprint`.\n\n```rad\nprint(\"hello\", \"world\")    // -\u003e hello world\nprint(1, 2, 3, sep=\", \")   // -\u003e 1, 2, 3\nprint(\"no newline\", end=\"\") // -\u003e no newline\n```"
     },
     "range": {
       "end": {

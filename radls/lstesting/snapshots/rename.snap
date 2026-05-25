@@ -216,7 +216,7 @@ x = 1
 {
   "error": {
     "code": 0,
-    "message": "not a valid Rad identifier"
+    "message": "not a valid Rad identifier: 1bad (identifiers can't start with a digit)"
   },
   "id": 1,
   "jsonrpc": "2.0",
@@ -241,7 +241,7 @@ y = 2
 {
   "error": {
     "code": 0,
-    "message": "name is already in scope"
+    "message": "name is already in scope: 'y' is already declared in this scope"
   },
   "id": 1,
   "jsonrpc": "2.0",
@@ -477,7 +477,7 @@ x = 1
 {
   "error": {
     "code": 0,
-    "message": "not a valid Rad identifier"
+    "message": "not a valid Rad identifier: if (this is a reserved Rad keyword)"
   },
   "id": 1,
   "jsonrpc": "2.0",
@@ -501,7 +501,7 @@ x = 1
 {
   "error": {
     "code": 0,
-    "message": "name is already in scope"
+    "message": "name is already in scope: 'print' is already a built-in function"
   },
   "id": 1,
   "jsonrpc": "2.0",

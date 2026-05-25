@@ -49,7 +49,7 @@ error[RAD20028]: Undefined identifier 'add'
 4 | 	fn add(x, y):
 5 | 		return x + y
   |
-   = help: did you mean one of 'abs', 'rand', 'red'?
+   = help: did you mean 'abs', 'rand', or 'red'?
    = info: rad explain RAD20028
 
 

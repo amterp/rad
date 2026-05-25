@@ -475,7 +475,7 @@ error[RAD20028]: Undefined identifier 'text'
 5 | print(text)
   |       ^^^^
   |
-   = help: did you mean one of 'exit', 'ceil', 'int'?
+   = help: did you mean 'exit', 'ceil', or 'int'?
    = info: rad explain RAD20028
 
 

@@ -90,7 +90,7 @@ error[RAD20028]: Undefined identifier 'i'
 6 | print("i", i)
   |            ^
   |
-   = help: did you mean one of 'dim', 'int', 'min'?
+   = help: did you mean 'dim', 'int', or 'min'?
    = info: rad explain RAD20028
 
 

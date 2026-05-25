@@ -65,7 +65,7 @@ error[RAD20028]: Undefined identifier 'var'
 2 | print("hello, {var}")
   |                ^^^
   |
-   = help: did you mean one of 'map', 'max', 'str'?
+   = help: did you mean 'map', 'max', or 'str'?
    = info: rad explain RAD20028
 
 

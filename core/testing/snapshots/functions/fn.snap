@@ -42,7 +42,7 @@ error[RAD20028]: Undefined identifier 'a'
 3 | a = 2
 4 | foo(10).print()
   |
-   = help: did you mean one of 'b', 'abs', 'map'?
+   = help: did you mean 'b', 'abs', or 'map'?
    = info: rad explain RAD20028
 
 

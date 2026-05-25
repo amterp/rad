@@ -29,14 +29,14 @@ L1:11: ERROR
      1 | hello = 2 a
        |           ^ Undefined identifier 'a'
        |           (code: RAD20028)
-       = help: did you mean one of 'abs', 'map', 'max'?
+       = help: did you mean 'abs', 'map', or 'max'?
 
 L3:6: ERROR
 
      3 | 	yes no
        |      ^ Undefined identifier 'no'
        |      (code: RAD20028)
-       = help: did you mean one of 'now', 'int', 'pow'?
+       = help: did you mean 'now', 'int', or 'pow'?
 
 Reported 4 diagnostics.
 `
@@ -52,14 +52,14 @@ func Test_Check_UnknownFunctions(t *testing.T) {
      1 | foo()
        | ^ Undefined identifier 'foo'
        | (code: RAD20028)
-       = help: did you mean one of 'floor', 'now', 'pow'?
+       = help: did you mean 'floor', 'now', or 'pow'?
 
 L3:1: ERROR
 
      3 | qux()
        | ^ Undefined identifier 'qux'
        | (code: RAD20028)
-       = help: did you mean one of 'max', 'sum'?
+       = help: did you mean 'max' or 'sum'?
 
 Reported 2 diagnostics.
 `

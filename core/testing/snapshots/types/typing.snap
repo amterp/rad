@@ -228,7 +228,7 @@ error[RAD20028]: Undefined identifier 'x'
 3 | 	return x / y
   |         ^
   |
-   = help: did you mean one of '_x', '_y', 'max'?
+   = help: did you mean '_x', '_y', or 'max'?
    = info: rad explain RAD20028
 
 error[RAD20028]: Undefined identifier 'y'
@@ -238,7 +238,7 @@ error[RAD20028]: Undefined identifier 'y'
 3 | 	return x / y
   |             ^
   |
-   = help: did you mean one of '_y', '_x'?
+   = help: did you mean '_y' or '_x'?
    = info: rad explain RAD20028
 
 error[RAD30006]: Argument '_x' cannot be passed as named arg, only positionally

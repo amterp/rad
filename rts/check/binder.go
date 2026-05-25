@@ -162,18 +162,7 @@ func (b *binder) emitUndefinedIdentifier(ident *rl.Identifier) {
 		builtinNames = b.builtins.Names()
 	}
 	similar := findSimilarNames(b.current, builtinNames, ident.Name, 3)
-	suggestion := ""
-	if len(similar) > 0 {
-		if len(similar) == 1 {
-			suggestion = "did you mean '" + similar[0] + "'?"
-		} else {
-			joined := similar[0]
-			for _, n := range similar[1:] {
-				joined += "', '" + n
-			}
-			suggestion = "did you mean one of '" + joined + "'?"
-		}
-	}
+	suggestion := formatDidYouMean(similar)
 	b.resolved.Issues = append(b.resolved.Issues, BindIssue{
 		Span:       ident.Span(),
 		Severity:   IssueError,

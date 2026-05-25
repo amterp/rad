@@ -101,33 +101,40 @@ func structuredFixFor(snap *DocumentVersion, d check.Diagnostic) (lsp.CodeAction
 // the suggestion string is the only carrier today and adding a
 // new field cascades through every BindIssue producer. Cheap
 // enough to do here at action-build time.
+//
+// Patterns we emit (must mirror formatDidYouMean in rts/check):
+//
+//	"did you mean 'X'?"                         -> 1 candidate
+//	"did you mean 'X' or 'Y'?"                  -> 2 candidates
+//	"did you mean 'X', 'Y', or 'Z'?"            -> 3+ Oxford-or
 func extractDidYouMeanNames(suggestion string) []string {
-	// Patterns we emit:
-	//   "did you mean 'X'?"
-	//   "did you mean one of 'X', 'Y', 'Z'?"
-	const prefix1 = "did you mean '"
-	const prefixN = "did you mean one of '"
-	if strings.HasPrefix(suggestion, prefix1) && !strings.HasPrefix(suggestion, prefixN) {
-		s := strings.TrimPrefix(suggestion, prefix1)
-		s = strings.TrimSuffix(s, "'?")
-		if s == "" {
-			return nil
-		}
-		return []string{s}
+	const prefix = "did you mean "
+	if !strings.HasPrefix(suggestion, prefix) {
+		return nil
 	}
-	if strings.HasPrefix(suggestion, prefixN) {
-		s := strings.TrimPrefix(suggestion, prefixN)
-		s = strings.TrimSuffix(s, "'?")
-		parts := strings.Split(s, "', '")
-		out := make([]string, 0, len(parts))
-		for _, p := range parts {
-			if p != "" {
-				out = append(out, p)
-			}
+	body := strings.TrimPrefix(suggestion, prefix)
+	body = strings.TrimSuffix(body, "?")
+	// Every name in the message is single-quoted; just pull out
+	// the quoted runs. Robust against the punctuation variations
+	// between the 1 / 2 / 3+ cases without needing to branch.
+	var out []string
+	for {
+		start := strings.Index(body, "'")
+		if start < 0 {
+			break
 		}
-		return out
+		body = body[start+1:]
+		end := strings.Index(body, "'")
+		if end < 0 {
+			break
+		}
+		name := body[:end]
+		if name != "" {
+			out = append(out, name)
+		}
+		body = body[end+1:]
 	}
-	return nil
+	return out
 }
 
 // buildNullUnionFix turns the tree-sitter ERROR span that covers

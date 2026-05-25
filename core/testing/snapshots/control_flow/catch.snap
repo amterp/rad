@@ -356,7 +356,7 @@ error[RAD20028]: Undefined identifier 'out'
 6 |   return error(out)
   |                ^^^
   |
-   = help: did you mean one of 'count', 'int', 'sort'?
+   = help: did you mean 'count', 'int', or 'sort'?
    = info: rad explain RAD20028
 
 

@@ -72,7 +72,7 @@ error[RAD20028]: Undefined identifier 'asd'
 4 | print(asd)
   |       ^^^
   |
-   = help: did you mean one of 'abs', 'hash', 'rand'?
+   = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad explain RAD20028
 
 
@@ -96,7 +96,7 @@ error[RAD20028]: Undefined identifier 'asd'
 4 | defer print("bye2")
 5 | print("hi")
   |
-   = help: did you mean one of 'abs', 'hash', 'rand'?
+   = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad explain RAD20028
 
 
@@ -121,7 +121,7 @@ error[RAD20028]: Undefined identifier 'asd'
 4 | defer exit(3)  // this one executed before 'asd' error, so we should use its code
 5 | defer print("bye2")
   |
-   = help: did you mean one of 'abs', 'hash', 'rand'?
+   = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad explain RAD20028
 
 
@@ -146,7 +146,7 @@ error[RAD20028]: Undefined identifier 'asd'
 5 | defer print("bye2")
 6 | print("hi")
   |
-   = help: did you mean one of 'abs', 'hash', 'rand'?
+   = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad explain RAD20028
 
 
@@ -171,7 +171,7 @@ error[RAD20028]: Undefined identifier 'asd'
 4 | defer exit(0)  // this is a clean exit, so we should use the error from 'asd'
 5 | defer print("bye2")
   |
-   = help: did you mean one of 'abs', 'hash', 'rand'?
+   = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad explain RAD20028
 
 
