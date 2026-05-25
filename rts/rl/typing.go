@@ -83,6 +83,7 @@ var (
 	_ TypingT = (*TypingErrorTypeT)(nil)
 	_ TypingT = (*TypingNeverT)(nil)
 	_ TypingT = (*TypingVoidT)(nil)
+	_ TypingT = (*TypingNullT)(nil)
 	_ TypingT = (*TypingAnyListT)(nil)
 	_ TypingT = (*TypingListT)(nil)
 	_ TypingT = (*TypingTupleT)(nil)
@@ -306,6 +307,37 @@ func (t *TypingVoidT) IsCompatibleWith(val TypingCompatVal) bool {
 	// Void is a special case, it means no return value.
 	if val.Val == nil && val.Type == nil {
 		return true
+	}
+	return false
+}
+
+// TypingNullT is the static type of the `null` literal. It is NOT
+// user-writable as a standalone type annotation - users spell
+// nullable as `T?` (TypingOptionalT). TypingNullT exists so that:
+//
+//   - the LitNull synth has a sound type instead of falling back to
+//     Dynamic and silently fitting any slot;
+//   - narrowing the false branch of `if x != null:` has a definite
+//     answer instead of a no-op;
+//   - inferred returns that mix a value and `null` synthesize to
+//     `T?` rather than `T|dynamic`.
+//
+// Assignability: TypingNullT only flows into slots that admit null
+// (Optional<T>, unions containing null, any/dynamic). Non-nullable
+// slots reject it.
+type TypingNullT struct{}
+
+func NewNullType() *TypingNullT {
+	return &TypingNullT{}
+}
+
+func (t *TypingNullT) Name() string {
+	return "null"
+}
+
+func (t *TypingNullT) IsCompatibleWith(val TypingCompatVal) bool {
+	if val.Type != nil {
+		return *val.Type == RadNullT
 	}
 	return false
 }

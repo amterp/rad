@@ -64,19 +64,22 @@ func makeChecker(baseType rl.TypingT) (*typeChecker, *rl.Identifier, *Symbol) {
 
 func TestInterpretCondition_NeqNullNarrowsTruthyToNonNull(t *testing.T) {
 	// `x != null` where x: int?
-	// Truthy branch should narrow x to int.
+	// Truthy branch narrows x to int; falsy branch narrows x to null.
 	tc, ident, sym := makeChecker(rl.NewOptionalType(rl.NewIntType()))
 	cond := rl.NewOpBinary(rl.Span{}, rl.OpNeq, ident, rl.NewLitNull(rl.Span{}))
 	r := tc.interpretCondition(cond, nil)
 
 	got, ok := r.WhenTrue[sym]
-	require.True(t, ok, "truthy branch should narrow x")
+	require.True(t, ok, "truthy branch should narrow x to non-null")
 	assert.Equal(t, rl.T_INT, got.Name())
-	assert.Empty(t, r.WhenFalse, "falsy branch should record no narrowing (null side)")
+	nullGot, ok := r.WhenFalse[sym]
+	require.True(t, ok, "falsy branch should narrow x to null")
+	assert.Equal(t, "null", nullGot.Name())
 }
 
 func TestInterpretCondition_EqNullNarrowsFalsyToNonNull(t *testing.T) {
-	// `x == null` where x: str? - inverse of the != case.
+	// `x == null` where x: str?
+	// Truthy narrows x to null; falsy narrows x to str.
 	tc, ident, sym := makeChecker(rl.NewOptionalType(rl.NewStrType()))
 	cond := rl.NewOpBinary(rl.Span{}, rl.OpEq, ident, rl.NewLitNull(rl.Span{}))
 	r := tc.interpretCondition(cond, nil)
@@ -84,7 +87,9 @@ func TestInterpretCondition_EqNullNarrowsFalsyToNonNull(t *testing.T) {
 	got, ok := r.WhenFalse[sym]
 	require.True(t, ok, "falsy branch should narrow x to non-null")
 	assert.Equal(t, rl.T_STR, got.Name())
-	assert.Empty(t, r.WhenTrue, "truthy branch (null side) should record no narrowing")
+	nullGot, ok := r.WhenTrue[sym]
+	require.True(t, ok, "truthy branch should narrow x to null")
+	assert.Equal(t, "null", nullGot.Name())
 }
 
 func TestInterpretCondition_SwappedOperandsStillNarrows(t *testing.T) {
@@ -158,25 +163,24 @@ func TestNarrowByTypeOf_LeafNoMatch(t *testing.T) {
 }
 
 func TestNarrowByTypeOf_OptionalInnerMatches(t *testing.T) {
-	// Optional<int>, target="int" => truthy: int, falsy: int? (the
-	// conservative "value is still nullable" approximation since we
-	// have no TypingNullT to represent "definitely null").
+	// Optional<int>, target="int" => truthy: int, falsy: null
+	// (TypingNullT - definite, the only remaining possibility).
 	base := rl.NewOptionalType(rl.NewIntType())
 	truthy, falsy := narrowByTypeOf(base, "int")
 	require.NotNil(t, truthy)
 	assert.Equal(t, rl.T_INT, truthy.Name())
-	require.NotNil(t, falsy, "null half stays as Optional, not nil")
-	assert.Equal(t, "int?", falsy.Name(),
-		"falsy keeps the optional - the only remaining possibility is null")
+	require.NotNil(t, falsy)
+	assert.Equal(t, "null", falsy.Name(),
+		"falsy is definite null after the inner-int branch is taken")
 }
 
 func TestNarrowByTypeOf_OptionalNullTarget(t *testing.T) {
-	// Optional<int>, target="null" => truthy: int? (no TypingNullT,
-	// keep the optional), falsy: int.
+	// Optional<int>, target="null" => truthy: null (definite),
+	// falsy: int.
 	base := rl.NewOptionalType(rl.NewIntType())
 	truthy, falsy := narrowByTypeOf(base, "null")
-	require.NotNil(t, truthy, "truthy keeps the optional - null half")
-	assert.Equal(t, "int?", truthy.Name())
+	require.NotNil(t, truthy, "truthy is the definite-null arm")
+	assert.Equal(t, "null", truthy.Name())
 	require.NotNil(t, falsy)
 	assert.Equal(t, rl.T_INT, falsy.Name())
 }

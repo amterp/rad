@@ -42,7 +42,7 @@ fn f(x: int?):
   x @ 2:8 -> int?
   x @ 4:13 -> <no-type>
   y @ 5:13 -> <no-type>
-  x @ 5:17 -> dynamic
+  x @ 5:17 -> null
   after_inner @ 6:9 -> <no-type>
   x @ 6:23 -> int
 
@@ -50,9 +50,9 @@ fn f(x: int?):
   after_inner (local): int
   f (fn): fn(int?) -> void
   g (fn): fn() -> void
-  x (local): dynamic
+  x (local): null
   x (param): int?
-  y (local): dynamic
+  y (local): null
 
 # Diagnostics
   (none)

@@ -45,11 +45,11 @@ fn f(x: int?|str):
   a @ 3:9 -> <no-type>
   x @ 3:13 -> int
   b @ 5:9 -> <no-type>
-  x @ 5:13 -> int?|str
+  x @ 5:13 -> str?
 
 # Symbol types
   a (local): int
-  b (local): int?|str
+  b (local): str?
   f (fn): fn(int?|str) -> void
   x (param): int?|str
 

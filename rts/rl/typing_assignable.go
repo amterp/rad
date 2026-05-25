@@ -64,6 +64,9 @@ func typesEqual(a, b TypingT) bool {
 	case *TypingVoidT:
 		_, ok := b.(*TypingVoidT)
 		return ok
+	case *TypingNullT:
+		_, ok := b.(*TypingNullT)
+		return ok
 	case *TypingAnyListT:
 		_, ok := b.(*TypingAnyListT)
 		return ok
@@ -227,6 +230,19 @@ func (t *TypingErrorT) IsAssignableFrom(other TypingT) bool {
 	return ok
 }
 
+// Null is its own type and not assignable from anything except itself
+// (or an any-like wildcard). Slots that admit null - Optional<T>, unions
+// containing null - accept it through their own IsAssignableFrom; this
+// method handles only the "null = null" case and explicit any/dynamic
+// flow.
+func (t *TypingNullT) IsAssignableFrom(other TypingT) bool {
+	if isAnyLike(other) {
+		return true
+	}
+	_, ok := other.(*TypingNullT)
+	return ok
+}
+
 // Any is the user-written escape hatch. Universally compatible: it accepts
 // every other type, and is accepted by every other type (Siek-Taha gradual
 // consistency). Distinct from Dynamic (which carries the same semantics but
@@ -384,11 +400,15 @@ func (t *TypingVarArgT) IsAssignableFrom(other TypingT) bool {
 	return typesEqual(t.t, o.t)
 }
 
-// Optional<T> accepts Optional<U> when T accepts U, and also accepts T
-// directly (the "definitely not null" case). The reverse - assigning an
-// Optional<T> into a slot typed T - is rejected, because T can't hold null.
+// Optional<T> accepts Optional<U> when T accepts U, T directly (the
+// "definitely not null" case), and TypingNullT (the bare-null literal).
+// The reverse - assigning an Optional<T> into a slot typed T - is
+// rejected, because T can't hold null.
 func (t *TypingOptionalT) IsAssignableFrom(other TypingT) bool {
 	if isAnyLike(other) {
+		return true
+	}
+	if _, ok := other.(*TypingNullT); ok {
 		return true
 	}
 	if o, ok := other.(*TypingOptionalT); ok {

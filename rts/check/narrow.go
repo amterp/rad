@@ -232,14 +232,10 @@ func mergeRefinementMaps(a, b map[*Symbol]rl.TypingT) map[*Symbol]rl.TypingT {
 // narrowNullEquality is invoked after the dispatcher confirms the
 // shape is `<ident> ==/!= null` (in either operand order). It looks
 // up the symbol, peels the nullable component from the base type, and
-// records the non-null type on the appropriate branch.
-//
-// The "narrow x to null" side is intentionally a no-op. We have no
-// TypingNullT in the static system, and the practical payoff of "x is
-// null in this branch" is small (users rarely access members of a
-// definitely-null value). Adding TypingNullT later is a pure expansion:
-// existing scripts keep working, the null branch just gains a tighter
-// static answer.
+// records both the non-null branch and the definitely-null branch.
+// With TypingNullT in the system, the previously-no-op null side now
+// narrows to TypingNullT - downstream `type_of(x) == "null"` dispatch
+// and similar patterns see x as definitely null in the matching arm.
 func (tc *typeChecker) narrowNullEquality(op rl.Operator, ident *rl.Identifier, frame *Frame) Refinement {
 	sym, ok := tc.resolved.Uses[ident]
 	if !ok || sym == nil {
@@ -254,11 +250,12 @@ func (tc *typeChecker) narrowNullEquality(op rl.Operator, ident *rl.Identifier, 
 		return EmptyRefinement()
 	}
 	nonNullBranch := map[*Symbol]rl.TypingT{sym: nonNull}
+	nullBranch := map[*Symbol]rl.TypingT{sym: rl.NewNullType()}
 	switch op {
 	case rl.OpEq:
-		return Refinement{WhenTrue: map[*Symbol]rl.TypingT{}, WhenFalse: nonNullBranch}
+		return Refinement{WhenTrue: nullBranch, WhenFalse: nonNullBranch}
 	case rl.OpNeq:
-		return Refinement{WhenTrue: nonNullBranch, WhenFalse: map[*Symbol]rl.TypingT{}}
+		return Refinement{WhenTrue: nonNullBranch, WhenFalse: nullBranch}
 	}
 	return EmptyRefinement()
 }
@@ -593,12 +590,8 @@ func matchesTypeOf(t rl.TypingT, target string) bool {
 		_, ok := t.(*rl.TypingFnT)
 		return ok
 	case "null":
-		// No TypingNullT today; the null component is implicit in
-		// TypingOptionalT and not directly representable as a leaf.
-		// narrowByTypeOf handles the optional case explicitly so this
-		// branch is only hit for non-nullable leaves, where the answer
-		// is unambiguously false.
-		return false
+		_, ok := t.(*rl.TypingNullT)
+		return ok
 	}
 	return false
 }
@@ -619,32 +612,22 @@ func matchesTypeOf(t rl.TypingT, target string) bool {
 //     this arm means we keep the whole arm as a fallback.
 //   - Optional<T>:
 //       target == "null":
-//         truthy: x is null. We have no TypingNullT, so we return
-//                 the original Optional<T> as the conservative
-//                 over-approximation - the value is still typed as
-//                 nullable, and the union-walk caller can rely on
-//                 the arm not being silently dropped.
+//         truthy: TypingNullT (definite - the null arm matched).
 //         falsy:  x is non-null - return T.
 //       inner matches target:
 //         truthy: T (the non-null component).
-//         falsy:  x is null - return Optional<T> conservatively
-//                 (no TypingNullT). This preserves the null arm
-//                 when the optional sits inside a union and the
-//                 other arms don'\''t fold it back in.
+//         falsy:  TypingNullT (only possibility left).
 //       inner doesn'\''t match target:
 //         truthy: Never (inner doesn'\''t match, null doesn'\''t
 //                 match any non-null target).
 //         falsy:  the original Optional<T> stays.
-//   - Leaf (non-Optional):
+//   - TypingNullT (definite-null leaf):
+//       target == "null":  truthy=null, falsy=Never.
+//       any other target:  truthy=Never, falsy=null.
+//   - Leaf (non-Optional, non-null):
 //       target == "null": truthy=Never, falsy=base.
 //       matches:           truthy=base,  falsy=Never.
-//       doesn'\''t match:    truthy=Never, falsy=base.
-//
-// The shift from the previous behavior: Optional cases now return
-// the original Optional<T> rather than nil on the side that has
-// "the null half is still possible." This stops union arm walks
-// from silently dropping the null arm when a non-null target
-// matched a different union arm.
+//       doesn'\''t match:   truthy=Never, falsy=base.
 func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 	if base == nil {
 		return nil, nil
@@ -677,20 +660,23 @@ func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 	if o, ok := base.(*rl.TypingOptionalT); ok {
 		inner := o.Inner()
 		if target == "null" {
-			// Truthy: x IS null. No TypingNullT, so keep the optional
-			// as the conservative "value is still nullable" answer.
+			// Truthy: x IS null - return TypingNullT (definite).
 			// Falsy: x is non-null = the inner type.
-			return base, inner
+			return rl.NewNullType(), inner
 		}
 		if matchesTypeOf(inner, target) {
 			// Truthy: non-null inner matched. Falsy: only possibility
-			// left is null - keep Optional<T> as the conservative
-			// "still nullable" answer; this preserves the null arm
-			// when used inside a union walk.
-			return inner, base
+			// left is null.
+			return inner, rl.NewNullType()
 		}
 		// Inner doesn'\''t match target and null doesn'\''t match any
 		// non-null target. Truthy is empty; falsy is the original.
+		return rl.NewNeverType(), base
+	}
+	if _, ok := base.(*rl.TypingNullT); ok {
+		if target == "null" {
+			return base, rl.NewNeverType()
+		}
 		return rl.NewNeverType(), base
 	}
 	if target == "null" {
@@ -712,13 +698,26 @@ func isNeverType(t rl.TypingT) bool {
 
 // joinNarrowArms collapses a slice of narrowed arms into a single
 // TypingT: empty -> Never (no remaining arms means the branch is
-// unreachable), one arm -> that arm, more -> a union.
+// unreachable), one arm -> that arm, more -> a union. Two-arm unions
+// with a null component collapse to T? to match how users spell
+// nullable types and how unionTypesForJoin canonicalises inferred
+// returns.
 func joinNarrowArms(arms []rl.TypingT) rl.TypingT {
 	switch len(arms) {
 	case 0:
 		return rl.NewNeverType()
 	case 1:
 		return arms[0]
+	case 2:
+		if _, leftNull := arms[0].(*rl.TypingNullT); leftNull {
+			if _, rightNull := arms[1].(*rl.TypingNullT); !rightNull {
+				return rl.NewOptionalType(arms[1])
+			}
+		}
+		if _, rightNull := arms[1].(*rl.TypingNullT); rightNull {
+			return rl.NewOptionalType(arms[0])
+		}
+		return rl.NewUnionType(arms...)
 	default:
 		return rl.NewUnionType(arms...)
 	}

@@ -1558,6 +1558,21 @@ func unionTypesForJoin(types []rl.TypingT) rl.TypingT {
 		return rl.NewNeverType()
 	case 1:
 		return flat[0]
+	case 2:
+		// `T | null` is the canonical nullable shape - collapse it to
+		// `T?` (TypingOptionalT) so inferred returns and narrowing
+		// joins read the way users spell nullable themselves. Multi-
+		// arm unions with null (e.g. `int|str|null`) stay as a union
+		// since `T|U?` is ambiguous to read.
+		if _, leftNull := flat[0].(*rl.TypingNullT); leftNull {
+			if _, rightNull := flat[1].(*rl.TypingNullT); !rightNull {
+				return rl.NewOptionalType(flat[1])
+			}
+		}
+		if _, rightNull := flat[1].(*rl.TypingNullT); rightNull {
+			return rl.NewOptionalType(flat[0])
+		}
+		return rl.NewUnionType(flat...)
 	default:
 		return rl.NewUnionType(flat...)
 	}
@@ -2036,11 +2051,12 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 	case *rl.LitBool:
 		return tc.record(v, rl.NewBoolType())
 	case *rl.LitNull:
-		// Rad models nullability via Optional<T>; a bare null literal
-		// without context is best-typed as Dynamic until later
-		// sub-commits give us a way to bubble the expected type into
-		// synth (the "check" direction of bidirectional checking).
-		return tc.record(v, rl.NewDynamicType())
+		// Rad's `null` literal has a dedicated static type so it
+		// only flows into slots that admit null (Optional<T>, unions
+		// containing null, any/dynamic). Synthesizing Dynamic here
+		// would silently fit any typed slot - a soundness gap that
+		// let `a: int = null` slip through.
+		return tc.record(v, rl.NewNullType())
 	case *rl.Identifier:
 		return tc.synthIdentifier(v)
 	case *rl.Call:
