@@ -85,7 +85,13 @@ func TestFuncDocsSignatureMatchesRegistered(t *testing.T) {
 // docs/funcs/ are in sync with the embedded copy in
 // rts/embedded_funcs/. The embedded files are the artefact the
 // runtime actually reads; the docs/funcs/ tree is the canonical
-// editable source. Manual sync today; codegen later.
+// editable source.
+//
+// TODO(codegen): replace the manual mirror with a build step that
+// reads docs/funcs/ and writes rts/embedded_funcs/. Until then,
+// this test is the drift gate - if you edit one tree, edit the
+// other or the test fails. Grep "TODO(codegen)" to find related
+// sites.
 func TestFuncDocsSourceMatchesEmbedded(t *testing.T) {
 	sourceDir := "../../docs/funcs"
 	embeddedDir := "../../rts/embedded_funcs"
@@ -125,21 +131,33 @@ func TestFuncDocsSourceMatchesEmbedded(t *testing.T) {
 	}
 }
 
+// collectDocSet walks dir and returns md files keyed by their
+// path relative to dir. Keying by relative path (not filename
+// alone) matters once docs/funcs/ grows subdirectories - the
+// README documents an `internal/` subfolder for _rad_* builtin
+// docs, and a `print.md` in both top-level and `internal/`
+// would silently collide under filepath.Base keying.
 func collectDocSet(dir string) (map[string][]byte, error) {
 	out := make(map[string][]byte)
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		base := filepath.Base(path)
-		if info.IsDir() || !strings.HasSuffix(base, ".md") {
+		if info.IsDir() || !strings.HasSuffix(path, ".md") {
 			return nil
 		}
+		rel, relErr := filepath.Rel(dir, path)
+		if relErr != nil {
+			return relErr
+		}
+		// Normalize to forward slashes so the map keys round-trip
+		// across platforms.
+		rel = filepath.ToSlash(rel)
 		content, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
-		out[base] = content
+		out[rel] = content
 		return nil
 	})
 	return out, err

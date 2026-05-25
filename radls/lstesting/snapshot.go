@@ -348,29 +348,16 @@ func parsePosToken(token, path string, lineNum int) (lsp.Pos, error) {
 	return lsp.NewPos(line, char), nil
 }
 
-// parsePosFromHeader extracts a position (line:char) from a header like "### COMPLETION 0:0 ###".
+// parsePosFromHeader extracts a position (line:char) from a header
+// like "### COMPLETION 0:0 ###" by stripping the envelope and
+// delegating to parsePosToken. Keeps the parsing logic in one
+// place so a future shape change (e.g. supporting byte offsets)
+// only needs one update.
 func parsePosFromHeader(header, prefix, path string, lineNum int) (lsp.Pos, error) {
-	// Strip prefix and trailing " ###"
 	inner := strings.TrimPrefix(header, prefix)
 	inner = strings.TrimSuffix(inner, "###")
 	inner = strings.TrimSpace(inner)
-
-	parts := strings.SplitN(inner, ":", 2)
-	if len(parts) != 2 {
-		return lsp.Pos{}, fmt.Errorf("%s:%d: expected position as line:char, got '%s'", path, lineNum, inner)
-	}
-
-	line, err := strconv.Atoi(strings.TrimSpace(parts[0]))
-	if err != nil {
-		return lsp.Pos{}, fmt.Errorf("%s:%d: invalid line number '%s': %w", path, lineNum, parts[0], err)
-	}
-
-	char, err := strconv.Atoi(strings.TrimSpace(parts[1]))
-	if err != nil {
-		return lsp.Pos{}, fmt.Errorf("%s:%d: invalid character number '%s': %w", path, lineNum, parts[1], err)
-	}
-
-	return lsp.NewPos(line, char), nil
+	return parsePosToken(inner, path, lineNum)
 }
 
 // parseRangeFromHeader extracts a range (startLine:startChar endLine:endChar) from a header

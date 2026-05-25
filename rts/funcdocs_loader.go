@@ -12,12 +12,16 @@ var embeddedFuncDocs embed.FS
 
 // FuncDocs is the lazily-loaded map from function name to its parsed
 // FuncDoc. Populated on first access from the embedded
-// `embedded_funcs/` directory. The directory is the output of
-// `tools/gen-funcs/...` reading `docs/funcs/*.md`; in a future
-// commit the codegen pipeline will land and the embedded copy will
-// be the only thing the runtime sees. For now we embed the source
-// directory directly (one file = one func) to keep the dependency
-// chain simple.
+// `embedded_funcs/` directory.
+//
+// TODO(codegen): today the embedded_funcs/ directory is a manual
+// byte-for-byte mirror of docs/funcs/. The intended pipeline is
+// `tools/gen-funcs/...` reading docs/funcs/*.md and writing
+// embedded_funcs/ as a build step. Until that lands,
+// TestFuncDocsSourceMatchesEmbedded gates drift between the two
+// trees so contributors can't accidentally edit only one side.
+// Grep for "TODO(codegen)" to find every site that bakes in this
+// assumption.
 var (
 	funcDocs     map[string]*FuncDoc
 	funcDocsOnce sync.Once

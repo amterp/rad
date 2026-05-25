@@ -71,6 +71,21 @@ matches the signature.
 what hover renders inline; later blocks appear in the public docs
 page.
 
+## What hover renders
+
+The LSP hover for a built-in shows:
+
+1. The signature line (always).
+2. A horizontal rule.
+3. The H1 description paragraph (only).
+4. The first `## Examples` rad code block.
+
+The `## Parameters`, `## Notes`, and `## See also` sections do NOT
+appear in hover - they're for the public docs page. If a parameter
+needs to be discoverable from hover (e.g. a confusing `_arg1`
+overload), describe it in the H1 description instead of relying on
+the Parameters list.
+
 `## Category` is a single word the public docs use to group
 functions ("io", "strings", "lists", "math", "time", "random",
 "shell", "system").

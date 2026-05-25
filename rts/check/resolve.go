@@ -136,6 +136,31 @@ type Resolved struct {
 
 // IssueSeverity is the binder's severity classification. Kept here
 // rather than on Diagnostic so resolve.go stays src-free.
+//
+// Severity policy (followed across rts/check and surfaced to the
+// CLI / LSP):
+//
+//   - IssueError - the static analyzer can prove the code is
+//     wrong. Gates runtime: `rad check` exits non-zero, `rad run`
+//     refuses to execute, the LSP marks the file as having errors.
+//     If you're tempted to add an IssueError that "might be wrong
+//     in edge cases," that's not Error - it's Warning.
+//
+//   - IssueWarning - genuinely uncertain. The analyzer suspects a
+//     problem but can't prove it, or the issue is severity-
+//     dependent on context the analyzer doesn't have. Does NOT
+//     gate runtime. Today's binder doesn't emit any Warnings;
+//     reserved for future drift cases (e.g. "this looks like a
+//     dead branch but we can't be sure"). The check.Diagnostic
+//     layer has its own Warning emitter for rad-options-no-effect
+//     style stylistic hints.
+//
+//   - IssueHint - style nudge, no behavior implication. "You
+//     could write this more idiomatically." Never gates anything.
+//
+// When promoting a Hint to Error: update the call site, update any
+// snapshots, and migrate downstream runtime tests that used the
+// now-static error as a runtime trigger.
 type IssueSeverity int
 
 const (

@@ -1319,17 +1319,53 @@ func caseLiteralKey(n rl.Node) (string, bool) {
 }
 
 // emitUnreachableCase records a diagnostic on a case key that was
-// already matched by an earlier arm. `prev` is the first occurrence's
-// span so the message can point at the original.
+// already matched by an earlier arm. `prev` is the first
+// occurrence's span so the message can point at the original. The
+// value text is sourced from the duplicate key node itself when
+// available - lets the user spot which value of a multi-key arm
+// is the duplicate without re-reading the switch.
 func (tc *typeChecker) emitUnreachableCase(key rl.Node, prev rl.Span) {
+	valueText := caseKeyDisplayText(key)
+	var msg string
+	if valueText != "" {
+		msg = fmt.Sprintf(
+			"Case is unreachable; %s is already matched by an earlier arm on line %d",
+			valueText, prev.StartLine())
+	} else {
+		msg = fmt.Sprintf(
+			"Case is unreachable; the value is already matched by an earlier arm on line %d",
+			prev.StartLine())
+	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     key.Span(),
 		Severity: IssueError,
 		Code:     rl.ErrUnreachableCase,
-		Message: fmt.Sprintf(
-			"Case is unreachable; the value is already matched by an earlier arm on line %d",
-			prev.StartLine()),
+		Message:  msg,
 	})
+}
+
+// caseKeyDisplayText renders a switch-case key literal back to its
+// source form for diagnostic messages. Mirrors caseLiteralKey's
+// type coverage; returns "" for shapes that don't have a clean
+// printable form (the caller falls back to a generic message).
+func caseKeyDisplayText(n rl.Node) string {
+	switch v := n.(type) {
+	case *rl.LitString:
+		if !v.Simple {
+			return ""
+		}
+		return fmt.Sprintf("'%s'", v.Value)
+	case *rl.LitInt:
+		return fmt.Sprintf("'%d'", v.Value)
+	case *rl.LitFloat:
+		return fmt.Sprintf("'%g'", v.Value)
+	case *rl.LitBool:
+		if v.Value {
+			return "'true'"
+		}
+		return "'false'"
+	}
+	return ""
 }
 
 // emitNonExhaustiveSwitch records a diagnostic naming the unmatched
