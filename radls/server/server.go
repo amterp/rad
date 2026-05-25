@@ -61,6 +61,7 @@ func NewServerWithDebounce(r io.Reader, w io.Writer, delay time.Duration) *Serve
 	m.AddRequestHandler(lsp.TD_DOCUMENT_SYMBOL, server.handleDocumentSymbol)
 	m.AddRequestHandler(lsp.TD_REFERENCES, server.handleReferences)
 	m.AddRequestHandler(lsp.TD_SEMANTIC_TOKENS, server.handleSemanticTokens)
+	m.AddRequestHandler(lsp.TD_RENAME, server.handleRename)
 
 	return &server
 }
@@ -218,6 +219,19 @@ func (s *Server) handleReferences(_ context.Context, params json.RawMessage) (re
 		defer snap.Release()
 	}
 	result, err = s.s.References(snap, refParams.Position, refParams.Context.IncludeDeclaration)
+	return
+}
+
+func (s *Server) handleRename(_ context.Context, params json.RawMessage) (result any, err error) {
+	var rp lsp.RenameParams
+	if err = json.Unmarshal(params, &rp); err != nil {
+		return
+	}
+	snap := s.s.Snapshot(rp.TextDocument.Uri)
+	if snap != nil {
+		defer snap.Release()
+	}
+	result, err = s.s.Rename(snap, rp.Position, rp.NewName)
 	return
 }
 

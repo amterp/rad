@@ -45,6 +45,7 @@ type ServerCapabilities struct {
 	DocumentSymbolProvider bool                    `json:"documentSymbolProvider"`
 	ReferencesProvider     bool                    `json:"referencesProvider"`
 	CodeActionProvider     bool                    `json:"codeActionProvider"`
+	RenameProvider         bool                    `json:"renameProvider"`
 	CompletionProvider     map[string]any          `json:"completionProvider"`
 	SemanticTokensProvider *SemanticTokensProvider `json:"semanticTokensProvider,omitempty"`
 	PositionEncoding       string                  `json:"positionEncoding,omitempty"`
@@ -69,6 +70,7 @@ func NewInitializeResult(positionEncoding string, semLegend SemanticTokensLegend
 			DocumentSymbolProvider: true,
 			ReferencesProvider:     true,
 			CodeActionProvider:     true,
+			RenameProvider:         true,
 			CompletionProvider: map[string]any{
 				"triggerCharacters": []string{".", "#", "$", "!", "/"},
 			},

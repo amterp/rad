@@ -15,6 +15,7 @@ const (
 	TD_REFERENCES          = "textDocument/references"
 	TD_SEMANTIC_TOKENS     = "textDocument/semanticTokens/full"
 	TD_PUBLISH_DIAGNOSTICS = "textDocument/publishDiagnostics"
+	TD_RENAME              = "textDocument/rename"
 )
 
 // CancelParams matches the LSP 3.17 $/cancelRequest payload. The

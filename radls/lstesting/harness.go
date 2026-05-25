@@ -93,6 +93,9 @@ func Run(tc *SnapshotCase) (string, error) {
 		case ActionReferences:
 			err = sendReferences(bw, requestId, *action.Position, action.IncludeDeclaration)
 			requestId++
+		case ActionRename:
+			err = sendRename(bw, requestId, *action.Position, action.NewName)
+			requestId++
 		case ActionSemanticTokens:
 			err = sendSemanticTokens(bw, requestId)
 			requestId++
@@ -288,6 +291,17 @@ func sendReferences(bw *bufio.Writer, id int, pos lsp.Pos, includeDecl bool) err
 		Context: lsp.ReferenceContext{IncludeDeclaration: includeDecl},
 	}
 	return sendRequest(bw, id, lsp.TD_REFERENCES, params)
+}
+
+func sendRename(bw *bufio.Writer, id int, pos lsp.Pos, newName string) error {
+	params := lsp.RenameParams{
+		TextDocumentPositionParams: lsp.TextDocumentPositionParams{
+			TextDocument: lsp.TextDocumentIdentifier{Uri: testURI},
+			Position:     pos,
+		},
+		NewName: newName,
+	}
+	return sendRequest(bw, id, lsp.TD_RENAME, params)
 }
 
 func sendSemanticTokens(bw *bufio.Writer, id int) error {

@@ -29,6 +29,7 @@ const (
 	DefinitionDelimiter     = "### DEFINITION"      // "### DEFINITION 0:0 ###"
 	DocumentSymbolDelimiter = "### DOCUMENT_SYMBOL" // "### DOCUMENT_SYMBOL ###"
 	ReferencesDelimiter     = "### REFERENCES"      // "### REFERENCES 0:0 [decl] ###"
+	RenameDelimiter         = "### RENAME"          // "### RENAME 0:0 newName ###"
 	SemanticTokensDelimiter = "### SEMANTIC_TOKENS" // "### SEMANTIC_TOKENS ###"
 	StdoutDelimiter         = "### STDOUT ###"
 )
@@ -43,6 +44,7 @@ const (
 	ActionDefinition
 	ActionDocumentSymbol
 	ActionReferences
+	ActionRename
 	ActionSemanticTokens
 )
 
@@ -53,9 +55,10 @@ const (
 type Action struct {
 	Type               ActionType
 	Content            string     // For CHANGE: new document text
-	Position           *lsp.Pos   // For COMPLETION / HOVER / DEFINITION / REFERENCES
+	Position           *lsp.Pos   // For COMPLETION / HOVER / DEFINITION / REFERENCES / RENAME
 	Range              *lsp.Range // For CODE_ACTION: selected range
 	IncludeDeclaration bool       // For REFERENCES: matches LSP context flag
+	NewName            string     // For RENAME: the rename target name
 }
 
 type SnapshotCase struct {
@@ -247,6 +250,7 @@ func isActionHeader(line string) bool {
 		strings.HasPrefix(line, CodeActionDelimiter) ||
 		strings.HasPrefix(line, DefinitionDelimiter) ||
 		strings.HasPrefix(line, ReferencesDelimiter) ||
+		strings.HasPrefix(line, RenameDelimiter) ||
 		strings.HasPrefix(line, HoverDelimiter)
 }
 
@@ -300,6 +304,21 @@ func parseActionHeader(line, path string, lineNum int) (Action, error) {
 			}
 		}
 		return Action{Type: ActionReferences, Position: &pos, IncludeDeclaration: includeDecl}, nil
+	case strings.HasPrefix(line, RenameDelimiter):
+		// RENAME headers carry a position and a new name token.
+		// "### RENAME 1:0 newName ###"
+		inner := strings.TrimPrefix(line, RenameDelimiter)
+		inner = strings.TrimSuffix(inner, "###")
+		inner = strings.TrimSpace(inner)
+		parts := strings.Fields(inner)
+		if len(parts) < 2 {
+			return Action{}, fmt.Errorf("%s:%d: RENAME header needs position and new name", path, lineNum)
+		}
+		pos, err := parsePosToken(parts[0], path, lineNum)
+		if err != nil {
+			return Action{}, err
+		}
+		return Action{Type: ActionRename, Position: &pos, NewName: parts[1]}, nil
 	case strings.HasPrefix(line, HoverDelimiter):
 		pos, err := parsePosFromHeader(line, HoverDelimiter, path, lineNum)
 		if err != nil {
@@ -444,6 +463,9 @@ func WriteSnapshotFile(path string, cases []SnapshotCase) error {
 				} else {
 					fmt.Fprintf(&builder, "%s %d:%d ###\n", ReferencesDelimiter, action.Position.Line, action.Position.Character)
 				}
+			case ActionRename:
+				fmt.Fprintf(&builder, "%s %d:%d %s ###\n", RenameDelimiter,
+					action.Position.Line, action.Position.Character, action.NewName)
 			case ActionSemanticTokens:
 				fmt.Fprintf(&builder, "%s ###\n", SemanticTokensDelimiter)
 			}

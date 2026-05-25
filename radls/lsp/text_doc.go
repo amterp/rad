@@ -152,6 +152,14 @@ type ReferenceContext struct {
 	IncludeDeclaration bool `json:"includeDeclaration"`
 }
 
+// RenameParams is the textDocument/rename request payload. The new
+// name is the user's chosen replacement; the response is a
+// WorkspaceEdit covering every site that needs to change.
+type RenameParams struct {
+	TextDocumentPositionParams
+	NewName string `json:"newName"`
+}
+
 // SemanticTokensParams is the textDocument/semanticTokens/full
 // payload. Whole-document; no range provided. Range-mode is a
 // future opt-in for very large files where we want to scope work.

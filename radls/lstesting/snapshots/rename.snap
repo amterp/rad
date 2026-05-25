@@ -1,0 +1,249 @@
+### TITLE ###
+RenameLocalFromDeclSite
+### DOCUMENT ###
+x = 1
+print(x)
+print(x + 1)
+### RENAME 0:0 y ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "y",
+          "range": {
+            "end": {
+              "character": 1,
+              "line": 0
+            },
+            "start": {
+              "character": 0,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "y",
+          "range": {
+            "end": {
+              "character": 7,
+              "line": 1
+            },
+            "start": {
+              "character": 6,
+              "line": 1
+            }
+          }
+        },
+        {
+          "newText": "y",
+          "range": {
+            "end": {
+              "character": 7,
+              "line": 2
+            },
+            "start": {
+              "character": 6,
+              "line": 2
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameLocalFromUseSite
+### DOCUMENT ###
+x = 1
+print(x)
+print(x + 1)
+### RENAME 1:6 y ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "y",
+          "range": {
+            "end": {
+              "character": 1,
+              "line": 0
+            },
+            "start": {
+              "character": 0,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "y",
+          "range": {
+            "end": {
+              "character": 7,
+              "line": 1
+            },
+            "start": {
+              "character": 6,
+              "line": 1
+            }
+          }
+        },
+        {
+          "newText": "y",
+          "range": {
+            "end": {
+              "character": 7,
+              "line": 2
+            },
+            "start": {
+              "character": 6,
+              "line": 2
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameFnFromDefSite
+### DOCUMENT ###
+fn greet():
+    print("hi")
+
+greet()
+greet()
+### RENAME 0:3 say_hi ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "say_hi",
+          "range": {
+            "end": {
+              "character": 8,
+              "line": 0
+            },
+            "start": {
+              "character": 3,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "say_hi",
+          "range": {
+            "end": {
+              "character": 5,
+              "line": 3
+            },
+            "start": {
+              "character": 0,
+              "line": 3
+            }
+          }
+        },
+        {
+          "newText": "say_hi",
+          "range": {
+            "end": {
+              "character": 5,
+              "line": 4
+            },
+            "start": {
+              "character": 0,
+              "line": 4
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameToInvalidIdentifier
+### DOCUMENT ###
+x = 1
+### RENAME 0:0 1bad ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "error": {
+    "code": 0,
+    "message": "not a valid Rad identifier"
+  },
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+RenameToCollidingName
+### DOCUMENT ###
+x = 1
+y = 2
+### RENAME 0:0 y ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "error": {
+    "code": 0,
+    "message": "name is already in scope"
+  },
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
