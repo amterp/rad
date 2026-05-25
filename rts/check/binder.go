@@ -191,13 +191,24 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 				b.addIssue(fnSpan, IssueError, rl.ErrHoistedFunctionShadowsArgument,
 					"Hoisted function '"+decl.Name+"' shadows an argument with the same name")
 			}
-			b.declare(decl.Name, SymArg, decl.Span(), decl)
+			sym := b.declare(decl.Name, SymArg, decl.Span(), decl)
+			if decl.Typing != nil {
+				sym.Declared = decl.Typing
+			}
 		}
 	}
 	for _, cmd := range file.Cmds {
 		for i := range cmd.Decls {
 			decl := &cmd.Decls[i]
-			b.declare(decl.Name, SymCmdArg, decl.Span(), decl)
+			sym := b.declare(decl.Name, SymCmdArg, decl.Span(), decl)
+			// Multiple cmds may declare the same arg name; declare()
+			// returns the existing symbol on collision. Only plant the
+			// type when fresh so the first cmd's annotation wins; the
+			// runtime enforces these are mutually exclusive at invoke
+			// time.
+			if decl.Typing != nil && sym.Declared == nil {
+				sym.Declared = decl.Typing
+			}
 		}
 	}
 

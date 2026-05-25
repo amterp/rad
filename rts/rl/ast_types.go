@@ -718,6 +718,13 @@ type ArgDecl struct {
 	span       Span
 	Name       string
 	TypeName   string // "int", "str", "int[]", etc.
+	// Typing is the same type as TypeName but pre-parsed into the
+	// general TypingT shape so downstream consumers (binder, type
+	// checker, LSP) don't each re-implement the args-block grammar.
+	// IsOptional has been folded in: an optional arg's type is
+	// `T?` to match runtime nullability. nil only for malformed
+	// declarations the parser already errored on.
+	Typing     TypingT
 	IsOptional bool
 	IsVariadic bool
 	Rename     *string

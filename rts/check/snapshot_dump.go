@@ -77,7 +77,14 @@ func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved, di
 		if syms[i].name != syms[j].name {
 			return syms[i].name < syms[j].name
 		}
-		return syms[i].kind < syms[j].kind
+		if syms[i].kind != syms[j].kind {
+			return syms[i].kind < syms[j].kind
+		}
+		// Same name + same kind happens for shadowing locals across
+		// scopes (e.g. two fn params named `s`). Tie-break on the
+		// rendered type so the dump is deterministic regardless of
+		// resolved.Uses map iteration order.
+		return syms[i].t < syms[j].t
 	})
 	if len(syms) == 0 {
 		sb.WriteString("  (none)\n")

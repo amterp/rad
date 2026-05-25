@@ -1,0 +1,125 @@
+### TITLE ###
+ArgsBlockTypedUseFlagsMismatch
+### DESCRIPTION ###
+An args-block decl is now a typed binding: passing it to a typed
+slot of an incompatible type fires RAD30001.
+### INPUT ###
+args:
+    name str
+
+fn greet(label: int):
+    print(label)
+
+greet(name)
+### STDOUT ###
+# Identifier types
+  print @ 5:5 -> dynamic
+  label @ 5:11 -> int
+  greet @ 7:1 -> fn(int) -> void
+  name @ 7:7 -> str
+
+# Symbol types
+  greet (fn): fn(int) -> void
+  label (param): int
+  name (arg): str
+
+# Diagnostics
+  [hint] RAD30001 @ 7:7 - Argument type 'str' is not assignable to expected type 'int'
+### TITLE ###
+ArgsBlockListUseCleanWhenSlotMatches
+### DESCRIPTION ###
+Args-block list types (`names str[]`) compose with the rest of the
+type system - passing one into a `str[]` slot is clean.
+### INPUT ###
+args:
+    names str[]
+
+fn first(xs: str[]) -> str:
+    return xs[0]
+
+print(first(names))
+### STDOUT ###
+# Identifier types
+  xs @ 5:12 -> str[]
+  print @ 7:1 -> dynamic
+  first @ 7:7 -> fn(str[]) -> str
+  names @ 7:13 -> str[]
+
+# Symbol types
+  first (fn): fn(str[]) -> str
+  names (arg): str[]
+  xs (param): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+CmdBlockTypedUseFlagsMismatch
+### DESCRIPTION ###
+Same enforcement applies to cmd-block decls (SymCmdArg). The cmd's
+arg lives in file scope so the callback can read it; here it flows
+into a typed function call and fires.
+### INPUT ###
+command build:
+    name str
+    calls on_build
+
+fn on_build():
+    consume_int(name)
+
+fn consume_int(label: int):
+    print(label)
+### STDOUT ###
+# Identifier types
+  consume_int @ 6:5 -> fn(int) -> void
+  name @ 6:17 -> str
+  print @ 9:5 -> dynamic
+  label @ 9:11 -> int
+
+# Symbol types
+  consume_int (fn): fn(int) -> void
+  label (param): int
+  name (cmdarg): str
+  on_build (fn): fn() -> void
+
+# Diagnostics
+  [hint] RAD30001 @ 6:17 - Argument type 'str' is not assignable to expected type 'int'
+### TITLE ###
+ArgsBlockOptionalIsNullable
+### DESCRIPTION ###
+The `?` in `name str?` marks the value as runtime-nullable (no
+default, user may omit the flag). The type binds to `str?` so
+passing it to a non-nullable `str` slot fires the existing
+nullable-suggestion diagnostic; passing it to a `str?` slot is
+clean.
+### INPUT ###
+args:
+    name str?
+
+fn need_str(s: str):
+    print(s)
+
+fn maybe_str(s: str?):
+    print(s)
+
+need_str(name)
+maybe_str(name)
+### STDOUT ###
+# Identifier types
+  print @ 5:5 -> dynamic
+  s @ 5:11 -> str
+  print @ 8:5 -> dynamic
+  s @ 8:11 -> str?
+  need_str @ 10:1 -> fn(str) -> void
+  name @ 10:10 -> str?
+  maybe_str @ 11:1 -> fn(str?) -> void
+  name @ 11:11 -> str?
+
+# Symbol types
+  maybe_str (fn): fn(str?) -> void
+  name (arg): str?
+  need_str (fn): fn(str) -> void
+  s (param): str
+  s (param): str?
+
+# Diagnostics
+  [hint] RAD30001 @ 10:10 - Argument type 'str?' is not assignable to expected type 'str'

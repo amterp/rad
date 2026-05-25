@@ -533,6 +533,18 @@ func (c *converter) convertArgDecl(node *ts.Node) rl.ArgDecl {
 	decl.IsOptional = optionalNode != nil
 	decl.IsVariadic = isVariadic
 
+	// Pre-parse the type name into a TypingT so the binder and type
+	// checker can use the same Typing-based machinery as every other
+	// typed binding. IsOptional means the runtime allows null (the
+	// user can omit a CLI flag with no default), so we wrap it.
+	if base := rl.TypingFromArgTypeName(typeStr); base != nil {
+		if decl.IsOptional {
+			decl.Typing = rl.NewOptionalType(base)
+		} else {
+			decl.Typing = base
+		}
+	}
+
 	if renameNode != nil {
 		r := c.extractArgString(renameNode)
 		decl.Rename = &r

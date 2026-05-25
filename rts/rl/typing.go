@@ -842,3 +842,31 @@ type ASTDefault struct {
 func (t TypingFnParam) AnonymousOnly() bool {
 	return strings.HasPrefix(t.Name, "_")
 }
+
+// TypingFromArgTypeName maps an args-block type-name string to its
+// TypingT. The args-block grammar admits only the eight scalar / list
+// forms (str, int, float, bool, plus their `[]` variants) and is the
+// authoritative caller list - everywhere else we go through the
+// general type parser. Returns nil for unrecognised names so the
+// binder can no-op rather than panic on malformed input.
+func TypingFromArgTypeName(name string) TypingT {
+	switch name {
+	case T_STR:
+		return NewStrType()
+	case T_INT:
+		return NewIntType()
+	case T_FLOAT:
+		return NewFloatType()
+	case T_BOOL:
+		return NewBoolType()
+	case T_STR_LIST:
+		return NewListType(NewStrType())
+	case T_INT_LIST:
+		return NewListType(NewIntType())
+	case T_FLOAT_LIST:
+		return NewListType(NewFloatType())
+	case T_BOOL_LIST:
+		return NewListType(NewBoolType())
+	}
+	return nil
+}
