@@ -112,6 +112,56 @@ func TestCompletionNilASTSorted(t *testing.T) {
 	}
 }
 
+// TestCompletionUFCSRanksRelevantBuiltinsAbove verifies that at
+// `xs.<cursor>`, builtins whose first param accepts the receiver
+// type (e.g. `len` accepts a list) sort above unrelated builtins.
+// The win: typing a `.` after a typed local floats the relevant
+// completions to the top instead of leaving them buried in the
+// alphabetical builtin tier.
+func TestCompletionUFCSRanksRelevantBuiltinsAbove(t *testing.T) {
+	// `xs.len()` is a complete UFCS call. Completion at the cursor
+	// position right after the `.` is the natural place to test
+	// ranking: the receiver is `xs` (typed `int[]`), and builtins
+	// whose first param accepts a list should outrank unrelated
+	// ones.
+	src := "xs: int[] = [1, 2, 3]\nxs.len()\n"
+	// Cursor sits right after the `.` on line 1, col 3.
+	items := completionFixture(t, src, lsp.NewPos(1, 3))
+
+	want := map[string]bool{"len": true, "sort": true}
+	gotRelevant := make(map[string]string)
+	for _, it := range items {
+		if !want[it.Label] {
+			continue
+		}
+		gotRelevant[it.Label] = it.SortText
+	}
+	for label := range want {
+		got, ok := gotRelevant[label]
+		if !ok {
+			t.Errorf("%q missing from completion list", label)
+			continue
+		}
+		if got != sortTierBuiltinRelevant {
+			t.Errorf("%q: SortText=%q, want relevant tier %q",
+				label, got, sortTierBuiltinRelevant)
+		}
+	}
+
+	// Unrelated builtins (e.g. `now`, `parse_int`) should stay at
+	// the plain builtin tier - the receiver type isn't compatible
+	// with their first param.
+	unrelated := map[string]bool{"now": true, "parse_int": true}
+	for _, it := range items {
+		if !unrelated[it.Label] {
+			continue
+		}
+		if it.SortText == sortTierBuiltinRelevant {
+			t.Errorf("%q unexpectedly promoted to relevant tier", it.Label)
+		}
+	}
+}
+
 // TestCompletionEmptySnapshotReturnsNil verifies nil-snapshot
 // path. Unreachable through the wire harness; defensive.
 func TestCompletionEmptySnapshotReturnsNil(t *testing.T) {

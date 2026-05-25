@@ -15,10 +15,17 @@ import (
 // "0" before "1" before "2", giving closer-scope items the top
 // of the popup. Within each tier the Label tiebreaker keeps the
 // list alphabetical, so the visual experience stays stable.
+//
+// UFCS ranking: when the cursor sits at `receiver.<prefix>`, the
+// builtin tier splits in two. Builtins whose first param accepts
+// the receiver's type get a "1.5" tier ("1z" so it sorts after
+// file-scope but before plain builtins). Everything else stays
+// at "2".
 const (
-	sortTierLocal    = "0"
-	sortTierFile     = "1"
-	sortTierBuiltin  = "2"
+	sortTierLocal           = "0"
+	sortTierFile            = "1"
+	sortTierBuiltinRelevant = "1z"
+	sortTierBuiltin         = "2"
 )
 
 // buildCompletions populates `items` with every name reachable at
@@ -46,13 +53,18 @@ const (
 // preserve insertion order across the map, so a separate sort
 // is what guarantees stable ordering on the wire.
 func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePos lsp.Pos) {
+	// receiverType is non-nil when the cursor is at `<expr>.<prefix>`
+	// and the resolver can synthesise the type of <expr>. Used to
+	// promote builtins whose first param accepts that type ahead of
+	// unrelated builtins.
+	receiverType := receiverTypeAtCursor(snap, bytePos)
 	if snap.ast == nil {
 		// Even without an AST we can still offer builtins - they're
 		// useful when the user has started a fresh file with a typo
 		// and the parse failed.
-		addBuiltinCompletions(items)
+		addBuiltinCompletions(items, receiverType)
 	} else {
-		addBuiltinCompletions(items)
+		addBuiltinCompletions(items, receiverType)
 		addFileScopeCompletions(items, snap, bytePos)
 		addEnclosingFnCompletions(items, snap, bytePos)
 	}
@@ -76,18 +88,132 @@ func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePo
 // Internal signatures (`_rad_*`) are filtered out - they exist for
 // the runtime's own use and shouldn't show up in user-facing
 // completion.
-func addBuiltinCompletions(items *[]lsp.CompletionItem) {
+//
+// When receiverType is non-nil, builtins whose first param's type
+// is assignable from receiverType get promoted to the "relevant"
+// builtin tier. This is the UFCS-aware path: at `xs.<cursor>`
+// where xs: int[], list/iterator-shaped builtins sort above the
+// alphabetically-first unrelated builtin.
+func addBuiltinCompletions(items *[]lsp.CompletionItem, receiverType rl.TypingT) {
 	for name, sig := range rts.FnSignaturesByName {
 		if sig.IsInternal {
 			continue
+		}
+		tier := sortTierBuiltin
+		if receiverType != nil && firstParamAccepts(sig, receiverType) {
+			tier = sortTierBuiltinRelevant
 		}
 		*items = append(*items, lsp.CompletionItem{
 			Label:    name,
 			Kind:     lsp.CompletionKindFunction,
 			Detail:   sig.Signature,
-			SortText: sortTierBuiltin,
+			SortText: tier,
 		})
 	}
+}
+
+// firstParamAccepts reports whether the builtin's first positional
+// parameter would accept a value of receiverType. UFCS lowers
+// `xs.f(...)` to `f(xs, ...)`, so the "is this builtin relevant
+// for an X" question is exactly "does its first param accept X".
+//
+// Variadic and keyword-only params don't count - the receiver
+// always lands in the first positional slot. Builtins that take
+// no positional params are unreachable via UFCS, so they stay
+// unranked.
+func firstParamAccepts(sig rts.FnSignature, receiverType rl.TypingT) bool {
+	if sig.Typing == nil || len(sig.Typing.Params) == 0 {
+		return false
+	}
+	first := sig.Typing.Params[0]
+	if first.Type == nil {
+		return false
+	}
+	return (*first.Type).IsAssignableFrom(receiverType)
+}
+
+// receiverTypeAtCursor inspects the source immediately before the
+// cursor for a UFCS access pattern (`<ident>.<prefix>`). On a
+// match, it looks up the receiver identifier and synthesises its
+// type from the resolved view. Returns nil for any shape that
+// isn't a straightforward identifier-dot-prefix - chained access
+// (`a.b.c.<cursor>`) and complex expressions fall through to the
+// flat builtin order without a type.
+func receiverTypeAtCursor(snap *DocumentVersion, pos lsp.Pos) rl.TypingT {
+	if snap == nil || snap.text == "" ||
+		snap.resolved == nil || snap.types == nil ||
+		snap.resolved.File == nil {
+		// When the document is mid-edit (e.g. just `xs.` with no
+		// trailing call) the converter typically bails and we get
+		// nil indexes. UFCS ranking degrades gracefully: builtins
+		// stay in the alphabetical tier rather than receiving the
+		// relevance boost. The completion list is still useful;
+		// just not ranked by receiver type.
+		return nil
+	}
+	// Locate the byte offset of the cursor in snap.text.
+	bytePos, ok := byteOffsetFor(snap, pos)
+	if !ok {
+		return nil
+	}
+	// Walk backwards over an identifier prefix the user might be
+	// typing (e.g. the `pr` in `xs.pr|`).
+	src := snap.text
+	end := bytePos
+	for end > 0 && isIdentByte(src[end-1]) {
+		end--
+	}
+	// The character right before the prefix must be a `.`.
+	if end == 0 || src[end-1] != '.' {
+		return nil
+	}
+	// Walk back over the receiver identifier.
+	receiverEnd := end - 1
+	receiverStart := receiverEnd
+	for receiverStart > 0 && isIdentByte(src[receiverStart-1]) {
+		receiverStart--
+	}
+	if receiverStart == receiverEnd {
+		return nil
+	}
+	name := src[receiverStart:receiverEnd]
+	sym := snap.resolved.File.Lookup(name)
+	if sym == nil {
+		return nil
+	}
+	if t, ok := snap.types.SymbolTypes[sym]; ok && t != nil {
+		return t
+	}
+	if sym.Declared != nil {
+		return sym.Declared
+	}
+	return nil
+}
+
+func isIdentByte(b byte) bool {
+	return b == '_' ||
+		(b >= 'a' && b <= 'z') ||
+		(b >= 'A' && b <= 'Z') ||
+		(b >= '0' && b <= '9')
+}
+
+// byteOffsetFor turns an (line, byte-column) position into a byte
+// offset within snap.text. Returns ok=false if the position is
+// out of range. Used by the UFCS-detect path to read the source
+// bytes immediately before the cursor.
+func byteOffsetFor(snap *DocumentVersion, pos lsp.Pos) (int, bool) {
+	if snap.lineIndex == nil {
+		return 0, false
+	}
+	if pos.Line < 0 || pos.Line >= snap.lineIndex.LineCount() {
+		return 0, false
+	}
+	startOfLine := snap.lineIndex.lineStarts[pos.Line]
+	off := startOfLine + pos.Character
+	if off < 0 || off > len(snap.text) {
+		return 0, false
+	}
+	return off, true
 }
 
 // addFileScopeCompletions walks SourceFile for top-level
