@@ -125,8 +125,36 @@ func (tc *typeChecker) interpretCondition(cond rl.Node, frame *Frame) Refinement
 		return tc.interpretBinaryCondition(c, frame)
 	case *rl.OpUnary:
 		return tc.interpretUnaryCondition(c, frame)
+	case *rl.Identifier:
+		return tc.narrowTruthyIdent(c, frame)
 	}
 	return EmptyRefinement()
+}
+
+// narrowTruthyIdent handles bare `if x:` predicates. When x has a
+// nullable component (Optional<T> or a union containing null) the
+// truthy branch strips it - inside the body, x is the non-null part.
+//
+// The falsy branch deliberately does NOT narrow x to null. Rad's
+// truthiness is looser than equality-to-null: empty strings, zero,
+// empty collections all evaluate falsy too. So `if x:` becoming
+// falsy doesn't prove x is null, only that x is one of "various
+// falsy values" - which we can't represent precisely. Empty
+// WhenFalse is the conservative answer.
+func (tc *typeChecker) narrowTruthyIdent(ident *rl.Identifier, frame *Frame) Refinement {
+	sym, ok := tc.resolved.Uses[ident]
+	if !ok || sym == nil {
+		return EmptyRefinement()
+	}
+	baseType := tc.typeOfSymbol(sym, frame)
+	nonNull := stripNullFrom(baseType)
+	if nonNull == nil {
+		return EmptyRefinement()
+	}
+	return Refinement{
+		WhenTrue:  map[*Symbol]rl.TypingT{sym: nonNull},
+		WhenFalse: map[*Symbol]rl.TypingT{},
+	}
 }
 
 // interpretUnaryCondition handles `not <expr>`. Other unary ops
@@ -393,35 +421,72 @@ func (tc *typeChecker) narrowStrEnumEquality(op rl.Operator, ident *rl.Identifie
 }
 
 // narrowStrEnumIn handles `<ident> in [<vals>]` and `<ident> not in
-// [<vals>]` when the identifier'\''s base type is a string-enum. The
-// list literal must contain only simple string literals; mixed or
-// non-literal contents disqualify the pattern.
+// [<vals>]`. The list literal must contain only simple string
+// literals; mixed or non-literal contents disqualify the pattern.
 //
-// For `in`: truthy keeps the intersection, falsy keeps the difference.
-// For `not in`: the sides swap automatically via op selection.
+// Two base-type shapes:
+//
+//   - Base is already a string-enum: partition into in-set (truthy)
+//     and out-of-set (falsy) values. For `in`, truthy keeps the
+//     intersection; for `not in`, the sides swap.
+//
+//   - Base is plain `str`: there's no enum to partition, but the
+//     truthy branch is more precise than `str` - x is provably one
+//     of the listed values. Narrow truthy to the new enum;
+//     leave falsy at the base type (a plain `str` minus a finite
+//     set is still effectively `str`, no useful narrowing).
 func (tc *typeChecker) narrowStrEnumIn(op rl.Operator, ident *rl.Identifier, values []string, frame *Frame) Refinement {
 	sym, ok := tc.resolved.Uses[ident]
 	if !ok || sym == nil {
 		return EmptyRefinement()
 	}
 	baseType := tc.typeOfSymbol(sym, frame)
-	enum, ok := baseType.(*rl.TypingStrEnumT)
-	if !ok {
+	if enum, isEnum := baseType.(*rl.TypingStrEnumT); isEnum {
+		set := make(map[string]bool, len(values))
+		for _, v := range values {
+			set[v] = true
+		}
+		truthy, falsy := partitionStrEnum(enum, set)
+		switch op {
+		case rl.OpIn:
+			return refinementForBranches(rl.OpEq, sym, truthy, falsy)
+		case rl.OpNotIn:
+			return refinementForBranches(rl.OpNeq, sym, truthy, falsy)
+		}
 		return EmptyRefinement()
 	}
-	set := make(map[string]bool, len(values))
-	for _, v := range values {
-		set[v] = true
-	}
-	truthy, falsy := partitionStrEnum(enum, set)
-	// `not in` flips: in-set values are falsy, out-of-set are truthy.
-	switch op {
-	case rl.OpIn:
-		return refinementForBranches(rl.OpEq, sym, truthy, falsy)
-	case rl.OpNotIn:
-		return refinementForBranches(rl.OpNeq, sym, truthy, falsy)
+	if _, isStr := baseType.(*rl.TypingStrT); isStr {
+		enumT := rl.NewStrEnumType(dedupeStrings(values)...)
+		switch op {
+		case rl.OpIn:
+			return Refinement{
+				WhenTrue:  map[*Symbol]rl.TypingT{sym: enumT},
+				WhenFalse: map[*Symbol]rl.TypingT{},
+			}
+		case rl.OpNotIn:
+			return Refinement{
+				WhenTrue:  map[*Symbol]rl.TypingT{},
+				WhenFalse: map[*Symbol]rl.TypingT{sym: enumT},
+			}
+		}
 	}
 	return EmptyRefinement()
+}
+
+// dedupeStrings returns the input slice with duplicates removed,
+// preserving first-occurrence order. Used so `x in ["a", "a"]`
+// narrows to ["a"] rather than ["a", "a"].
+func dedupeStrings(in []string) []string {
+	seen := make(map[string]bool, len(in))
+	out := make([]string, 0, len(in))
+	for _, s := range in {
+		if seen[s] {
+			continue
+		}
+		seen[s] = true
+		out = append(out, s)
+	}
+	return out
 }
 
 // partitionStrEnum splits an enum into the values present in keepSet

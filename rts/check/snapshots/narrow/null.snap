@@ -156,3 +156,53 @@ fn maybe(b: bool):
 
 # Diagnostics
   (none)
+### TITLE ###
+TruthyIdentifierStripsNullableInTrueBranch
+### DESCRIPTION ###
+`if x:` on `int?` narrows x to int inside the body. Rad's
+looser truthiness (empty str/list/0 also falsy) means the
+false branch doesn't tighten - it stays at int?.
+### INPUT ###
+fn f(x: int?):
+    if x:
+        a = x
+    b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int?
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+  b @ 4:5 -> <no-type>
+  x @ 4:9 -> int?
+
+# Symbol types
+  a (local): int
+  b (local): int?
+  f (fn): fn(int?) -> void
+  x (param): int?
+
+# Diagnostics
+  (none)
+### TITLE ###
+TruthyIdentifierNoOpOnNonNullableType
+### DESCRIPTION ###
+`if x:` on plain `int` has nothing to strip - the body keeps
+the base type. Regression lock: we don't invent a narrowing
+where there isn't one.
+### INPUT ###
+fn f(x: int):
+    if x:
+        a = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> int
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> int
+
+# Symbol types
+  a (local): int
+  f (fn): fn(int) -> void
+  x (param): int
+
+# Diagnostics
+  (none)

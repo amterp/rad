@@ -158,3 +158,58 @@ open("append")
 
 # Diagnostics
   [hint] RAD30001 @ 6:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+### TITLE ###
+InLiteralListUpgradesPlainStrToEnum
+### DESCRIPTION ###
+`if x in ["a", "b"]:` on plain `str` narrows x to the enum
+["a", "b"] in the truthy branch. Falsy stays at plain str -
+a str minus a finite set isn't enumerable.
+### INPUT ###
+fn f(x: str):
+    if x in ["a", "b"]:
+        a = x
+    b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> str
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> ["a", "b"]
+  b @ 4:5 -> <no-type>
+  x @ 4:9 -> str
+
+# Symbol types
+  a (local): ["a", "b"]
+  b (local): str
+  f (fn): fn(str) -> void
+  x (param): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+NotInLiteralListNarrowsFalsyBranch
+### DESCRIPTION ###
+`not in` swaps: x is the enum in the FALSY branch (the
+predicate failed = x was in the list = it's one of those
+values). Truthy stays at plain str.
+### INPUT ###
+fn f(x: str):
+    if x not in ["a", "b"]:
+        a = x
+    else:
+        b = x
+### STDOUT ###
+# Identifier types
+  x @ 2:8 -> str
+  a @ 3:9 -> <no-type>
+  x @ 3:13 -> str
+  b @ 5:9 -> <no-type>
+  x @ 5:13 -> ["a", "b"]
+
+# Symbol types
+  a (local): str
+  b (local): ["a", "b"]
+  f (fn): fn(str) -> void
+  x (param): str
+
+# Diagnostics
+  (none)
