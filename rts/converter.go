@@ -530,6 +530,7 @@ func (c *converter) convertArgDecl(node *ts.Node) rl.ArgDecl {
 	}
 
 	decl := rl.NewArgDecl(c.makeSpan(node), name, typeStr)
+	decl.NameSpan = c.makeSpan(nameNode)
 	decl.IsOptional = optionalNode != nil
 	decl.IsVariadic = isVariadic
 

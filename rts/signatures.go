@@ -10,11 +10,24 @@ type FnSignature struct {
 	Name      string
 	Signature string
 	Typing    *rl.TypingFnT
+	// IsInternal marks signatures that exist for the runtime's own use
+	// (e.g. _rad_explain wiring up the CLI's `rad explain` flow). They
+	// remain callable from a script - that's how the runtime invokes
+	// them - but completion, hover, and other user-facing surfaces
+	// should filter them out so the public API stays focused.
+	IsInternal bool
 }
 
 func newFnSignature(signature string) FnSignature {
 	return FnSignature{
 		Signature: signature,
+	}
+}
+
+func newInternalFnSignature(signature string) FnSignature {
+	return FnSignature{
+		Signature:  signature,
+		IsInternal: true,
 	}
 }
 
@@ -148,13 +161,15 @@ func init() {
 		newFnSignature(`strikethrough(_item: any) -> str`),
 		newFnSignature(`underline(_item: any) -> str`),
 
-		// Internal signatures
-		newFnSignature(`_rad_get_stash_id(*_)`),
-		newFnSignature(`_rad_delete_stash(*_)`),
-		newFnSignature(`_rad_run_check(*_)`),
-		newFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool) -> void`),
-		newFnSignature(`_rad_explain(_code: str) -> str?`),
-		newFnSignature(`_rad_explain_list() -> str[]`),
+		// Internal signatures - marked so the LSP / hover filter them
+		// from completion and public hover. They stay registered so
+		// the runtime can still resolve them at call time.
+		newInternalFnSignature(`_rad_get_stash_id(*_)`),
+		newInternalFnSignature(`_rad_delete_stash(*_)`),
+		newInternalFnSignature(`_rad_run_check(*_)`),
+		newInternalFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool) -> void`),
+		newInternalFnSignature(`_rad_explain(_code: str) -> str?`),
+		newInternalFnSignature(`_rad_explain_list() -> str[]`),
 	}
 
 	parser, err := NewRadParser()

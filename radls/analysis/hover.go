@@ -127,7 +127,11 @@ func symbolKindLabel(k check.SymbolKind) string {
 // renders as "?" so the hover is still non-empty.
 func symbolTypeString(sym *check.Symbol, info *check.TypeInfo) string {
 	if sym.Kind == check.SymBuiltin {
-		if sig, ok := rts.FnSignaturesByName[sym.Name]; ok {
+		// Internal builtins (`_rad_*`) are runtime plumbing - skip
+		// the rich-signature path so they don't get an advertised
+		// hover. Completion filters them too; the LSP surface should
+		// stay consistent across both.
+		if sig, ok := rts.FnSignaturesByName[sym.Name]; ok && !sig.IsInternal {
 			return sig.Signature
 		}
 	}

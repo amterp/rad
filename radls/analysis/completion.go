@@ -72,8 +72,15 @@ func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePo
 // addBuiltinCompletions offers every parsed builtin. The Detail is
 // the signature so the editor's preview pane shows what the
 // builtin expects without the user having to hover.
+//
+// Internal signatures (`_rad_*`) are filtered out - they exist for
+// the runtime's own use and shouldn't show up in user-facing
+// completion.
 func addBuiltinCompletions(items *[]lsp.CompletionItem) {
 	for name, sig := range rts.FnSignaturesByName {
+		if sig.IsInternal {
+			continue
+		}
 		*items = append(*items, lsp.CompletionItem{
 			Label:    name,
 			Kind:     lsp.CompletionKindFunction,

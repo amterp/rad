@@ -132,6 +132,46 @@ fn greet(who: str):
   }
 }
 ### TITLE ###
+ArgsBlockDeclAndUseTaggedAsParameter
+### DOCUMENT ###
+args:
+    name str
+print(name)
+### SEMANTIC_TOKENS ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      1,
+      4,
+      4,
+      1,
+      0,
+      1,
+      0,
+      5,
+      0,
+      0,
+      0,
+      6,
+      4,
+      1,
+      0
+    ]
+  }
+}
+### TITLE ###
 UnresolvedIdentsSkipped
 ### DOCUMENT ###
 print(undefined_name)

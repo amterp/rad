@@ -231,11 +231,12 @@ func (n *JsonPath) Children() []Node {
 }
 
 func (n *ArgBlock) Children() []Node {
-	var c []Node
+	// Expose each ArgDecl as a child so the generic Walk visits it
+	// directly. ArgDecl.Children() in turn yields the Default
+	// expression, so default-value sub-trees stay reachable.
+	c := make([]Node, 0, len(n.Decls))
 	for i := range n.Decls {
-		if n.Decls[i].Default != nil {
-			c = append(c, n.Decls[i].Default)
-		}
+		c = append(c, &n.Decls[i])
 	}
 	return c
 }

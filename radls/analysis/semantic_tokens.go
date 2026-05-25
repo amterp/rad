@@ -81,7 +81,7 @@ func (s *State) SemanticTokens(snap *DocumentVersion) (*lsp.SemanticTokens, erro
 }
 
 // collectSemanticTokens walks the AST for identifiers and emits
-// a token for each. Two sources:
+// a token for each. Three sources:
 //
 //  1. Identifier nodes that resolve through resolved.Uses. This
 //     catches call sites, var reads, and the dual-registered
@@ -91,8 +91,13 @@ func (s *State) SemanticTokens(snap *DocumentVersion) (*lsp.SemanticTokens, erro
 //     at `fn greet():` has no Uses entry; without this branch
 //     it would not be coloured at the decl site even though
 //     every call to `greet()` is.
+//  3. ArgDecl name positions inside the `args:` / cmd `args:`
+//     blocks. Same shape as FnDef: the args declaration sits in
+//     the AST as an ArgDecl node rather than an Identifier, so
+//     the decl-site name needs its own emit to match how every
+//     use of the arg is tagged via path 1.
 //
-// Param-name positions at the decl site are still uncoloured.
+// Fn param-name positions at the decl site are still uncoloured.
 // The AST's TypingFnParam carries no per-name span; emitting
 // would need a converter+AST extension. Param references inside
 // the body do get tokens via path 1.
@@ -122,6 +127,11 @@ func collectSemanticTokens(snap *DocumentVersion) []rawToken {
 				return
 			}
 			tokens = append(tokens, tokenFromSpan(nn.NameSpan, TokenTypeFunction))
+		case *rl.ArgDecl:
+			if nn.Name == "" || nn.NameSpan.EndByte == 0 {
+				return
+			}
+			tokens = append(tokens, tokenFromSpan(nn.NameSpan, TokenTypeParameter))
 		}
 	})
 	return tokens
@@ -149,10 +159,13 @@ func tokenTypeForSymbol(sym *check.Symbol) (SemanticTokenType, bool) {
 	switch sym.Kind {
 	case check.SymBuiltin, check.SymHoistedFn:
 		return TokenTypeFunction, true
-	case check.SymParam:
+	case check.SymParam, check.SymArg, check.SymCmdArg:
+		// Args / cmd-args are declared parameters of the script
+		// (the script's caller fills them in via CLI flags), so
+		// they belong with fn params under the `parameter` token
+		// type rather than the generic `variable`.
 		return TokenTypeParameter, true
-	case check.SymLocal, check.SymArg, check.SymCmdArg,
-		check.SymLoopVar, check.SymWith:
+	case check.SymLocal, check.SymLoopVar, check.SymWith:
 		return TokenTypeVariable, true
 	}
 	return 0, false

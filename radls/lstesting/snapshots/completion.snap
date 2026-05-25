@@ -21,42 +21,6 @@ ShebangCompletionLineZero
       "label": "#!/usr/bin/env rad"
     },
     {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
-    },
-    {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
       "label": "abs",
@@ -792,42 +756,6 @@ x = 1
       "sortText": "1"
     },
     {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
-    },
-    {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
       "label": "abs",
@@ -1558,42 +1486,6 @@ ShebangCompletionEmptyDocMiddleOfLine
     {
       "detail": "Shebang for rad",
       "label": "#!/usr/bin/env rad"
-    },
-    {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
@@ -2328,42 +2220,6 @@ y = 2
     {
       "detail": "Shebang for rad",
       "label": "#!/usr/bin/env rad"
-    },
-    {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
@@ -3109,42 +2965,6 @@ z = 3
       "sortText": "1"
     },
     {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
-    },
-    {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
       "label": "abs",
@@ -3886,42 +3706,6 @@ x = 1
     {
       "detail": "Shebang for rad",
       "label": "#!/usr/bin/env rad"
-    },
-    {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
@@ -4666,42 +4450,6 @@ args:
       "kind": 6,
       "label": "name",
       "sortText": "1"
-    },
-    {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
@@ -5453,42 +5201,6 @@ fn greet(who: str):
       "sortText": "1"
     },
     {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
-    },
-    {
       "detail": "abs(_num: int|float) -\u003e int|float",
       "kind": 3,
       "label": "abs",
@@ -6225,42 +5937,6 @@ later = 2
       "kind": 6,
       "label": "alpha",
       "sortText": "1"
-    },
-    {
-      "detail": "_rad_check_from_logs(_duration: str, _verbose: bool) -\u003e void",
-      "kind": 3,
-      "label": "_rad_check_from_logs",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_delete_stash(*_)",
-      "kind": 3,
-      "label": "_rad_delete_stash",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain(_code: str) -\u003e str?",
-      "kind": 3,
-      "label": "_rad_explain",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_explain_list() -\u003e str[]",
-      "kind": 3,
-      "label": "_rad_explain_list",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_get_stash_id(*_)",
-      "kind": 3,
-      "label": "_rad_get_stash_id",
-      "sortText": "2"
-    },
-    {
-      "detail": "_rad_run_check(*_)",
-      "kind": 3,
-      "label": "_rad_run_check",
-      "sortText": "2"
     },
     {
       "detail": "abs(_num: int|float) -\u003e int|float",
