@@ -34,12 +34,7 @@ func (s *State) Definition(snap *DocumentVersion, pos lsp.Pos) (*lsp.Location, e
 	}
 
 	bytePos := toBytePos(pos, snap)
-	ident := identifierAt(snap.ast, bytePos)
-	if ident == nil {
-		return nil, nil
-	}
-
-	sym := lookupSymbolForIdent(ident, snap.resolved)
+	sym := symbolAtPos(snap, bytePos)
 	if sym == nil {
 		return nil, nil
 	}

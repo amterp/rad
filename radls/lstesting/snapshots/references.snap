@@ -158,6 +158,133 @@ print(x)
   ]
 }
 ### TITLE ###
+FnNameAtDefinitionSite
+### DOCUMENT ###
+fn greet():
+    print("hi")
+
+greet()
+greet()
+### REFERENCES 0:3 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 8,
+          "line": 0
+        },
+        "start": {
+          "character": 3,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 3
+        },
+        "start": {
+          "character": 0,
+          "line": 3
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 4
+        },
+        "start": {
+          "character": 0,
+          "line": 4
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+ArgsBlockNameAtDefinitionSite
+### DOCUMENT ###
+args:
+    name str
+print(name)
+print(name)
+### REFERENCES 1:5 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 8,
+          "line": 1
+        },
+        "start": {
+          "character": 4,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 10,
+          "line": 2
+        },
+        "start": {
+          "character": 6,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 10,
+          "line": 3
+        },
+        "start": {
+          "character": 6,
+          "line": 3
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
 OffIdentifierReturnsEmpty
 ### DOCUMENT ###
 x = 1

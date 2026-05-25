@@ -30,12 +30,7 @@ func (s *State) References(snap *DocumentVersion, pos lsp.Pos, includeDecl bool)
 	}
 
 	bytePos := toBytePos(pos, snap)
-	ident := identifierAt(snap.ast, bytePos)
-	if ident == nil {
-		return []lsp.Location{}, nil
-	}
-
-	target := lookupSymbolForIdent(ident, snap.resolved)
+	target := symbolAtPos(snap, bytePos)
 	if target == nil {
 		return []lsp.Location{}, nil
 	}

@@ -61,6 +61,53 @@ func lookupSymbolForIdent(ident *rl.Identifier, resolved *check.Resolved) *check
 	return nil
 }
 
+// symbolAtPos generalises lookupSymbolForIdent to cover decl-site
+// positions that DON'T sit on an *rl.Identifier node. The fn name
+// in `fn greet():` and the arg name in `args: \n    name str` are
+// stored on FnDef.NameSpan and ArgDecl.NameSpan as plain strings
+// rather than identifier sub-nodes. Without this fallback the
+// click-at-def shapes (hover / goto-def / find-refs) all dead-end
+// because identifierAt can't see them.
+//
+// The lookup prefers the identifier path - that's the common case
+// and matches the existing behavior at use sites. Only when no
+// identifier covers the cursor do we walk for a FnDef or ArgDecl
+// whose NameSpan covers the position; on a hit, resolved.Decls
+// yields the symbol the binder planted when the decl was bound.
+func symbolAtPos(snap *DocumentVersion, pos lsp.Pos) *check.Symbol {
+	if snap == nil || snap.ast == nil || snap.resolved == nil {
+		return nil
+	}
+	if ident := identifierAt(snap.ast, pos); ident != nil {
+		if sym := lookupSymbolForIdent(ident, snap.resolved); sym != nil {
+			return sym
+		}
+	}
+	var found *check.Symbol
+	rl.Walk(snap.ast, func(n rl.Node) {
+		if found != nil {
+			return
+		}
+		switch nn := n.(type) {
+		case *rl.FnDef:
+			if nn.Name == "" || !spanContains(nn.NameSpan, pos) {
+				return
+			}
+			if sym, ok := snap.resolved.Decls[nn]; ok && sym != nil {
+				found = sym
+			}
+		case *rl.ArgDecl:
+			if nn.Name == "" || nn.NameSpan.EndByte == 0 || !spanContains(nn.NameSpan, pos) {
+				return
+			}
+			if sym, ok := snap.resolved.Decls[nn]; ok && sym != nil {
+				found = sym
+			}
+		}
+	})
+	return found
+}
+
 // spanContains reports whether (line, byteCol) sits inside span.
 // The span is half-open at the start row but treats the end
 // column as inclusive: a cursor sitting just after the last char

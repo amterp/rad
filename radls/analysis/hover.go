@@ -28,17 +28,34 @@ func (s *State) Hover(snap *DocumentVersion, pos lsp.Pos) (*lsp.Hover, error) {
 	}
 
 	bytePos := toBytePos(pos, snap)
-	ident := identifierAt(snap.ast, bytePos)
-	if ident == nil {
-		return nil, nil
+	if ident := identifierAt(snap.ast, bytePos); ident != nil {
+		contents := formatIdentHover(ident, snap.resolved, snap.types)
+		if contents == "" {
+			return nil, nil
+		}
+		r := fromByteRange(spanToRange(ident.Span()), snap)
+		return &lsp.Hover{
+			Contents: lsp.MarkupContent{
+				Kind:  lsp.MarkupMarkdown,
+				Value: contents,
+			},
+			Range: &r,
+		}, nil
 	}
 
-	contents := formatIdentHover(ident, snap.resolved, snap.types)
+	// No identifier under the cursor - fall through to the decl-site
+	// path so a click on the fn name in `fn greet():` or the arg
+	// name in `name str` still hovers. symbolAtPos owns the FnDef /
+	// ArgDecl NameSpan lookup; this branch reuses the result.
+	sym := symbolAtPos(snap, bytePos)
+	if sym == nil || sym.DefNode == nil {
+		return nil, nil
+	}
+	contents := formatSymbolHover(sym, snap.types)
 	if contents == "" {
 		return nil, nil
 	}
-
-	r := fromByteRange(spanToRange(ident.Span()), snap)
+	r := fromByteRange(spanToRange(sym.DeclSpan), snap)
 	return &lsp.Hover{
 		Contents: lsp.MarkupContent{
 			Kind:  lsp.MarkupMarkdown,
@@ -46,6 +63,23 @@ func (s *State) Hover(snap *DocumentVersion, pos lsp.Pos) (*lsp.Hover, error) {
 		},
 		Range: &r,
 	}, nil
+}
+
+// formatSymbolHover renders a hover body directly from a Symbol -
+// used when the click landed on a decl-site name that's not an
+// *rl.Identifier (FnDef name, ArgDecl name). Mirrors the format
+// from formatIdentHover but skips the identifier-specific lookup
+// since we already have the symbol in hand.
+func formatSymbolHover(sym *check.Symbol, info *check.TypeInfo) string {
+	if sym == nil {
+		return ""
+	}
+	typeStr := symbolTypeString(sym, info)
+	if sym.Kind == check.SymBuiltin {
+		return fmt.Sprintf("```rad\n%s: %s\n```", sym.Name, typeStr)
+	}
+	kindLabel := symbolKindLabel(sym.Kind)
+	return fmt.Sprintf("```rad\n(%s) %s: %s\n```", kindLabel, sym.Name, typeStr)
 }
 
 // formatIdentHover renders the markdown body for a hover on an

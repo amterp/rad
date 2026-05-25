@@ -107,6 +107,72 @@ greet()
   }
 }
 ### TITLE ###
+SelfReferenceFromFnDefSite
+### DOCUMENT ###
+fn greet():
+    print("hi")
+### DEFINITION 0:3 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "range": {
+      "end": {
+        "character": 8,
+        "line": 0
+      },
+      "start": {
+        "character": 3,
+        "line": 0
+      }
+    },
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+SelfReferenceFromArgsDeclSite
+### DOCUMENT ###
+args:
+    name str
+### DEFINITION 1:5 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "range": {
+      "end": {
+        "character": 8,
+        "line": 1
+      },
+      "start": {
+        "character": 4,
+        "line": 1
+      }
+    },
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
 SelfReferenceFromDeclSite
 ### DOCUMENT ###
 x = 1
