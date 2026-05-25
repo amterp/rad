@@ -338,3 +338,189 @@ x = 1
     }
   ]
 }
+### TITLE ###
+FnParamFromDeclSite
+### DOCUMENT ###
+fn greet(name: str):
+    print(name)
+    print(name)
+### REFERENCES 0:9 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 13,
+          "line": 0
+        },
+        "start": {
+          "character": 9,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 14,
+          "line": 1
+        },
+        "start": {
+          "character": 10,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 14,
+          "line": 2
+        },
+        "start": {
+          "character": 10,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+FnParamFromUseSite
+### DOCUMENT ###
+fn greet(name: str):
+    print(name)
+    print(name)
+### REFERENCES 1:10 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 13,
+          "line": 0
+        },
+        "start": {
+          "character": 9,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 14,
+          "line": 1
+        },
+        "start": {
+          "character": 10,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 14,
+          "line": 2
+        },
+        "start": {
+          "character": 10,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+LoopVarFromUseSite
+### DOCUMENT ###
+for v in [1, 2, 3]:
+    print(v)
+    print(v)
+### REFERENCES 1:10 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 5,
+          "line": 0
+        },
+        "start": {
+          "character": 4,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 11,
+          "line": 1
+        },
+        "start": {
+          "character": 10,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 11,
+          "line": 2
+        },
+        "start": {
+          "character": 10,
+          "line": 2
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}

@@ -135,15 +135,23 @@ func (n *Switch) Span() Span     { return n.span }
 
 // ForLoop represents a for ... in ... loop.
 type ForLoop struct {
-	span    Span
-	Vars    []string // loop variable names
-	Iter    Node     // the iterable expression
-	Body    []Node   // statement list
-	Context *string  // optional "with x" context name
+	span Span
+	Vars []string // loop variable names
+	// VarSpans is parallel to Vars: VarSpans[i] is the source span of
+	// the Vars[i] identifier. Used so the binder can plant SymLoopVar
+	// symbols with name-precision DeclSpans rather than the whole
+	// ForLoop span - lets LSP rename / find-refs / goto-def land on
+	// the var token. Always the same length as Vars; entries are
+	// zero spans only for synthesised loops (no current callers).
+	VarSpans    []Span
+	Iter        Node    // the iterable expression
+	Body        []Node  // statement list
+	Context     *string // optional "with x" context name
+	ContextSpan Span    // span of the "with x" context name; zero when absent
 }
 
-func NewForLoop(span Span, vars []string, iter Node, body []Node, context *string) *ForLoop {
-	return &ForLoop{span: span, Vars: vars, Iter: iter, Body: body, Context: context}
+func NewForLoop(span Span, vars []string, varSpans []Span, iter Node, body []Node, context *string, contextSpan Span) *ForLoop {
+	return &ForLoop{span: span, Vars: vars, VarSpans: varSpans, Iter: iter, Body: body, Context: context, ContextSpan: contextSpan}
 }
 func (n *ForLoop) Kind() NodeKind { return NForLoop }
 func (n *ForLoop) Span() Span     { return n.span }

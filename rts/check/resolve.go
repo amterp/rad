@@ -57,11 +57,12 @@ const (
 // The Symbol is shared across all uses so later passes (type checker,
 // goto-def, find-refs) can route through one identity per binding.
 //
-// Note: parameter and loop-variable spans currently fall back to the
-// owner's span (the FnDef/Lambda or ForLoop) because TypingFnParam
-// and ForLoop.Vars don't carry per-name spans on the AST. LSP
-// goto-def on a param will point at the function keyword until the
-// AST gains per-name span info.
+// Parameter and loop-variable symbols carry name-precision DeclSpans:
+// TypingFnParam.NameSpan and ForLoop.VarSpans (parallel to Vars) feed
+// the binder, which plants those on the symbol. Goto-def, find-refs,
+// and rename therefore land on the name token rather than the owner.
+// (Synthesised params with no source token - e.g. fn_type entries -
+// still fall back to the owner span; affects no real call site today.)
 type Symbol struct {
 	Name     string
 	Kind     SymbolKind
@@ -120,6 +121,12 @@ type Resolved struct {
 	// binding) read from here. ListComp uses the same Vars[]string shape
 	// but is single-var in practice today, so we don't track it.
 	ForLoopVars map[*rl.ForLoop][]*Symbol
+	// ParamSymbols maps a function-like owner (FnDef or Lambda) to its
+	// parameter Symbols in source order. SymParam bindings live in the
+	// function's body scope, so a name-only lookup needs the scope to
+	// be in hand; this index lets LSP click-at-decl-site features
+	// reach the symbol without re-walking scope chains.
+	ParamSymbols map[rl.Node][]*Symbol
 	// Issues are problems the binder detected during resolution
 	// (undefined references, duplicate parameters, etc.). Callers
 	// convert these to whatever diagnostic shape they need; the binder

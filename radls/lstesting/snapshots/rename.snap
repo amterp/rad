@@ -247,3 +247,371 @@ y = 2
   "jsonrpc": "2.0",
   "result": null
 }
+### TITLE ###
+RenameFnParamFromUseSite
+### DOCUMENT ###
+fn greet(name: str):
+    print(name)
+
+greet("rad")
+### RENAME 1:10 person ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 13,
+              "line": 0
+            },
+            "start": {
+              "character": 9,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 14,
+              "line": 1
+            },
+            "start": {
+              "character": 10,
+              "line": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameFnParamFromDeclSite
+### DOCUMENT ###
+fn greet(name: str):
+    print(name)
+
+greet("rad")
+### RENAME 0:9 person ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 13,
+              "line": 0
+            },
+            "start": {
+              "character": 9,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 14,
+              "line": 1
+            },
+            "start": {
+              "character": 10,
+              "line": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameLoopVarFromUseSite
+### DOCUMENT ###
+for v in [1, 2, 3]:
+    print(v)
+### RENAME 1:10 n ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "n",
+          "range": {
+            "end": {
+              "character": 5,
+              "line": 0
+            },
+            "start": {
+              "character": 4,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "n",
+          "range": {
+            "end": {
+              "character": 11,
+              "line": 1
+            },
+            "start": {
+              "character": 10,
+              "line": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameLoopVarFromDeclSite
+### DOCUMENT ###
+for v in [1, 2, 3]:
+    print(v)
+### RENAME 0:4 n ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "n",
+          "range": {
+            "end": {
+              "character": 5,
+              "line": 0
+            },
+            "start": {
+              "character": 4,
+              "line": 0
+            }
+          }
+        },
+        {
+          "newText": "n",
+          "range": {
+            "end": {
+              "character": 11,
+              "line": 1
+            },
+            "start": {
+              "character": 10,
+              "line": 1
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameToReservedKeywordRejected
+### DOCUMENT ###
+x = 1
+### RENAME 0:0 if ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "error": {
+    "code": 0,
+    "message": "not a valid Rad identifier"
+  },
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+RenameToUnloadedBuiltinRejected
+### DOCUMENT ###
+x = 1
+### RENAME 0:0 print ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "error": {
+    "code": 0,
+    "message": "name is already in scope"
+  },
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": null
+}
+### TITLE ###
+RenameArgFromDeclSite
+### DOCUMENT ###
+args:
+    name str
+
+print(name)
+### RENAME 1:4 person ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 8,
+              "line": 1
+            },
+            "start": {
+              "character": 4,
+              "line": 1
+            }
+          }
+        },
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 10,
+              "line": 3
+            },
+            "start": {
+              "character": 6,
+              "line": 3
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+### TITLE ###
+RenameArgFromUseSite
+### DOCUMENT ###
+args:
+    name str
+
+print(name)
+### RENAME 3:6 person ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 8,
+              "line": 1
+            },
+            "start": {
+              "character": 4,
+              "line": 1
+            }
+          }
+        },
+        {
+          "newText": "person",
+          "range": {
+            "end": {
+              "character": 10,
+              "line": 3
+            },
+            "start": {
+              "character": 6,
+              "line": 3
+            }
+          }
+        }
+      ]
+    }
+  }
+}

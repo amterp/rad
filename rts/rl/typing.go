@@ -840,7 +840,14 @@ func NewMapNamedKey(name string, isOptional bool) MapNamedKey {
 }
 
 type TypingFnParam struct {
-	Name       string
+	Name string
+	// NameSpan covers just the parameter-name identifier in source.
+	// Zero for synthesised params (e.g. fn_type entries that have no
+	// names) and for built-in signatures (constructed in Go, not parsed).
+	// The binder uses this as the symbol's DeclSpan so LSP rename /
+	// find-refs / goto-def land on the name token rather than the
+	// owning fn span.
+	NameSpan   Span
 	Type       *TypingT
 	IsVariadic bool // vararg
 	NamedOnly  bool // if true, can only be passed as a named arg

@@ -48,10 +48,11 @@ func newBinder() *binder {
 	builtinScope := &Scope{Kind: ScopeBuiltin, Symbols: map[string]*Symbol{}}
 	return &binder{
 		resolved: &Resolved{
-			Builtin:     builtinScope,
-			Uses:        map[rl.Node]*Symbol{},
-			Decls:       map[rl.Node]*Symbol{},
-			ForLoopVars: map[*rl.ForLoop][]*Symbol{},
+			Builtin:      builtinScope,
+			Uses:         map[rl.Node]*Symbol{},
+			Decls:        map[rl.Node]*Symbol{},
+			ForLoopVars:  map[*rl.ForLoop][]*Symbol{},
+			ParamSymbols: map[rl.Node][]*Symbol{},
 		},
 		current:  builtinScope,
 		builtins: rts.GetBuiltInFunctions(),
@@ -558,21 +559,31 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 	defer b.popScope()
 
 	if typing != nil {
+		paramSyms := make([]*Symbol, 0, len(typing.Params))
 		for i := range typing.Params {
 			p := &typing.Params[i]
 			if p.Name == "" {
 				continue
+			}
+			// Prefer the param name span when the typing resolver
+			// captured it; fall back to the owning fn span for
+			// synthesised params with no source token. The name span
+			// is what lets LSP rename / find-refs / goto-def land on
+			// the parameter name rather than the entire function.
+			declSpan := p.NameSpan
+			if declSpan == (rl.Span{}) {
+				declSpan = owner.Span()
 			}
 			// Same-scope collisions are the actual error case here -
 			// shadowing an outer-scope binding via a parameter is a
 			// legitimate, common pattern. Only flag when two params
 			// in the *same* parameter list share a name.
 			if _, dup := b.current.Symbols[p.Name]; dup {
-				b.addIssue(owner.Span(), IssueError, rl.ErrDuplicateParameter,
+				b.addIssue(declSpan, IssueError, rl.ErrDuplicateParameter,
 					"Duplicate parameter '"+p.Name+"'")
 				continue
 			}
-			sym := b.declare(p.Name, SymParam, owner.Span(), nil)
+			sym := b.declare(p.Name, SymParam, declSpan, nil)
 			// Param type annotation acts like a typed local'\''s
 			// declared type: it'\''s an immutable contract subsequent
 			// reads / assigns must respect. Unannotated params stay
@@ -580,6 +591,10 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 			if p.Type != nil {
 				sym.Declared = *p.Type
 			}
+			paramSyms = append(paramSyms, sym)
+		}
+		if len(paramSyms) > 0 {
+			b.resolved.ParamSymbols[owner] = paramSyms
 		}
 	}
 
@@ -607,17 +622,29 @@ func (b *binder) visitForLoop(f *rl.ForLoop) {
 	// retain one. Type checking the `for k, v in xs:` shape needs
 	// both symbols, so we keep them in source order here.
 	vars := make([]*Symbol, 0, len(f.Vars))
-	for _, name := range f.Vars {
+	for i, name := range f.Vars {
 		if name == "" {
 			continue
 		}
-		vars = append(vars, b.declare(name, SymLoopVar, f.Span(), f))
+		// VarSpans is parallel to Vars; populated by the converter.
+		// Defensive fallback to f.Span() when a caller built a ForLoop
+		// without per-var spans - we keep working but lose rename
+		// precision. Current callers always populate VarSpans.
+		declSpan := f.Span()
+		if i < len(f.VarSpans) && f.VarSpans[i] != (rl.Span{}) {
+			declSpan = f.VarSpans[i]
+		}
+		vars = append(vars, b.declare(name, SymLoopVar, declSpan, f))
 	}
 	if len(vars) > 0 {
 		b.resolved.ForLoopVars[f] = vars
 	}
 	if f.Context != nil && *f.Context != "" {
-		b.declare(*f.Context, SymWith, f.Span(), f)
+		ctxSpan := f.Span()
+		if f.ContextSpan != (rl.Span{}) {
+			ctxSpan = f.ContextSpan
+		}
+		b.declare(*f.Context, SymWith, ctxSpan, f)
 	}
 	for _, stmt := range f.Body {
 		b.visit(stmt)

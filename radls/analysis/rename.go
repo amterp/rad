@@ -6,9 +6,27 @@ import (
 
 	"github.com/amterp/rad/radls/lsp"
 
+	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/check"
 	"github.com/amterp/rad/rts/rl"
 )
+
+// radKeywords lists reserved words the Rad grammar accepts only in
+// keyword positions. Renaming a symbol to any of these would produce
+// an unparseable script. Kept in sync with tree-sitter-rad's grammar;
+// the contextual keywords (`with`, `rad`, `request`, `display`,
+// `confirm`, `unsafe`, `quiet`) are intentionally NOT here - the
+// grammar aliases them as identifiers in non-keyword positions, so
+// renaming to them is allowed (even if mildly unfortunate).
+var radKeywords = map[string]bool{
+	"if": true, "else": true, "while": true, "for": true, "in": true,
+	"switch": true, "case": true, "yield": true,
+	"break": true, "continue": true, "pass": true,
+	"fn": true, "return": true, "defer": true, "errdefer": true,
+	"and": true, "or": true, "not": true,
+	"true": true, "false": true, "null": true,
+	"args": true,
+}
 
 // ErrInvalidRenameTarget signals the cursor isn't on a renameable
 // symbol - e.g. on whitespace, on a builtin (no source decl), or
@@ -64,7 +82,17 @@ func (s *State) Rename(snap *DocumentVersion, pos lsp.Pos, newName string) (*lsp
 		empty := lsp.NewWorkspaceEdit()
 		return &empty, nil
 	}
+	// Collision check has two arms. scopeHasName covers the loaded
+	// scope chain (locals, params, fns the script already binds).
+	// The builtin-set check covers builtins the script may not yet
+	// reference - resolved.Builtin.Symbols is populated lazily as
+	// names get used, so a script that never calls `print` would
+	// otherwise pass a `rename x -> print` straight through and
+	// silently shadow the builtin forever after.
 	if scopeHasName(target.Scope, newName) {
+		return nil, ErrRenameWouldCollide
+	}
+	if _, isBuiltin := rts.FnSignaturesByName[newName]; isBuiltin {
 		return nil, ErrRenameWouldCollide
 	}
 
@@ -117,9 +145,12 @@ func scopeHasName(scope *check.Scope, name string) bool {
 
 // isValidRadIdentifier reports whether s parses as a Rad
 // identifier per the grammar: first byte is letter or underscore,
-// remaining bytes are letter / digit / underscore. Matches the
-// shape the tree-sitter grammar accepts; we don't need to invoke
-// the parser for the simple identifier rule.
+// remaining bytes are letter / digit / underscore, and the result
+// isn't a reserved keyword. Matches the shape the tree-sitter
+// grammar accepts; we don't need to invoke the parser for the
+// simple identifier rule, but we do need the keyword filter -
+// without it, `rename x -> if` would emit textually-valid edits
+// that produce an unparseable script.
 func isValidRadIdentifier(s string) bool {
 	if s == "" {
 		return false
@@ -133,6 +164,9 @@ func isValidRadIdentifier(s string) bool {
 		if !(c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
 			return false
 		}
+	}
+	if radKeywords[s] {
+		return false
 	}
 	return true
 }

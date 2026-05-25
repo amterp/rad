@@ -43,6 +43,7 @@ func resolveParams(resolvedParams *[]TypingFnParam, src string, paramNodes []ts.
 
 		typingParam := TypingFnParam{
 			Name:       GetSrc(nameNode, src),
+			NameSpan:   spanFromNode(nameNode),
 			IsVariadic: isVariadic,
 			NamedOnly:  isNamedOnly,
 		}

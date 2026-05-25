@@ -62,18 +62,22 @@ func lookupSymbolForIdent(ident *rl.Identifier, resolved *check.Resolved) *check
 }
 
 // symbolAtPos generalises lookupSymbolForIdent to cover decl-site
-// positions that DON'T sit on an *rl.Identifier node. The fn name
-// in `fn greet():` and the arg name in `args: \n    name str` are
-// stored on FnDef.NameSpan and ArgDecl.NameSpan as plain strings
-// rather than identifier sub-nodes. Without this fallback the
-// click-at-def shapes (hover / goto-def / find-refs) all dead-end
-// because identifierAt can't see them.
+// positions that DON'T sit on an *rl.Identifier node. Several Rad
+// shapes store decl-site names as plain spans rather than identifier
+// sub-nodes, and identifierAt can't reach them:
+//
+//   - fn name in `fn greet():` (FnDef.NameSpan)
+//   - args-block name in `args: \n  name str` (ArgDecl.NameSpan)
+//   - fn parameter name in `fn greet(name: str):`
+//     (TypingFnParam.NameSpan, indexed via Resolved.ParamSymbols)
+//   - for-loop variable in `for v in xs:`
+//     (ForLoop.VarSpans, indexed via Resolved.ForLoopVars)
 //
 // The lookup prefers the identifier path - that's the common case
 // and matches the existing behavior at use sites. Only when no
-// identifier covers the cursor do we walk for a FnDef or ArgDecl
-// whose NameSpan covers the position; on a hit, resolved.Decls
-// yields the symbol the binder planted when the decl was bound.
+// identifier covers the cursor do we fall back to the decl-site
+// walks; on a hit, the appropriate Resolved index yields the symbol
+// the binder planted when the decl was bound.
 func symbolAtPos(snap *DocumentVersion, pos lsp.Pos) *check.Symbol {
 	if snap == nil || snap.ast == nil || snap.resolved == nil {
 		return nil
@@ -90,11 +94,20 @@ func symbolAtPos(snap *DocumentVersion, pos lsp.Pos) *check.Symbol {
 		}
 		switch nn := n.(type) {
 		case *rl.FnDef:
-			if nn.Name == "" || !spanContains(nn.NameSpan, pos) {
-				return
+			if nn.Name != "" && spanContains(nn.NameSpan, pos) {
+				if sym, ok := snap.resolved.Decls[nn]; ok && sym != nil {
+					found = sym
+					return
+				}
 			}
-			if sym, ok := snap.resolved.Decls[nn]; ok && sym != nil {
-				found = sym
+			// Cursor on a parameter name: walk the typing.Params and
+			// look up the symbol in ParamSymbols (keyed by owner).
+			if syms := snap.resolved.ParamSymbols[nn]; syms != nil && nn.Typing != nil {
+				found = paramSymbolAt(nn.Typing, syms, pos)
+			}
+		case *rl.Lambda:
+			if syms := snap.resolved.ParamSymbols[nn]; syms != nil && nn.Typing != nil {
+				found = paramSymbolAt(nn.Typing, syms, pos)
 			}
 		case *rl.ArgDecl:
 			if nn.Name == "" || nn.NameSpan.EndByte == 0 || !spanContains(nn.NameSpan, pos) {
@@ -103,9 +116,63 @@ func symbolAtPos(snap *DocumentVersion, pos lsp.Pos) *check.Symbol {
 			if sym, ok := snap.resolved.Decls[nn]; ok && sym != nil {
 				found = sym
 			}
+		case *rl.ForLoop:
+			syms := snap.resolved.ForLoopVars[nn]
+			if syms == nil {
+				return
+			}
+			// VarSpans is parallel to Vars / syms; match by position.
+			for i, span := range nn.VarSpans {
+				if i >= len(syms) {
+					break
+				}
+				if span.EndByte == 0 {
+					continue
+				}
+				if spanContains(span, pos) {
+					found = syms[i]
+					return
+				}
+			}
+			// Context name (`with ctx`): scope lookup by name since
+			// the binder doesn't store the SymWith symbol in any
+			// index. Acceptable because contexts are rare and the
+			// fn body opens its own scope, so this read sees the
+			// owning loop's scope first.
+			if nn.Context != nil && nn.ContextSpan.EndByte != 0 && spanContains(nn.ContextSpan, pos) {
+				// SymWith is declared in the loop's enclosing scope.
+				// No direct AST-keyed map, but `Lookup` on the file
+				// scope returns it; correctness rests on no other
+				// symbol shadowing it between decl and the cursor.
+				if sym := snap.resolved.File.Lookup(*nn.Context); sym != nil {
+					found = sym
+				}
+			}
 		}
 	})
 	return found
+}
+
+// paramSymbolAt returns the SymParam whose NameSpan covers pos, or
+// nil. The Params and syms slices are in source order but may differ
+// in length when some params have empty names (synthesised); we
+// re-walk Params to keep the index alignment honest.
+func paramSymbolAt(typing *rl.TypingFnT, syms []*check.Symbol, pos lsp.Pos) *check.Symbol {
+	idx := 0
+	for i := range typing.Params {
+		p := &typing.Params[i]
+		if p.Name == "" {
+			continue
+		}
+		if idx >= len(syms) {
+			break
+		}
+		if p.NameSpan.EndByte != 0 && spanContains(p.NameSpan, pos) {
+			return syms[idx]
+		}
+		idx++
+	}
+	return nil
 }
 
 // spanContains reports whether (line, byteCol) sits inside span.

@@ -307,8 +307,10 @@ func (c *converter) convertForLoop(node *ts.Node) *rl.ForLoop {
 
 	leftNodes := rl.GetChildren(leftsNode, rl.F_LEFT)
 	vars := make([]string, 0, len(leftNodes))
+	varSpans := make([]rl.Span, 0, len(leftNodes))
 	for _, leftNode := range leftNodes {
 		vars = append(vars, c.getSrc(&leftNode))
+		varSpans = append(varSpans, c.makeSpan(&leftNode))
 	}
 
 	iter := c.convertExpr(rightNode)
@@ -317,12 +319,14 @@ func (c *converter) convertForLoop(node *ts.Node) *rl.ForLoop {
 	body := c.convertStmts(stmtNodes)
 
 	var context *string
+	var contextSpan rl.Span
 	if contextNode != nil {
 		ctx := c.getSrc(contextNode)
 		context = &ctx
+		contextSpan = c.makeSpan(contextNode)
 	}
 
-	return rl.NewForLoop(c.makeSpan(node), vars, iter, body, context)
+	return rl.NewForLoop(c.makeSpan(node), vars, varSpans, iter, body, context, contextSpan)
 }
 
 func (c *converter) convertWhileLoop(node *ts.Node) *rl.WhileLoop {
