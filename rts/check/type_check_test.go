@@ -164,9 +164,10 @@ func TestTypeCheck_BuiltinKnownNamedArgOK(t *testing.T) {
 }
 
 func TestTypeCheck_ArgTypeMismatchEmitsHint(t *testing.T) {
-	// `len` expects str/list/map. Passing an int should surface a
-	// type-mismatch hint - not an error, so the runtime still gets
-	// to fire its richer value-aware message.
+	// `len` expects str/list/map. Passing an int surfaces a Hint -
+	// the call site is held at Hint until structural-literal fidelity
+	// lands; the runtime still catches the mismatch with a value-aware
+	// message.
 	_, info, _ := typeInfoFromSrc(t, "x = len(5)\n")
 	require.NotEmpty(t, info.Issues)
 	found := false
@@ -190,7 +191,7 @@ func TestTypeCheck_ArgTypeCorrectIsSilent(t *testing.T) {
 
 func TestTypeCheck_NamedArgTypeMismatchEmitsHint(t *testing.T) {
 	// `print(... sep: str = ...)` - sep expects str. Passing an int
-	// at the named-arg site should surface a type-mismatch hint.
+	// surfaces a Hint at the call site (see checkArgType comment).
 	_, info, _ := typeInfoFromSrc(t, "print(\"hi\", sep=5)\n")
 	found := false
 	for _, i := range info.Issues {
@@ -223,8 +224,9 @@ func TestTypeCheck_NoFalsePositivesOnSimpleAssignments(t *testing.T) {
 // --- Operator tests ---------------------------------------------------
 //
 // These exercise the binary, unary, ternary, fallback, and catch
-// handlers added in Phase 2c. The diagnostic-emitting cases all check
-// for Hint severity (matching the precedent set by the per-arg check).
+// handlers added in Phase 2c. Operator diagnostics are held at Hint
+// while union-narrowing on fallible-result patterns is incomplete
+// (see addOpIssue comment).
 
 // hasOpIssue reports whether info recorded an ErrInvalidTypeForOp
 // diagnostic at the expected severity. Used by the negative tests
@@ -295,8 +297,8 @@ func TestTypeCheck_StrTimesIntSynthesizesStr(t *testing.T) {
 
 func TestTypeCheck_IntPlusStrFlagsHint(t *testing.T) {
 	// This is the migration case from v0.9 - `+` no longer coerces.
-	// The runtime would emit ErrInvalidTypeForOp; we want the static
-	// checker to surface it as a hint pre-execution.
+	// Surfaces as Hint (operator sites are held at Hint pending
+	// union-narrowing fidelity); the runtime emits ErrInvalidTypeForOp.
 	_, info, _ := typeInfoFromSrc(t, "x = 1 + \"hi\"\n")
 	assert.True(t, hasOpIssue(info),
 		"expected Hint-severity ErrInvalidTypeForOp for int + str")
@@ -372,7 +374,7 @@ func TestTypeCheck_UnaryNegOnIntReturnsInt(t *testing.T) {
 }
 
 func TestTypeCheck_UnaryNegOnStrFlagsHint(t *testing.T) {
-	// `-"hi"` is a runtime error; the static side flags it as a hint.
+	// `-"hi"` is a runtime error; the static side flags it as Hint.
 	_, info, _ := typeInfoFromSrc(t, "x = -\"hi\"\n")
 	assert.True(t, hasOpIssue(info))
 }
@@ -499,9 +501,8 @@ func TestTypeCheck_UserFnCallWithTooFewArgsFlagsArity(t *testing.T) {
 }
 
 func TestTypeCheck_UserFnCallWithWrongArgTypeFlagsHint(t *testing.T) {
-	// Type mismatch on a user fn arg surfaces as a Hint, matching the
-	// behavior on builtin calls. Hint severity keeps runtime's richer
-	// value-aware error path in play.
+	// Type mismatch on a user fn arg surfaces as Hint, matching the
+	// deferred severity for call-site checks (see checkArgType comment).
 	src := "fn add(x: int, y: int) -> int: x + y\nz = add(\"a\", 2)\n"
 	_, info, _ := typeInfoFromSrc(t, src)
 	found := false
@@ -695,8 +696,8 @@ func TestTypeCheck_TypedLocalAcceptsAssignableRHS(t *testing.T) {
 }
 
 func TestTypeCheck_TypedLocalRejectsIncompatibleRHS(t *testing.T) {
-	// str literal can't flow into `: int`. Hint severity matches the
-	// rest of Phase 2's assignability precedent.
+	// str literal can't flow into `: int`. Held at Hint until
+	// structural-literal fidelity lands (Kan: promote-type-check).
 	_, info, _ := typeInfoFromSrc(t, "x: int = \"hi\"\n")
 	found := false
 	for _, i := range info.Issues {

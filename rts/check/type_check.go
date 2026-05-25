@@ -138,6 +138,12 @@ func (tc *typeChecker) popReturnFrame() []rl.TypingT {
 // scope's accumulator and, if that scope has a declared return
 // type, checks the value against it at the return's own span. A
 // return outside any fn (validation-error elsewhere) is a no-op.
+//
+// Severity is Hint, not Error - same structural-literal fidelity
+// gap as checkArgType. `return [1, "2"]` for `-> [int, str]` is
+// valid at runtime, but the list literal synths to `int|str[]`
+// which doesn't structurally match the tuple type. Promoting here
+// would block legitimate scripts. Kan: promote-type-check.
 func (tc *typeChecker) recordReturn(t rl.TypingT, retNode rl.Node) {
 	n := len(tc.returnStack)
 	if n == 0 {
@@ -1220,9 +1226,12 @@ func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT
 	if enum, ok := residual.(*rl.TypingStrEnumT); ok {
 		msg = fmt.Sprintf("Switch is not exhaustive; missing case for %s", enum.Name())
 	}
+	// Severity is Error: the analyzer knows the full enum set and which
+	// arms are present, so missing arms are provable. Users who want a
+	// catch-all opt out with a default arm.
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     n.Span(),
-		Severity: IssueWarning,
+		Severity: IssueError,
 		Code:     rl.ErrNonExhaustiveSwitch,
 		Message:  msg,
 	})
@@ -1870,11 +1879,14 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 }
 
 // checkAssignAgainstDeclared emits a type-mismatch when the assigned
-// value can't flow into the declared slot. Severity matches Phase 2's
-// per-arg precedent: Hint, not Error - the runtime still produces a
-// richer value-aware message when the script runs, and we only
-// promote once literal types fill the missing fidelity (a one-pass
-// severity migration covers all assignability checks at once).
+// value can't flow into the declared slot.
+//
+// Severity is Hint, not Error - same structural-literal fidelity gap
+// as checkArgType. `x: ["a", "b"] = "a"` is valid at runtime, but the
+// str literal synths to plain TypingStrT (litMatchesStrEnum lives
+// only at the call site today, not here). Similar story for tuple
+// and struct literals against named-shape declared types. Promoting
+// would block legitimate scripts. Kan: promote-type-check.
 //
 // ErrorType / Dynamic short-circuit: a poisoned RHS already produced
 // a diagnostic and any-likes are universally assignable, so no extra
@@ -1915,10 +1927,10 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 // has admitted us. Concretely: we want the most precise statically
 // known element type, gated by the user having opted in.
 //
-// Severity is Hint, matching checkAssignAgainstDeclared: the runtime
-// still enforces declared element types when the script runs, and
-// this is the static "heads up" version. Other forms of mutation
-// (struct field assignment, slice assignment) aren't checked here.
+// Severity is Hint, matching checkAssignAgainstDeclared - same
+// structural-literal fidelity gap (Kan: promote-type-check). Other
+// forms of mutation (struct field assignment, slice assignment)
+// aren't checked here.
 func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.Node, valType rl.TypingT) {
 	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
 		return
@@ -2323,15 +2335,15 @@ func (tc *typeChecker) checkCall(call *rl.Call, typing *rl.TypingFnT, implicitRe
 // unannotated (nil declared type) - that's the "any" parameter case
 // and we let the runtime catch any mismatch.
 //
-// Severity is intentionally Hint, not Error, while the static side
-// lacks two pieces of fidelity it eventually needs: literal types
-// (so a string-literal "seconds" can be checked against a string
-// enum), and structural matching for function values. Until both
-// exist, promoting to Error would short-circuit the runtime check
-// path - which today produces richer "Value 'X' (Y) is not
-// compatible..." errors that mention the actual value. Keeping
-// this at Hint surfaces the issue in LSP and `rad check` while
-// preserving runtime behavior for the value-aware cases.
+// Severity is Hint, not Error - intentionally less strict than the
+// rest of the assignability checks. The call site is where users pass
+// literals into structured typed slots ({ "outer": { "inner": int } },
+// fn() -> void[], etc.), and today's literal-type synth loses fidelity:
+// `{ "outer": { "inner": 42 } }` synths to `{ str: { str: int } }`,
+// which structurally can't match the named-key form even though the
+// runtime would accept it. Promoting to Error would block legitimate
+// scripts on day one. The runtime still catches genuine mismatches
+// with its value-aware error message. Kan: promote-type-check.
 func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 	if param.Type == nil {
 		return
@@ -2781,6 +2793,13 @@ func unionOf(a, b rl.TypingT) rl.TypingT {
 // the same actionable follow-up as `rad <script>` users do.
 const strPlusMigrationHint = "In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/"
 
+// addOpIssue emits a binary-op type diagnostic.
+//
+// Severity is Hint, not Error - fallible builtins like `parse_int`
+// return `int|error`, and users routinely write `a = parse_int(...)`
+// followed by `a + 1` without narrowing. The runtime succeeds when
+// the parse does, so promoting here would block valid scripts.
+// Kan: promote-type-check (union-narrowing path).
 func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.TypingT, isCompound bool) {
 	opStr := op.String()
 	if isCompound {
@@ -2815,6 +2834,9 @@ func isBool(t rl.TypingT) bool {
 	return ok
 }
 
+// addUnaryOpIssue emits a unary-op type diagnostic. Severity is Hint
+// for the same reason as addOpIssue - union types from fallible
+// builtins flow through unary ops too. Kan: promote-type-check.
 func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.TypingT) {
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     span,

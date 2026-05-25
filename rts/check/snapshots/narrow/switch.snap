@@ -101,7 +101,7 @@ fn f(name: ["a", "b", "c"]):
   x (local): int
 
 # Diagnostics
-  [warn] RAD40010 @ 2:5 - Switch is not exhaustive; missing case for ["c"]
+  [error] RAD40010 @ 2:5 - Switch is not exhaustive; missing case for ["c"]
 ### TITLE ###
 SwitchDefaultSuppressesDiagnostic
 ### INPUT ###
