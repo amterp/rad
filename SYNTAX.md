@@ -1286,16 +1286,20 @@ args:
 
 As a convention, align comments 2 spaces from the longest argument in the aligned group.
 
+Good - align comments within reason (2 spaces from longest):
+
 ```rad
-// Good: Align comments within reason (2 spaces from longest)
 args:
     name str        # User's full name
     age int         # Age in years
     email str?      # Contact email
     very_long_param str  # Don't align with this one if it's much longer
     city str        # Align with the shorter ones instead
+```
 
-// Bad: Inconsistent alignment
+Bad - inconsistent alignment:
+
+```rad
 args:
     name str      # User's full name
     age int            # Age in years

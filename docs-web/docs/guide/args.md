@@ -478,7 +478,7 @@ Script args:
 
 If we invoke this script with a value outside the listed valid values:
 
-```rad
+```shell
 ./colors yellow
 ```
 

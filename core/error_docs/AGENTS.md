@@ -39,12 +39,14 @@ No rigid template. Include what's useful, omit what isn't.
 Examples are the backbone. Show the failure, show the fix.
 
 ```rad
-# Wrong
+// Wrong
 print("hello"
 
-# Correct
+// Correct
 print("hello")
 ```
+
+Use `//` for comments in Rad code blocks. The only place `#` is a valid comment marker is inside `args:` blocks (where it carries --help text), and the rendered text in this file is the only convention contributors are likely to copy - so model the right one.
 
 One good example beats three okay ones. Add more only if they show genuinely different scenarios.
 

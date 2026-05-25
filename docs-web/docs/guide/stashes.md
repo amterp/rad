@@ -182,7 +182,7 @@ Beyond state, stashes can also store arbitrary files. This is useful for caching
 [`write_stash_file(path, content)`](../reference/functions.md#write_stash_file) writes a file to your stash:
 
 ```rad
-write_stash_file("cache.json", '{"data": [1, 2, 3]}')
+write_stash_file("cache.json", r'{"data": [1, 2, 3]}')
 write_stash_file("logs/run.log", "Script executed at {now().time}")
 ```
 

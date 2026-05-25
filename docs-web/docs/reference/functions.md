@@ -570,10 +570,15 @@ parse_json(_str: str) -> any|error
 ```
 
 ```rad
-parse_json('{"name": "Alice", "age": 30}')  // -> {"name": "Alice", "age": 30}
-parse_json('[1, 2, 3]')                     // -> [1, 2, 3]
-parse_json('invalid json')                  // -> Error: invalid JSON
+parse_json(r'{"name": "Alice", "age": 30}')  // -> {"name": "Alice", "age": 30}
+parse_json('[1, 2, 3]')                      // -> [1, 2, 3]
+parse_json('invalid json')                   // -> Error: invalid JSON
 ```
+
+Use a raw string (`r'...'`) when the JSON contains `{` or `}` - plain
+single- and double-quoted strings interpolate `{expr}`, which makes
+JSON literals trip the interpolator. Raw strings are also natural for
+JSON pasted verbatim from a sample.
 
 ### parse_duration
 
@@ -773,7 +778,7 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 "hello world hello".index_of("hello", n=1)      // -> 12
 "hello world hello".index_of("hello", n=-1)     // -> 12
 "hello".index_of("xyz")                         // -> null
-"hello".index_of("xyz") ?? -1                   // -> -1
+"hello".index_of("xyz") ?? (-1)                 // -> -1
 "hello".index_of("")                             // -> null (empty target)
 
 // List search
@@ -1816,8 +1821,11 @@ Returns all arguments after the script name. Unlike parsed args, this gives you 
 
 ```rad
 // If script was called: rad myscript.rad arg1 arg2 --flag
-args = get_args()  // -> ["./myscript.rad", "arg1", "arg2", "--flag"]
+raw_args = get_args()  // -> ["./myscript.rad", "arg1", "arg2", "--flag"]
 ```
+
+The name `args` is reserved (it's the args-block keyword), so the
+local has to be called something else.
 
 ### error
 
@@ -1828,9 +1836,17 @@ error(_msg: str) -> error
 ```
 
 ```rad
-err = error("Something went wrong")
-return err  // -> Script will exit with this error message
+fn validate(x: int):
+    if x < 0:
+        return error("Something went wrong")
+    return x
+
+result = validate(-1)  // -> Script will exit with this error message
 ```
+
+`return` at the top level isn't legal Rad - wrap it in a `fn` and
+return the error from there, or assign it and propagate via `??` /
+`catch:`.
 
 ## Home & Stash
 
