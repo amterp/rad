@@ -1,0 +1,29 @@
+# abs
+
+Returns the absolute value of a number. The result's type matches
+the input - `int` in, `int` out; `float` in, `float` out.
+
+## Signature
+
+`abs(_num: int|float) -> int|float`
+
+## Parameters
+
+- `_num` (`int|float`): the number to take the absolute value of.
+
+## Examples
+
+```rad
+abs(-5)        // -> 5
+abs(5)         // -> 5
+abs(-3.14)     // -> 3.14
+abs(0)         // -> 0
+```
+
+## Category
+
+math
+
+## See also
+
+`floor`, `ceil`, `round`

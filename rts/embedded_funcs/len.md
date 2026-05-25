@@ -1,0 +1,30 @@
+# len
+
+Returns the number of elements in a string, list, or map. For
+strings this is the rune count (not byte count), so unicode characters
+contribute one each.
+
+## Signature
+
+`len(_val: str|list|map) -> int`
+
+## Parameters
+
+- `_val` (`str|list|map`): the collection to measure.
+
+## Examples
+
+```rad
+len("hello")              // -> 5
+len([1, 2, 3])            // -> 3
+len({"a": 1, "b": 2})     // -> 2
+len("héllo")              // -> 5 (rune count, not byte count)
+```
+
+## Category
+
+lists
+
+## See also
+
+`sort`, `keys`, `values`

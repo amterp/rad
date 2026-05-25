@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/amterp/rad/radls/lsp"
 
@@ -123,10 +124,36 @@ func formatIdentHover(ident *rl.Identifier, resolved *check.Resolved, info *chec
 	if sym.Kind == check.SymBuiltin {
 		// Signature is self-describing; the kind tag would
 		// just repeat what `name(args) -> ret` already says.
+		// When a structured doc exists for the builtin (an entry
+		// in docs/funcs/), append the description + first
+		// example so hover gives users prose context, not just
+		// the type. Falls back to signature-only when no doc.
+		if doc := rts.GetFuncDoc(sym.Name); doc != nil {
+			return renderBuiltinHoverWithDoc(sym.Name, typeStr, doc)
+		}
 		return fmt.Sprintf("```rad\n%s: %s\n```", sym.Name, typeStr)
 	}
 	kindLabel := symbolKindLabel(sym.Kind)
 	return fmt.Sprintf("```rad\n(%s) %s: %s\n```", kindLabel, sym.Name, typeStr)
+}
+
+// renderBuiltinHoverWithDoc formats a builtin hover with structured
+// documentation - signature on top, description in the middle,
+// first example at the bottom. Markdown sections separated by `---`
+// so the LSP client renders them as visually distinct.
+func renderBuiltinHoverWithDoc(name, signature string, doc *rts.FuncDoc) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "```rad\n%s: %s\n```", name, signature)
+	if doc.Description != "" {
+		b.WriteString("\n\n---\n\n")
+		b.WriteString(doc.Description)
+	}
+	if len(doc.Examples) > 0 {
+		b.WriteString("\n\n```rad\n")
+		b.WriteString(doc.Examples[0])
+		b.WriteString("\n```")
+	}
+	return b.String()
 }
 
 // symbolKindLabel maps a SymbolKind to a short tag for the hover
