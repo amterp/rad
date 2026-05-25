@@ -11,7 +11,9 @@ import (
 	radtesting "github.com/amterp/rad/core/testing"
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/check"
+	"github.com/amterp/rad/rts/rl"
 	"github.com/stretchr/testify/require"
+	tsapi "github.com/tree-sitter/go-tree-sitter"
 )
 
 // TestCheckSnapshots runs every .snap file under rts/check/snapshots/
@@ -82,12 +84,20 @@ func TestCheckSnapshots(t *testing.T) {
 				require.NoError(t, err)
 				defer parser.Close()
 				tree := parser.Parse(tc.Input)
-				file := rts.ConvertCST(tree.Root(), tc.Input, "snapshot_test.rad")
+				// Match the production check pipeline's recover
+				// guard: malformed inputs (the kind that exercise
+				// parser-error heuristics like RAD10009) produce
+				// ERROR nodes the converter doesn't know how to
+				// represent. The CLI's `rad check` recovers and
+				// proceeds without an AST; snapshots should too.
+				file := safeConvertCST(tree.Root(), tc.Input)
 				checker := check.NewCheckerWithTree(tree, parser, tc.Input, file)
 				result, err := checker.Check()
 				require.NoError(t, err, "Check should not error")
-				require.NotNil(t, result.Resolved, "Check should return Resolved")
-				require.NotNil(t, result.Types, "Check should return Types")
+				// Resolved / Types may be nil when the converter
+				// bailed on malformed input; DumpForSnapshot
+				// tolerates that (parser-error heuristic
+				// snapshots exercise the nil-ast path).
 
 				actual := check.DumpForSnapshot(file, result.Types, result.Resolved, result.Diagnostics)
 
@@ -122,4 +132,17 @@ func TestCheckSnapshots(t *testing.T) {
 			}
 		}
 	})
+}
+
+// safeConvertCST wraps rts.ConvertCST with a panic recover, matching
+// the production check pipeline (rts/check/check.go tryConvertAST).
+// Returns nil when the converter bails on malformed input; the
+// checker tolerates a nil ast in that case.
+func safeConvertCST(root *tsapi.Node, src string) (file *rl.SourceFile) {
+	defer func() {
+		if r := recover(); r != nil {
+			file = nil
+		}
+	}()
+	return rts.ConvertCST(root, src, "snapshot_test.rad")
 }

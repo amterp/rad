@@ -1,0 +1,104 @@
+### TITLE ###
+NullInUnionTypedAssignmentSuggestsTQuestion
+### DESCRIPTION ###
+Baseline: typed-assignment `x: int|null = ...` already produced
+the helpful "Rad spells nullable types as T?" suggestion.
+Regression lock for that path.
+### INPUT ###
+a: int|null = null
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  [error] RAD10009 @ 1:7 - 'null' is not a valid type in a union
+    help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')
+  [hint] RAD30001 @ 1:15 - Value of type 'null' is not assignable to declared type 'int'
+### TITLE ###
+NullInUnionFnNamedParamSuggestsTQuestion
+### DESCRIPTION ###
+A named-fn parameter `fn f(x: int|null):` now fires the same
+suggestion - previously this produced a generic "Invalid
+function syntax" / RAD10001 because the parser bailed before
+wrapping the union in a fn_param_or_return_type.
+### INPUT ###
+fn f(x: int|null):
+    print(x)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  x @ 2:11 -> int
+
+# Symbol types
+  f (fn): fn(int) -> void
+  x (param): int
+
+# Diagnostics
+  [error] RAD10009 @ 1:12 - 'null' is not a valid type in a union
+    help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')
+### TITLE ###
+NullInUnionLambdaParamSuggestsTQuestion
+### DESCRIPTION ###
+Same enforcement for inline lambdas. The ERROR attaches to
+the fn_lambda node when the param annotation has the bad
+`int|null` shape.
+### INPUT ###
+f = fn(x: int|null): x
+### STDOUT ###
+# Identifier types
+  f @ 1:1 -> <no-type>
+  x @ 1:22 -> int
+
+# Symbol types
+  f (local): fn(int) -> int
+  x (param): int
+
+# Diagnostics
+  [error] RAD10009 @ 1:14 - 'null' is not a valid type in a union
+    help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')
+### TITLE ###
+NullInUnionFnTypeSuggestsTQuestion
+### DESCRIPTION ###
+A fn-type annotation like `fn(int|null) -> int` previously
+produced a bare "Unexpected '|null'" without the helpful
+T? suggestion. Now the suggestion is attached.
+### INPUT ###
+fn process(cb: fn(int|null) -> int):
+    print(cb(1))
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  cb @ 2:11 -> fn(int) -> int
+
+# Symbol types
+  cb (param): fn(int) -> int
+  process (fn): fn(fn(int) -> int) -> void
+
+# Diagnostics
+  [error] RAD10009 @ 1:22 - 'null' is not a valid type in a union
+    help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')
+### TITLE ###
+NullInUnionFnReturnTypeSuggestsTQuestion
+### DESCRIPTION ###
+The return-type position is the messiest case - the parser
+collapses the whole header into an outer ERROR with the bad
+union nested as an inner ERROR. The inner one fires the
+suggestion; the outer one stays at the generic message so
+the user gets exactly one help hint.
+### INPUT ###
+fn f() -> int|null:
+    return null
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10001 @ 1:1 - Invalid syntax
+  [error] RAD10009 @ 1:14 - 'null' is not a valid type in a union
+    help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')

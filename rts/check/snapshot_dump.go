@@ -35,7 +35,10 @@ func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved, di
 
 	// --- Identifier types -------------------------------------------------
 	sb.WriteString("# Identifier types\n")
-	idents := collectIdentifiers(file)
+	var idents []*rl.Identifier
+	if file != nil {
+		idents = collectIdentifiers(file)
+	}
 	sortByPos(idents)
 	if len(idents) == 0 {
 		sb.WriteString("  (none)\n")
@@ -59,19 +62,21 @@ func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved, di
 	}
 	var syms []symRow
 	seen := map[*Symbol]bool{}
-	for _, sym := range resolved.Uses {
-		if sym == nil || seen[sym] || sym.Kind == SymBuiltin {
-			continue
+	if resolved != nil {
+		for _, sym := range resolved.Uses {
+			if sym == nil || seen[sym] || sym.Kind == SymBuiltin {
+				continue
+			}
+			seen[sym] = true
+			syms = append(syms, symRowFor(sym, info))
 		}
-		seen[sym] = true
-		syms = append(syms, symRowFor(sym, info))
-	}
-	for _, sym := range resolved.Decls {
-		if sym == nil || seen[sym] || sym.Kind == SymBuiltin {
-			continue
+		for _, sym := range resolved.Decls {
+			if sym == nil || seen[sym] || sym.Kind == SymBuiltin {
+				continue
+			}
+			seen[sym] = true
+			syms = append(syms, symRowFor(sym, info))
 		}
-		seen[sym] = true
-		syms = append(syms, symRowFor(sym, info))
 	}
 	sort.Slice(syms, func(i, j int) bool {
 		if syms[i].name != syms[j].name {

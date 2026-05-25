@@ -254,46 +254,125 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 // TypeScript / Pyright but invalid in Rad - the grammar doesn't list
 // `null` as a leaf type. Rad has a single canonical spelling for
 // nullable types: `T?`. Without this heuristic, users get
-// "Unexpected '|null'" and have to figure out the right form on
-// their own; the suggestion turns that into "use 'T?' instead."
+// "Unexpected '|null'" (fn_type case) or "Invalid function syntax"
+// (fn_named / fn_lambda cases) and have to figure out the right form
+// on their own; the suggestion turns that into "use 'T?' instead."
 //
-// Triggered when:
-//   - the ERROR node lives under a fn_param_or_return_type (the
-//     only place leaf types are stacked into a union), AND
-//   - the ERROR content contains the bare word `null`.
+// Triggered when the ERROR node sits under any context where a type
+// union is legal AND its content contains the bare word `null`:
+//
+//   - fn_param_or_return_type: the union site itself.
+//   - typed_assign: parent above when the ERROR tails a typed-local
+//     declaration (`x: int|null = ...`).
+//   - fn_named, fn_lambda: parent above when the ERROR shows up in
+//     a param-position annotation (`fn f(x: int|null):`,
+//     `fn(x: int|null) <body>`). The parser bails before it can
+//     wrap the union in a fn_param_or_return_type, so the ERROR
+//     attaches to the fn node directly.
+//   - fn_type: parent above when the ERROR shows up inside a
+//     fn-type annotation (`fn(int|null) -> int`).
 //
 // We keep the parent-kind check strict so a stray `null` token
 // elsewhere in source doesn't get this suggestion.
 func checkNullInUnion(node *ts.Node, trimmed string) (string, rl.Error, *string) {
+	// Walk up through any wrapping ERROR nodes - when the parser
+	// misrecovers in a return-type position the whole `fn ... -> T:
+	// body` shape collapses into an outer ERROR, so the immediate
+	// parent of our content-bearing ERROR is itself an ERROR. Climb
+	// until we hit something concrete, then test that.
 	parent := node.Parent()
+	climbed := false
+	for parent != nil && parent.IsError() {
+		parent = parent.Parent()
+		climbed = true
+	}
 	if parent == nil {
 		return "", "", nil
 	}
-	pkind := parent.Kind()
-	// fn_param_or_return_type: the union site.
-	// typed_assign: the parent above when ERROR is at the tail of
-	// a typed-local declaration (e.g. `x: int|null = ...`).
-	if pkind != "fn_param_or_return_type" && pkind != rl.K_TYPED_ASSIGN {
+	switch parent.Kind() {
+	case "fn_param_or_return_type",
+		rl.K_TYPED_ASSIGN,
+		rl.K_FN_NAMED,
+		rl.K_FN_LAMBDA,
+		rl.K_FN_TYPE:
+		// allowed contexts
+	case "source_file":
+		// Accept source_file only when we climbed through at least
+		// one ERROR layer. That picks up the inner ERROR of a nested
+		// fn-header collapse (`fn f() -> int|null:` shape) without
+		// also firing on the surrounding outer ERROR - the outer one
+		// would emit a duplicate hint on the whole header span.
+		if !climbed {
+			return "", "", nil
+		}
+	default:
 		return "", "", nil
 	}
-	// Strip leading/trailing | and whitespace to look at the bare
-	// tokens. ERROR content is usually one of: "|null", "|null|",
-	// "null|" (and possibly more).
-	stripped := strings.Trim(trimmed, "| \t")
-	hasNull := false
-	for _, tok := range strings.Split(stripped, "|") {
-		if strings.TrimSpace(tok) == "null" {
-			hasNull = true
-			break
-		}
-	}
-	if !hasNull {
+	// Look for `null` as a standalone token adjacent to a `|`. We
+	// can't just substring-match: identifiers like `nullify` should
+	// not trigger this, and the ERROR content can drag in surrounding
+	// source (newlines, body fragments) when the parser misrecovers.
+	if !containsNullTypeToken(trimmed) {
 		return "", "", nil
 	}
 	suggestion := "Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')"
 	return "'null' is not a valid type in a union",
 		rl.ErrUnexpectedToken,
 		&suggestion
+}
+
+// containsNullTypeToken reports whether `s` contains `null` used as
+// a type token: `|null`, `null|`, or a bare `null` flanked by union
+// punctuation / whitespace / type-position delimiters. We require an
+// adjacent `|` so `null = 5` (the value literal) doesn't trigger the
+// suggestion - only the union-position spelling does.
+func containsNullTypeToken(s string) bool {
+	for i := 0; i+4 <= len(s); i++ {
+		if s[i:i+4] != "null" {
+			continue
+		}
+		left := byte(0)
+		if i > 0 {
+			left = s[i-1]
+		}
+		right := byte(0)
+		if i+4 < len(s) {
+			right = s[i+4]
+		}
+		if !isTypeTokenBoundary(left) || !isTypeTokenBoundary(right) {
+			continue
+		}
+		// Must be adjacent to a `|` somewhere - either immediately
+		// before or after, or as the only token after stripping
+		// trailing punctuation (the `null|` or `|null` shapes).
+		if left == '|' || right == '|' {
+			return true
+		}
+	}
+	return false
+}
+
+// isTypeTokenBoundary reports whether `b` can separate `null` from
+// surrounding text without making `null` part of an identifier. Word
+// chars (letters, digits, underscore) glue identifiers together; any
+// other byte (or zero for string edges) is a boundary.
+func isTypeTokenBoundary(b byte) bool {
+	if b == 0 {
+		return true
+	}
+	if b >= 'a' && b <= 'z' {
+		return false
+	}
+	if b >= 'A' && b <= 'Z' {
+		return false
+	}
+	if b >= '0' && b <= '9' {
+		return false
+	}
+	if b == '_' {
+		return false
+	}
+	return true
 }
 
 func checkUnterminatedString(raw, trimmed string) (string, rl.Error, *string) {
