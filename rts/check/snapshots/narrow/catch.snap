@@ -46,3 +46,27 @@ x: int|error = parse_int("hi") catch:
 
 # Diagnostics
   (none)
+### TITLE ###
+CatchBlockYieldIsValidContext
+### DESCRIPTION ###
+Catch blocks use `yield <expr>` to provide a fallback value for
+the failed assignment. The yield-outside-function AST check must
+recognize catch as a valid yield context - the canonical form
+shouldn't fire RAD40005 spuriously. Regression lock against the
+ast_checks.go walkASTForReturn gap.
+### INPUT ###
+x = parse_int("foo") catch:
+    yield 99
+print(x)
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 3:1 -> dynamic
+  x @ 3:7 -> int|error
+
+# Symbol types
+  x (local): int|error
+
+# Diagnostics
+  (none)

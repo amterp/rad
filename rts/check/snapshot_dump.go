@@ -30,7 +30,7 @@ import (
 // human to diff snapshot changes and confirm they reflect intentional
 // behavior changes. Each section is prefixed with a header so a
 // future reader can read top-to-bottom without context.
-func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved) string {
+func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved, diagnostics []Diagnostic) string {
 	var sb strings.Builder
 
 	// --- Identifier types -------------------------------------------------
@@ -88,33 +88,60 @@ func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved) st
 	}
 
 	// --- Diagnostics -----------------------------------------------------
+	//
+	// Diagnostics come from the full Check() pipeline, not just the
+	// type-checker's BindIssue list. This is what catches AST-level
+	// problems (return-outside-fn, invalid LHS, etc.) that the binder
+	// + type-checker alone don't see. Without this, snapshots could
+	// claim "clean" while `rad check` emits real errors.
 	sb.WriteString("\n# Diagnostics\n")
-	issues := append([]BindIssue(nil), info.Issues...)
-	sort.SliceStable(issues, func(i, j int) bool {
-		a, b := issues[i].Span, issues[j].Span
-		if a.StartRow != b.StartRow {
-			return a.StartRow < b.StartRow
+	diags := append([]Diagnostic(nil), diagnostics...)
+	sort.SliceStable(diags, func(i, j int) bool {
+		a, b := diags[i].Range, diags[j].Range
+		if a.Start.Line != b.Start.Line {
+			return a.Start.Line < b.Start.Line
 		}
-		if a.StartCol != b.StartCol {
-			return a.StartCol < b.StartCol
+		if a.Start.Character != b.Start.Character {
+			return a.Start.Character < b.Start.Character
 		}
-		return string(issues[i].Code) < string(issues[j].Code)
+		return codeString(diags[i].Code) < codeString(diags[j].Code)
 	})
-	if len(issues) == 0 {
+	if len(diags) == 0 {
 		sb.WriteString("  (none)\n")
 	} else {
-		for _, i := range issues {
+		for _, d := range diags {
 			fmt.Fprintf(&sb, "  [%s] %s @ %d:%d - %s\n",
-				severityShort(i.Severity), i.Code,
-				i.Span.StartLine(), i.Span.StartColumn(),
-				i.Message)
-			if i.Suggestion != "" {
-				fmt.Fprintf(&sb, "    help: %s\n", i.Suggestion)
+				severityShortDiag(d.Severity), codeString(d.Code),
+				d.Range.Start.Line+1, d.Range.Start.Character+1,
+				d.Message)
+			if d.Suggestion != nil && *d.Suggestion != "" {
+				fmt.Fprintf(&sb, "    help: %s\n", *d.Suggestion)
 			}
 		}
 	}
 
 	return strings.TrimRight(sb.String(), "\n")
+}
+
+func codeString(c *rl.Error) string {
+	if c == nil {
+		return ""
+	}
+	return c.String()
+}
+
+func severityShortDiag(s Severity) string {
+	switch s {
+	case Error:
+		return "error"
+	case Warning:
+		return "warn"
+	case Info:
+		return "info"
+	case Hint:
+		return "hint"
+	}
+	return "?"
 }
 
 func symRowFor(sym *Symbol, info *TypeInfo) struct {

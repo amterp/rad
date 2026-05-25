@@ -9,6 +9,7 @@ import (
 
 	gd "github.com/amterp/go-delta"
 	radtesting "github.com/amterp/rad/core/testing"
+	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/check"
 	"github.com/stretchr/testify/require"
 )
@@ -71,13 +72,24 @@ func TestCheckSnapshots(t *testing.T) {
 					t.Skip(tc.SkipReason)
 				}
 
-				file := parseFile(t, tc.Input)
-				resolved := check.Resolve(file)
-				require.NotNil(t, resolved, "Resolve should not return nil")
-				info := check.TypeCheck(file, resolved)
-				require.NotNil(t, info, "TypeCheck should not return nil")
+				// Run the full Check() pipeline (binder + type
+				// checker + AST-level checks) rather than just
+				// Resolve + TypeCheck. Without the AST checks,
+				// snapshots can claim "no diagnostics" while
+				// `rad check` emits real errors (return-outside-
+				// fn, invalid LHS, etc.).
+				parser, err := rts.NewRadParser()
+				require.NoError(t, err)
+				defer parser.Close()
+				tree := parser.Parse(tc.Input)
+				file := rts.ConvertCST(tree.Root(), tc.Input, "snapshot_test.rad")
+				checker := check.NewCheckerWithTree(tree, parser, tc.Input, file)
+				result, err := checker.Check()
+				require.NoError(t, err, "Check should not error")
+				require.NotNil(t, result.Resolved, "Check should return Resolved")
+				require.NotNil(t, result.Types, "Check should return Types")
 
-				actual := check.DumpForSnapshot(file, info, resolved)
+				actual := check.DumpForSnapshot(file, result.Types, result.Resolved, result.Diagnostics)
 
 				if actual != tc.Stdout {
 					if *radtesting.UpdateSnapshots {

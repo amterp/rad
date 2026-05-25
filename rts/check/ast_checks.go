@@ -94,11 +94,64 @@ func (c *RadCheckerImpl) walkASTForReturn(node rl.Node, d *[]Diagnostic, inFunct
 		inFunction = true
 	case *rl.Switch:
 		inYieldContext = true
+	case *rl.Assign:
+		// Assign.Children() flattens the catch block's stmts in
+		// alongside the value-side children, which loses the
+		// "inside a catch body" signal. Handle Assign explicitly so
+		// the catch stmts get inYieldContext = true and the
+		// canonical `x = foo() catch: yield 0` shape doesn't fire
+		// RAD40005 spuriously.
+		c.walkAssignForReturn(n, d, inFunction, inYieldContext)
+		return
+	case *rl.ExprStmt:
+		// Same as Assign: ExprStmt also carries a CatchBlock that
+		// gets flattened in Children().
+		c.walkExprStmtForReturn(n, d, inFunction, inYieldContext)
+		return
+	case *rl.Shell:
+		// Same as Assign: Shell also carries a CatchBlock.
+		c.walkShellForReturn(n, d, inFunction, inYieldContext)
+		return
 	}
 
 	walkASTChildren(node, func(child rl.Node) {
 		c.walkASTForReturn(child, d, inFunction, inYieldContext)
 	})
+}
+
+func (c *RadCheckerImpl) walkAssignForReturn(a *rl.Assign, d *[]Diagnostic, inFunction, inYieldContext bool) {
+	for _, target := range a.Targets {
+		c.walkASTForReturn(target, d, inFunction, inYieldContext)
+	}
+	for _, value := range a.Values {
+		c.walkASTForReturn(value, d, inFunction, inYieldContext)
+	}
+	if a.Catch != nil {
+		for _, stmt := range a.Catch.Stmts {
+			c.walkASTForReturn(stmt, d, inFunction, true)
+		}
+	}
+}
+
+func (c *RadCheckerImpl) walkExprStmtForReturn(e *rl.ExprStmt, d *[]Diagnostic, inFunction, inYieldContext bool) {
+	c.walkASTForReturn(e.Expr, d, inFunction, inYieldContext)
+	if e.Catch != nil {
+		for _, stmt := range e.Catch.Stmts {
+			c.walkASTForReturn(stmt, d, inFunction, true)
+		}
+	}
+}
+
+func (c *RadCheckerImpl) walkShellForReturn(s *rl.Shell, d *[]Diagnostic, inFunction, inYieldContext bool) {
+	for _, target := range s.Targets {
+		c.walkASTForReturn(target, d, inFunction, inYieldContext)
+	}
+	c.walkASTForReturn(s.Cmd, d, inFunction, inYieldContext)
+	if s.Catch != nil {
+		for _, stmt := range s.Catch.Stmts {
+			c.walkASTForReturn(stmt, d, inFunction, true)
+		}
+	}
 }
 
 // Check 9: Invalid assignment LHS (AST version)

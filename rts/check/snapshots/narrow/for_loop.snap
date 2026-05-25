@@ -82,4 +82,4 @@ for v in unknown_thing():
   v (loop): dynamic
 
 # Diagnostics
-  (none)
+  [hint] RAD40003 @ 1:10 - Function 'unknown_thing' may not be defined (only built-in and top-level functions are tracked)
