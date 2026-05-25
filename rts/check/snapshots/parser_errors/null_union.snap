@@ -16,7 +16,8 @@ a: int|null = null
 # Diagnostics
   [error] RAD10009 @ 1:7 - 'null' is not a valid type in a union
     help: Rad spells nullable types as 'T?' (e.g. 'int?', not 'int|null')
-  [hint] RAD30001 @ 1:15 - Value of type 'null' is not assignable to declared type 'int'
+  [error] RAD30001 @ 1:15 - Value of type 'null' is not assignable to declared type 'int'
+    help: To allow null here, declare the slot as 'int?'
 ### TITLE ###
 NullInUnionFnNamedParamSuggestsTQuestion
 ### DESCRIPTION ###

@@ -90,7 +90,8 @@ a: int = null
   a (local): int
 
 # Diagnostics
-  [hint] RAD30001 @ 1:10 - Value of type 'null' is not assignable to declared type 'int'
+  [error] RAD30001 @ 1:10 - Value of type 'null' is not assignable to declared type 'int'
+    help: To allow null here, declare the slot as 'int?'
 ### TITLE ###
 NullLiteralAcceptedByOptionalSlot
 ### DESCRIPTION ###
@@ -203,6 +204,50 @@ fn f(x: int):
   a (local): int
   f (fn): fn(int) -> void
   x (param): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+NotEqualNullStripsNullArmFromThreeArmUnion
+### DESCRIPTION ###
+`if x != null:` narrows a 3+ arm union by dropping the null
+arm. Regression lock for stripNullFrom: the 2-arm collapse
+(`int|null` -> `int?`) happens upstream in unionTypesForJoin;
+3+ arm unions like `int|str|null` keep null as a bare arm and
+the strip needs to handle it explicitly. We use an inferred
+type here because the parser rejects `int|str|null` in
+annotation positions (RAD10009 suggests T? instead) - so a
+3-arm union with bare null only arises from join inference.
+### INPUT ###
+fn maybe(n: int):
+    if n < 0:
+        return null
+    if n == 0:
+        return "zero"
+    return 1
+
+x = maybe(2)
+if x != null:
+    a = x
+b = x
+### STDOUT ###
+# Identifier types
+  n @ 2:8 -> int
+  n @ 4:8 -> int
+  x @ 8:1 -> <no-type>
+  maybe @ 8:5 -> fn(int) -> null|str|int
+  x @ 9:4 -> null|str|int
+  a @ 10:5 -> <no-type>
+  x @ 10:9 -> str|int
+  b @ 11:1 -> <no-type>
+  x @ 11:5 -> str|int|null
+
+# Symbol types
+  a (local): str|int
+  b (local): str|int|null
+  maybe (fn): fn(int) -> null|str|int
+  n (param): int
+  x (local): null|str|int
 
 # Diagnostics
   (none)

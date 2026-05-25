@@ -853,12 +853,24 @@ func extractErrorFrom(t rl.TypingT) rl.TypingT {
 }
 
 // stripNullFrom returns t with any null component removed. For
-// Optional<T> it returns T. For a union whose arms are individually
-// optional, each arm is stripped. Returns nil if t has no nullable
-// component to subtract - the caller treats that as "predicate
-// gives us no narrowing here."
+// Optional<T> it returns T. For a bare TypingNullT it returns
+// nothing strippable (the caller treats nil as "no narrowing
+// possible," which for a bare-null receiver is the truthful
+// answer - the truthy branch of `if x != null` is uninhabited).
+// For a union, each arm is examined: TypingNullT arms are
+// dropped, Optional<T> arms unwrap to T, other arms stay
+// unchanged. Returns nil if t had no nullable component to
+// subtract - the caller treats that as "predicate gives us no
+// narrowing here."
 func stripNullFrom(t rl.TypingT) rl.TypingT {
 	if t == nil {
+		return nil
+	}
+	if _, isNull := t.(*rl.TypingNullT); isNull {
+		// Bare null has nothing to narrow to - the only inhabitant
+		// is null itself. Return nil so the caller leaves the
+		// branch's binding alone (the type checker still sees the
+		// outer non-null branch as unreachable, which is correct).
 		return nil
 	}
 	if o, ok := t.(*rl.TypingOptionalT); ok {
@@ -869,6 +881,16 @@ func stripNullFrom(t rl.TypingT) rl.TypingT {
 		out := make([]rl.TypingT, 0, len(arms))
 		changed := false
 		for _, arm := range arms {
+			if _, isNull := arm.(*rl.TypingNullT); isNull {
+				// Drop bare null arms outright. The 2-arm collapse
+				// (`int|null` -> `int?`) happens upstream in
+				// unionTypesForJoin; for 3+ arm unions like
+				// `int|str|null`, the null arm survives and lands
+				// here. Dropping it is exactly what the narrowing
+				// contract wants.
+				changed = true
+				continue
+			}
 			if s := stripNullFrom(arm); s != nil {
 				out = append(out, s)
 				changed = true
@@ -877,6 +899,11 @@ func stripNullFrom(t rl.TypingT) rl.TypingT {
 			}
 		}
 		if !changed {
+			return nil
+		}
+		if len(out) == 0 {
+			// Every arm was null - the receiver was already a bare
+			// null union (degenerate but possible). No narrowing.
 			return nil
 		}
 		if len(out) == 1 {

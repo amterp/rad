@@ -2041,12 +2041,19 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 // checkAssignAgainstDeclared emits a type-mismatch when the assigned
 // value can't flow into the declared slot.
 //
-// Severity is Hint, not Error - same structural-literal fidelity gap
-// as checkArgType. `x: ["a", "b"] = "a"` is valid at runtime, but the
+// Default severity is Hint - same structural-literal fidelity gap as
+// checkArgType. `x: ["a", "b"] = "a"` is valid at runtime, but the
 // str literal synths to plain TypingStrT (litMatchesStrEnum lives
 // only at the call site today, not here). Similar story for tuple
 // and struct literals against named-shape declared types. Promoting
-// would block legitimate scripts. Kan: promote-type-check.
+// the general case would block legitimate scripts. Kan:
+// promote-type-check.
+//
+// Exception: a bare TypingNullT value flowing into a non-nullable
+// slot is promoted to Error. The structural-literal fidelity caveat
+// doesn't apply - `null` has exactly one inhabitant, no synthesis
+// shortcut hides a valid program here. The severity matches the
+// project policy: provably wrong = Error, gate runtime.
 //
 // ErrorType / Dynamic short-circuit: a poisoned RHS already produced
 // a diagnostic and any-likes are universally assignable, so no extra
@@ -2058,12 +2065,19 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 	if declared.IsAssignableFrom(valType) {
 		return
 	}
+	severity := IssueHint
+	var suggestion string
+	if _, isNull := valType.(*rl.TypingNullT); isNull {
+		severity = IssueError
+		suggestion = fmt.Sprintf("To allow null here, declare the slot as '%s?'", declared.Name())
+	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     valNode.Span(),
-		Severity: IssueHint,
+		Severity: severity,
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
 			valType.Name(), declared.Name()),
+		Suggestion: suggestion,
 	})
 }
 
