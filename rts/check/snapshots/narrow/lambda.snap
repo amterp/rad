@@ -54,3 +54,64 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+### TITLE ###
+RecursiveLambdaTupleReturnCollapsesNeverArm
+### DESCRIPTION ###
+A recursive lambda's inferred return type used to surface
+`int|[never, int]` - the recursive arm synth'd to `[never, int]`
+(self_call's return was still being inferred, so it slot was
+Never). Tuples with any Never position are uninhabited, so the
+union join drops them; the final type is `int`.
+### INPUT ###
+self_call = fn(n: int):
+    if n <= 0:
+        return 1
+    return self_call(n-1), 2
+
+x: int = self_call(5)
+### STDOUT ###
+# Identifier types
+  self_call @ 1:1 -> <no-type>
+  n @ 2:8 -> int
+  self_call @ 4:12 -> fn(int) -> never
+  n @ 4:22 -> int
+  x @ 6:1 -> <no-type>
+  self_call @ 6:10 -> fn(int) -> int
+
+# Symbol types
+  n (param): int
+  self_call (local): fn(int) -> int
+  x (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+RecursiveLambdaScalarBaseCaseStillWorks
+### DESCRIPTION ###
+Regression lock for the scalar case the collapse already
+covered before tuples: a recursive lambda whose recursive arm
+is just `self_call(n-1)` (bare Never during inference) returns
+the base case's type, not `int|never`.
+### INPUT ###
+self_call = fn(n: int) -> int:
+    if n <= 0:
+        return 1
+    return self_call(n-1)
+
+x: int = self_call(5)
+### STDOUT ###
+# Identifier types
+  self_call @ 1:1 -> <no-type>
+  n @ 2:8 -> int
+  self_call @ 4:12 -> fn(int) -> never
+  n @ 4:22 -> int
+  x @ 6:1 -> <no-type>
+  self_call @ 6:10 -> fn(int) -> int
+
+# Symbol types
+  n (param): int
+  self_call (local): fn(int) -> int
+  x (local): int
+
+# Diagnostics
+  (none)

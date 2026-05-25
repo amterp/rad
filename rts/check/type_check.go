@@ -1721,18 +1721,48 @@ func flattenUnion(types []rl.TypingT) []rl.TypingT {
 
 // dropNeverAndErrorType filters out the two "empty contribution"
 // markers. Never means "this arm was proven unreachable"; ErrorType
-// is the checker'\''s poison sentinel - both should disappear in a
+// is the checker's poison sentinel - both should disappear in a
 // join (unioning Never or ErrorType with X yields X).
+//
+// Tuple types with any Never position are also uninhabited - a tuple
+// requires every slot filled, and Never has no values. Collapse them
+// here so they drop with the rest. This shows up most often in
+// recursive-lambda inferred returns: `fn(n): if n<=0: return 1;
+// return self_call(n-1), 2` synths the recursive arm to `[never,
+// int]` while the lambda's return type is still being computed; we
+// want the final type to be `int`, not `int|[never, int]`.
 func dropNeverAndErrorType(types []rl.TypingT) []rl.TypingT {
 	out := make([]rl.TypingT, 0, len(types))
 	for _, t := range types {
-		switch t.(type) {
-		case *rl.TypingNeverT, *rl.TypingErrorTypeT:
+		if isUninhabited(t) {
 			continue
 		}
 		out = append(out, t)
 	}
 	return out
+}
+
+// isUninhabited reports whether `t` has no values at all. Bare Never
+// and ErrorType are uninhabited by definition. A tuple is
+// uninhabited if any of its positions is uninhabited (the recursion
+// handles nested tuples like `[int, [never, str]]`).
+//
+// Lists and maps are NOT collapsed when their element / value type is
+// Never - the empty list and empty map are valid inhabitants of any
+// `T[]` and `{K: V}`. Only tuples have a fixed-arity inhabitedness
+// constraint.
+func isUninhabited(t rl.TypingT) bool {
+	switch v := t.(type) {
+	case *rl.TypingNeverT, *rl.TypingErrorTypeT:
+		return true
+	case *rl.TypingTupleT:
+		for _, elem := range v.Types() {
+			if isUninhabited(elem) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // mergeStructuralByKind collapses arms of the same "merge kind" into

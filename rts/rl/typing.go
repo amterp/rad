@@ -426,6 +426,13 @@ func (t *TypingTupleT) Name() string {
 	return sb.String()
 }
 
+// Types returns the tuple's positional element types. Exposed for
+// structural inspection (e.g. collapsing tuples with Never positions
+// in the type checker's union-join pipeline).
+func (t *TypingTupleT) Types() []TypingT {
+	return t.types
+}
+
 func (t *TypingTupleT) IsCompatibleWith(val TypingCompatVal) bool {
 	// 1. Value‐level check
 	if val.Val != nil {
