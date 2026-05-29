@@ -2236,7 +2236,7 @@ command build:
 if verbose:
     print(&quot;Checking project structure...&quot;.yellow())
 
-if not path_exists(&quot;package.json&quot;):
+if not get_path(&quot;package.json&quot;)[&quot;exists&quot;]:
     print_err(&quot;Error: package.json not found&quot;.red())
     print_err(&quot;Run this script from the project root&quot;.yellow())
     exit(1)

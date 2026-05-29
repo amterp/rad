@@ -1565,7 +1565,7 @@ Most of the time, it is, so I follow that with a <code>brew install</code>.</p>
 Facilitates checking a brew formula before installing it.
 ---
 <span class="hll">args:
-</span><span class="hll">    formula string # Name of the formula to install.
+</span><span class="hll">    formula str # Name of the formula to install.
 </span></code></pre></div></td></tr></table></div>
 <p><code>formula</code> will serve both as the variable name for the rest of the script, and be exposed to the user as the script's CLI API.</p>
 <p>Setup done. First thing we'll wanna do is run <code>brew info</code> with the formula. We'll do this via a <a href="../../guide/shell-commands/">shell command</a>.</p>
@@ -1583,7 +1583,7 @@ Facilitates checking a brew formula before installing it.
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
 
 <span class="hll">$`brew info {formula}`
 </span></code></pre></div></td></tr></table></div>
@@ -1605,7 +1605,7 @@ The default prompt is <code>Confirm? [Y/n] &gt;</code>, which works fine for us 
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
 
 $`brew info {formula}`
 <span class="hll">if confirm():
@@ -1630,7 +1630,7 @@ We need to pay close attention to whitespace so we make sure the command comes o
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
 <span class="hll">    cask c bool    # Enable if it&#39;s a cask.
 </span>
 $`brew info {formula}`

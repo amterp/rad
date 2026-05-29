@@ -1779,7 +1779,8 @@ print(&quot;{name:.2}&quot;)   // Error: cannot format string with decimal place
 print(&quot;{name:,}&quot;)    // Error: cannot format string with thousands separator
 </code></pre></div>
 <p>However, padding, fill characters, and zero-padding work on all types:</p>
-<div class="highlight"><pre><span></span><code>print(&quot;{name:10}&quot;)     // &quot;     Alice&quot; (padded to 10 chars)
+<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
+print(&quot;{name:10}&quot;)     // &quot;     Alice&quot; (padded to 10 chars)
 print(&quot;{name:*&gt;10}&quot;)   // &quot;*****Alice&quot; (fill with *, any type)
 print(&quot;{name:08}&quot;)     // &quot;000Alice&quot;   (zero-pad shorthand, any type)
 </code></pre></div>

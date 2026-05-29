@@ -64,7 +64,7 @@ We want the script to accept a formula as an argument, i.e. the formula we may b
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
 ```
 
 `formula` will serve both as the variable name for the rest of the script, and be exposed to the user as the script's CLI API.
@@ -81,7 +81,7 @@ This uses the `$` syntax.
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
 
 $`brew info {formula}`
 ```
@@ -99,7 +99,7 @@ The default prompt is `Confirm? [Y/n] > `, which works fine for us here, so we'l
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
 
 $`brew info {formula}`
 if confirm():
@@ -119,7 +119,7 @@ We need to pay close attention to whitespace so we make sure the command comes o
 Facilitates checking a brew formula before installing it.
 ---
 args:
-    formula string # Name of the formula to install.
+    formula str # Name of the formula to install.
     cask c bool    # Enable if it's a cask.
 
 $`brew info {formula}`

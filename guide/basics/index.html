@@ -2587,7 +2587,8 @@ print(&quot;alice&quot; in scores)    // true
 print(&quot;charlie&quot; in scores)  // false
 </code></pre></div>
 <p>You can use <code>not in</code> to check for the absence of an item:</p>
-<div class="highlight"><pre><span></span><code>print(&quot;david&quot; not in names)  // true
+<div class="highlight"><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+print(&quot;david&quot; not in names)  // true
 print(&quot;alice&quot; not in names)  // false
 </code></pre></div>
 <h3 id="concatenation">Concatenation<a class="headerlink" href="#concatenation" title="Permanent link">&para;</a></h3>
@@ -2690,7 +2691,8 @@ For a complete list of all built-in functions, see the <a href="../../reference/
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <p>Rad employs very standard if statements.</p>
 <p>You are <strong>not</strong> required to wrap conditions in parentheses <code>()</code>.</p>
-<div class="highlight"><pre><span></span><code>if units == &quot;metric&quot;:
+<div class="highlight"><pre><span></span><code>units = &quot;metric&quot;
+if units == &quot;metric&quot;:
     print(&quot;That&#39;s 10 meters.&quot;)
 else if units == &quot;imperial&quot;:
     print(&quot;That&#39;s almost 33 feet.&quot;)
@@ -2747,7 +2749,8 @@ Charlie is at index 2
 <li><strong><code>loop.src</code></strong> - An immutable snapshot of the original collection</li>
 </ul>
 <p>You can name the context variable anything you like, but <code>loop</code> is the convention for for-loops:</p>
-<div class="highlight"><pre><span></span><code>for name in names with loop:
+<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+for name in names with loop:
     print(&quot;Processing {loop.idx + 1} of {loop.src.len()}: {name}&quot;)
 </code></pre></div>
 <div class="result">
@@ -2784,7 +2787,8 @@ bob green
 </div>
 
 <p>You can also combine map iteration with the context object:</p>
-<div class="highlight"><pre><span></span><code>for k, v in colors with loop:
+<div class="highlight"><pre><span></span><code>colors = { &quot;alice&quot;: &quot;blue&quot;, &quot;bob&quot;: &quot;green&quot; }
+for k, v in colors with loop:
     print(&quot;{loop.idx}: {k} = {v}&quot;)
 </code></pre></div>
 <div class="result">
@@ -2900,7 +2904,7 @@ Count: 2
 <span class="normal">13</span>
 <span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
     a float
-    op string
+    op str
     b float
 
 switch op:
@@ -2929,7 +2933,7 @@ For example, the above <code>default</code> could be made into a single line:</p
 <span class="normal">12</span>
 <span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
     a float
-    op string
+    op str
     b float
 
 switch op:
@@ -2952,7 +2956,7 @@ Switch <strong>expressions</strong> can be used in assignments.</p>
 <span class="normal">7</span>
 <span class="normal">8</span>
 <span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
-    object string
+    object str
 
 sound = switch object:
     case &quot;car&quot; -&gt; &quot;vroom&quot;
@@ -2975,7 +2979,7 @@ If you want to write a case as a block in a switch expression, you can use the <
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
-    object string
+    object str
 
 <span class="hll">sound, plural = switch object:
 </span><span class="hll">    case &quot;car&quot; -&gt; &quot;vroom&quot;, &quot;cars&quot;

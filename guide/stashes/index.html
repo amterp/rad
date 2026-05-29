@@ -1874,7 +1874,7 @@ Current preferences: editor=nano, theme=light
 <p>Beyond state, stashes can also store arbitrary files. This is useful for caching larger data, storing user-created content, or managing configuration files.</p>
 <h3 id="writing-files">Writing Files<a class="headerlink" href="#writing-files" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/functions/#write_stash_file"><code>write_stash_file(path, content)</code></a> writes a file to your stash:</p>
-<div class="highlight"><pre><span></span><code>write_stash_file(&quot;cache.json&quot;, &#39;{&quot;data&quot;: [1, 2, 3]}&#39;)
+<div class="highlight"><pre><span></span><code>write_stash_file(&quot;cache.json&quot;, r&#39;{&quot;data&quot;: [1, 2, 3]}&#39;)
 write_stash_file(&quot;logs/run.log&quot;, &quot;Script executed at {now().time}&quot;)
 </code></pre></div>
 <p>Nested paths work automatically - Rad creates any necessary directories.</p>

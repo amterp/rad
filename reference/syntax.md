@@ -964,14 +964,21 @@ fn format_text(text: str, *, uppercase: bool = false, prefix: str = ""):
 
 formatted = format_text("hello", uppercase=true, prefix=">>> ")
 
-// Complex type annotations  
+// Function-typed parameters and union returns
 fn process_data(
-    input: list[str], 
-    callback: fn(str) -> bool,
-    options: {config: str, debug?: bool}
-) -> error|{processed: int, failed: int}:
-    // function implementation
-    return {processed: 10, failed: 0}
+    input: str[],
+    callback: fn(str) -> bool
+) -> int|error:
+    matched = 0
+    for s in input:
+        if callback(s):
+            matched += 1
+    return matched
+
+fn is_long(s: str) -> bool:
+    return s.len() > 5
+
+count = process_data(["a", "bb", "ccccc", "dddddd"], is_long)
 ```
 
 ### Map Dot Syntax
@@ -1155,18 +1162,21 @@ error         // Error type
 
 ```rad
 list          // List of any type
-list[T]       // List of specific type T
-str[]         // List of strings (shorthand for list[str])
+str[]         // List of strings
+int[]         // List of integers
 any[]         // List of any type
 map           // Map/object with any keys/values
-map[K,V]      // Map with specific key/value types
+{str: int}    // Map with specific key/value types
 ```
+
+The `T[]` suffix is the only way to write a typed list. There's no
+`list[T]` form; one canonical spelling keeps things simple.
 
 ### Optional Types
 
 ```rad
 str?          // Optional string (can be null)
-any?          // Optional any type  
+any?          // Optional any type
 int?          // Optional integer
 ```
 
@@ -1177,6 +1187,20 @@ int|float     // Either int or float
 str|list      // Either string or list
 error|str     // Either error or string (common for fallible operations)
 ```
+
+### Parenthesized Type Groups
+
+Parentheses group a union so list / optional modifiers stack on
+top of the whole group rather than just the rightmost arm:
+
+```rad
+(int|str)[]      // List whose elements are int or str
+(int|str)?       // Optional value that's int or str
+((int|str)|bool)[]?  // Combinations compose freely
+```
+
+Without the parens, `int|str[]` parses as `int | (str[])` - an int
+or a list of strings, not a list of (int|str).
 
 ### Enum Types
 
@@ -1269,16 +1293,20 @@ args:
 
 As a convention, align comments 2 spaces from the longest argument in the aligned group.
 
+Good - align comments within reason (2 spaces from longest):
+
 ```rad
-// Good: Align comments within reason (2 spaces from longest)
 args:
     name str        # User's full name
     age int         # Age in years
     email str?      # Contact email
     very_long_param str  # Don't align with this one if it's much longer
     city str        # Align with the shorter ones instead
+```
 
-// Bad: Inconsistent alignment
+Bad - inconsistent alignment:
+
+```rad
 args:
     name str      # User's full name
     age int            # Age in years

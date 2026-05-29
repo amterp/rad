@@ -31,7 +31,7 @@
 ## Reference
 
 - [Language Reference](https://amterp.dev/rad/reference/syntax.md): Script Structure, Comments, Data Types, Variables and Assignment, String Interpolation, Ternary Operator, Collection Access and Slicing, Control Flow, Additional Control Flow, Functions, List Comprehensions, Argument Parsing, Script Commands, Shell Commands, JSON Processing and Display Blocks, Advanced Features, Operators, Scoping and Variables, Built-in Types and Methods, Type System, Rad Code Style
-- [Functions](https://amterp.dev/rad/reference/functions.md): How to Read This Document, Output, Misc, Input, Parsing, Text, Maps, Random, Picking, HTTP, Math, Hashing & Encode/Decode, System & Files, Home & Stash, Time
+- [Functions](https://amterp.dev/rad/reference/functions.md): How to Read This Document, Crypto, Formatting, HTTP, IO, Lists, Math, Parsing, Random, Stash, Strings, System, Time
 
 ## Migrations
 

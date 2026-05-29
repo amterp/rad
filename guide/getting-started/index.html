@@ -1845,14 +1845,8 @@ versions as the language evolves. Your feedback directly shapes Rad's future!</p
 <p>Let's get into it.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <h3 id="macos-homebrew">macOS (Homebrew)<a class="headerlink" href="#macos-homebrew" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>amterp/rad/rad
+<div class="highlight"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>rad
 </code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Use the Rad tap</p>
-<p>There is a separate <code>rad</code> formula in Homebrew Core (<code>brew install rad</code>), but it currently only installs the <code>rad</code>
-interpreter - <strong>not</strong> the <code>radls</code> language server needed for editor support. We're working on getting the Homebrew Core
-formula updated, but in the meantime, if you want language server support, use the custom tap above.</p>
-</div>
 <h3 id="go-from-source-all-platforms">Go (from source, all platforms)<a class="headerlink" href="#go-from-source-all-platforms" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad@latest
 go<span class="w"> </span>install<span class="w"> </span>github.com/amterp/rad/radls@latest

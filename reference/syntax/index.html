@@ -2070,6 +2070,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#parenthesized-type-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parenthesized Type Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enum-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3552,6 +3563,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#parenthesized-type-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parenthesized Type Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enum-types" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4569,14 +4591,21 @@ fn format_text(text: str, *, uppercase: bool = false, prefix: str = &quot;&quot;
 
 formatted = format_text(&quot;hello&quot;, uppercase=true, prefix=&quot;&gt;&gt;&gt; &quot;)
 
-// Complex type annotations  
+// Function-typed parameters and union returns
 fn process_data(
-    input: list[str], 
-    callback: fn(str) -&gt; bool,
-    options: {config: str, debug?: bool}
-) -&gt; error|{processed: int, failed: int}:
-    // function implementation
-    return {processed: 10, failed: 0}
+    input: str[],
+    callback: fn(str) -&gt; bool
+) -&gt; int|error:
+    matched = 0
+    for s in input:
+        if callback(s):
+            matched += 1
+    return matched
+
+fn is_long(s: str) -&gt; bool:
+    return s.len() &gt; 5
+
+count = process_data([&quot;a&quot;, &quot;bb&quot;, &quot;ccccc&quot;, &quot;dddddd&quot;], is_long)
 </code></pre></div>
 <h3 id="map-dot-syntax">Map Dot Syntax<a class="headerlink" href="#map-dot-syntax" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>person = {&quot;name&quot;: &quot;alice&quot;, &quot;details&quot;: {&quot;age&quot;: 25}}
@@ -4700,15 +4729,17 @@ error         // Error type
 </code></pre></div>
 <h3 id="collection-types">Collection Types<a class="headerlink" href="#collection-types" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>list          // List of any type
-list[T]       // List of specific type T
-str[]         // List of strings (shorthand for list[str])
+str[]         // List of strings
+int[]         // List of integers
 any[]         // List of any type
 map           // Map/object with any keys/values
-map[K,V]      // Map with specific key/value types
+{str: int}    // Map with specific key/value types
 </code></pre></div>
+<p>The <code>T[]</code> suffix is the only way to write a typed list. There's no
+<code>list[T]</code> form; one canonical spelling keeps things simple.</p>
 <h3 id="optional-types">Optional Types<a class="headerlink" href="#optional-types" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>str?          // Optional string (can be null)
-any?          // Optional any type  
+any?          // Optional any type
 int?          // Optional integer
 </code></pre></div>
 <h3 id="union-types">Union Types<a class="headerlink" href="#union-types" title="Permanent link">&para;</a></h3>
@@ -4716,6 +4747,15 @@ int?          // Optional integer
 str|list      // Either string or list
 error|str     // Either error or string (common for fallible operations)
 </code></pre></div>
+<h3 id="parenthesized-type-groups">Parenthesized Type Groups<a class="headerlink" href="#parenthesized-type-groups" title="Permanent link">&para;</a></h3>
+<p>Parentheses group a union so list / optional modifiers stack on
+top of the whole group rather than just the rightmost arm:</p>
+<div class="highlight"><pre><span></span><code>(int|str)[]      // List whose elements are int or str
+(int|str)?       // Optional value that&#39;s int or str
+((int|str)|bool)[]?  // Combinations compose freely
+</code></pre></div>
+<p>Without the parens, <code>int|str[]</code> parses as <code>int | (str[])</code> - an int
+or a list of strings, not a list of (int|str).</p>
 <h3 id="enum-types">Enum Types<a class="headerlink" href="#enum-types" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>[&quot;option1&quot;, &quot;option2&quot;]        // Enum with specific string values
 [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;] // Enum for time units
@@ -4780,16 +4820,16 @@ args:
 </code></pre></div>
 <h3 id="comment-alignment">Comment Alignment<a class="headerlink" href="#comment-alignment" title="Permanent link">&para;</a></h3>
 <p>As a convention, align comments 2 spaces from the longest argument in the aligned group.</p>
-<div class="highlight"><pre><span></span><code>// Good: Align comments within reason (2 spaces from longest)
-args:
+<p>Good - align comments within reason (2 spaces from longest):</p>
+<div class="highlight"><pre><span></span><code>args:
     name str        # User&#39;s full name
     age int         # Age in years
     email str?      # Contact email
     very_long_param str  # Don&#39;t align with this one if it&#39;s much longer
     city str        # Align with the shorter ones instead
-
-// Bad: Inconsistent alignment
-args:
+</code></pre></div>
+<p>Bad - inconsistent alignment:</p>
+<div class="highlight"><pre><span></span><code>args:
     name str      # User&#39;s full name
     age int            # Age in years
     email str?  # Contact email
