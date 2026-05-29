@@ -2,6 +2,7 @@ package rl
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -501,11 +502,41 @@ func NewStructType(named map[MapNamedKey]TypingT) *TypingStructT {
 	}
 }
 
+// Field looks up a declared key by name, returning its type, whether
+// it's optional, and whether it exists at all. Used by the type
+// checker to resolve `m.key` / `m["key"]` access against a known
+// struct shape (e.g. a builtin's typed-map return value).
+func (t *TypingStructT) Field(name string) (typ TypingT, optional bool, found bool) {
+	for mapKey, fieldT := range t.named {
+		if mapKey.Name == name {
+			return fieldT, mapKey.IsOptional, true
+		}
+	}
+	return nil, false, false
+}
+
+// Fields exposes the declared keys for enumeration (LSP completion,
+// hover). The returned map is the live backing store - callers must
+// not mutate it.
+func (t *TypingStructT) Fields() map[MapNamedKey]TypingT {
+	return t.named
+}
+
 func (t *TypingStructT) Name() string {
+	// Sort keys so the rendered name is deterministic - it surfaces
+	// in diagnostics, hover, and snapshot output, all of which need
+	// stable ordering (Go map iteration is randomized). We don't
+	// retain declaration order: `named` is a map, so it's already
+	// lost by here; alphabetical is the stable choice available.
+	keys := make([]MapNamedKey, 0, len(t.named))
+	for mapKey := range t.named {
+		keys = append(keys, mapKey)
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i].Name < keys[j].Name })
+
 	var sb strings.Builder
 	sb.WriteString("{ ")
-	i := 0
-	for mapKey, typ := range t.named {
+	for i, mapKey := range keys {
 		if i > 0 {
 			sb.WriteString(", ")
 		}
@@ -514,8 +545,14 @@ func (t *TypingStructT) Name() string {
 			sb.WriteString("?")
 		}
 		sb.WriteString(": ")
-		sb.WriteString(typ.Name())
-		i++
+		// Guard against a nil field type: a struct built with a nil
+		// value (not reachable via the type resolver today, but the
+		// NewStructType API permits it) would otherwise panic here.
+		if typ := t.named[mapKey]; typ != nil {
+			sb.WriteString(typ.Name())
+		} else {
+			sb.WriteString(T_ANY)
+		}
 	}
 	sb.WriteString(" }")
 	return sb.String()

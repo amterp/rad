@@ -118,6 +118,52 @@ func findSimilarNames(scope *Scope, builtins map[string]bool, target string, lim
 	return out
 }
 
+// findSimilarInSet ranks a fixed candidate list by edit distance to
+// `target`, returning up to `limit` close matches. Same threshold as
+// findSimilarNames, but for cases where the candidates are an
+// enumerable set (e.g. a struct type's declared keys) rather than a
+// scope chain.
+func findSimilarInSet(candidates []string, target string, limit int) []string {
+	if limit <= 0 {
+		return nil
+	}
+	maxDist := len(target)/2 + 1
+	if maxDist < 2 {
+		maxDist = 2
+	}
+
+	type cand struct {
+		name string
+		dist int
+	}
+	var cands []cand
+	for _, name := range candidates {
+		if name == target {
+			continue
+		}
+		d := levenshtein(target, name)
+		if d > 0 && d <= maxDist {
+			cands = append(cands, cand{name: name, dist: d})
+		}
+	}
+
+	sort.Slice(cands, func(i, j int) bool {
+		if cands[i].dist != cands[j].dist {
+			return cands[i].dist < cands[j].dist
+		}
+		return cands[i].name < cands[j].name
+	})
+
+	if len(cands) > limit {
+		cands = cands[:limit]
+	}
+	out := make([]string, len(cands))
+	for i, c := range cands {
+		out[i] = c.name
+	}
+	return out
+}
+
 // formatDidYouMean renders a list of suggestion candidates into the
 // `did you mean ...?` line shown after a static diagnostic. Three
 // cases:

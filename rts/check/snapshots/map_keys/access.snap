@@ -1,0 +1,164 @@
+### TITLE ###
+UnknownKeyDotAccess
+### DESCRIPTION ###
+Reading a key the typed-map return shape doesn't declare fires
+ErrUnknownMapKey - get_path has no 'nonsense' key.
+### INPUT ###
+gp = get_path("f")
+print(gp.nonsense)
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  print @ 2:1 -> dynamic
+  gp @ 2:7 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  [error] RAD40014 @ 2:10 - Key "nonsense" does not exist on this map
+    help: Available keys: accessed_millis, base_name, exists, full_path, modified_millis, permissions, size_bytes, type
+### TITLE ###
+UnknownKeyBracketLiteral
+### DESCRIPTION ###
+A string-literal bracket index is checked the same as dot access.
+### INPUT ###
+gp = get_path("f")
+print(gp["nonsense"])
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  print @ 2:1 -> dynamic
+  gp @ 2:7 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  [error] RAD40014 @ 2:10 - Key "nonsense" does not exist on this map
+    help: Available keys: accessed_millis, base_name, exists, full_path, modified_millis, permissions, size_bytes, type
+### TITLE ###
+KnownRequiredKey
+### DESCRIPTION ###
+A declared required key resolves cleanly, no diagnostic.
+### INPUT ###
+gp = get_path("f")
+print(gp.full_path)
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  print @ 2:1 -> dynamic
+  gp @ 2:7 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  (none)
+### TITLE ###
+OptionalKeyNoWarning
+### DESCRIPTION ###
+An optional key (size_bytes?) resolves to its type with no
+"may be absent" diagnostic, per the typed-map access design.
+### INPUT ###
+gp = get_path("f")
+print(gp.size_bytes)
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  print @ 2:1 -> dynamic
+  gp @ 2:7 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  (none)
+### TITLE ###
+UfcsCallNotTreatedAsKey
+### DESCRIPTION ###
+`gp.keys()` is a UFCS call, not a key access, so it must not
+fire ErrUnknownMapKey even though 'keys' isn't a declared key.
+### INPUT ###
+gp = get_path("f")
+print(gp.keys())
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  print @ 2:1 -> dynamic
+  gp @ 2:7 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+  keys @ 2:10 -> dynamic
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  (none)
+### TITLE ###
+WriteUnknownKeyAllowed
+### DESCRIPTION ###
+Writing an undeclared key is a legal runtime add, so the final
+write segment is exempt from the unknown-key check.
+### INPUT ###
+gp = get_path("f")
+gp.newkey = 5
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  gp @ 2:1 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  (none)
+### TITLE ###
+WriteThroughUnknownIntermediateFires
+### DESCRIPTION ###
+Only the final write segment is exempt; an undeclared
+intermediate key is still a read and fires ErrUnknownMapKey.
+### INPUT ###
+gp = get_path("f")
+gp.nonsense.x = 5
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  gp @ 2:1 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+
+# Diagnostics
+  [error] RAD40014 @ 2:4 - Key "nonsense" does not exist on this map
+    help: Available keys: accessed_millis, base_name, exists, full_path, modified_millis, permissions, size_bytes, type
+### TITLE ###
+DynamicKeyNotChecked
+### DESCRIPTION ###
+A non-literal (dynamic) key can't be resolved statically, so no
+existence check fires.
+### INPUT ###
+gp = get_path("f")
+k = "full_path"
+print(gp[k])
+### STDOUT ###
+# Identifier types
+  gp @ 1:1 -> <no-type>
+  get_path @ 1:6 -> dynamic
+  k @ 2:1 -> <no-type>
+  print @ 3:1 -> dynamic
+  gp @ 3:7 -> { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+  k @ 3:10 -> str
+
+# Symbol types
+  gp (local): { "accessed_millis"?: int, "base_name"?: str, "exists": bool, "full_path": str, "modified_millis"?: int, "permissions"?: str, "size_bytes"?: int, "type"?: str }
+  k (local): str
+
+# Diagnostics
+  (none)

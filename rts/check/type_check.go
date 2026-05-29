@@ -2,6 +2,8 @@ package check
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
@@ -2095,7 +2097,11 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		// frame for these: indexed assign mutates the container's
 		// contents, not the binding, so the symbol's type is unchanged.
 		if vp, ok := a.Targets[i].(*rl.VarPath); ok {
-			_ = tc.synth(vp) // walk children for hover/use tracking
+			// Walk children for hover/use tracking. asTarget=true so
+			// the final segment (the write slot) doesn't fire the
+			// unknown-key check - writing an undeclared key is a
+			// legal runtime add - while intermediate reads still do.
+			_ = tc.synthVarPath(vp, true)
 			tc.checkIndexedAssignTarget(vp, val, valType)
 			continue
 		}
@@ -2354,7 +2360,7 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 	case *rl.Call:
 		return tc.synthCall(v, 0)
 	case *rl.VarPath:
-		return tc.synthVarPath(v)
+		return tc.synthVarPath(v, false)
 	case *rl.OpBinary:
 		return tc.synthOpBinary(v)
 	case *rl.OpUnary:
@@ -2420,24 +2426,40 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.Ty
 }
 
 // synthVarPath walks a chained path expression (e.g. `a.b[c].d`,
-// `xs.sort()`). Non-UFCS segments are visited for hover/symbol
-// purposes only - their actual semantics (field access, indexing,
-// slicing) get static types in a later sub-commit.
+// `xs.sort()`), threading the running type from segment to segment so
+// each access resolves against the shape it actually has.
 //
 // UFCS segments are calls whose first positional argument is the
 // path's chain so far. We pull the Call out of the segment and
 // type-check it with an implicit-receiver count of 1, so arity
-// checks count the chain-receiver as the first arg.
-func (tc *typeChecker) synthVarPath(v *rl.VarPath) rl.TypingT {
-	_ = tc.synth(v.Root)
-	for _, seg := range v.Segments {
+// checks count the chain-receiver as the first arg; the chain then
+// continues from the call's return type.
+//
+// Field and string-literal-key access against a closed struct shape
+// (a builtin's typed-map return value, an annotated struct map) is
+// existence-checked: an unknown key is a guaranteed runtime
+// KeyNotFound, so we fire ErrUnknownMapKey. asTarget marks this path
+// as an assignment LHS; only its final segment is exempt from the
+// check, since writing an undeclared key is a legal runtime add
+// while every intermediate read must still resolve.
+func (tc *typeChecker) synthVarPath(v *rl.VarPath, asTarget bool) rl.TypingT {
+	cur := tc.synth(v.Root)
+	for i, seg := range v.Segments {
+		last := i == len(v.Segments)-1
 		switch {
 		case seg.IsUFCS:
 			if call, ok := seg.Index.(*rl.Call); ok {
-				_ = tc.synthCall(call, 1)
+				cur = tc.synthCall(call, 1)
+			} else {
+				// Defensive: the converter always sets Index to the
+				// Call when IsUFCS, so this branch is unreachable.
+				cur = rl.NewDynamicType()
 			}
+		case seg.Field != nil:
+			cur = tc.synthMemberAccess(cur, *seg.Field, seg.Span(), asTarget && last)
 		case seg.Index != nil:
 			_ = tc.synth(seg.Index)
+			cur = tc.synthIndexAccess(cur, seg.Index, seg.Span(), asTarget && last)
 		case seg.IsSlice:
 			if seg.Start != nil {
 				_ = tc.synth(seg.Start)
@@ -2445,9 +2467,86 @@ func (tc *typeChecker) synthVarPath(v *rl.VarPath) rl.TypingT {
 			if seg.End != nil {
 				_ = tc.synth(seg.End)
 			}
+			cur = rl.NewDynamicType()
 		}
 	}
-	return tc.record(v, rl.NewDynamicType())
+	return tc.record(v, cur)
+}
+
+// synthMemberAccess resolves a dot access (`recv.name`) against the
+// receiver's static type. On a closed struct shape an unknown key is
+// a guaranteed runtime KeyNotFound, so we emit ErrUnknownMapKey -
+// unless isWriteTarget, where writing a new key is a legal add.
+// Optional keys are valid keys: they resolve to their declared type
+// and never fire here, even though the key may be absent at runtime.
+func (tc *typeChecker) synthMemberAccess(recv rl.TypingT, name string, span rl.Span, isWriteTarget bool) rl.TypingT {
+	switch r := recv.(type) {
+	case *rl.TypingStructT:
+		if fieldT, _, found := r.Field(name); found {
+			if fieldT == nil {
+				// Defensive: a struct built with a nil field type
+				// shouldn't flow a nil into ExprTypes (record would
+				// then store nil and later .Name() calls would panic).
+				return rl.NewDynamicType()
+			}
+			return fieldT
+		}
+		if !isWriteTarget {
+			tc.emitUnknownMapKey(name, span, r)
+		}
+		return rl.NewDynamicType()
+	case *rl.TypingMapT:
+		// Uniform map: every key shares one type, so we can't prove
+		// any particular key is absent. Resolve to the value type.
+		return r.ValT()
+	}
+	return rl.NewDynamicType()
+}
+
+// synthIndexAccess resolves a bracket access (`recv[expr]`). A
+// static string-literal index against a struct shape is equivalent
+// to a dot access and gets the same existence check. Dynamic keys
+// and interpolated strings can't be resolved statically, so they
+// fall through to Dynamic.
+func (tc *typeChecker) synthIndexAccess(recv rl.TypingT, index rl.Node, span rl.Span, isWriteTarget bool) rl.TypingT {
+	switch r := recv.(type) {
+	case *rl.TypingStructT:
+		if lit, ok := index.(*rl.LitString); ok && lit.Simple {
+			// Point the diagnostic at the key literal itself, not the
+			// whole `["key"]` segment span - matches the precision of
+			// dot access, where the span covers just the field name.
+			return tc.synthMemberAccess(recv, lit.Value, lit.Span(), isWriteTarget)
+		}
+		return rl.NewDynamicType()
+	case *rl.TypingMapT:
+		return r.ValT()
+	}
+	return rl.NewDynamicType()
+}
+
+// emitUnknownMapKey records the unknown-key diagnostic. The message
+// stays short (the full struct shape can be very long and is better
+// surfaced via hover); the suggestion does the heavy lifting - a
+// `did you mean` fuzzy match against the declared keys when one is
+// close, followed by the full sorted key list. Both are deterministic.
+func (tc *typeChecker) emitUnknownMapKey(name string, span rl.Span, structT *rl.TypingStructT) {
+	keys := make([]string, 0, len(structT.Fields()))
+	for k := range structT.Fields() {
+		keys = append(keys, k.Name)
+	}
+	sort.Strings(keys)
+
+	suggestion := fmt.Sprintf("Available keys: %s", strings.Join(keys, ", "))
+	if didYouMean := formatDidYouMean(findSimilarInSet(keys, name, 3)); didYouMean != "" {
+		suggestion = didYouMean + " " + suggestion
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:       span,
+		Severity:   IssueError,
+		Code:       rl.ErrUnknownMapKey,
+		Message:    fmt.Sprintf("Key %q does not exist on this map", name),
+		Suggestion: suggestion,
+	})
 }
 
 // callSignatureFor returns the static signature of a call's callee,

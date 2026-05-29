@@ -125,6 +125,7 @@ const (
 	ErrDuplicateTypedDeclaration        Error = "40011"
 	ErrUnreachableCase                  Error = "40012"
 	ErrCaseKeyNotInDiscriminantType     Error = "40013"
+	ErrUnknownMapKey                    Error = "40014"
 )
 
 func (e Error) String() string {

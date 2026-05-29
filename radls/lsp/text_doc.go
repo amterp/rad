@@ -265,6 +265,7 @@ type CompletionItemKind int
 const (
 	CompletionKindText     CompletionItemKind = 1
 	CompletionKindFunction CompletionItemKind = 3
+	CompletionKindField    CompletionItemKind = 5
 	CompletionKindVariable CompletionItemKind = 6
 	CompletionKindKeyword  CompletionItemKind = 14
 	CompletionKindSnippet  CompletionItemKind = 15
