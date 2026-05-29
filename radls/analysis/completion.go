@@ -22,7 +22,14 @@ import (
 // file-scope but before plain builtins). Everything else stays
 // at "2".
 const (
-	sortTierLocal           = "0"
+	sortTierLocal = "0"
+	// sortTierMember is for keys of a typed map surfaced at
+	// `recv.<prefix>`. It deliberately shares the local tier: a
+	// member access rarely collides with an in-scope local name, and
+	// when it does the alphabetical Label tiebreak is fine. Members
+	// are added last so dedupe (last-add-wins) keeps the member on
+	// collision.
+	sortTierMember          = sortTierLocal
 	sortTierFile            = "1"
 	sortTierBuiltinRelevant = "1z"
 	sortTierBuiltin         = "2"
@@ -68,6 +75,9 @@ func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePo
 		addFileScopeCompletions(items, snap, bytePos)
 		addEnclosingFnCompletions(items, snap, bytePos)
 	}
+	// Added last so dedupe (last-add-wins) keeps the member entry
+	// when a key shares a name with an in-scope local or builtin.
+	addStructKeyCompletions(items, receiverType)
 	dedupCompletionsInPlace(items)
 	// Sort runs unconditionally - including on the nil-AST path,
 	// where without it the popup order would be whatever
@@ -132,6 +142,41 @@ func firstParamAccepts(sig rts.FnSignature, receiverType rl.TypingT) bool {
 	return (*first.Type).IsAssignableFrom(receiverType)
 }
 
+// addStructKeyCompletions offers the declared keys of a typed map
+// (TypingStructT) when the cursor sits at `recv.<prefix>` and recv
+// resolves to such a shape - e.g. a `get_path` result. These are
+// the most likely completion at a member access, so they get the
+// member tier and lead the popup. Optional keys are marked with a
+// trailing `?` in the detail.
+func addStructKeyCompletions(items *[]lsp.CompletionItem, receiverType rl.TypingT) {
+	structT, ok := receiverType.(*rl.TypingStructT)
+	if !ok {
+		return
+	}
+	for key, fieldT := range structT.Fields() {
+		detail := ""
+		if fieldT != nil {
+			detail = fieldT.Name()
+		}
+		// Disambiguate the `?` suffix: in Rad it means the key may be
+		// absent from the map, not that the value is nullable. The
+		// detail alone reads like a nullable type to most editors, so
+		// the Doc spells out the runtime implication.
+		doc := ""
+		if key.IsOptional {
+			detail += "?"
+			doc = "Optional key - may be absent at runtime; accessing it without a guard errors if missing."
+		}
+		*items = append(*items, lsp.CompletionItem{
+			Label:    key.Name,
+			Kind:     lsp.CompletionKindField,
+			Detail:   detail,
+			Doc:      doc,
+			SortText: sortTierMember,
+		})
+	}
+}
+
 // receiverTypeAtCursor inspects the source immediately before the
 // cursor for a UFCS access pattern (`<ident>.<prefix>`). On a
 // match, it looks up the receiver identifier and synthesises its
@@ -183,7 +228,7 @@ func receiverTypeAtCursor(snap *DocumentVersion, pos lsp.Pos) rl.TypingT {
 	if indexes == nil {
 		return nil
 	}
-	sym := indexes.resolved.File.Lookup(name)
+	sym := resolveReceiverSymbol(indexes, name, pos)
 	if sym == nil {
 		return nil
 	}
@@ -194,6 +239,56 @@ func receiverTypeAtCursor(snap *DocumentVersion, pos lsp.Pos) rl.TypingT {
 		return sym.Declared
 	}
 	return nil
+}
+
+// resolveReceiverSymbol resolves a receiver name to its Symbol using
+// the same scope discipline as buildCompletions: the enclosing
+// function's params and earlier body-locals first, then file scope.
+// Without the enclosing-function tier, a receiver declared as a
+// function local (the common `gp = get_path(...)` inside a fn)
+// wouldn't resolve and the feature would only work at top level.
+//
+// Positions are interpreted against indexes.ast - which may be the
+// last-good snapshot, one keystroke stale. The receiver's enclosing
+// function rarely shifts within a single keystroke, and a miss falls
+// through to the position-independent file-scope lookup, so a stale
+// AST degrades gracefully rather than misresolving.
+func resolveReceiverSymbol(indexes *DocumentVersion, name string, pos lsp.Pos) *check.Symbol {
+	if indexes.ast != nil {
+		if owner, _ := enclosingCallable(indexes.ast, pos); owner != nil {
+			for _, ps := range indexes.resolved.ParamSymbols[owner] {
+				if ps != nil && ps.Name == name {
+					return ps
+				}
+			}
+			// Walk the whole function body (not just top-level
+			// statements) so locals declared inside if/for/switch
+			// blocks resolve too - Rad doesn't open a scope for those,
+			// so the binding lives in the function's scope. The
+			// Scope.Owner == owner guard keeps us from picking up a
+			// same-named local from a *nested* fn/lambda, which does
+			// open its own scope and isn't visible at the cursor.
+			var local *check.Symbol
+			rl.Walk(owner, func(n rl.Node) {
+				assign, ok := n.(*rl.Assign)
+				if !ok || !spanBefore(assign.Span(), pos) {
+					return
+				}
+				for _, target := range assign.Targets {
+					if id, ok := target.(*rl.Identifier); ok && id.Name == name {
+						if s := lookupSymbolForIdent(id, indexes.resolved); s != nil &&
+							s.Scope != nil && s.Scope.Owner == owner {
+							local = s
+						}
+					}
+				}
+			})
+			if local != nil {
+				return local
+			}
+		}
+	}
+	return indexes.resolved.File.Lookup(name)
 }
 
 // pickResolvedSnapshot returns whichever of (snap, snap.lastGood)
