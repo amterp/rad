@@ -79,9 +79,9 @@ type stubChecker struct {
 	result check.Result
 }
 
-func (s *stubChecker) UpdateSrc(string)                             {}
-func (s *stubChecker) Update(*rts.RadTree, string, *rl.SourceFile)  {}
-func (s *stubChecker) Check() (check.Result, error)                 { return s.result, nil }
+func (s *stubChecker) UpdateSrc(string)                            {}
+func (s *stubChecker) Update(*rts.RadTree, string, *rl.SourceFile) {}
+func (s *stubChecker) Check() (check.Result, error)                { return s.result, nil }
 
 // Compile-time interface check. lsp import keeps the file honest if
 // the test ever drops its only lsp reference.

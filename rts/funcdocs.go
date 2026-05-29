@@ -15,8 +15,8 @@ import (
 // callers need.
 type FuncDoc struct {
 	Name        string
-	Description string   // body of the H1 section, before any "##" subsection
-	Signature   string   // single line inside the `## Signature` section
+	Description string // body of the H1 section, before any "##" subsection
+	Signature   string // single line inside the `## Signature` section
 	Parameters  []FuncDocParam
 	Examples    []string // each rad code block inside `## Examples`
 	Category    string
@@ -144,7 +144,7 @@ func ParseFuncDoc(name, src string) (*FuncDoc, error) {
 	return doc, nil
 }
 
-// extractInlineCode pulls the first ``...`` inline-code span from
+// extractInlineCode pulls the first “...“ inline-code span from
 // the given lines. Returns "" when none is found. The signature
 // section is expected to be a single line of inline code; this
 // helper is forgiving about leading blank lines before that line.

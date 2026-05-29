@@ -684,10 +684,10 @@ func (tc *typeChecker) walkStmts(stmts []rl.Node) {
 //
 // For each branch with a condition:
 //   - The condition is interpreted against the accumulated falsy
-//     frame (everything previous branches couldn'\''t match).
+//     frame (everything previous branches couldn'\”t match).
 //   - The branch body walks with WhenTrue layered on the accumulated
 //     frame; subsequent branches accumulate WhenFalse.
-//   - If the branch falls off the end (doesn'\''t return/break/continue),
+//   - If the branch falls off the end (doesn'\”t return/break/continue),
 //     its exit frame contributes to the join.
 //
 // The else branch (no condition) walks with the final accumulated
@@ -735,19 +735,19 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 
 // walkFnDef handles a function definition statement. The body opens
 // a fresh frame so that narrowings active in the surrounding scope
-// don'\''t leak into the function body - a function can be called
-// from anywhere, and the call-site enclosing narrowings aren'\''t
+// don'\”t leak into the function body - a function can be called
+// from anywhere, and the call-site enclosing narrowings aren'\”t
 // available at the body. Body-internal narrowings stay isolated too:
 // after walking, tc.frame is restored to whatever the surrounding
 // scope had before the function definition.
 //
 // Param default expressions are walked under the SURROUNDING frame
-// (defaults are evaluated at call time but in the caller'\''s scope,
-// not the callee'\''s - matching the runtime'\''s lazy default eval).
+// (defaults are evaluated at call time but in the caller'\”s scope,
+// not the callee'\”s - matching the runtime'\”s lazy default eval).
 //
 // Closure rule deferred: same caveat as synthLambda. Captured
 // narrowings from the enclosing frame are NOT preserved. For a
-// closure-friendly design we'\''d need Pyright'\''s reassignment-after-
+// closure-friendly design we'\”d need Pyright'\”s reassignment-after-
 // definition check. Today, nested functions just see Dynamic for
 // outer locals. Conservative but sound.
 func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
@@ -895,16 +895,16 @@ func mapKeyValTypes(iter rl.TypingT) (rl.TypingT, rl.TypingT) {
 }
 
 // walkWhileLoop handles `while [cond]:`. Inside the body the
-// condition'\''s WhenTrue applies (we entered because cond was
+// condition'\”s WhenTrue applies (we entered because cond was
 // truthy); after the loop the WhenFalse applies (we exited because
 // cond finally turned falsy).
 //
 // Sorbet rule for body-assigned vars: before applying the condition
 // narrowing, drop narrowings for any symbol the body reassigns. The
 // body may run any number of times, so a "narrowed before entering
-// the body" type isn'\''t sound for an iteration where the body
+// the body" type isn'\”t sound for an iteration where the body
 // already changed the var. Resetting to the base SymbolTypes /
-// Declared is the conservative answer that lets the body'\''s own
+// Declared is the conservative answer that lets the body'\”s own
 // assignments re-narrow on each iteration as needed.
 //
 // We collect the assigned-symbol set from the body statements with
@@ -1119,17 +1119,17 @@ func loopElementType(iter rl.TypingT) rl.TypingT {
 
 // walkSwitch handles `switch <disc>:` with per-case narrowing of the
 // discriminant. For each case the body walks with the discriminant
-// symbol narrowed to the case'\''s match type; the discriminant'\''s
+// symbol narrowed to the case'\”s match type; the discriminant'\”s
 // residual (= base minus all peeled cases) flows into the default
 // branch.
 //
 // String-enum exhaustiveness: when the discriminant is a closed type
 // (string-enum) and no default arm catches the rest, the residual
-// after peeling all explicit cases should be Never. If it'\''s
+// after peeling all explicit cases should be Never. If it'\”s
 // non-Never, the switch is missing variants - emit an
 // ErrNonExhaustiveSwitch diagnostic naming the unmatched values.
 //
-// Non-enum discriminants get the normal walk (case bodies don'\''t
+// Non-enum discriminants get the normal walk (case bodies don'\”t
 // narrow) and no exhaustiveness check. The mechanism is in place;
 // extending it to int / int-enum / sealed unions is straightforward
 // when those types arrive.
@@ -1246,7 +1246,7 @@ func (tc *typeChecker) walkSwitchAlt(alt rl.Node) bool {
 }
 
 // matchTypeForCaseKeys turns a list of case keys into the type that
-// the discriminant takes inside that case'\''s body. For string
+// the discriminant takes inside that case'\”s body. For string
 // literals we build a string-enum naming the matched values; for
 // anything else we currently return nil (no narrowing applied).
 //
@@ -1268,7 +1268,7 @@ func (tc *typeChecker) matchTypeForCaseKeys(keys []rl.Node) rl.TypingT {
 }
 
 // subtractEnumType removes the values of caseType from base. Returns
-// base unchanged if either side isn'\''t a string-enum. For exhausted
+// base unchanged if either side isn'\”t a string-enum. For exhausted
 // enums (all values peeled), returns Never.
 func subtractEnumType(base, caseType rl.TypingT) rl.TypingT {
 	if base == nil {
@@ -1295,7 +1295,7 @@ func subtractEnumType(base, caseType rl.TypingT) rl.TypingT {
 	return rl.NewStrEnumType(remaining...)
 }
 
-// isClosedDiscriminant reports whether a discriminant'\''s static type
+// isClosedDiscriminant reports whether a discriminant'\”s static type
 // is a closed set the checker can exhaustively analyze. Today: just
 // string-enums. Bool would be a near-term extension (true / false
 // being the closed set), if we add an exhaustive-bool predicate.
@@ -1468,7 +1468,7 @@ func caseKeyDisplayText(n rl.Node) string {
 // emitNonExhaustiveSwitch records a diagnostic naming the unmatched
 // values of a closed discriminant. The message lists the values so
 // the user can read the fix off the diagnostic without inspecting
-// the discriminant'\''s declared type.
+// the discriminant'\”s declared type.
 func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT) {
 	msg := "Switch is not exhaustive"
 	if enum, ok := residual.(*rl.TypingStrEnumT); ok {
@@ -1486,7 +1486,7 @@ func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT
 }
 
 // branchExitsEarly is a deep "does this body always diverge?" check
-// suitable for if/switch branch joins. Phase 4e'\''s "last statement
+// suitable for if/switch branch joins. Phase 4e'\”s "last statement
 // is a return/break/continue" version was too shallow: a common
 // guard pattern like
 //
@@ -1496,7 +1496,7 @@ func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT
 //
 // has return as the second-to-last statement of the if body, but
 // branchExitsEarly only inspected the LAST statement (log_it()), so
-// the surrounding flow didn'\''t pick up the divergence and the
+// the surrounding flow didn'\”t pick up the divergence and the
 // "after-the-if" narrowing was wrong.
 //
 // The new predicate walks the body, recursing through if (every
@@ -1514,13 +1514,13 @@ func (tc *typeChecker) emitNonExhaustiveSwitch(n *rl.Switch, residual rl.TypingT
 // insideLoop controls whether break/continue count as divergence:
 // only inside an actual loop do they transfer control past the
 // enclosing construct. The current call sites (walkIf, walkSwitch)
-// don'\''t themselves carry a loop indicator yet, so they default to
+// don'\”t themselves carry a loop indicator yet, so they default to
 // true to preserve the prior behavior - break/continue have always
 // been treated as "exits this branch" in practice because
 // branchExitsEarly accepted them unconditionally.
 // branchExits is the typeChecker method form. The receiver lets the
 // divergence walk consult sym info (noReturn builtins, closed-enum
-// switch exhaustiveness) that the standalone helper can'\''t reach.
+// switch exhaustiveness) that the standalone helper can'\”t reach.
 // Callers from walkIf / walkSwitch use this method form.
 func (tc *typeChecker) branchExits(body []rl.Node) bool {
 	return bodyDiverges(body, divergeCtx{insideLoop: true}, tc)
@@ -1584,7 +1584,7 @@ func stmtDiverges(n rl.Node, ctx divergeCtx, tc *typeChecker) bool {
 
 // ifDiverges: every branch must diverge AND there must be an explicit
 // else. Without an else, the "no branch matched" path is an implicit
-// fall-through, so the if as a whole doesn'\''t diverge.
+// fall-through, so the if as a whole doesn'\”t diverge.
 func ifDiverges(n *rl.If, ctx divergeCtx, tc *typeChecker) bool {
 	hasElse := false
 	for _, branch := range n.Branches {
@@ -1599,7 +1599,7 @@ func ifDiverges(n *rl.If, ctx divergeCtx, tc *typeChecker) bool {
 }
 
 // switchDiverges: every explicit case must diverge, AND either a
-// default arm is present and also diverges, OR the discriminant'\''s
+// default arm is present and also diverges, OR the discriminant'\”s
 // residual after peeling all cases is Never (i.e., exhaustive on a
 // closed type).
 func switchDiverges(n *rl.Switch, ctx divergeCtx, tc *typeChecker) bool {
@@ -1649,7 +1649,7 @@ func altDiverges(alt rl.Node, ctx divergeCtx, tc *typeChecker) bool {
 // the body has no top-level break that targets this loop. A
 // conditional `while cond:` may execute zero times - non-divergent.
 // (Detecting constant-true conditions would require literal folding;
-// we don'\''t do it today.)
+// we don'\”t do it today.)
 func whileDiverges(n *rl.WhileLoop, tc *typeChecker) bool {
 	if n.Condition != nil {
 		return false
@@ -1702,7 +1702,7 @@ func altHasTopLevelBreak(alt rl.Node) bool {
 
 // callIsNoReturn reports whether call is to a builtin function
 // whose runtime semantics never return - exit(), today. Future
-// shape: check the builtin signature'\''s return type against Never.
+// shape: check the builtin signature'\”s return type against Never.
 func callIsNoReturn(call *rl.Call, tc *typeChecker) bool {
 	if tc == nil {
 		return false
@@ -1724,10 +1724,10 @@ func callIsNoReturn(call *rl.Call, tc *typeChecker) bool {
 
 // joinFrames computes the post-branch frame from a set of branch-exit
 // frames. For each symbol narrowed by any branch (relative to
-// initial), the joined type is the union of each branch'\''s effective
-// type for that symbol. Branches that didn'\''t narrow the symbol
+// initial), the joined type is the union of each branch'\”s effective
+// type for that symbol. Branches that didn'\”t narrow the symbol
 // contribute the base type from info.SymbolTypes - or the initial
-// frame'\''s narrowing if present, via Frame.Lookup'\''s parent walk.
+// frame'\”s narrowing if present, via Frame.Lookup'\”s parent walk.
 //
 // Returns initial unchanged when no branch narrowed anything (or
 // when only one branch survived early-exit filtering).
@@ -1780,7 +1780,7 @@ func (tc *typeChecker) joinFrames(initial *Frame, branches []*Frame) *Frame {
 //     Both contribute nothing to a join; unioning them with X gives X.
 //  3. Structural merge: collapse multiple StrEnum arms into one with
 //     the unioned value set. (Future: do the same for Optional arms
-//     with compatible inners.) Preserves the first occurrence'\''s
+//     with compatible inners.) Preserves the first occurrence'\”s
 //     position in the result for diagnostic order.
 //  4. Pairwise subsumption: if some arm B is assignable-from another
 //     arm A (B is a super-type of A), drop A. This is what makes
@@ -1827,7 +1827,7 @@ func unionTypesForJoin(types []rl.TypingT) rl.TypingT {
 }
 
 // UnionJoinForTest exposes unionTypesForJoin for testing. Tests in
-// the check_test package can'\''t reach the unexported helper; this
+// the check_test package can'\”t reach the unexported helper; this
 // thin wrapper keeps the test interface explicit (not "everything in
 // the package is exported"). Not for production use.
 func UnionJoinForTest(types []rl.TypingT) rl.TypingT {
@@ -1904,7 +1904,7 @@ func isUninhabited(t rl.TypingT) bool {
 // closed-enum cases produces `StrEnum<"a","b","c">` instead of
 // `StrEnum<"a">|StrEnum<"b">|StrEnum<"c">`.
 //
-// The first StrEnum'\''s position in the input is preserved as the
+// The first StrEnum'\”s position in the input is preserved as the
 // position of the merged result. This keeps diagnostic ordering
 // stable when other arms are interleaved.
 func mergeStructuralByKind(types []rl.TypingT) []rl.TypingT {
@@ -1952,10 +1952,10 @@ func mergeStructuralByKind(types []rl.TypingT) []rl.TypingT {
 // each one (a) drop it if anything already kept subsumes it; (b)
 // otherwise, drop any kept arms it subsumes, then add it.
 //
-// Gradual types (Any, Dynamic, ErrorType) don'\''t subsume on the
-// subsumer side: we don'\''t want `int | any` to collapse to `any`,
+// Gradual types (Any, Dynamic, ErrorType) don'\”t subsume on the
+// subsumer side: we don'\”t want `int | any` to collapse to `any`,
 // because the concrete int arm carries real static info that a
-// downstream narrowing might exploit. Matching Pyright'\''s rule
+// downstream narrowing might exploit. Matching Pyright'\”s rule
 // keeps concrete arms alive alongside gradual ones.
 //
 // O(n^2) but n is tiny (typically 2-5 arms); correctness over speed.
@@ -2023,7 +2023,7 @@ func dedupeByName(types []rl.TypingT) []rl.TypingT {
 }
 
 // isGradualLike identifies types the static checker uses to signal
-// "we couldn'\''t pin a type" (Any, Dynamic) or "an error is
+// "we couldn'\”t pin a type" (Any, Dynamic) or "an error is
 // suppressing cascades" (ErrorType). They should not subsume
 // concrete arms in a union join.
 func isGradualLike(t rl.TypingT) bool {
@@ -3164,7 +3164,7 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 // `xs = []` followed by `xs.append(1)` to `List<int>`, but the safe
 // over-approximation lets every existing program type-check today.
 
-// synthLambda walks the lambda'\''s body and synthesizes a structural
+// synthLambda walks the lambda'\”s body and synthesizes a structural
 // TypingFnT. Params come from the grammar annotation (l.Typing.Params,
 // possibly with nil per-param Type for unannotated args - that maps
 // to `any`). The return type is the headline work here:
@@ -3179,13 +3179,13 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 //
 // Closure rule deferred: same caveat as walkFnDef. Captured-path
 // narrowings from the enclosing frame are NOT preserved. For a
-// closure-friendly design we'\''d need Pyright'\''s reassignment-
+// closure-friendly design we'\”d need Pyright'\”s reassignment-
 // after-definition check. Today, the body opens a fresh frame so
 // outer locals appear unnarrowed (read as their base type).
 //
-// Recursion: anonymous lambdas can'\''t self-reference. A named
+// Recursion: anonymous lambdas can'\”t self-reference. A named
 // recursive lambda bound to a local (`f = fn(x) f(x-1)`) would synth
-// the recursive `f` to Dynamic because SymbolTypes[f] isn'\''t set
+// the recursive `f` to Dynamic because SymbolTypes[f] isn'\”t set
 // during the walk. Sound but lossy - the inferred return would
 // collapse to Dynamic via any-like subsumption rules. Fixing this
 // needs the Tarjan SCC + placeholder return type machinery the plan

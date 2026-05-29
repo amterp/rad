@@ -35,9 +35,9 @@ const (
 //
 // Order discipline (the LSP client honours SortText before Label):
 //
-//   1. enclosing-fn params + earlier locals (tier "0")
-//   2. file-scope: args, cmd-args, top-level fns + vars (tier "1")
-//   3. builtins (tier "2")
+//  1. enclosing-fn params + earlier locals (tier "0")
+//  2. file-scope: args, cmd-args, top-level fns + vars (tier "1")
+//  3. builtins (tier "2")
 //
 // The popup the user sees has their local names at the top,
 // file-scope next, builtins last - which matches what people

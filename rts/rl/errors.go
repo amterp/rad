@@ -11,10 +11,10 @@ type Error string
 // code no longer fires. New codes always pick the next unused
 // number in their band. Bands:
 //
-//   1xxxx  Syntax / parser errors    (this file's first block)
-//   2xxxx  Runtime errors            (interpreter)
-//   3xxxx  Type errors               (shared static + runtime)
-//   4xxxx  Validation / lint errors  (static only)
+//	1xxxx  Syntax / parser errors    (this file's first block)
+//	2xxxx  Runtime errors            (interpreter)
+//	3xxxx  Type errors               (shared static + runtime)
+//	4xxxx  Validation / lint errors  (static only)
 //
 // When adding here, also touch core/error_docs/<code>.md and the
 // reference at docs-web/docs/reference/errors.md.
@@ -29,28 +29,28 @@ const (
 	// numbers stay reserved per the tombstone rule, and so old logs
 	// remain greppable. The error_docs/<code>.md tombstones point
 	// readers at the codes that do fire.
-	ErrInvalidSyntax              Error = "10001"
-	ErrMissingColon               Error = "10002"
-	ErrMissingIdentifier_retired  Error = "10003"
-	ErrMissingExpression_retired  Error = "10004"
-	ErrMissingCloseParen_retired  Error = "10005"
+	ErrInvalidSyntax               Error = "10001"
+	ErrMissingColon                Error = "10002"
+	ErrMissingIdentifier_retired   Error = "10003"
+	ErrMissingExpression_retired   Error = "10004"
+	ErrMissingCloseParen_retired   Error = "10005"
 	ErrMissingCloseBracket_retired Error = "10006"
-	ErrMissingCloseBrace_retired  Error = "10007"
-	ErrReservedKeyword            Error = "10008"
-	ErrUnexpectedToken            Error = "10009"
-	ErrMissingOpenParen_retired   Error = "10010"
-	ErrMissingOpenBracket_retired Error = "10011"
-	ErrMissingOpenBrace_retired   Error = "10012"
-	ErrMissingComma_retired       Error = "10013"
-	ErrMissingEquals_retired      Error = "10014"
-	ErrMissingArrow_retired       Error = "10015"
-	ErrMissingType_retired        Error = "10016"
-	ErrMissingNewline_retired     Error = "10017"
-	ErrMissingIndent              Error = "10018"
-	ErrUnexpectedIndent_retired   Error = "10019"
-	ErrUnterminatedString         Error = "10020"
-	ErrMissingOperator            Error = "10021"
-	ErrKeywordMisuse              Error = "10022"
+	ErrMissingCloseBrace_retired   Error = "10007"
+	ErrReservedKeyword             Error = "10008"
+	ErrUnexpectedToken             Error = "10009"
+	ErrMissingOpenParen_retired    Error = "10010"
+	ErrMissingOpenBracket_retired  Error = "10011"
+	ErrMissingOpenBrace_retired    Error = "10012"
+	ErrMissingComma_retired        Error = "10013"
+	ErrMissingEquals_retired       Error = "10014"
+	ErrMissingArrow_retired        Error = "10015"
+	ErrMissingType_retired         Error = "10016"
+	ErrMissingNewline_retired      Error = "10017"
+	ErrMissingIndent               Error = "10018"
+	ErrUnexpectedIndent_retired    Error = "10019"
+	ErrUnterminatedString          Error = "10020"
+	ErrMissingOperator             Error = "10021"
+	ErrKeywordMisuse               Error = "10022"
 
 	// 2xxxx Runtime Errors
 	ErrGenericRuntime       Error = "20000"
@@ -100,15 +100,15 @@ const (
 	ErrParseDate                  = "20044"
 
 	// 3xxxx Type Errors
-	ErrTypeMismatch     Error = "30001"
-	ErrInvalidTypeForOp Error = "30002"
-	ErrCannotFormat     Error = "30003"
-	ErrCannotIndex      Error = "30004"
-	ErrCannotAssign     Error = "30005"
-	ErrInvalidArgType   Error = "30006"
-	ErrWrongArgCount    Error = "30007"
-	ErrCannotCompare    Error = "30008"
-	ErrCannotConvert    Error = "30009"
+	ErrTypeMismatch              Error = "30001"
+	ErrInvalidTypeForOp          Error = "30002"
+	ErrCannotFormat              Error = "30003"
+	ErrCannotIndex               Error = "30004"
+	ErrCannotAssign              Error = "30005"
+	ErrInvalidArgType            Error = "30006"
+	ErrWrongArgCount             Error = "30007"
+	ErrCannotCompare             Error = "30008"
+	ErrCannotConvert             Error = "30009"
 	ErrCollectionElementMismatch Error = "30010"
 
 	// 4xxxx Validation Errors

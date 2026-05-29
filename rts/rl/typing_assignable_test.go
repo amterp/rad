@@ -226,7 +226,7 @@ func TestAssign_ListsCovariantOverUnions(t *testing.T) {
 	boolT := rl.NewBoolType()
 	intOrStr := rl.NewUnionType(intT, strT)
 	intStrBoolFlat := rl.NewUnionType(intT, strT, boolT)
-	intStrBoolNestedLeft := rl.NewUnionType(intOrStr, boolT)                   // ((int|str)|bool)
+	intStrBoolNestedLeft := rl.NewUnionType(intOrStr, boolT)                     // ((int|str)|bool)
 	intStrBoolNestedRight := rl.NewUnionType(intT, rl.NewUnionType(strT, boolT)) // (int|(str|bool))
 
 	// `xs: (int|str)[] = [1, 2, 3]` — the common int[] -> (int|str)[] widening.
@@ -370,6 +370,6 @@ func TestAssign_UnionBranchMatch(t *testing.T) {
 
 	// Union-to-union: every branch of source must fit somewhere in target.
 	intOrFloatTarget := rl.NewUnionType(rl.NewFloatType(), rl.NewStrType()) // accepts float (and int via widening), str
-	assert.True(t, intOrFloatTarget.IsAssignableFrom(intOrFloat))            // int->float, float->float, both fit
-	assert.False(t, intOrStr.IsAssignableFrom(intOrFloat))                   // float doesn't fit in int|str
+	assert.True(t, intOrFloatTarget.IsAssignableFrom(intOrFloat))           // int->float, float->float, both fit
+	assert.False(t, intOrStr.IsAssignableFrom(intOrFloat))                  // float doesn't fit in int|str
 }
