@@ -185,4 +185,3 @@ func pruneTarget(target string, sourceFiles []*funcDocFile, dryRun bool) (int, e
 	}
 	return removed, nil
 }
-

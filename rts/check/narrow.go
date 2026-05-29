@@ -158,7 +158,7 @@ func (tc *typeChecker) narrowTruthyIdent(ident *rl.Identifier, frame *Frame) Ref
 }
 
 // interpretUnaryCondition handles `not <expr>`. Other unary ops
-// (-, +) aren'\''t boolean and don'\''t produce refinements.
+// (-, +) aren'\”t boolean and don'\”t produce refinements.
 //
 // Logical negation flips the refinement: what was the truthy
 // narrowing becomes the falsy narrowing and vice versa. Refinement.
@@ -203,18 +203,19 @@ func (tc *typeChecker) interpretBinaryCondition(c *rl.OpBinary, frame *Frame) Re
 // the narrowing semantics:
 //
 //   - WhenTrue: both a and b evaluated truthy. The truthy narrowing
-//     is a'\''s WhenTrue applied first, then b'\''s WhenTrue computed
+//     is a'\”s WhenTrue applied first, then b'\”s WhenTrue computed
 //     against the a-truthy frame and merged on top. Latter wins on
-//     conflicts since it'\''s computed in the tighter frame.
+//     conflicts since it'\”s computed in the tighter frame.
 //
 //   - WhenFalse: at least one of a, b is falsy. This is a disjunction
-//     - either "a falsy" or "a truthy, b falsy" - and we don'\''t have
+//
+//   - either "a falsy" or "a truthy, b falsy" - and we don'\”t have
 //     a way to express "OR of two refinements" without losing info.
 //     Conservative: empty WhenFalse. Pyright takes the same shortcut.
 //
-// The right-hand side is interpreted with a'\''s truthy narrowing
+// The right-hand side is interpreted with a'\”s truthy narrowing
 // active: in `x != null and x > 5`, the `x > 5` is evaluated knowing
-// x is non-null. That'\''s why we walk the right under
+// x is non-null. That'\”s why we walk the right under
 // frame.WithMany(leftRef.WhenTrue) before interpreting.
 func (tc *typeChecker) interpretAnd(c *rl.OpBinary, frame *Frame) Refinement {
 	leftRef := tc.interpretCondition(c.Left, frame)
@@ -228,8 +229,8 @@ func (tc *typeChecker) interpretAnd(c *rl.OpBinary, frame *Frame) Refinement {
 
 // interpretOr handles `a or b`. Mirror image of and:
 //
-//   - WhenFalse: both falsy. Sequential apply: a'\''s WhenFalse first,
-//     b'\''s WhenFalse computed against the a-falsy frame, then
+//   - WhenFalse: both falsy. Sequential apply: a'\”s WhenFalse first,
+//     b'\”s WhenFalse computed against the a-falsy frame, then
 //     merged.
 //
 //   - WhenTrue: at least one truthy. Disjunction, conservatively empty.
@@ -244,8 +245,8 @@ func (tc *typeChecker) interpretOr(c *rl.OpBinary, frame *Frame) Refinement {
 }
 
 // mergeRefinementMaps overlays b on top of a. When both refine the
-// same symbol, b'\''s narrowing wins because b was computed in the
-// tighter frame (after a'\''s refinement was applied).
+// same symbol, b'\”s narrowing wins because b was computed in the
+// tighter frame (after a'\”s refinement was applied).
 func mergeRefinementMaps(a, b map[*Symbol]rl.TypingT) map[*Symbol]rl.TypingT {
 	out := make(map[*Symbol]rl.TypingT, len(a)+len(b))
 	for k, v := range a {
@@ -331,7 +332,7 @@ func (tc *typeChecker) narrowTypeOfEquality(op rl.Operator, ident *rl.Identifier
 // refinementForBranches builds a Refinement from the computed truthy
 // and falsy narrowed types. Either may be nil meaning "no narrowing
 // on this branch"; we skip the map entry in that case so frame join
-// later doesn'\''t union with a base type to produce the base type.
+// later doesn'\”t union with a base type to produce the base type.
 //
 // op switches truthy/falsy: == puts the matching arm in WhenTrue; !=
 // puts it in WhenFalse.
@@ -376,7 +377,7 @@ func typeOfPattern(c *rl.OpBinary) (*rl.Identifier, string, bool) {
 
 // typeOfCallOfIdent matches exactly `type_of(<ident>)`. Anything more
 // elaborate (chained call, multiple args, named args, non-identifier
-// argument) falls through - those don'\''t cleanly correspond to a
+// argument) falls through - those don'\”t cleanly correspond to a
 // narrowable path.
 func typeOfCallOfIdent(n rl.Node) (*rl.Identifier, bool) {
 	call, ok := n.(*rl.Call)
@@ -398,7 +399,7 @@ func typeOfCallOfIdent(n rl.Node) (*rl.Identifier, bool) {
 }
 
 // narrowStrEnumEquality handles `<ident> ==/!= "<value>"` when the
-// identifier'\''s base type is a string-enum. Truthy keeps the matching
+// identifier'\”s base type is a string-enum. Truthy keeps the matching
 // value (a single-valued enum); falsy keeps the rest. Either side can
 // collapse to Never if the partition leaves nothing.
 //
@@ -559,7 +560,7 @@ func identInStringList(c *rl.OpBinary) (*rl.Identifier, []string, bool) {
 // simpleStringValue returns the literal value of a non-interpolated
 // string literal, or false for anything else. Interpolated strings
 // could in principle be constant-folded, but the static checker
-// doesn'\''t do constant folding and the catalog is intentionally
+// doesn'\”t do constant folding and the catalog is intentionally
 // shape-driven.
 func simpleStringValue(n rl.Node) (string, bool) {
 	s, ok := n.(*rl.LitString)
@@ -669,30 +670,30 @@ func matchesTypeOf(t rl.TypingT, target string) bool {
 // caller treats it as "no narrowing applied" rather than "Never".
 //
 // Decision table:
-//   - Any / Dynamic / ErrorType base: (nil, nil) - we can'\''t prove
+//   - Any / Dynamic / ErrorType base: (nil, nil) - we can'\”t prove
 //     either side against a fully-open or poisoned type.
 //   - Union: partition arms by recursive call. Drop Never on each
 //     side (those arms contribute nothing). Preserve nil arms by
 //     passing the arm through unchanged - "no static handle" on
 //     this arm means we keep the whole arm as a fallback.
 //   - Optional<T>:
-//       target == "null":
-//         truthy: TypingNullT (definite - the null arm matched).
-//         falsy:  x is non-null - return T.
-//       inner matches target:
-//         truthy: T (the non-null component).
-//         falsy:  TypingNullT (only possibility left).
-//       inner doesn'\''t match target:
-//         truthy: Never (inner doesn'\''t match, null doesn'\''t
-//                 match any non-null target).
-//         falsy:  the original Optional<T> stays.
+//     target == "null":
+//     truthy: TypingNullT (definite - the null arm matched).
+//     falsy:  x is non-null - return T.
+//     inner matches target:
+//     truthy: T (the non-null component).
+//     falsy:  TypingNullT (only possibility left).
+//     inner doesn'\”t match target:
+//     truthy: Never (inner doesn'\”t match, null doesn'\”t
+//     match any non-null target).
+//     falsy:  the original Optional<T> stays.
 //   - TypingNullT (definite-null leaf):
-//       target == "null":  truthy=null, falsy=Never.
-//       any other target:  truthy=Never, falsy=null.
+//     target == "null":  truthy=null, falsy=Never.
+//     any other target:  truthy=Never, falsy=null.
 //   - Leaf (non-Optional, non-null):
-//       target == "null": truthy=Never, falsy=base.
-//       matches:           truthy=base,  falsy=Never.
-//       doesn'\''t match:   truthy=Never, falsy=base.
+//     target == "null": truthy=Never, falsy=base.
+//     matches:           truthy=base,  falsy=Never.
+//     doesn'\”t match:   truthy=Never, falsy=base.
 func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 	if base == nil {
 		return nil, nil

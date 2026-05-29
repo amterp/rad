@@ -204,4 +204,3 @@ func countCategories(docs []*rts.FuncDoc) int {
 	}
 	return len(seen)
 }
-

@@ -28,9 +28,9 @@ type State struct {
 	encoding PositionEncoding
 	idAlloc  fileIDAllocator
 
-	mu        sync.RWMutex
-	docs      map[string]*Document
-	idToDoc   map[FileID]*Document
+	mu      sync.RWMutex
+	docs    map[string]*Document
+	idToDoc map[FileID]*Document
 
 	// parserMu serializes calls into the tree-sitter parser. Tree-sitter
 	// parsers are NOT safe to share across goroutines; until/unless we

@@ -24,9 +24,9 @@ import (
 //
 //	go test ./rts/check/ -run TestCheckSnapshots -update
 //
-// The harness is intentionally simple: each case'\''s INPUT is a Rad
+// The harness is intentionally simple: each case'\”s INPUT is a Rad
 // script, the STDOUT section is the expected DumpForSnapshot output.
-// Stderr / exit-code aren'\''t used (the checker isn'\''t a runtime).
+// Stderr / exit-code aren'\”t used (the checker isn'\”t a runtime).
 func TestCheckSnapshots(t *testing.T) {
 	snapshotDir := "snapshots"
 	if _, err := os.Stat(snapshotDir); os.IsNotExist(err) {

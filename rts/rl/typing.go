@@ -384,7 +384,7 @@ func parenWrapIfUnion(t TypingT) string {
 	return t.Name()
 }
 
-// Elem returns the list'\''s element type. Exposed for narrowing -
+// Elem returns the list'\”s element type. Exposed for narrowing -
 // the for-loop walker uses it to type the loop variable.
 func (t *TypingListT) Elem() TypingT {
 	return t.elem
@@ -572,7 +572,7 @@ func (t *TypingMapT) Name() string {
 	return fmt.Sprintf("{ %s: %s }", t.keyT.Name(), t.valT.Name())
 }
 
-// KeyT and ValT expose the map'\''s key and value types. Used by the
+// KeyT and ValT expose the map'\”s key and value types. Used by the
 // for-loop walker: a single-var iteration over a map binds the var
 // to the key type; a two-var iteration binds (key, value).
 func (t *TypingMapT) KeyT() TypingT { return t.keyT }

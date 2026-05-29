@@ -723,10 +723,10 @@ func (n *ArgBlock) Span() Span     { return n.span }
 
 // ArgDecl represents a single arg declaration (e.g. "name str? = "default").
 type ArgDecl struct {
-	span       Span
-	Name       string
-	NameSpan   Span // span of just the name identifier; for LSP semantic tokens
-	TypeName   string // "int", "str", "int[]", etc.
+	span     Span
+	Name     string
+	NameSpan Span   // span of just the name identifier; for LSP semantic tokens
+	TypeName string // "int", "str", "int[]", etc.
 	// Typing is the same type as TypeName but pre-parsed into the
 	// general TypingT shape so downstream consumers (binder, type
 	// checker, LSP) don't each re-implement the args-block grammar.
