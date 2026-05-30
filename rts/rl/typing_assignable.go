@@ -1,9 +1,9 @@
 package rl
 
 // This file implements IsAssignableFrom for every TypingT. The variance rules
-// (invariant collections, contravariant params + covariant returns on
-// functions, int->float widening on scalars, universal consistency for
-// any/dynamic/error_type) are documented on the TypingT interface in
+// (covariant lists, invariant maps + tuples, contravariant params + covariant
+// returns on functions, int->float widening on scalars, universal consistency
+// for any/dynamic/error_type) are documented on the TypingT interface in
 // typing.go. Implementations live here to keep all the static-checker
 // compatibility logic together; the runtime IsCompatibleWith methods remain
 // alongside their types.
@@ -24,11 +24,11 @@ func isAnyLike(other TypingT) bool {
 }
 
 // typesEqual reports strict structural equality between two static types. Used
-// by the invariant variance checks on collections - allowing `int[]` to satisfy
-// `(int|str)[]` would let the callee push a string into a list the caller
-// still believes is int-typed, so collection element types must match exactly
-// rather than via the looser IsAssignableFrom. Treats nil ReturnT / param Type
-// as `any` to mirror the rendering convention in Name().
+// by the invariant types - maps, tuples, optionals - and by fn structural
+// matching, where element/component types must match exactly rather than via
+// the looser IsAssignableFrom. (Lists are covariant and use IsAssignableFrom on
+// their element instead.) Treats nil ReturnT / param Type as `any` to mirror
+// the rendering convention in Name().
 func typesEqual(a, b TypingT) bool {
 	if a == nil || b == nil {
 		return a == b
@@ -292,11 +292,12 @@ func (t *TypingErrorTypeT) IsAssignableFrom(TypingT) bool {
 	return true
 }
 
-// --- Collections (invariant) ---
+// --- Collections (lists covariant; maps + tuples invariant) ---
 
-// AnyList is the unparameterized list type. It accepts any concrete list or
-// tuple shape, since the caller has expressed no requirement on the element
-// type.
+// AnyList is the unparameterized list type - the `list` keyword, and what
+// `any[]`/`dynamic[]` collapse to (see NewListType). It accepts any concrete
+// list or tuple shape, since the caller has expressed no requirement on the
+// element type.
 func (t *TypingAnyListT) IsAssignableFrom(other TypingT) bool {
 	if isAnyLike(other) {
 		return true

@@ -202,20 +202,45 @@ func TestAssign_StrEnumSubsetRelation(t *testing.T) {
 func TestAssign_ListsCovariant(t *testing.T) {
 	listInt := rl.NewListType(rl.NewIntType())
 	listFloat := rl.NewListType(rl.NewFloatType())
-	listAny := rl.NewListType(rl.NewAnyType())
 
 	// Identity holds.
 	assert.True(t, listInt.IsAssignableFrom(rl.NewListType(rl.NewIntType())))
 
 	// Covariance: List<int> flows into List<float> because int widens to
-	// float at the scalar level. Likewise List<int> flows into List<any>.
-	// Unsound under mutation+aliasing but accepted for ergonomics - see the
-	// commentary on TypingListT.IsAssignableFrom.
+	// float at the scalar level. Unsound under mutation+aliasing but accepted
+	// for ergonomics - see the commentary on TypingListT.IsAssignableFrom.
 	assert.True(t, listFloat.IsAssignableFrom(listInt))
-	assert.True(t, listAny.IsAssignableFrom(listInt))
 
 	// Narrowing direction stays refused.
 	assert.False(t, listInt.IsAssignableFrom(listFloat))
+}
+
+// any[] and dynamic[] are not distinct types - NewListType collapses an
+// all-accepting element to the generic `list` (TypingAnyListT). This is the
+// regression lock for the bug where `any[].IsAssignableFrom(list)` returned
+// false (a TypingListT only accepted another TypingListT, never the generic
+// list), so an inferred `list` value wrongly failed to satisfy an `any[]` slot.
+func TestAssign_AnyArrayCollapsesToList(t *testing.T) {
+	anyArray := rl.NewListType(rl.NewAnyType())
+	dynArray := rl.NewListType(rl.NewDynamicType())
+
+	// Both normalize to the generic `list`, not a parameterized T[].
+	assert.Equal(t, rl.T_LIST, anyArray.Name())
+	assert.Equal(t, rl.T_LIST, dynArray.Name())
+
+	// The bug: the generic `list` now flows into an `any[]` annotation.
+	genericList := rl.NewAnyListType()
+	assert.True(t, anyArray.IsAssignableFrom(genericList))
+	// And any concrete list still flows in.
+	assert.True(t, anyArray.IsAssignableFrom(rl.NewListType(rl.NewIntType())))
+
+	// A union element that accepts everything (it has an `any`/`dynamic` arm)
+	// makes the list indistinguishable from `list`, so it collapses too -
+	// otherwise `(int|any)[]` would inconsistently reject `list` while `any[]`
+	// accepts it.
+	unionArray := rl.NewListType(rl.NewUnionType(rl.NewIntType(), rl.NewAnyType()))
+	assert.Equal(t, rl.T_LIST, unionArray.Name())
+	assert.True(t, unionArray.IsAssignableFrom(genericList))
 }
 
 func TestAssign_ListsCovariantOverUnions(t *testing.T) {

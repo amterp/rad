@@ -77,6 +77,26 @@ fn cb(x: int) -> bool:
 # Diagnostics
   (none)
 ### TITLE ###
+DeclaredAnyArrayReturnAcceptsInferredList
+### DESCRIPTION ###
+A fn declared `-> any[]` returning an empty `[]` literal (which
+infers to the generic `list`) must type-check clean. Regression
+lock: `any[]` collapses to `list`, so the inferred list satisfies
+it. Before the fix, `any[]` was a distinct TypingListT that
+rejected the generic list and fired a spurious mismatch.
+### INPUT ###
+fn f() -> any[]:
+    return []
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  f (fn): fn() -> list
+
+# Diagnostics
+  (none)
+### TITLE ###
 NestedFnReturnIsolated
 ### DESCRIPTION ###
 A return inside a nested fn belongs to the nested fn, not the

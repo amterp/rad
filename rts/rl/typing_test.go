@@ -150,6 +150,28 @@ func TestStructNested(t *testing.T) {
 	assert.False(t, outer.IsCompatibleWith(missingRequired))
 }
 
+// DisplayName must never surface the internal `dynamic` to users - not at the
+// top level, and not nested inside composites (the hover leak the reviewers
+// flagged). It renders dynamic as its behavioural twin `any` while leaving real
+// types untouched.
+func TestDisplayNameHidesDynamicEverywhere(t *testing.T) {
+	// Bare dynamic, and real types unchanged.
+	assert.Equal(t, rl.T_ANY, rl.DisplayName(rl.NewDynamicType()))
+	assert.Equal(t, rl.T_INT, rl.DisplayName(rl.NewIntType()))
+	assert.Equal(t, "int[]", rl.DisplayName(rl.NewListType(rl.NewIntType())))
+
+	// Nested dynamic in an inferred fn signature (e.g. recursive/unknown call).
+	pt := rl.TypingT(rl.NewDynamicType())
+	ret := rl.TypingT(rl.NewDynamicType())
+	fn := &rl.TypingFnT{Params: []rl.TypingFnParam{{Type: &pt}}, ReturnT: &ret}
+	assert.Equal(t, "fn(any) -> any", rl.DisplayName(fn))
+
+	// Nested dynamic in a map value and an optional and a union.
+	assert.Equal(t, "{ str: any }", rl.DisplayName(rl.NewMapType(rl.NewStrType(), rl.NewDynamicType())))
+	assert.Equal(t, "any?", rl.DisplayName(rl.NewOptionalType(rl.NewDynamicType())))
+	assert.Equal(t, "int|any", rl.DisplayName(rl.NewUnionType(rl.NewIntType(), rl.NewDynamicType())))
+}
+
 func TestStructOptionalField(t *testing.T) {
 	s := rl.NewStructType(map[rl.MapNamedKey]rl.TypingT{
 		rl.NewMapNamedKey("req", false): rl.NewIntType(),
