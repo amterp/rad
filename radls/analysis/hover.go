@@ -202,11 +202,11 @@ func symbolTypeString(sym *check.Symbol, info *check.TypeInfo) string {
 	}
 	if info != nil {
 		if t, ok := info.SymbolTypes[sym]; ok && t != nil {
-			return t.Name()
+			return rl.DisplayName(t)
 		}
 	}
 	if sym.Declared != nil {
-		return sym.Declared.Name()
+		return rl.DisplayName(sym.Declared)
 	}
 	return "?"
 }

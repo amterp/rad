@@ -62,14 +62,80 @@ func (r RadType) AsString() string {
 // vs parameter, return value vs declared return). It compares two *types*. The
 // rules implement gradual typing: `any` and `dynamic` are universally
 // compatible in both directions (you can store anything in them, and they can
-// flow anywhere); collections are invariant (allowing `int[]` into `(int|str)[]`
-// would let the callee write a string into a list the caller still believes is
-// int-typed); function parameters are contravariant and returns are covariant;
-// `int` widens implicitly to `float` to mirror the runtime rule.
+// flow anywhere); lists are covariant in their element (`int[]` flows into
+// `(int|str)[]`) for ergonomics, accepting the mutation-aliasing unsoundness;
+// maps and tuples stay invariant; function parameters are contravariant and
+// returns are covariant; `int` widens implicitly to `float` to mirror the
+// runtime rule.
 type TypingT interface {
 	Name() string
 	IsCompatibleWith(val TypingCompatVal) bool
 	IsAssignableFrom(other TypingT) bool
+}
+
+// DisplayName renders t as users should see it: identical to Name() except the
+// internal `dynamic` type surfaces as its behavioural twin `any`. `dynamic` is
+// the implicit-any the checker assigns when inference can't pin a type; users
+// never write it and have no docs for it, so it must never appear in a
+// user-facing surface (hover, messages). Name() stays the canonical spelling
+// for tests and the contributor-facing checker dump, which legitimately want to
+// see `dynamic`.
+func DisplayName(t TypingT) string {
+	return substituteDynamic(t).Name()
+}
+
+// substituteDynamic deep-copies t with every `dynamic` rewritten to `any`,
+// reusing each type's own Name() for rendering rather than duplicating format
+// logic. Unknown leaf types fall through unchanged; a future composite type not
+// handled here degrades to leaking `dynamic` in that nesting (same as no
+// rewrite at all), never to a crash.
+func substituteDynamic(t TypingT) TypingT {
+	switch tt := t.(type) {
+	case *TypingDynamicT:
+		return NewAnyType()
+	case *TypingListT:
+		return NewListType(substituteDynamic(tt.elem))
+	case *TypingTupleT:
+		return NewTupleType(substituteDynamicEach(tt.types)...)
+	case *TypingUnionT:
+		return NewUnionType(substituteDynamicEach(tt.types)...)
+	case *TypingOptionalT:
+		return NewOptionalType(substituteDynamic(tt.t))
+	case *TypingVarArgT:
+		return NewVarArgType(substituteDynamic(tt.t))
+	case *TypingMapT:
+		return NewMapType(substituteDynamic(tt.keyT), substituteDynamic(tt.valT))
+	case *TypingStructT:
+		named := make(map[MapNamedKey]TypingT, len(tt.named))
+		for k, v := range tt.named {
+			named[k] = substituteDynamic(v)
+		}
+		return NewStructType(named)
+	case *TypingFnT:
+		params := make([]TypingFnParam, len(tt.Params))
+		for i, p := range tt.Params {
+			params[i] = p
+			if p.Type != nil {
+				sub := substituteDynamic(*p.Type)
+				params[i].Type = &sub
+			}
+		}
+		var ret *TypingT
+		if tt.ReturnT != nil {
+			sub := substituteDynamic(*tt.ReturnT)
+			ret = &sub
+		}
+		return &TypingFnT{FnName: tt.FnName, Params: params, ReturnT: ret}
+	}
+	return t
+}
+
+func substituteDynamicEach(ts []TypingT) []TypingT {
+	out := make([]TypingT, len(ts))
+	for i, t := range ts {
+		out[i] = substituteDynamic(t)
+	}
+	return out
 }
 
 // Compile-time guards: every concrete typing must satisfy TypingT.
@@ -344,7 +410,7 @@ func (t *TypingNullT) IsCompatibleWith(val TypingCompatVal) bool {
 }
 
 // Collections
-type TypingAnyListT struct{} // var: list i.e. any[]
+type TypingAnyListT struct{} // the `list` keyword; `any[]`/`dynamic[]` collapse to this (see NewListType)
 
 func NewAnyListType() *TypingAnyListT {
 	return &TypingAnyListT{}
@@ -365,7 +431,36 @@ type TypingListT struct { // var: int[]
 	elem TypingT
 }
 
-func NewListType(elem TypingT) *TypingListT {
+// acceptsAnything reports whether every value satisfies t - i.e. t is `any`,
+// `dynamic`, or a union with such a member (since `T | any` accepts everything
+// the `any` arm does). A list with such an element is indistinguishable from
+// the generic `list`, so NewListType collapses it.
+func acceptsAnything(t TypingT) bool {
+	switch tt := t.(type) {
+	case *TypingAnyT, *TypingDynamicT:
+		return true
+	case *TypingUnionT:
+		for _, m := range tt.types {
+			if acceptsAnything(m) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// NewListType builds the static type for `T[]`. A list whose element accepts
+// everything (`any[]`, the inferred `dynamic[]`, or `(int|any)[]`) is collapsed
+// to the generic `list` (TypingAnyListT) so these spellings are one type. This
+// keeps an inferred `list` value assignable into an `any[]`-annotated slot:
+// TypingListT.IsAssignableFrom only accepts another TypingListT, so without the
+// collapse `any[].IsAssignableFrom(list)` falsely fails. It also guarantees
+// TypingListT never holds an all-accepting element, so its per-element checks
+// never run a trivially-true loop.
+func NewListType(elem TypingT) TypingT {
+	if acceptsAnything(elem) {
+		return NewAnyListType()
+	}
 	return &TypingListT{elem: elem}
 }
 
