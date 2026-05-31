@@ -76,7 +76,7 @@ Subtract from array errors
 a = [1]
 a -= 2
 ### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'list -= int'
+error[RAD30002]: Invalid operand types: cannot do 'int[] -= int'
   --> <script>:2:1
   |
 1 | a = [1]
@@ -94,7 +94,7 @@ Divide from array errors
 a = [1]
 a /= 2
 ### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'list /= int'
+error[RAD30002]: Invalid operand types: cannot do 'int[] /= int'
   --> <script>:2:1
   |
 1 | a = [1]
@@ -112,7 +112,7 @@ Multiply from array errors
 a = [1]
 a *= 2
 ### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'list *= int'
+error[RAD30002]: Invalid operand types: cannot do 'int[] *= int'
   --> <script>:2:1
   |
 1 | a = [1]
@@ -130,7 +130,7 @@ Errors if append not array
 a = [1]
 a += 2
 ### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'list += int'. Did you mean to wrap the right side in a list in order to append?
+error[RAD30002]: Invalid operand types: cannot do 'int[] += int'
   --> <script>:2:1
   |
 1 | a = [1]

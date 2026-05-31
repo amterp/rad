@@ -1,0 +1,160 @@
+### TITLE ###
+UnguardedFallibleStripsAndHints
+### DESCRIPTION ###
+An unhandled fallible call (parse_int) strips its error arm to the
+success type (int), so `a + 1` type-checks. The call carries a hint
+nudging the user to handle the error. Gap 2 panic-promotion model.
+### INPUT ###
+a = parse_int("2")
+print(a + 1)
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 2:1 -> dynamic
+  a @ 2:7 -> int
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  [hint] RAD30011 @ 1:5 - This call can fail; the error isn't handled and would halt the script
+    help: Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`
+### TITLE ###
+CatchExpressionSuppressesHint
+### DESCRIPTION ###
+A `catch` expression handles the error, so no unhandled-fallible
+hint fires and the result is int.
+### INPUT ###
+a = parse_int("2") catch 0
+print(a + 1)
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 2:1 -> dynamic
+  a @ 2:7 -> int
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+FallbackOperatorSuppressesHint
+### DESCRIPTION ###
+The `??` operator catches the error-panic at runtime, so it counts
+as a guard: no hint, result is int.
+### INPUT ###
+a = parse_int("2") ?? 0
+print(a + 1)
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 2:1 -> dynamic
+  a @ 2:7 -> int
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+FallibleInsideGuardedExprNoOpError
+### DESCRIPTION ###
+A fallible call inside a guarded expression must not flag the
+operator OR the call. The error panics before the `+` runs and the
+catch handles the whole `(parse_int(..) + 1)` expression, so neither
+RAD30011 nor RAD30002 may fire. Regression lock on always-strip +
+guard tracking. (Parens are required: `catch` binds tighter than
+`+`, so without them the call sits outside the catch and is
+genuinely unguarded.)
+### INPUT ###
+r = (parse_int("2") + 1) catch 0
+print(r)
+### STDOUT ###
+# Identifier types
+  r @ 1:1 -> <no-type>
+  parse_int @ 1:6 -> dynamic
+  print @ 2:1 -> dynamic
+  r @ 2:7 -> int
+
+# Symbol types
+  r (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+StatementCatchBindsErrorInBody
+### DESCRIPTION ###
+A statement-level catch suppresses the hint; inside the catch body
+the assignment target carries type error, while the assigned value
+is int outside.
+### INPUT ###
+a = parse_int("2") catch:
+    print(a)
+    yield 0
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 2:5 -> dynamic
+  a @ 2:11 -> error
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+ErrorBuiltinKeepsErrorValue
+### DESCRIPTION ###
+The error() builtin is the one call the runtime does not panic-
+promote, so its result stays type error and no unhandled-fallible
+hint fires.
+### INPUT ###
+e = error("boom")
+print(e)
+### STDOUT ###
+# Identifier types
+  e @ 1:1 -> <no-type>
+  error @ 1:5 -> dynamic
+  print @ 2:1 -> dynamic
+  e @ 2:7 -> error
+
+# Symbol types
+  e (local): error
+
+# Diagnostics
+  (none)
+### TITLE ###
+UserFnUnionStripsAndHints
+### DESCRIPTION ###
+A user fn declaring -> int|error panic-promotes like any call, so
+an unguarded call strips to int and gets the hint; the parse_int
+inside the fn body is guarded by its own catch.
+### INPUT ###
+fn maybe(s: str) -> int|error:
+    return parse_int(s) catch error("nope")
+
+x = maybe("2")
+print(x + 1)
+### STDOUT ###
+# Identifier types
+  parse_int @ 2:12 -> dynamic
+  s @ 2:22 -> str
+  error @ 2:31 -> dynamic
+  x @ 4:1 -> <no-type>
+  maybe @ 4:5 -> fn(str) -> int|error
+  print @ 5:1 -> dynamic
+  x @ 5:7 -> int
+
+# Symbol types
+  maybe (fn): fn(str) -> int|error
+  s (param): str
+  x (local): int
+
+# Diagnostics
+  [hint] RAD30011 @ 4:5 - This call can fail; the error isn't handled and would halt the script
+    help: Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`

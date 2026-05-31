@@ -293,6 +293,11 @@ func evaluateDiagnostics(diags []check.Diagnostic, tol Tolerance) []string {
 	var fails []string
 	for _, d := range diags {
 		code := diagCode(d)
+		// Globally-tolerated advisory codes are accepted everywhere,
+		// independent of any per-snippet tolerance.
+		if code != "" && globallyToleratedCodes[code] {
+			continue
+		}
 		// Severity tolerance: diagnostics at or below MaxSeverity are accepted.
 		// (Note: the Severity iota goes Hint < Warning < Info < Error.)
 		if hasMax && d.Severity <= maxSev {

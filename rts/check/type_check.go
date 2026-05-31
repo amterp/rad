@@ -60,7 +60,8 @@ func TypeCheck(file *rl.SourceFile, resolved *Resolved) *TypeInfo {
 			SymbolTypes: map[*Symbol]rl.TypingT{},
 			ExprTypes:   map[rl.Node]rl.TypingT{},
 		},
-		frame: NewFrame(),
+		frame:        NewFrame(),
+		guardedCalls: map[rl.Node]bool{},
 	}
 	// Seed SymbolTypes from any pre-pinned declared annotations the
 	// binder recorded (function parameters with type annotations,
@@ -83,6 +84,7 @@ func TypeCheck(file *rl.SourceFile, resolved *Resolved) *TypeInfo {
 			tc.info.SymbolTypes[sym] = sym.Declared
 		}
 	}
+	tc.markGuardedCalls(file)
 	tc.walkFile(file)
 	return tc.info
 }
@@ -118,6 +120,14 @@ type typeChecker struct {
 	// fn / lambda entry (save & swap), restored on exit. Empty
 	// map = no reassignments to worry about.
 	reassignedInScope map[*Symbol][]rl.Span
+	// guardedCalls marks every *rl.Call whose error-panic is caught by
+	// an enclosing guard (`??`, a `catch` expression, or a statement-
+	// level catch). Populated by markGuardedCalls before any synth, so
+	// it's independent of walk/cache order. It gates only the
+	// unhandled-fallible hint: the error-arm strip in synthCall is
+	// unconditional, since the runtime panic-promotes the error either
+	// way and it can never flow past the call as a value.
+	guardedCalls map[rl.Node]bool
 }
 
 type returnFrame struct {
@@ -142,28 +152,50 @@ func (tc *typeChecker) popReturnFrame() []rl.TypingT {
 // return outside any fn (validation-error elsewhere) is a no-op.
 //
 // Severity is Hint, not Error - same structural-literal fidelity
-// gap as checkArgType. `return [1, "2"]` for `-> [int, str]` is
-// valid at runtime, but the list literal synths to `int|str[]`
-// which doesn't structurally match the tuple type. Promoting here
-// would block legitimate scripts. Kan: promote-type-check.
-func (tc *typeChecker) recordReturn(t rl.TypingT, retNode rl.Node) {
+// gap as checkArgType: `return [1, "2"]` for `-> [int, str]` is valid
+// at runtime, but the list literal synths to `int|str[]` which doesn't
+// structurally match the tuple type. check closes that gap by walking
+// the value node against the declared return type structurally.
+//
+// valNode is the single return-value expression when there is exactly
+// one (so check can localize a nested mismatch); it's nil for a `void`
+// return or a multi-value `return a, b` (whose synthesized tuple has no
+// single literal node to walk), in which case we fall back to a
+// whole-statement assignability check at spanNode.
+//
+// Severity is Hint pending the promote-type-check rollout (Phase D).
+func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.Node) {
 	n := len(tc.returnStack)
 	if n == 0 {
 		return
 	}
 	tc.returnStack[n-1].collected = append(tc.returnStack[n-1].collected, t)
 	expected := tc.returnStack[n-1].expected
-	if expected == nil || retNode == nil || t == nil {
+	if expected == nil || spanNode == nil || t == nil {
 		return
 	}
 	if isErrorType(t) || isDynamicLike(t) {
+		return
+	}
+	if valNode != nil {
+		res := tc.check(valNode, expected)
+		if res.ok {
+			return
+		}
+		tc.info.Issues = append(tc.info.Issues, BindIssue{
+			Span:     res.offending.Span(),
+			Severity: IssueHint,
+			Code:     rl.ErrTypeMismatch,
+			Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
+				res.got.Name(), res.want.Name()),
+		})
 		return
 	}
 	if expected.IsAssignableFrom(t) {
 		return
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
-		Span:     retNode.Span(),
+		Span:     spanNode.Span(),
 		Severity: IssueHint,
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
@@ -203,6 +235,92 @@ func (tc *typeChecker) walkFile(file *rl.SourceFile) {
 	}
 	for _, cmd := range file.Cmds {
 		tc.walkCmd(cmd)
+	}
+}
+
+// markGuardedCalls records every call whose error-panic an enclosing
+// guard would catch, so the unhandled-fallible hint can skip them. The
+// guards are `??` (Fallback), a `catch` expression (CatchExpr), and a
+// statement-level catch (Assign/ExprStmt/Shell .Catch). Descent stops
+// at fn and lambda bodies: a call defined there runs in its own
+// context, not under the outer guard.
+func (tc *typeChecker) markGuardedCalls(file *rl.SourceFile) {
+	for _, s := range file.Stmts {
+		tc.markGuarded(s, false)
+	}
+	for _, c := range file.Cmds {
+		tc.markGuarded(c, false)
+	}
+}
+
+func (tc *typeChecker) markGuarded(n rl.Node, guarded bool) {
+	if n == nil {
+		return
+	}
+	switch v := n.(type) {
+	case *rl.FnDef:
+		for _, b := range v.Body {
+			tc.markGuarded(b, false)
+		}
+		return
+	case *rl.Lambda:
+		for _, b := range v.Body {
+			tc.markGuarded(b, false)
+		}
+		return
+	case *rl.Fallback:
+		tc.markGuarded(v.Left, true)
+		tc.markGuarded(v.Right, guarded)
+		return
+	case *rl.CatchExpr:
+		tc.markGuarded(v.Left, true)
+		tc.markGuarded(v.Right, guarded)
+		return
+	case *rl.Assign:
+		valsGuarded := guarded || v.Catch != nil
+		for _, val := range v.Values {
+			tc.markGuarded(val, valsGuarded)
+		}
+		for _, tgt := range v.Targets {
+			tc.markGuarded(tgt, guarded)
+		}
+		if v.Catch != nil {
+			for _, s := range v.Catch.Stmts {
+				tc.markGuarded(s, false)
+			}
+		}
+		return
+	case *rl.ExprStmt:
+		tc.markGuarded(v.Expr, guarded || v.Catch != nil)
+		if v.Catch != nil {
+			for _, s := range v.Catch.Stmts {
+				tc.markGuarded(s, false)
+			}
+		}
+		return
+	case *rl.Shell:
+		cmdGuarded := guarded || v.Catch != nil
+		tc.markGuarded(v.Cmd, cmdGuarded)
+		for _, tgt := range v.Targets {
+			tc.markGuarded(tgt, guarded)
+		}
+		if v.Catch != nil {
+			for _, s := range v.Catch.Stmts {
+				tc.markGuarded(s, false)
+			}
+		}
+		return
+	case *rl.Call:
+		if guarded {
+			tc.guardedCalls[v] = true
+		}
+		for _, c := range v.Children() {
+			tc.markGuarded(c, guarded)
+		}
+		return
+	}
+	for _, c := range n.Children() {
+		tc.markGuarded(c, guarded)
 	}
 }
 
@@ -649,11 +767,13 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		// `return a, b` builds a tuple so the static return type
 		// matches what the unpack-side `x, y = f()` would expect.
 		var t rl.TypingT
+		var valNode rl.Node
 		switch len(v.Values) {
 		case 0:
 			t = rl.NewVoidType()
 		case 1:
 			t = tc.synth(v.Values[0])
+			valNode = v.Values[0]
 		default:
 			elems := make([]rl.TypingT, len(v.Values))
 			for i, val := range v.Values {
@@ -661,7 +781,7 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 			}
 			t = rl.NewTupleType(elems...)
 		}
-		tc.recordReturn(t, v)
+		tc.recordReturn(t, v, valNode)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -2201,21 +2321,28 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
 		return
 	}
-	if declared.IsAssignableFrom(valType) {
+	res := tc.check(valNode, declared)
+	if res.ok {
 		return
 	}
 	severity := IssueHint
 	var suggestion string
-	if _, isNull := valType.(*rl.TypingNullT); isNull {
+	// A bare `null` assigned to a non-nullable slot is provably wrong -
+	// null has a single inhabitant, no synthesis shortcut hides a valid
+	// program. Promote that one case to Error (with a fix-it). We gate on
+	// the offending node being the whole value, so this stays scoped to
+	// `x: int = null` and doesn't sweep in nested nulls, which the
+	// promote-type-check rollout (Phase D) handles uniformly.
+	if _, isNull := res.got.(*rl.TypingNullT); isNull && res.offending == valNode {
 		severity = IssueError
-		suggestion = fmt.Sprintf("To allow null here, declare the slot as '%s?'", declared.Name())
+		suggestion = fmt.Sprintf("To allow null here, declare the slot as '%s?'", res.want.Name())
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
-		Span:     valNode.Span(),
+		Span:     res.offending.Span(),
 		Severity: severity,
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
-			valType.Name(), declared.Name()),
+			res.got.Name(), res.want.Name()),
 		Suggestion: suggestion,
 	})
 }
@@ -2288,15 +2415,16 @@ func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.N
 	if isErrorType(expected) || isDynamicLike(expected) {
 		return
 	}
-	if expected.IsAssignableFrom(valType) {
+	res := tc.check(valNode, expected)
+	if res.ok {
 		return
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
-		Span:     valNode.Span(),
+		Span:     res.offending.Span(),
 		Severity: IssueHint,
 		Code:     rl.ErrCollectionElementMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to element type '%s'",
-			valType.Name(), expected.Name()),
+			res.got.Name(), res.want.Name()),
 	})
 }
 
@@ -2420,9 +2548,58 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.Ty
 	tc.checkCall(call, typing, implicitReceiverCount)
 
 	if typing.ReturnT != nil {
-		return tc.record(call, *typing.ReturnT)
+		return tc.record(call, tc.maybeStripFallible(call, *typing.ReturnT))
 	}
 	return tc.record(call, rl.NewDynamicType())
+}
+
+// maybeStripFallible models Rad's panic-promotion. Every call except
+// the error() builtin raises a RadPanic instead of returning an error
+// arm as a value (core/funcs.go: panicIfError), so a fallible call's
+// error can never flow past the call in normal control flow - it
+// either succeeds or unwinds. We therefore drop the error arm from the
+// call's static result, leaving the success type. When the call isn't
+// guarded by `??`/`catch`, we also nudge the user to handle the
+// failure they've left implicit (it would otherwise halt the script).
+func (tc *typeChecker) maybeStripFallible(call *rl.Call, ret rl.TypingT) rl.TypingT {
+	if tc.isErrorBuiltinCall(call) {
+		// error() is the one call that returns its error as a value;
+		// stripping it would collapse the result to Never.
+		return ret
+	}
+	stripped := stripErrorFrom(ret)
+	if stripped == nil {
+		return ret // no error arm: not a fallible call
+	}
+	if !tc.guardedCalls[call] {
+		tc.emitUnhandledFallible(call)
+	}
+	return stripped
+}
+
+// isErrorBuiltinCall reports whether call is a direct invocation of the
+// error() builtin - the sole call the runtime does not panic-promote.
+// Mirrors core/funcs.go's `funcName == FUNC_ERROR && isBuiltIn`.
+func (tc *typeChecker) isErrorBuiltinCall(call *rl.Call) bool {
+	ident, ok := call.Func.(*rl.Identifier)
+	if !ok || ident.Name != "error" {
+		return false
+	}
+	sym, ok := tc.resolved.Uses[ident]
+	return ok && sym != nil && sym.Kind == SymBuiltin
+}
+
+// emitUnhandledFallible flags a fallible call whose error isn't caught.
+// Stays a Hint by policy: the script runs fine when the call succeeds,
+// so this is a nudge toward explicit handling, never a gate.
+func (tc *typeChecker) emitUnhandledFallible(call *rl.Call) {
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:       call.Span(),
+		Severity:   IssueHint,
+		Code:       rl.ErrUnhandledFallibleCall,
+		Message:    "This call can fail; the error isn't handled and would halt the script",
+		Suggestion: "Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`",
+	})
 }
 
 // synthVarPath walks a chained path expression (e.g. `a.b[c].d`,
@@ -2742,63 +2919,31 @@ func (tc *typeChecker) checkCall(call *rl.Call, typing *rl.TypingFnT, implicitRe
 // unannotated (nil declared type) - that's the "any" parameter case
 // and we let the runtime catch any mismatch.
 //
-// Severity is Hint, not Error - intentionally less strict than the
-// rest of the assignability checks. The call site is where users pass
-// literals into structured typed slots ({ "outer": { "inner": int } },
-// fn() -> void[], etc.), and today's literal-type synth loses fidelity:
-// `{ "outer": { "inner": 42 } }` synths to `{ str: { str: int } }`,
-// which structurally can't match the named-key form even though the
-// runtime would accept it. Promoting to Error would block legitimate
-// scripts on day one. The runtime still catches genuine mismatches
-// with its value-aware error message. Kan: promote-type-check.
+// The assignability decision runs through check, which sees through
+// literal shapes synth widens away: `{ "outer": { "inner": 42 } }`
+// passed into `{ "outer": { "inner": int } }` matches field-wise even
+// though its synthesized type is `{ str: { str: int } }`. On a genuine
+// mismatch check pinpoints the offending element, so the diagnostic
+// lands on the bad value rather than the whole argument.
+//
+// Severity is Hint pending the promote-type-check rollout (Phase D);
+// the structural-fidelity gap that previously forced Hint here is now
+// closed by check.
 func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 	if param.Type == nil {
 		return
 	}
-	expected := *param.Type
-	argType := tc.synth(argNode)
-	if argType == nil {
-		return
-	}
-	if expected.IsAssignableFrom(argType) {
-		return
-	}
-	// Literal-aware exception: a plain string literal synths to
-	// TypingStrT, which IsAssignableFrom rejects for a StrEnum
-	// param even when the literal's value is in the enum. Until the
-	// synth layer carries literal types, peek at the AST here so
-	// f("read") against ["read","write"] doesn't false-flag.
-	if litMatchesStrEnum(argNode, expected) {
+	res := tc.check(argNode, *param.Type)
+	if res.ok {
 		return
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
-		Span:     argNode.Span(),
+		Span:     res.offending.Span(),
 		Severity: IssueHint,
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Argument type '%s' is not assignable to expected type '%s'",
-			argType.Name(), expected.Name()),
+			res.got.Name(), res.want.Name()),
 	})
-}
-
-// litMatchesStrEnum returns true when argNode is a plain (non-
-// interpolated) string literal whose value is a member of the
-// expected StrEnum. Used to bridge the gap between today's plain-
-// TypingStrT synth and the literal-aware check the enum needs.
-func litMatchesStrEnum(argNode rl.Node, expected rl.TypingT) bool {
-	enum, ok := expected.(*rl.TypingStrEnumT)
-	if !ok {
-		return false
-	}
-	lit, ok := argNode.(*rl.LitString)
-	if !ok || !lit.Simple {
-		return false
-	}
-	for _, v := range enum.Values() {
-		if v == lit.Value {
-			return true
-		}
-	}
-	return false
 }
 
 func (tc *typeChecker) addCallIssue(span rl.Span, code rl.Error, msg string) {
@@ -3202,11 +3347,14 @@ const strPlusMigrationHint = "In v0.9, + no longer coerces types. Use string int
 
 // addOpIssue emits a binary-op type diagnostic.
 //
-// Severity is Hint, not Error - fallible builtins like `parse_int`
-// return `int|error`, and users routinely write `a = parse_int(...)`
-// followed by `a + 1` without narrowing. The runtime succeeds when
-// the parse does, so promoting here would block valid scripts.
-// Kan: promote-type-check (union-narrowing path).
+// Severity is Error: by the time an op sees its operands, fallible
+// calls have already had their error arm stripped at the call site
+// (maybeStripFallible), so the old `int|error + int` false positive
+// can't occur - `a = parse_int(...); a + 1` types `a` as int. What
+// reaches here is a provably-wrong operand pair (e.g. `"hi" + 1`),
+// which the runtime always rejects (ErrInvalidTypeForOp). The
+// Never/Dynamic/ErrorType short-circuits in synthOpBinary keep this
+// from firing on poisoned or opted-out operands.
 func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.TypingT, isCompound bool) {
 	opStr := op.String()
 	if isCompound {
@@ -3214,7 +3362,7 @@ func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.T
 	}
 	issue := BindIssue{
 		Span:     span,
-		Severity: IssueHint,
+		Severity: IssueError,
 		Code:     rl.ErrInvalidTypeForOp,
 		Message: fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'",
 			left.Name(), opStr, right.Name()),
@@ -3241,13 +3389,14 @@ func isBool(t rl.TypingT) bool {
 	return ok
 }
 
-// addUnaryOpIssue emits a unary-op type diagnostic. Severity is Hint
-// for the same reason as addOpIssue - union types from fallible
-// builtins flow through unary ops too. Kan: promote-type-check.
+// addUnaryOpIssue emits a unary-op type diagnostic. Severity is Error
+// for the same reason as addOpIssue - fallible-call error arms are
+// stripped before the operand reaches here, so only a provably-wrong
+// operand (e.g. unary `-` on a str) survives to fire.
 func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.TypingT) {
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     span,
-		Severity: IssueHint,
+		Severity: IssueError,
 		Code:     rl.ErrInvalidTypeForOp,
 		Message: fmt.Sprintf("Invalid operand type '%s' for unary '%s'",
 			operand.Name(), op.String()),
@@ -3332,7 +3481,7 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 			if stmt == nil {
 				continue
 			}
-			tc.recordReturn(tc.synth(stmt), stmt)
+			tc.recordReturn(tc.synth(stmt), stmt, stmt)
 		}
 	} else {
 		tc.walkStmts(n.Body)

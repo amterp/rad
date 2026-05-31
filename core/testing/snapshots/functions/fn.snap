@@ -302,14 +302,14 @@ fn f():
 	pass
 f() + 1
 ### STDERR ###
-error[RAD20038]: Cannot use void value in expression
+error[RAD30002]: Invalid operand types: cannot do 'void + int'
   --> <script>:3:1
   |
 2 | 	pass
 3 | f() + 1
-  | ^^^
+  | ^^^^^^^
   |
-   = info: rad explain RAD20038
+   = info: rad explain RAD30002
 
 
 ### EXIT ###
@@ -380,14 +380,14 @@ fn f():
 	pass
 -f()
 ### STDERR ###
-error[RAD20038]: Cannot use void value in expression
-  --> <script>:3:2
+error[RAD30002]: Invalid operand type 'void' for unary '-'
+  --> <script>:3:1
   |
 2 | 	pass
 3 | -f()
-  |  ^^^
+  | ^^^^
   |
-   = info: rad explain RAD20038
+   = info: rad explain RAD30002
 
 
 ### EXIT ###

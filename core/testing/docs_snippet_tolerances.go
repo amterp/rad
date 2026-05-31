@@ -31,6 +31,18 @@ type Tolerance struct {
 	Reason string
 }
 
+// globallyToleratedCodes are advisory diagnostics accepted in ANY doc
+// snippet, without a per-snippet entry. RAD30011 (unhandled fallible
+// call) is a pervasive teaching-style hint: docs and examples call
+// parse_int / read_file / etc. terse by design, to keep the focus on
+// the feature being shown rather than on error scaffolding. Pinning it
+// per-snippet would add dozens of no-signal entries. It's a Hint and
+// never gates execution, so tolerating it globally hides no real error
+// - the snippets still run.
+var globallyToleratedCodes = map[string]bool{
+	"RAD30011": true,
+}
+
 // docSnippetTolerances maps snippet IDs to their accepted diagnostic profile.
 // Add entries via copy-paste from the test failure output - each failure
 // prints a ready-to-paste stub.
@@ -209,25 +221,26 @@ var docSnippetTolerances = map[string]Tolerance{
 	},
 
 	// hm.md
-	"docs-web/docs/examples/hm.md#4eb5a0f8": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "checker false positive: `state.load(...)` UFCS-resolves to `load(state, ...)` where state is `error|map`; the first param is `map`, so the checker hints. The script is correct in practice because errdefer + state handling cover the error case at runtime.",
-	},
+	// #4eb5a0f8 (the final-form script + its preview duplicate) no longer
+	// needs an entry: load_state() now strips its error arm at the call
+	// (Gap 2), so `state` is `map` and the old `error|map` UFCS false
+	// positive is gone. The unhandled-fallible hint it now carries is
+	// globally tolerated.
 	"docs-web/docs/examples/hm.md#19e0e50a": {
 		ExpectedCodes: []string{"RAD40003"},
 		Reason:        "intermediate tutorial step: command callbacks `do_show`/`do_edit`/`do_list` are added in the following tutorial steps. The RAD40003 warning surfaces because the tracking only sees top-level fns.",
 	},
 	"docs-web/docs/examples/hm.md#03e13698": {
-		ExpectedCodes: []string{"RAD30001", "RAD40003"},
-		Reason:        "intermediate tutorial step: `do_edit`/`do_list` not yet defined (added in later steps), plus the same `error|map` hint as #4eb5a0f8.",
+		ExpectedCodes: []string{"RAD40003"},
+		Reason:        "intermediate tutorial step: `do_edit`/`do_list` not yet defined (added in later steps). The old `error|map` RAD30001 hint is gone now that load_state() strips its error arm (Gap 2).",
 	},
 	"docs-web/docs/examples/hm.md#0b53f387": {
-		ExpectedCodes: []string{"RAD30001", "RAD40003"},
-		Reason:        "intermediate tutorial step: `do_list` not yet defined; same `error|map` hint pattern.",
+		ExpectedCodes: []string{"RAD40003"},
+		Reason:        "intermediate tutorial step: `do_list` not yet defined. Old `error|map` RAD30001 hint gone after Gap 2 error-strip.",
 	},
 	"docs-web/docs/examples/hm.md#abb66476": {
-		ExpectedCodes: []string{"RAD30001", "RAD40003"},
-		Reason:        "intermediate tutorial step: `do_list` not yet defined; same `error|map` hint pattern.",
+		ExpectedCodes: []string{"RAD40003"},
+		Reason:        "intermediate tutorial step: `do_list` not yet defined. Old `error|map` RAD30001 hint gone after Gap 2 error-strip.",
 	},
 
 	// ---- docs-web/docs/reference/syntax.md -------------------------
@@ -369,18 +382,20 @@ var docSnippetTolerances = map[string]Tolerance{
 		Skip:   true,
 		Reason: "guide fragment: ?? chaining with placeholder 'user' / 'config_path'.",
 	},
-	"docs-web/docs/guide/error-handling.md#82491324": {
-		ExpectedCodes: []string{"RAD30002"},
-		Reason:        "checker hint: 'float|error * float' in the user's error-flow example. The doc is teaching error propagation; the hint surfaces because the checker doesn't see that the error short-circuit happens before the arithmetic.",
-	},
+	// #82491324 no longer needs an entry: `parse_float(...)` now strips
+	// its error arm at the call (Gap 2), so `price` is `float` and the
+	// old `float|error * float` RAD30002 hint is gone - the very false
+	// positive that hint represented. It now carries the globally-
+	// tolerated unhandled-fallible hint instead.
 	"docs-web/docs/guide/error-handling.md#8ce3fff7": {
 		Skip:   true,
 		Reason: "guide fragment: catch-chaining with placeholder 'risky_call' / 'fallback_call'.",
 	},
-	"docs-web/docs/guide/error-handling.md#b558bc7f": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "checker hint: `port = parse_int(port_str) ?? 8080` should narrow to `int`, but `??` doesn't fully narrow `int|error ?? int` today, so the subsequent `validate_port(port)` call sees a residual `int|error|int`.",
-	},
+	// #b558bc7f no longer needs an entry: `parse_int(port_str) ?? 8080`
+	// now yields `int` because the call strips its error arm before `??`
+	// (Gap 2), so the residual-`int|error|int` RAD30001 hint into
+	// validate_port is gone. This is exactly the narrowing the old
+	// comment wished for.
 	"docs-web/docs/guide/error-handling.md#e380902c": {
 		Skip:   true,
 		Reason: "guide fragment: nested-access with placeholder 'response'.",
@@ -503,37 +518,27 @@ var docSnippetTolerances = map[string]Tolerance{
 	},
 
 	// ---- docs-web/docs/guide/stashes.md -----------------------------
-	"docs-web/docs/guide/stashes.md#18fa9b0a": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "checker hint: load_state() returns error|map and the doc shows direct use; the doc teaches the state-management pattern, error handling is covered separately.",
-	},
-	"docs-web/docs/guide/stashes.md#43a279d8": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "same load_state() error|map pattern as #18fa9b0a.",
-	},
+	// Most load_state() snippets no longer need entries: load_state()
+	// strips its error arm at the call (Gap 2), so `state` is `map` and
+	// the old error|map RAD30001 hints are gone; they now carry only the
+	// globally-tolerated unhandled-fallible hint.
 	"docs-web/docs/guide/stashes.md#ed4e81de": {
-		ExpectedCodes: []string{"RAD30001", "RAD30002"},
-		Reason:        "same load_state() pattern + arithmetic on error|int. The error case is handled by the surrounding flow at runtime but the static checker can't yet see that.",
+		ExpectedCodes: []string{"RAD30002"},
+		Reason:        "checker hint: `count = state[\"count\"] ?? 0` is `dynamic|int` (untyped map index), so `count++` flags `dynamic|int + int`. The script is correct at runtime. Was RAD30001 pre-Gap-2 (load_state's error|map); the error arm now strips, surfacing the underlying dynamic-map-index hint instead.",
 	},
 
 	// ---- docs-web/docs/guide/type-annotations.md --------------------
 	// Type-annotation examples often demonstrate function signatures
-	// against literal returns. Many of these snippets hit the
-	// structural-literal fidelity gap noted in commit 1's severity
-	// promotion: list/struct/tuple literals synthesise as their
-	// surface shape rather than the declared annotated shape, so
-	// the static check fires a Hint even when the code is correct
-	// at runtime. Pinned to RAD30001 (Hint) so language changes
-	// that surface a different code show up.
+	// against typed returns. The remaining pins here hit an *inference*
+	// fidelity gap: the returned value is a variable built up in a loop
+	// (`counts = {}; counts[k] = 1; return counts`), so its synthesised
+	// type stays wider than the declared annotated shape and the static
+	// check fires a Hint even though the code is correct at runtime.
+	// (The literal-at-site cases - returning a map/list literal directly -
+	// are now handled structurally by check and no longer fire.) Pinned
+	// to RAD30001 (Hint) so language changes that surface a different
+	// code show up.
 
-	"docs-web/docs/guide/type-annotations.md#71864ce1": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "literal-fidelity hint on nested struct-literal return.",
-	},
-	"docs-web/docs/guide/type-annotations.md#77d291e0": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "literal-fidelity hint on struct-literal return.",
-	},
 	"docs-web/docs/guide/type-annotations.md#8bcb60a4": {
 		ExpectedCodes: []string{"RAD30001", "RAD30002"},
 		Reason:        "checker hint: vararg `*data_points: int|float` doesn't refine into `sum()`'s `float[]` or `join()`'s `str|list|map` parameters. RAD30002 cascades on the division because total/len both produce union types.",
@@ -553,10 +558,6 @@ var docSnippetTolerances = map[string]Tolerance{
 	"docs-web/docs/guide/type-annotations.md#ca9eb821": {
 		ExpectedCodes: []string{"RAD30002"},
 		Reason:        "literal-fidelity hint on words.join(' ') return type vs declared str.",
-	},
-	"docs-web/docs/guide/type-annotations.md#d4f47260": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "literal-fidelity hint on optional-field struct return shape.",
 	},
 	"docs-web/docs/guide/type-annotations.md#defd0b86": {
 		ExpectedCodes: []string{"RAD30001"},
