@@ -148,22 +148,21 @@ func (tc *typeChecker) popReturnFrame() []rl.TypingT {
 
 // recordReturn appends a return-value type to the innermost fn
 // scope's accumulator and, if that scope has a declared return
-// type, checks the value against it at the return's own span. A
-// return outside any fn (validation-error elsewhere) is a no-op.
+// type, checks the value against it. A return outside any fn
+// (validation-error elsewhere) is a no-op.
 //
-// Severity is Hint, not Error - same structural-literal fidelity
-// gap as checkArgType: `return [1, "2"]` for `-> [int, str]` is valid
-// at runtime, but the list literal synths to `int|str[]` which doesn't
-// structurally match the tuple type. check closes that gap by walking
-// the value node against the declared return type structurally.
+// The runtime enforces declared return types, so a provable mismatch
+// is an Error; check downgrades to a Hint when the real value is
+// unknown (see checkResult.gateable). `return [1, "2"]` for
+// `-> [int, str]` is accepted: check walks the literal against the
+// tuple position-wise even though it synths to `(int|str)[]`.
 //
 // valNode is the single return-value expression when there is exactly
 // one (so check can localize a nested mismatch); it's nil for a `void`
 // return or a multi-value `return a, b` (whose synthesized tuple has no
 // single literal node to walk), in which case we fall back to a
-// whole-statement assignability check at spanNode.
-//
-// Severity is Hint pending the promote-type-check rollout (Phase D).
+// whole-statement assignability check at spanNode, gating only when the
+// synthesized type carries no gradual container.
 func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.Node) {
 	n := len(tc.returnStack)
 	if n == 0 {
@@ -184,7 +183,7 @@ func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.N
 		}
 		tc.info.Issues = append(tc.info.Issues, BindIssue{
 			Span:     res.offending.Span(),
-			Severity: IssueHint,
+			Severity: mismatchSeverity(res),
 			Code:     rl.ErrTypeMismatch,
 			Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
 				res.got.Name(), res.want.Name()),
@@ -194,9 +193,13 @@ func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.N
 	if expected.IsAssignableFrom(t) {
 		return
 	}
+	severity := IssueHint
+	if typeIsGateable(t) {
+		severity = IssueError
+	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     spanNode.Span(),
-		Severity: IssueHint,
+		Severity: severity,
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
 			t.Name(), expected.Name()),
@@ -2300,19 +2303,16 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 // checkAssignAgainstDeclared emits a type-mismatch when the assigned
 // value can't flow into the declared slot.
 //
-// Default severity is Hint - same structural-literal fidelity gap as
-// checkArgType. `x: ["a", "b"] = "a"` is valid at runtime, but the
-// str literal synths to plain TypingStrT (litMatchesStrEnum lives
-// only at the call site today, not here). Similar story for tuple
-// and struct literals against named-shape declared types. Promoting
-// the general case would block legitimate scripts. Kan:
-// promote-type-check.
+// The declared type is the user's contract for the binding, so a
+// provable violation is an Error - matching how typed languages reject
+// `x: int = "hi"` even though Rad's runtime is lenient about local
+// assignment. check sees through literal shapes (`x: [int, str] =
+// [1, "2"]` is accepted) and downgrades to a Hint when the real value
+// is unknown - a gradual `list`/`map`, or an interpolated string into a
+// str-enum (see checkResult.gateable).
 //
-// Exception: a bare TypingNullT value flowing into a non-nullable
-// slot is promoted to Error. The structural-literal fidelity caveat
-// doesn't apply - `null` has exactly one inhabitant, no synthesis
-// shortcut hides a valid program here. The severity matches the
-// project policy: provably wrong = Error, gate runtime.
+// A bare `null` into a non-nullable slot additionally carries a fix-it
+// suggesting the `T?` form.
 //
 // ErrorType / Dynamic short-circuit: a poisoned RHS already produced
 // a diagnostic and any-likes are universally assignable, so no extra
@@ -2325,21 +2325,16 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 	if res.ok {
 		return
 	}
-	severity := IssueHint
+	// A bare `null` assigned to a non-nullable slot earns a fix-it
+	// nudging the `T?` form. (The severity is already Error - null into a
+	// non-nullable type is a provable mismatch.)
 	var suggestion string
-	// A bare `null` assigned to a non-nullable slot is provably wrong -
-	// null has a single inhabitant, no synthesis shortcut hides a valid
-	// program. Promote that one case to Error (with a fix-it). We gate on
-	// the offending node being the whole value, so this stays scoped to
-	// `x: int = null` and doesn't sweep in nested nulls, which the
-	// promote-type-check rollout (Phase D) handles uniformly.
-	if _, isNull := res.got.(*rl.TypingNullT); isNull && res.offending == valNode {
-		severity = IssueError
+	if _, isNull := res.got.(*rl.TypingNullT); isNull {
 		suggestion = fmt.Sprintf("To allow null here, declare the slot as '%s?'", res.want.Name())
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     res.offending.Span(),
-		Severity: severity,
+		Severity: mismatchSeverity(res),
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
 			res.got.Name(), res.want.Name()),
@@ -2367,10 +2362,11 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 // has admitted us. Concretely: we want the most precise statically
 // known element type, gated by the user having opted in.
 //
-// Severity is Hint, matching checkAssignAgainstDeclared - same
-// structural-literal fidelity gap (Kan: promote-type-check). Other
-// forms of mutation (struct field assignment, slice assignment)
-// aren't checked here.
+// A provable element mismatch is an Error, matching
+// checkAssignAgainstDeclared - the declared element type is a contract,
+// and check downgrades to a Hint when the value is unknown. Other forms
+// of mutation (struct field assignment, slice assignment) aren't checked
+// here.
 func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.Node, valType rl.TypingT) {
 	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
 		return
@@ -2421,7 +2417,7 @@ func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.N
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     res.offending.Span(),
-		Severity: IssueHint,
+		Severity: mismatchSeverity(res),
 		Code:     rl.ErrCollectionElementMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to element type '%s'",
 			res.got.Name(), res.want.Name()),
@@ -2926,9 +2922,10 @@ func (tc *typeChecker) checkCall(call *rl.Call, typing *rl.TypingFnT, implicitRe
 // mismatch check pinpoints the offending element, so the diagnostic
 // lands on the bad value rather than the whole argument.
 //
-// Severity is Hint pending the promote-type-check rollout (Phase D);
-// the structural-fidelity gap that previously forced Hint here is now
-// closed by check.
+// The runtime enforces argument types, so a provable mismatch is an
+// Error. check downgrades the verdict to a Hint when the real value is
+// unknown (a gradual `list`/`map`, or an interpolated string into a
+// str-enum) - see checkResult.gateable.
 func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 	if param.Type == nil {
 		return
@@ -2939,7 +2936,7 @@ func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     res.offending.Span(),
-		Severity: IssueHint,
+		Severity: mismatchSeverity(res),
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Argument type '%s' is not assignable to expected type '%s'",
 			res.got.Name(), res.want.Name()),

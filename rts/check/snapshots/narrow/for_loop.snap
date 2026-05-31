@@ -165,7 +165,7 @@ fn consume_str(s: str):
   v (loop): int
 
 # Diagnostics
-  [hint] RAD30001 @ 3:21 - Argument type 'int' is not assignable to expected type 'str'
+  [error] RAD30001 @ 3:21 - Argument type 'int' is not assignable to expected type 'str'
 ### TITLE ###
 ForTwoVarOverMapValueIsTyped
 ### DESCRIPTION ###

@@ -24,7 +24,7 @@ greet(name)
   name (arg): str
 
 # Diagnostics
-  [hint] RAD30001 @ 7:7 - Argument type 'str' is not assignable to expected type 'int'
+  [error] RAD30001 @ 7:7 - Argument type 'str' is not assignable to expected type 'int'
 ### TITLE ###
 ArgsBlockListUseCleanWhenSlotMatches
 ### DESCRIPTION ###
@@ -82,7 +82,7 @@ fn consume_int(label: int):
   on_build (fn): fn() -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 6:17 - Argument type 'str' is not assignable to expected type 'int'
+  [error] RAD30001 @ 6:17 - Argument type 'str' is not assignable to expected type 'int'
 ### TITLE ###
 ArgsBlockOptionalIsNullable
 ### DESCRIPTION ###

@@ -16,7 +16,7 @@ Null errors if used in wrong function
 ### INPUT ###
 split(null, ",")
 ### STDERR ###
-error[RAD30001]: Value 'null' (null) is not compatible with expected type 'str'
+error[RAD30001]: Argument type 'null' is not assignable to expected type 'str'
   --> <script>:1:7
   |
 1 | split(null, ",")

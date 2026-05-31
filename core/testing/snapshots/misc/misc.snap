@@ -194,7 +194,7 @@ Misc_Abs_ErrorsOnAlphabetical
 
 a = abs("asd")
 ### STDERR ###
-error[RAD30001]: Value '"asd"' (str) is not compatible with expected type 'int|float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int|float'
   --> <script>:2:9
   |
 1 |

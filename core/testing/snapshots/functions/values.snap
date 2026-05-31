@@ -16,7 +16,7 @@ Values errors if given string
 ### INPUT ###
 values("foo")
 ### STDERR ###
-error[RAD30001]: Value '"foo"' (str) is not compatible with expected type 'map'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'map'
   --> <script>:1:8
   |
 1 | values("foo")

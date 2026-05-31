@@ -45,7 +45,7 @@ process(fn(x):
   process (fn): fn(fn(int) -> [int, str]) -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, int]' is not assignable to expected type 'fn(int) -> [int, str]'
+  [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, int]' is not assignable to expected type 'fn(int) -> [int, str]'
 ### TITLE ###
 LambdaTupleArityMismatchFires
 ### DESCRIPTION ###
@@ -69,7 +69,7 @@ process(fn(x):
   process (fn): fn(fn(int) -> [int, str]) -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, str, bool]' is not assignable to expected type 'fn(int) -> [int, str]'
+  [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> [int, str, bool]' is not assignable to expected type 'fn(int) -> [int, str]'
 ### TITLE ###
 HoistedFnTupleReturnAnnotationHonored
 ### DESCRIPTION ###

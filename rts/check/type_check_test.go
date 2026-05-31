@@ -163,21 +163,19 @@ func TestTypeCheck_BuiltinKnownNamedArgOK(t *testing.T) {
 	assert.Empty(t, info.Issues)
 }
 
-func TestTypeCheck_ArgTypeMismatchEmitsHint(t *testing.T) {
-	// `len` expects str/list/map. Passing an int surfaces a Hint -
-	// the call site is held at Hint until structural-literal fidelity
-	// lands; the runtime still catches the mismatch with a value-aware
-	// message.
+func TestTypeCheck_ArgTypeMismatchEmitsError(t *testing.T) {
+	// `len` expects str/list/map. Passing an int is a provable mismatch
+	// the runtime enforces, so it gates as an Error.
 	_, info, _ := typeInfoFromSrc(t, "x = len(5)\n")
 	require.NotEmpty(t, info.Issues)
 	found := false
 	for _, i := range info.Issues {
-		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueError {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "expected a Hint-severity ErrTypeMismatch issue")
+	assert.True(t, found, "expected an Error-severity ErrTypeMismatch issue")
 }
 
 func TestTypeCheck_ArgTypeCorrectIsSilent(t *testing.T) {
@@ -189,18 +187,18 @@ func TestTypeCheck_ArgTypeCorrectIsSilent(t *testing.T) {
 	}
 }
 
-func TestTypeCheck_NamedArgTypeMismatchEmitsHint(t *testing.T) {
-	// `print(... sep: str = ...)` - sep expects str. Passing an int
-	// surfaces a Hint at the call site (see checkArgType comment).
+func TestTypeCheck_NamedArgTypeMismatchEmitsError(t *testing.T) {
+	// `print(... sep: str = ...)` - sep expects str. Passing an int is a
+	// provable mismatch and gates as an Error (see checkArgType comment).
 	_, info, _ := typeInfoFromSrc(t, "print(\"hi\", sep=5)\n")
 	found := false
 	for _, i := range info.Issues {
-		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueError {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "expected type-mismatch hint on named arg")
+	assert.True(t, found, "expected type-mismatch error on named arg")
 }
 
 func TestTypeCheck_UFCSCallReceiverCountsAsFirstArg(t *testing.T) {
@@ -503,19 +501,19 @@ func TestTypeCheck_UserFnCallWithTooFewArgsFlagsArity(t *testing.T) {
 		"expected ErrWrongArgCount when user fn called with too few args")
 }
 
-func TestTypeCheck_UserFnCallWithWrongArgTypeFlagsHint(t *testing.T) {
-	// Type mismatch on a user fn arg surfaces as Hint, matching the
-	// deferred severity for call-site checks (see checkArgType comment).
+func TestTypeCheck_UserFnCallWithWrongArgTypeFlagsError(t *testing.T) {
+	// Type mismatch on a user fn arg gates as an Error - the runtime
+	// enforces user-fn argument types (see checkArgType comment).
 	src := "fn add(x: int, y: int) -> int: x + y\nz = add(\"a\", 2)\n"
 	_, info, _ := typeInfoFromSrc(t, src)
 	found := false
 	for _, i := range info.Issues {
-		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueError {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "expected Hint-severity type-mismatch on user fn arg")
+	assert.True(t, found, "expected Error-severity type-mismatch on user fn arg")
 }
 
 func TestTypeCheck_UnannotatedUserFnFallsBackToDynamic(t *testing.T) {
@@ -699,18 +697,18 @@ func TestTypeCheck_TypedLocalAcceptsAssignableRHS(t *testing.T) {
 }
 
 func TestTypeCheck_TypedLocalRejectsIncompatibleRHS(t *testing.T) {
-	// str literal can't flow into `: int`. Held at Hint until
-	// structural-literal fidelity lands (Kan: promote-type-check).
+	// str literal can't flow into `: int`. The declared type is a
+	// contract, so this gates as an Error.
 	_, info, _ := typeInfoFromSrc(t, "x: int = \"hi\"\n")
 	found := false
 	for _, i := range info.Issues {
-		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueHint {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueError {
 			found = true
 			break
 		}
 	}
 	assert.True(t, found,
-		"expected a Hint-severity type-mismatch when RHS isn't assignable to declared")
+		"expected an Error-severity type-mismatch when RHS isn't assignable to declared")
 }
 
 func TestTypeCheck_TypedLocalDeclaredFloatAcceptsInt(t *testing.T) {

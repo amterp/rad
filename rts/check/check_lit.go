@@ -13,11 +13,20 @@ import (
 // offending is the node itself and got/want equal the synthesized and
 // expected types, so the message reads exactly as the old
 // synth + IsAssignableFrom path did.
+//
+// gateable records whether a *failure* is provable enough to block runtime
+// (Error) rather than merely suspected (Hint). It's false when the real
+// value is unknown to the checker - an open gradual container (`list` /
+// `map`) whose contents we can't see, or a non-literal string flowing into
+// a str-enum (the string's runtime value decides membership). Gating those
+// would brick valid programs, which the severity policy forbids. Meaningless
+// when ok is true.
 type checkResult struct {
 	ok        bool
 	offending rl.Node
 	got       rl.TypingT
 	want      rl.TypingT
+	gateable  bool
 }
 
 // check is the structural companion to synth: it decides whether a value
@@ -71,12 +80,18 @@ func (tc *typeChecker) check(node rl.Node, expected rl.TypingT) checkResult {
 		// Assignable if the value fits any arm. We recurse rather than
 		// stop at the fast path so a literal can match a *structured*
 		// arm (tuple, struct, str-enum) that IsAssignableFrom rejects.
+		// A union miss is only gateable when *every* arm was provably
+		// missed - if any arm's miss was uncertain, the value might fit
+		// it at runtime.
+		allGateable := true
 		for _, arm := range exp.Types() {
-			if res := tc.check(node, arm); res.ok {
+			res := tc.check(node, arm)
+			if res.ok {
 				return accept(node, got, expected)
 			}
+			allGateable = allGateable && res.gateable
 		}
-		return reject(node, got, expected)
+		return rejectWith(node, got, expected, allGateable)
 	}
 
 	// Structural literal rules.
@@ -86,12 +101,17 @@ func (tc *typeChecker) check(node rl.Node, expected rl.TypingT) checkResult {
 	case *rl.LitMap:
 		return tc.checkMapLit(lit, expected, got)
 	case *rl.LitString:
-		if enum, isEnum := expected.(*rl.TypingStrEnumT); isEnum && lit.Simple && strEnumContains(enum, lit.Value) {
-			return accept(node, got, expected)
+		if enum, isEnum := expected.(*rl.TypingStrEnumT); isEnum && lit.Simple {
+			if strEnumContains(enum, lit.Value) {
+				return accept(node, got, expected)
+			}
+			// A simple literal not among the members is provably wrong.
+			return reject(node, got, expected)
 		}
 	}
 
-	return reject(node, got, expected)
+	// Leaf mismatch: gateable unless the real value is unknown to us.
+	return rejectWith(node, got, expected, gateableMismatch(got, expected))
 }
 
 // checkListLit checks a list literal against a tuple, list, or open-list
@@ -130,34 +150,42 @@ func (tc *typeChecker) checkListLit(lit *rl.LitList, expected, got rl.TypingT) c
 }
 
 // checkMapLit checks a map literal against a struct or map target. A struct
-// target requires every entry key to be a plain string literal naming a
-// declared field, each value to fit its field type, and every required
-// field to be present. A map target checks all keys against K and all
-// values against V. Other targets fall back to assignability.
+// target requires every declared field's value to fit its type and every
+// required field to be present; extra keys are allowed (the runtime ignores
+// keys beyond the declared shape, so `{ "a": 1, "b": 2 }` satisfies
+// `{ "a": int }`). A map target checks all keys against K and all values
+// against V. Other targets fall back to assignability.
 func (tc *typeChecker) checkMapLit(lit *rl.LitMap, expected, got rl.TypingT) checkResult {
 	switch exp := expected.(type) {
 	case *rl.TypingStructT:
 		seen := make(map[string]bool, len(lit.Entries))
+		hasComputedKey := false
 		for _, entry := range lit.Entries {
 			name, isStr := simpleStringKey(entry.Key)
 			if !isStr {
-				// A computed/interpolated key can't be matched to a named
-				// field statically. Point at the key.
-				return reject(entry.Key, got, expected)
+				// A computed/interpolated key might name any field - we
+				// can't tell which, and it might satisfy a required one.
+				// (Extra keys are valid anyway.) Defer judgement.
+				hasComputedKey = true
+				continue
 			}
 			fieldT, _, found := exp.Field(name)
 			if !found {
-				return reject(entry.Key, got, expected)
+				// Extra field beyond the declared shape - runtime ignores it.
+				continue
 			}
 			if res := tc.check(entry.Value, fieldT); !res.ok {
 				return res
 			}
 			seen[name] = true
 		}
-		// Every required (non-optional) field must be supplied.
-		for key := range exp.Fields() {
-			if !key.IsOptional && !seen[key.Name] {
-				return reject(lit, got, expected)
+		// Every required (non-optional) field must be present - but only
+		// gate the absence when no computed key could be supplying it.
+		if !hasComputedKey {
+			for key := range exp.Fields() {
+				if !key.IsOptional && !seen[key.Name] {
+					return reject(lit, got, expected)
+				}
 			}
 		}
 		return accept(lit, got, expected)
@@ -203,9 +231,103 @@ func strEnumContains(enum *rl.TypingStrEnumT, value string) bool {
 }
 
 func accept(node rl.Node, got, want rl.TypingT) checkResult {
-	return checkResult{ok: true, offending: node, got: got, want: want}
+	return checkResult{ok: true, offending: node, got: got, want: want, gateable: true}
 }
 
+// reject builds a provably-wrong (gateable) failure - the default for a
+// concrete structural conflict. Use rejectWith when the confidence is
+// conditional.
 func reject(node rl.Node, got, want rl.TypingT) checkResult {
-	return checkResult{ok: false, offending: node, got: got, want: want}
+	return rejectWith(node, got, want, true)
+}
+
+func rejectWith(node rl.Node, got, want rl.TypingT, gateable bool) checkResult {
+	return checkResult{ok: false, offending: node, got: got, want: want, gateable: gateable}
+}
+
+// gateableMismatch reports whether a leaf (scalar / non-structured)
+// mismatch is provable enough to gate as an Error. It is true only when
+// *every* possible runtime value of got is definitely incompatible with
+// want. It's false - merely a Hint - whenever some runtime value could
+// fit, i.e. the checker can't see the real value:
+//
+//   - an open gradual container (`list` / `map`) whose contents are hidden;
+//   - a non-literal string into a str-enum (a simple literal would have
+//     been resolved by membership upstream, so a bare `str` here is an
+//     interpolation/variable whose value decides membership at runtime);
+//   - a union or optional whose arms include one that would fit (e.g.
+//     `int|str` into `int`, or `str?` into `str` - the value might be the
+//     compatible arm).
+func gateableMismatch(got, want rl.TypingT) bool {
+	if isGradualContainer(got) {
+		return false
+	}
+	switch g := got.(type) {
+	case *rl.TypingUnionT:
+		return allArmsGateable(g.Types(), want)
+	case *rl.TypingOptionalT:
+		// T? is T | null: gateable only if neither could fit.
+		return allArmsGateable([]rl.TypingT{g.Inner(), rl.NewNullType()}, want)
+	}
+	if _, isEnum := want.(*rl.TypingStrEnumT); isEnum {
+		if _, isStr := got.(*rl.TypingStrT); isStr {
+			return false
+		}
+	}
+	return true
+}
+
+// allArmsGateable reports whether every arm of a union/optional source is
+// a provable mismatch against want. If any arm is assignable (a runtime
+// value of that arm would fit) or is itself an uncertain mismatch, the
+// whole thing is uncertain.
+func allArmsGateable(arms []rl.TypingT, want rl.TypingT) bool {
+	for _, arm := range arms {
+		if want.IsAssignableFrom(arm) {
+			return false
+		}
+		if !gateableMismatch(arm, want) {
+			return false
+		}
+	}
+	return true
+}
+
+// isGradualContainer reports whether t is one of the open gradual
+// collection types (`list` / `map`) - the gradual-typing escape hatch
+// whose element/value contents the checker doesn't track.
+func isGradualContainer(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingAnyListT, *rl.TypingAnyMapT:
+		return true
+	}
+	return false
+}
+
+// typeIsGateable reports whether a synthesized type is concrete enough that
+// a mismatch against it is provable. Used by the non-structural return path
+// (void / multi-value returns) where there's no value node to walk: a type
+// carrying an open gradual container anywhere stays a Hint.
+func typeIsGateable(t rl.TypingT) bool {
+	switch v := t.(type) {
+	case *rl.TypingAnyListT, *rl.TypingAnyMapT:
+		return false
+	case *rl.TypingTupleT:
+		for _, e := range v.Types() {
+			if !typeIsGateable(e) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+// mismatchSeverity maps a failed checkResult to the severity its call site
+// should emit: a blocking Error when the failure is provable, a non-gating
+// Hint when the real value is unknown (see checkResult.gateable).
+func mismatchSeverity(res checkResult) IssueSeverity {
+	if res.gateable {
+		return IssueError
+	}
+	return IssueHint
 }

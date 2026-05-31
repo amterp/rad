@@ -16,7 +16,7 @@ Keys errors if given string
 ### INPUT ###
 keys("foo")
 ### STDERR ###
-error[RAD30001]: Value '"foo"' (str) is not compatible with expected type 'map'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'map'
   --> <script>:1:6
   |
 1 | keys("foo")

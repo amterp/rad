@@ -38,7 +38,7 @@ print(f())
   f (fn): fn() -> [int, str]
 
 # Diagnostics
-  [hint] RAD30001 @ 2:16 - Return value of type 'int' is not assignable to declared return type 'str'
+  [error] RAD30001 @ 2:16 - Return value of type 'int' is not assignable to declared return type 'str'
 ### TITLE ###
 MapLiteralIntoStructAccepts
 ### DESCRIPTION ###
@@ -77,7 +77,7 @@ print(f())
   f (fn): fn() -> { "k": int }
 
 # Diagnostics
-  [hint] RAD30001 @ 2:19 - Return value of type 'str' is not assignable to declared return type 'int'
+  [error] RAD30001 @ 2:19 - Return value of type 'str' is not assignable to declared return type 'int'
 ### TITLE ###
 StructOptionalFieldOmittedAccepts
 ### DESCRIPTION ###
@@ -117,12 +117,13 @@ print(f())
   f (fn): fn() -> { "a": int, "b": str }
 
 # Diagnostics
-  [hint] RAD30001 @ 2:12 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int, "b": str }'
+  [error] RAD30001 @ 2:12 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int, "b": str }'
 ### TITLE ###
-StructUnknownFieldFires
+StructExtraFieldAccepted
 ### DESCRIPTION ###
-A field name not present in the struct target fires, localized to
-the offending key.
+Extra keys beyond the declared struct shape are allowed - the
+runtime ignores them, so `{ "a": 1, "b": 2 }` satisfies
+`{ "a": int }`. No diagnostic.
 ### INPUT ###
 fn f() -> { "a": int }:
     return { "a": 1, "b": 2 }
@@ -137,7 +138,7 @@ print(f())
   f (fn): fn() -> { "a": int }
 
 # Diagnostics
-  [hint] RAD30001 @ 2:22 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int }'
+  (none)
 ### TITLE ###
 StrLiteralIntoStrEnumArgAccepts
 ### DESCRIPTION ###
@@ -180,7 +181,7 @@ pick("delete")
   pick (fn): fn(["read", "write"]) -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 4:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+  [error] RAD30001 @ 4:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
 ### TITLE ###
 NestedMapListIntoStructTupleAccepts
 ### DESCRIPTION ###
@@ -220,7 +221,7 @@ print(f())
   f (fn): fn() -> { "k": [int, str] }
 
 # Diagnostics
-  [hint] RAD30001 @ 2:23 - Return value of type 'int' is not assignable to declared return type 'str'
+  [error] RAD30001 @ 2:23 - Return value of type 'int' is not assignable to declared return type 'str'
 ### TITLE ###
 AssignListLiteralIntoTupleLocalAccepts
 ### DESCRIPTION ###
@@ -259,4 +260,4 @@ print(xs)
   xs (local): int[]
 
 # Diagnostics
-  [hint] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'
+  [error] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'

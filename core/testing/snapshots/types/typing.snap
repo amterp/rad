@@ -14,7 +14,7 @@ add(1, "2").print()
 fn add(x: float, y: float) -> float:
 	return x + y
 ### STDERR ###
-error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:1:8
   |
 1 | add(1, "2").print()
@@ -34,16 +34,13 @@ add(1, 2).print()
 fn add(x: float, y: float) -> float:
 	return "hi"
 ### STDERR ###
-error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'float'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type 'float'
+  --> <script>:3:9
   |
-1 | add(1, 2).print()
-  | ^^^^^^^^^
 2 | fn add(x: float, y: float) -> float:
 3 | 	return "hi"
+  |         ^^^^
   |
-   = stack:
-     at add (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -82,7 +79,7 @@ foo(x=1, y="2").print()
 fn foo(x: float, y: float) -> float:
 	return x / y
 ### STDERR ###
-error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:1:12
   |
 1 | foo(x=1, y="2").print()
@@ -398,7 +395,7 @@ foo(2)
 fn foo(x: str):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '2' (int) is not compatible with expected type 'str'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
   --> <script>:1:5
   |
 1 | foo(2)
@@ -427,16 +424,13 @@ foo().print()
 fn foo() -> str:
 	return 2
 ### STDERR ###
-error[RAD30001]: Value '2' (int) is not compatible with expected type 'str'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'int' is not assignable to declared return type 'str'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> str:
 3 | 	return 2
+  |         ^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -458,7 +452,7 @@ foo("2")
 fn foo(x: int):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'int'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
   --> <script>:1:5
   |
 1 | foo("2")
@@ -478,7 +472,7 @@ foo(null)
 fn foo(x: int):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value 'null' (null) is not compatible with expected type 'int'
+error[RAD30001]: Argument type 'null' is not assignable to expected type 'int'
   --> <script>:1:5
   |
 1 | foo(null)
@@ -507,16 +501,13 @@ foo().print()
 fn foo() -> int:
 	return "2"
 ### STDERR ###
-error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'int'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type 'int'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> int:
 3 | 	return "2"
+  |         ^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -538,7 +529,7 @@ foo(1)
 fn foo(x: bool):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'bool'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'bool'
   --> <script>:1:5
   |
 1 | foo(1)
@@ -567,16 +558,13 @@ foo().print()
 fn foo() -> bool:
 	return 1
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'bool'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'int' is not assignable to declared return type 'bool'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> bool:
 3 | 	return 1
+  |         ^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -598,7 +586,7 @@ foo(1)
 fn foo(x: error):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'error'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'error'
   --> <script>:1:5
   |
 1 | foo(1)
@@ -628,16 +616,13 @@ foo().print()
 fn foo() -> error:
 	return 1
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'error'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'int' is not assignable to declared return type 'error'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> error:
 3 | 	return 1
+  |         ^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -727,7 +712,7 @@ foo(1)
 fn foo(x: list):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'list'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'list'
   --> <script>:1:5
   |
 1 | foo(1)
@@ -747,6 +732,16 @@ foo(1, 2)
 fn foo(x: list):
 	print("|{x}|")
 ### STDERR ###
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'list'
+  --> <script>:1:5
+  |
+1 | foo(1, 2)
+  |     ^
+2 | fn foo(x: list):
+3 | 	print("|{x}|")
+  |
+   = info: rad explain RAD30001
+
 error[RAD30007]: Expected at most 1 args, but was invoked with 2
   --> <script>:1:1
   |
@@ -785,16 +780,13 @@ foo().print()
 fn foo() -> list:
 	return 1
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'list'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'int' is not assignable to declared return type 'list'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> list:
 3 | 	return 1
+  |         ^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -816,11 +808,11 @@ foo(["hi", 1])
 fn foo(x: [int, str]):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '[ "hi", 1 ]' (list) is not compatible with expected type '[int, str]'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:6
   |
 1 | foo(["hi", 1])
-  |     ^^^^^^^^^
+  |      ^^^^
 2 | fn foo(x: [int, str]):
 3 | 	print("|{x}|")
   |
@@ -845,16 +837,13 @@ foo().print()
 fn foo() -> [int, str]:
 	return [1, 2]
 ### STDERR ###
-error[RAD30001]: Value '[ 1, 2 ]' (list) is not compatible with expected type '[int, str]'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'int' is not assignable to declared return type 'str'
+  --> <script>:3:13
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> [int, str]:
 3 | 	return [1, 2]
+  |             ^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -878,11 +867,11 @@ foo([1, "hi"])
 fn foo(x: int[]):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '[ 1, "hi" ]' (list) is not compatible with expected type 'int[]'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:9
   |
 1 | foo([1, "hi"])
-  |     ^^^^^^^^^
+  |         ^^^^
 2 | fn foo(x: int[]):
 3 | 	print("|{x}|")
   |
@@ -907,16 +896,13 @@ foo().print()
 fn foo() -> int[]:
 	return [1, "2"]
 ### STDERR ###
-error[RAD30001]: Value '[ 1, "2" ]' (list) is not compatible with expected type 'int[]'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type 'int'
+  --> <script>:3:13
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> int[]:
 3 | 	return [1, "2"]
+  |             ^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -938,7 +924,7 @@ foo("quz")
 fn foo(x: ["foo", "bar"]):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '"quz"' (str) is not compatible with expected type '["foo", "bar"]'
+error[RAD30001]: Argument type 'str' is not assignable to expected type '["foo", "bar"]'
   --> <script>:1:5
   |
 1 | foo("quz")
@@ -967,16 +953,13 @@ foo().print()
 fn foo() -> ["foo", "bar"]:
 	return "quz"
 ### STDERR ###
-error[RAD30001]: Value '"quz"' (str) is not compatible with expected type '["foo", "bar"]'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type '["foo", "bar"]'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> ["foo", "bar"]:
 3 | 	return "quz"
+  |         ^^^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -998,7 +981,7 @@ foo(2)
 fn foo(x: map):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '2' (int) is not compatible with expected type 'map'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'map'
   --> <script>:1:5
   |
 1 | foo(2)
@@ -1027,16 +1010,13 @@ foo().print()
 fn foo() -> map:
 	return 1
 ### STDERR ###
-error[RAD30001]: Value '1' (int) is not compatible with expected type 'map'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'int' is not assignable to declared return type 'map'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> map:
 3 | 	return 1
+  |         ^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -1058,7 +1038,7 @@ foo({"key2": 10})
 fn foo(x: {"key1": int}):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type '{ "key1": int }'
+error[RAD30001]: Argument type '{ str: int }' is not assignable to expected type '{ "key1": int }'
   --> <script>:1:5
   |
 1 | foo({"key2": 10})
@@ -1087,16 +1067,13 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": 10}
 ### STDERR ###
-error[RAD30001]: Value '{ "key2": 10 }' (map) is not compatible with expected type '{ "key1": int }'
-  --> <script>:1:1
+error[RAD30001]: Return value of type '{ str: int }' is not assignable to declared return type '{ "key1": int }'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> {"key1": int}:
 3 | 	return {"key2": 10}
+  |         ^^^^^^^^^^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -1109,16 +1086,13 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": "hi"}
 ### STDERR ###
-error[RAD30001]: Value '{ "key2": "hi" }' (map) is not compatible with expected type '{ "key1": int }'
-  --> <script>:1:1
+error[RAD30001]: Return value of type '{ str: str }' is not assignable to declared return type '{ "key1": int }'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> {"key1": int}:
 3 | 	return {"key2": "hi"}
+  |         ^^^^^^^^^^^^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -1140,11 +1114,11 @@ foo({"key1": "hi"})
 fn foo(x: {str: int}):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:14
   |
 1 | foo({"key1": "hi"})
-  |     ^^^^^^^^^^^^^^
+  |              ^^^^
 2 | fn foo(x: {str: int}):
 3 | 	print("|{x}|")
   |
@@ -1169,16 +1143,13 @@ foo().print()
 fn foo() -> {str: int}:
 	return {"key1": "hi"}
 ### STDERR ###
-error[RAD30001]: Value '{ "key1": "hi" }' (map) is not compatible with expected type '{ str: int }'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type 'int'
+  --> <script>:3:18
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> {str: int}:
 3 | 	return {"key1": "hi"}
+  |                  ^^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -1274,7 +1245,7 @@ foo("hi")
 fn foo(x: int?):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int?'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
   --> <script>:1:5
   |
 1 | foo("hi")
@@ -1307,16 +1278,13 @@ foo().print()
 fn foo() -> int?:
 	return "hi"
 ### STDERR ###
-error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int?'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type 'int'
+  --> <script>:3:9
   |
-1 | foo().print()
-  | ^^^^^
 2 | fn foo() -> int?:
 3 | 	return "hi"
+  |         ^^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 
@@ -1340,7 +1308,7 @@ foo(1.2)
 fn foo(x: int|str):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Value '1.2' (float) is not compatible with expected type 'int|str'
+error[RAD30001]: Argument type 'float' is not assignable to expected type 'int|str'
   --> <script>:1:5
   |
 1 | foo(1.2)
@@ -1376,16 +1344,13 @@ foo(2).print()
 fn foo(x) -> int|str:
 	return 1.2
 ### STDERR ###
-error[RAD30001]: Value '1.2' (float) is not compatible with expected type 'int|str'
-  --> <script>:1:1
+error[RAD30001]: Return value of type 'float' is not assignable to declared return type 'int|str'
+  --> <script>:4:9
   |
-1 | foo(1).print()
-  | ^^^^^^
-2 | foo(2).print()
 3 | fn foo(x) -> int|str:
+4 | 	return 1.2
+  |         ^^^
   |
-   = stack:
-     at foo (TestCase:1:1)
    = info: rad explain RAD30001
 
 

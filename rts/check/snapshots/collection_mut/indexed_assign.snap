@@ -34,7 +34,7 @@ xs[0] = "wrong"
   xs (local): int[]
 
 # Diagnostics
-  [hint] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'
+  [error] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'
 ### TITLE ###
 TypedMapIndexedAssignOk
 ### DESCRIPTION ###
@@ -69,7 +69,7 @@ m["b"] = "wrong"
   m (local): { str: int }
 
 # Diagnostics
-  [hint] RAD30010 @ 2:10 - Value of type 'str' is not assignable to element type 'int'
+  [error] RAD30010 @ 2:10 - Value of type 'str' is not assignable to element type 'int'
 ### TITLE ###
 ParamIndexedAssignMismatch
 ### DESCRIPTION ###
@@ -87,7 +87,7 @@ fn f(xs: int[]):
   xs (param): int[]
 
 # Diagnostics
-  [hint] RAD30010 @ 2:13 - Value of type 'str' is not assignable to element type 'int'
+  [error] RAD30010 @ 2:13 - Value of type 'str' is not assignable to element type 'int'
 ### TITLE ###
 UntypedListSkipsCheck
 ### DESCRIPTION ###
@@ -240,4 +240,4 @@ fn f(xs: int[]?):
   xs (param): int[]?
 
 # Diagnostics
-  [hint] RAD30010 @ 3:17 - Value of type 'str' is not assignable to element type 'int'
+  [error] RAD30010 @ 3:17 - Value of type 'str' is not assignable to element type 'int'

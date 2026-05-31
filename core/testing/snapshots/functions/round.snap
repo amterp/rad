@@ -69,7 +69,7 @@ a = 1
 b = "ab"
 print(round(a, b))
 ### STDERR ###
-error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'int'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
   --> <script>:3:16
   |
 2 | b = "ab"
@@ -88,7 +88,7 @@ a = "ab"
 b = 1
 print(round(a, b))
 ### STDERR ###
-error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:3:13
   |
 2 | b = 1

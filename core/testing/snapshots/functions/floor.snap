@@ -31,7 +31,7 @@ Floor errors with string
 ### INPUT ###
 print(floor("ab"))
 ### STDERR ###
-error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:1:13
   |
 1 | print(floor("ab"))

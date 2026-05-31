@@ -31,7 +31,7 @@ Ceil errors with string
 ### INPUT ###
 print(ceil("ab"))
 ### STDERR ###
-error[RAD30001]: Value '"ab"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:1:12
   |
 1 | print(ceil("ab"))
