@@ -20,7 +20,7 @@ Sum errors for non-numeric elements
 a = [1, "ab", 3]
 print(sum(a))
 ### STDERR ###
-error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected type 'float[]'
+error[RAD30001]: Argument type '(int|str)[]' is not assignable to expected type 'float[]'
   --> <script>:2:11
   |
 1 | a = [1, "ab", 3]

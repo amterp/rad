@@ -80,18 +80,19 @@ func globalFlagHelpWithout(s string) string {
 
 func Test_Misc_StackTraceShownInNestedFunctionError(t *testing.T) {
 	// The trigger is a runtime type-mismatch on a typed function
-	// return. The previous version used an undefined variable, but
-	// that's now caught statically by the binder so the runtime
-	// stack-trace path was never exercised. Type errors that fall
-	// out of static-checkable territory (return-of-wrong-type from
-	// a typed fn) emit via emitDiagnostic, which auto-attaches the
-	// call stack.
+	// return, which emits via emitDiagnostic and auto-attaches the
+	// call stack. It must stay out of static-checkable territory or
+	// the binder gates it before runtime (an undefined variable and a
+	// literal wrong-typed return were both previous versions that the
+	// checker grew to catch). Routing the value through an `any`
+	// parameter hides its type from the checker, so the mismatch only
+	// surfaces when `inner` actually returns at runtime.
 	script := `
-fn inner() -> int:
-    return "not an int"
+fn inner(x: any) -> int:
+    return x
 
 fn outer():
-    inner()
+    inner("not an int")
 
 outer()
 `

@@ -29,7 +29,7 @@ Reverse with nums
 a = 123
 print(reverse(a))
 ### STDERR ###
-error[RAD30001]: Value '123' (int) is not compatible with expected type 'str|list'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'str|list'
   --> <script>:2:15
   |
 1 | a = 123

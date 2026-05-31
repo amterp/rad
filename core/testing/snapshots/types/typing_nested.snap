@@ -9,11 +9,11 @@ foo([[1, 2], [3, "bad"]])
 fn foo(x: int[][]):
 	print(x)
 ### STDERR ###
-error[RAD30001]: Value '[ [ 1, 2 ], [ 3, "bad" ] ]' (list) is not compatible with expected type 'int[][]'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:18
   |
 1 | foo([[1, 2], [3, "bad"]])
-  |     ^^^^^^^^^^^^^^^^^^^^
+  |                  ^^^^^
 2 | fn foo(x: int[][]):
 3 | 	print(x)
   |
@@ -38,11 +38,11 @@ foo([1, [2, "bad"]])
 fn foo(x: [int, int[]]):
 	print(x)
 ### STDERR ###
-error[RAD30001]: Value '[ 1, [ 2, "bad" ] ]' (list) is not compatible with expected type '[int, int[]]'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:13
   |
 1 | foo([1, [2, "bad"]])
-  |     ^^^^^^^^^^^^^^^
+  |             ^^^^^
 2 | fn foo(x: [int, int[]]):
 3 | 	print(x)
   |
@@ -67,11 +67,11 @@ foo({ "a": [1, "bad"] })
 fn foo(x: { str: int[] }):
 	print(x)
 ### STDERR ###
-error[RAD30001]: Value '{ "a": [ 1, "bad" ] }' (map) is not compatible with expected type '{ str: int[] }'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:16
   |
 1 | foo({ "a": [1, "bad"] })
-  |     ^^^^^^^^^^^^^^^^^^^
+  |                ^^^^^
 2 | fn foo(x: { str: int[] }):
 3 | 	print(x)
   |
@@ -87,11 +87,11 @@ foo({ "outer": { "inner": "no" } })
 fn foo(x: { "outer": { "inner": int } }):
 	print(x)
 ### STDERR ###
-error[RAD30001]: Value '{ "outer": { "inner": "no" } }' (map) is not compatible with expected type '{ "outer": { "inner": int } }'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
+  --> <script>:1:27
   |
 1 | foo({ "outer": { "inner": "no" } })
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |                           ^^^^
 2 | fn foo(x: { "outer": { "inner": int } }):
 3 | 	print(x)
   |
@@ -119,11 +119,11 @@ foo([1, null, 2])
 fn foo(x: int[]):
 	print(x)
 ### STDERR ###
-error[RAD30001]: Value '[ 1, null, 2 ]' (list) is not compatible with expected type 'int[]'
-  --> <script>:1:5
+error[RAD30001]: Argument type 'null' is not assignable to expected type 'int'
+  --> <script>:1:9
   |
 1 | foo([1, null, 2])
-  |     ^^^^^^^^^^^^
+  |         ^^^^
 2 | fn foo(x: int[]):
 3 | 	print(x)
   |
@@ -145,12 +145,12 @@ foo([1, helper, 2])
 fn foo(x: int[]):
 	print(x)
 ### STDERR ###
-error[RAD30001]: Value '[ 1, <fn>, 2 ]' (list) is not compatible with expected type 'int[]'
-  --> <script>:3:5
+error[RAD30001]: Argument type 'fn() -> void' is not assignable to expected type 'int'
+  --> <script>:3:9
   |
 2 | 	print("hi")
 3 | foo([1, helper, 2])
-  |     ^^^^^^^^^^^^^^
+  |         ^^^^^^
 4 | fn foo(x: int[]):
 5 | 	print(x)
   |

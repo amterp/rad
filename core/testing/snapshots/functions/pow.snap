@@ -66,7 +66,7 @@ Pow errors with string base
 ### INPUT ###
 print(pow("abc", 2))
 ### STDERR ###
-error[RAD30001]: Value '"abc"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:1:11
   |
 1 | print(pow("abc", 2))
@@ -82,7 +82,7 @@ Pow errors with string exponent
 ### INPUT ###
 print(pow(2, "abc"))
 ### STDERR ###
-error[RAD30001]: Value '"abc"' (str) is not compatible with expected type 'float'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   --> <script>:1:14
   |
 1 | print(pow(2, "abc"))

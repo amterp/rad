@@ -54,7 +54,7 @@ process(cb)
   process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 7:9 - Argument type 'fn(int) -> str' is not assignable to expected type 'fn(int) -> bool'
+  [error] RAD30001 @ 7:9 - Argument type 'fn(int) -> str' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
 FnValueParamTypeMismatchFires
 ### DESCRIPTION ###
@@ -83,7 +83,7 @@ process(cb)
   x (param): str
 
 # Diagnostics
-  [hint] RAD30001 @ 7:9 - Argument type 'fn(str) -> bool' is not assignable to expected type 'fn(int) -> bool'
+  [error] RAD30001 @ 7:9 - Argument type 'fn(str) -> bool' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
 FnValueWiderParamOkContravariance
 ### DESCRIPTION ###
@@ -141,7 +141,7 @@ process(cb)
   y (param): int
 
 # Diagnostics
-  [hint] RAD30001 @ 7:9 - Argument type 'fn(int, int) -> bool' is not assignable to expected type 'fn(int) -> bool'
+  [error] RAD30001 @ 7:9 - Argument type 'fn(int, int) -> bool' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
 FnValueUntypedParamAcceptsAnything
 ### DESCRIPTION ###
@@ -193,7 +193,7 @@ process(fn(x) "hi")
   process (fn): fn(fn(int) -> bool) -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> str' is not assignable to expected type 'fn(int) -> bool'
+  [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> str' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
 LambdaExprRightShapeOk
 ### DESCRIPTION ###
@@ -246,7 +246,7 @@ process(fn(x):
   x (param): <no-type>
 
 # Diagnostics
-  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> int|str' is not assignable to expected type 'fn(int) -> bool'
+  [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> int|str' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
 LambdaBlockNoReturnIsVoid
 ### DESCRIPTION ###
@@ -272,7 +272,7 @@ process(fn(x):
   x (param): <no-type>
 
 # Diagnostics
-  [hint] RAD30001 @ 4:9 - Argument type 'fn(any) -> void' is not assignable to expected type 'fn(int) -> bool'
+  [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> void' is not assignable to expected type 'fn(int) -> bool'
 ### TITLE ###
 LambdaDeclaredReturnMismatchFiresAtReturn
 ### DESCRIPTION ###
@@ -297,4 +297,4 @@ process(fn(x) -> bool: return "hi")
 
 # Diagnostics
   [error] RAD10001 @ 4:24 - Invalid function syntax
-  [hint] RAD30001 @ 4:31 - Return value of type 'str' is not assignable to declared return type 'bool'
+  [error] RAD30001 @ 4:31 - Return value of type 'str' is not assignable to declared return type 'bool'

@@ -42,7 +42,7 @@ the signature `fn(any) -> any | fn(any, any) -> any` enforces fn-only.
 a = ["alice", "bob"]
 a.map("not a fn")
 ### STDERR ###
-error[RAD30001]: Value '"not a fn"' (str) is not compatible with expected type 'fn(any) -> any|fn(any, any) -> any'
+error[RAD30001]: Argument type 'str' is not assignable to expected type 'fn(any) -> any|fn(any, any) -> any'
   --> <script>:2:7
   |
 1 | a = ["alice", "bob"]

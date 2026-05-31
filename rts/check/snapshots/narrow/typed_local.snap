@@ -67,7 +67,7 @@ y = x
   y (local): int
 
 # Diagnostics
-  [hint] RAD30001 @ 1:10 - Value of type 'str' is not assignable to declared type 'int'
+  [error] RAD30001 @ 1:10 - Value of type 'str' is not assignable to declared type 'int'
 ### TITLE ###
 TypedLocalUntypedReassignIsClean
 ### DESCRIPTION ###
@@ -110,7 +110,7 @@ bb: str = "hi"
 
 # Diagnostics
   [error] RAD40011 @ 3:1 - Cannot re-declare 'bb' with a type annotation (originally declared on line 1); drop ': str' to reassign
-  [hint] RAD30001 @ 3:11 - Value of type 'str' is not assignable to declared type 'int'
+  [error] RAD30001 @ 3:11 - Value of type 'str' is not assignable to declared type 'int'
 ### TITLE ###
 TypedLocalRedeclarationSameTypeIsRejected
 ### DESCRIPTION ###
@@ -234,7 +234,7 @@ xs: int[] = ["a"]
   xs (local): int[]
 
 # Diagnostics
-  [hint] RAD30001 @ 1:14 - Value of type 'str' is not assignable to declared type 'int'
+  [error] RAD30001 @ 1:14 - Value of type 'str' is not assignable to declared type 'int'
 ### TITLE ###
 ParenTypeGroupOptionalWraps
 ### DESCRIPTION ###

@@ -69,7 +69,7 @@ Errors on invalid type
 ### INPUT ###
 parse_json(10)
 ### STDERR ###
-error[RAD30001]: Value '10' (int) is not compatible with expected type 'str'
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
   --> <script>:1:12
   |
 1 | parse_json(10)

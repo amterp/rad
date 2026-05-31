@@ -157,7 +157,7 @@ open("append")
   open (fn): fn(["read", "write"]) -> void
 
 # Diagnostics
-  [hint] RAD30001 @ 6:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+  [error] RAD30001 @ 6:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
 ### TITLE ###
 InLiteralListUpgradesPlainStrToEnum
 ### DESCRIPTION ###

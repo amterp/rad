@@ -113,7 +113,7 @@ func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 	setupAndRunCode(t, `sleep(true)`, "--color=never")
 	assertDidNotSleep(t)
-	expected := `error[RAD30001]: Value 'true' (bool) is not compatible with expected type 'int|float|str'
+	expected := `error[RAD30001]: Argument type 'bool' is not assignable to expected type 'int|float|str'
   --> TestCase:1:7
   |
 1 | sleep(true)
