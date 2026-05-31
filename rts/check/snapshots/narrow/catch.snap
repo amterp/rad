@@ -17,11 +17,11 @@ y = x
   print @ 2:5 -> dynamic
   x @ 2:11 -> error
   y @ 4:1 -> <no-type>
-  x @ 4:5 -> int|error
+  x @ 4:5 -> int
 
 # Symbol types
-  x (local): int|error
-  y (local): int|error
+  x (local): int
+  y (local): int
 
 # Diagnostics
   (none)
@@ -63,10 +63,10 @@ print(x)
   x @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
   print @ 3:1 -> dynamic
-  x @ 3:7 -> int|error
+  x @ 3:7 -> int
 
 # Symbol types
-  x (local): int|error
+  x (local): int
 
 # Diagnostics
   (none)

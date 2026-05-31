@@ -233,7 +233,7 @@ func TestTypeCheck_NoFalsePositivesOnSimpleAssignments(t *testing.T) {
 // below to assert "the type checker flagged this op."
 func hasOpIssue(info *check.TypeInfo) bool {
 	for _, i := range info.Issues {
-		if i.Code == rl.ErrInvalidTypeForOp && i.Severity == check.IssueHint {
+		if i.Code == rl.ErrInvalidTypeForOp && i.Severity == check.IssueError {
 			return true
 		}
 	}
@@ -295,13 +295,14 @@ func TestTypeCheck_StrTimesIntSynthesizesStr(t *testing.T) {
 	assert.Empty(t, info.Issues)
 }
 
-func TestTypeCheck_IntPlusStrFlagsHint(t *testing.T) {
+func TestTypeCheck_IntPlusStrFlagsError(t *testing.T) {
 	// This is the migration case from v0.9 - `+` no longer coerces.
-	// Surfaces as Hint (operator sites are held at Hint pending
-	// union-narrowing fidelity); the runtime emits ErrInvalidTypeForOp.
+	// Surfaces as Error (operator sites gate now that fallible-call
+	// error arms are stripped before the op); the runtime also rejects
+	// it with ErrInvalidTypeForOp.
 	_, info, _ := typeInfoFromSrc(t, "x = 1 + \"hi\"\n")
 	assert.True(t, hasOpIssue(info),
-		"expected Hint-severity ErrInvalidTypeForOp for int + str")
+		"expected Error-severity ErrInvalidTypeForOp for int + str")
 }
 
 func TestTypeCheck_LessThanReturnsBool(t *testing.T) {
@@ -373,8 +374,8 @@ func TestTypeCheck_UnaryNegOnIntReturnsInt(t *testing.T) {
 	assert.Equal(t, rl.T_INT, exprTypeOf(t, file, info).Name())
 }
 
-func TestTypeCheck_UnaryNegOnStrFlagsHint(t *testing.T) {
-	// `-"hi"` is a runtime error; the static side flags it as Hint.
+func TestTypeCheck_UnaryNegOnStrFlagsError(t *testing.T) {
+	// `-"hi"` is a runtime error; the static side gates it as Error.
 	_, info, _ := typeInfoFromSrc(t, "x = -\"hi\"\n")
 	assert.True(t, hasOpIssue(info))
 }
@@ -1034,11 +1035,16 @@ func TestTypeCheck_ReassignmentWidens(t *testing.T) {
 	// Reassigning a narrowed var to a value of the declared type
 	// widens it back. After `x = parse_int(...)` (returns int|error),
 	// the narrowing inside the if body is lost.
-	src := `fn f(x: int|error):
+	// The RHS is a union-typed param (g), not a fallible call: a fallible
+	// call's result has its error arm stripped at the call (Gap 2), so it
+	// wouldn't widen x back to a union. Reading the union straight from a
+	// param keeps this test focused on the reassignment-drops-narrowing
+	// mechanism it's actually exercising.
+	src := `fn f(x: int|error, g: int|error):
     if type_of(x) == "int":
         // x is int here
         a = x
-        x = parse_int("5")
+        x = g
         // x is back to int|error now
         b = x
 `
@@ -1053,8 +1059,7 @@ func TestTypeCheck_ReassignmentWidens(t *testing.T) {
 	assert.Equal(t, rl.T_INT, info.ExprTypes[aUse].Name(),
 		"x before reassignment should still be narrowed to int")
 
-	// b sees the post-reassignment x. parse_int returns int|error,
-	// so x should be back to int|error here.
+	// b sees the post-reassignment x. g is int|error, so x widens back.
 	bUse := bAssign.Values[0].(*rl.Identifier)
 	got := info.ExprTypes[bUse]
 	require.NotNil(t, got)

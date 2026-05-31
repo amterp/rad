@@ -110,6 +110,7 @@ const (
 	ErrCannotCompare             Error = "30008"
 	ErrCannotConvert             Error = "30009"
 	ErrCollectionElementMismatch Error = "30010"
+	ErrUnhandledFallibleCall     Error = "30011"
 
 	// 4xxxx Validation Errors
 	ErrScientificNotationNotWholeNumber Error = "40001"

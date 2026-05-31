@@ -1,0 +1,262 @@
+### TITLE ###
+ListLiteralIntoTupleAccepts
+### DESCRIPTION ###
+Gap-1 structural check: a list literal whose elements match a
+tuple type position-wise is accepted, even though its synthesized
+type `(int|str)[]` can't satisfy the invariant tuple type.
+### INPUT ###
+fn f() -> [int, str]:
+    return [1, "2"]
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> [int, str]
+
+# Symbol types
+  f (fn): fn() -> [int, str]
+
+# Diagnostics
+  (none)
+### TITLE ###
+ListLiteralIntoTupleElementMismatchLocalized
+### DESCRIPTION ###
+A genuine element mismatch still fires, localized to the offending
+element (the second value) rather than the whole literal.
+### INPUT ###
+fn f() -> [int, str]:
+    return [1, 2]
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> [int, str]
+
+# Symbol types
+  f (fn): fn() -> [int, str]
+
+# Diagnostics
+  [hint] RAD30001 @ 2:16 - Return value of type 'int' is not assignable to declared return type 'str'
+### TITLE ###
+MapLiteralIntoStructAccepts
+### DESCRIPTION ###
+A map literal with the right field name and value type matches a
+named-key struct target field-wise.
+### INPUT ###
+fn f() -> { "k": int }:
+    return { "k": 10 }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "k": int }
+
+# Symbol types
+  f (fn): fn() -> { "k": int }
+
+# Diagnostics
+  (none)
+### TITLE ###
+MapLiteralIntoStructValueMismatchLocalized
+### DESCRIPTION ###
+A wrong field value fires, localized to the offending value node.
+### INPUT ###
+fn f() -> { "k": int }:
+    return { "k": "x" }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "k": int }
+
+# Symbol types
+  f (fn): fn() -> { "k": int }
+
+# Diagnostics
+  [hint] RAD30001 @ 2:19 - Return value of type 'str' is not assignable to declared return type 'int'
+### TITLE ###
+StructOptionalFieldOmittedAccepts
+### DESCRIPTION ###
+Optional struct fields may be absent; required fields present is
+enough to accept.
+### INPUT ###
+fn f() -> { "a": int, "b"?: str }:
+    return { "a": 1 }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "a": int, "b"?: str }
+
+# Symbol types
+  f (fn): fn() -> { "a": int, "b"?: str }
+
+# Diagnostics
+  (none)
+### TITLE ###
+StructMissingRequiredFieldFires
+### DESCRIPTION ###
+A required field that's absent fires (at the whole literal - there
+is no single offending node to point at for an omission).
+### INPUT ###
+fn f() -> { "a": int, "b": str }:
+    return { "a": 1 }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "a": int, "b": str }
+
+# Symbol types
+  f (fn): fn() -> { "a": int, "b": str }
+
+# Diagnostics
+  [hint] RAD30001 @ 2:12 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int, "b": str }'
+### TITLE ###
+StructUnknownFieldFires
+### DESCRIPTION ###
+A field name not present in the struct target fires, localized to
+the offending key.
+### INPUT ###
+fn f() -> { "a": int }:
+    return { "a": 1, "b": 2 }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "a": int }
+
+# Symbol types
+  f (fn): fn() -> { "a": int }
+
+# Diagnostics
+  [hint] RAD30001 @ 2:22 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int }'
+### TITLE ###
+StrLiteralIntoStrEnumArgAccepts
+### DESCRIPTION ###
+A plain string literal that's a member of a str-enum parameter is
+accepted (folds in the former litMatchesStrEnum special case).
+### INPUT ###
+fn pick(mode: ["read", "write"]):
+    print(mode)
+
+pick("read")
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  mode @ 2:11 -> ["read", "write"]
+  pick @ 4:1 -> fn(["read", "write"]) -> void
+
+# Symbol types
+  mode (param): ["read", "write"]
+  pick (fn): fn(["read", "write"]) -> void
+
+# Diagnostics
+  (none)
+### TITLE ###
+StrLiteralIntoStrEnumArgNonMemberFires
+### DESCRIPTION ###
+A string literal outside the str-enum members fires.
+### INPUT ###
+fn pick(mode: ["read", "write"]):
+    print(mode)
+
+pick("delete")
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  mode @ 2:11 -> ["read", "write"]
+  pick @ 4:1 -> fn(["read", "write"]) -> void
+
+# Symbol types
+  mode (param): ["read", "write"]
+  pick (fn): fn(["read", "write"]) -> void
+
+# Diagnostics
+  [hint] RAD30001 @ 4:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+### TITLE ###
+NestedMapListIntoStructTupleAccepts
+### DESCRIPTION ###
+Nesting composes: a map literal holding a list literal checks
+field-wise then position-wise against `{ "k": [int, str] }`.
+### INPUT ###
+fn f() -> { "k": [int, str] }:
+    return { "k": [1, "2"] }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "k": [int, str] }
+
+# Symbol types
+  f (fn): fn() -> { "k": [int, str] }
+
+# Diagnostics
+  (none)
+### TITLE ###
+NestedMismatchLocalizedToInnerElement
+### DESCRIPTION ###
+A mismatch buried two levels deep is localized to the innermost
+offending element.
+### INPUT ###
+fn f() -> { "k": [int, str] }:
+    return { "k": [1, 2] }
+
+print(f())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  f @ 4:7 -> fn() -> { "k": [int, str] }
+
+# Symbol types
+  f (fn): fn() -> { "k": [int, str] }
+
+# Diagnostics
+  [hint] RAD30001 @ 2:23 - Return value of type 'int' is not assignable to declared return type 'str'
+### TITLE ###
+AssignListLiteralIntoTupleLocalAccepts
+### DESCRIPTION ###
+The declared-local assignment site runs through the same check.
+### INPUT ###
+x: [int, str] = [1, "2"]
+print(x)
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  print @ 2:1 -> dynamic
+  x @ 2:7 -> [int, str]
+
+# Symbol types
+  x (local): [int, str]
+
+# Diagnostics
+  (none)
+### TITLE ###
+IndexedAssignElementLiteralChecks
+### DESCRIPTION ###
+The indexed-assign site checks the written value against the
+declared element type via the same structural path.
+### INPUT ###
+xs: int[] = [1]
+xs[0] = "x"
+print(xs)
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  xs @ 2:1 -> int[]
+  print @ 3:1 -> dynamic
+  xs @ 3:7 -> int[]
+
+# Symbol types
+  xs (local): int[]
+
+# Diagnostics
+  [hint] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'

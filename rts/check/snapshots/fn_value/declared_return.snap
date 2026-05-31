@@ -14,7 +14,7 @@ fn cb(x: int) -> bool:
   cb (fn): fn(int) -> bool
 
 # Diagnostics
-  [hint] RAD30001 @ 2:5 - Return value of type 'str' is not assignable to declared return type 'bool'
+  [hint] RAD30001 @ 2:12 - Return value of type 'str' is not assignable to declared return type 'bool'
 ### TITLE ###
 HoistedFnMultipleReturnsEachChecked
 ### DESCRIPTION ###
@@ -34,8 +34,8 @@ fn cb(x: int) -> bool:
   x (param): int
 
 # Diagnostics
-  [hint] RAD30001 @ 3:9 - Return value of type 'int' is not assignable to declared return type 'bool'
-  [hint] RAD30001 @ 4:5 - Return value of type 'str' is not assignable to declared return type 'bool'
+  [hint] RAD30001 @ 3:16 - Return value of type 'int' is not assignable to declared return type 'bool'
+  [hint] RAD30001 @ 4:12 - Return value of type 'str' is not assignable to declared return type 'bool'
 ### TITLE ###
 HoistedFnReturnMatchesDeclared
 ### DESCRIPTION ###
