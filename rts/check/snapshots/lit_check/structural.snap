@@ -117,7 +117,7 @@ print(f())
   f (fn): fn() -> { "a": int, "b": str }
 
 # Diagnostics
-  [error] RAD30001 @ 2:12 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int, "b": str }'
+  [error] RAD30001 @ 2:12 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int, "b": str }' (missing required field 'b')
 ### TITLE ###
 StructExtraFieldAccepted
 ### DESCRIPTION ###

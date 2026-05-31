@@ -145,19 +145,10 @@ result = save_state({ "test": "value" }) catch:
 	pass
 print(type_of(result))
 print("Error contains 'Script ID':", "Script ID" in result)
-### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'str in error?'
-  --> <script>:5:38
-  |
-4 | print(type_of(result))
-5 | print("Error contains 'Script ID':", "Script ID" in result)
-  |                                      ^^^^^^^^^^^^^^^^^^^^^
-  |
-   = info: rad explain RAD30002
+### STDOUT ###
+error
+Error contains 'Script ID': true
 
-
-### EXIT ###
-1
 ### TITLE ###
 Stash_WriteStashFileReturnsErrorOnFailure
 ### INPUT ###
@@ -166,16 +157,7 @@ result = write_stash_file("test.txt", "content") catch:
 	pass
 print(type_of(result))
 print("Error contains 'Script ID':", "Script ID" in result)
-### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'str in error?'
-  --> <script>:5:38
-  |
-4 | print(type_of(result))
-5 | print("Error contains 'Script ID':", "Script ID" in result)
-  |                                      ^^^^^^^^^^^^^^^^^^^^^
-  |
-   = info: rad explain RAD30002
+### STDOUT ###
+error
+Error contains 'Script ID': true
 
-
-### EXIT ###
-1
