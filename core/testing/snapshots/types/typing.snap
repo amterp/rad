@@ -328,15 +328,6 @@ foo(1, x=2)
 fn foo(x: float, y?) -> float:
 	return x / y
 ### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'float / any?'
-  --> <script>:3:9
-  |
-2 | fn foo(x: float, y?) -> float:
-3 | 	return x / y
-  |         ^^^^^
-  |
-   = info: rad explain RAD30002
-
 error[RAD30006]: Argument 'x' already specified
   --> <script>:1:8
   |
@@ -357,15 +348,6 @@ foo(1, y = 2, y = 3)
 fn foo(x: float, y?) -> float:
 	return x / y
 ### STDERR ###
-error[RAD30002]: Invalid operand types: cannot do 'float / any?'
-  --> <script>:3:9
-  |
-2 | fn foo(x: float, y?) -> float:
-3 | 	return x / y
-  |         ^^^^^
-  |
-   = info: rad explain RAD30002
-
 error[RAD30006]: Argument 'y' already specified
   --> <script>:1:15
   |
@@ -1038,7 +1020,7 @@ foo({"key2": 10})
 fn foo(x: {"key1": int}):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Argument type '{ str: int }' is not assignable to expected type '{ "key1": int }'
+error[RAD30001]: Argument type '{ str: int }' is not assignable to expected type '{ "key1": int }' (missing required field 'key1')
   --> <script>:1:5
   |
 1 | foo({"key2": 10})
@@ -1067,7 +1049,7 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": 10}
 ### STDERR ###
-error[RAD30001]: Return value of type '{ str: int }' is not assignable to declared return type '{ "key1": int }'
+error[RAD30001]: Return value of type '{ str: int }' is not assignable to declared return type '{ "key1": int }' (missing required field 'key1')
   --> <script>:3:9
   |
 2 | fn foo() -> {"key1": int}:
@@ -1086,7 +1068,7 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": "hi"}
 ### STDERR ###
-error[RAD30001]: Return value of type '{ str: str }' is not assignable to declared return type '{ "key1": int }'
+error[RAD30001]: Return value of type '{ str: str }' is not assignable to declared return type '{ "key1": int }' (missing required field 'key1')
   --> <script>:3:9
   |
 2 | fn foo() -> {"key1": int}:

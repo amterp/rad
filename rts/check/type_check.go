@@ -157,13 +157,17 @@ func (tc *typeChecker) popReturnFrame() []rl.TypingT {
 // `-> [int, str]` is accepted: check walks the literal against the
 // tuple position-wise even though it synths to `(int|str)[]`.
 //
-// valNode is the single return-value expression when there is exactly
-// one (so check can localize a nested mismatch); it's nil for a `void`
-// return or a multi-value `return a, b` (whose synthesized tuple has no
-// single literal node to walk), in which case we fall back to a
-// whole-statement assignability check at spanNode, gating only when the
-// synthesized type carries no gradual container.
-func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.Node) {
+// valNodes are the return-value expressions: one for `return x`, N for
+// `return a, b`, none for a bare `void` return. A single value is walked
+// structurally so a literal can match a structured target and a nested
+// mismatch localizes. A multi-value return against a tuple of matching
+// arity is walked position-wise, so `return 1, 2` satisfies
+// `[int|str, int]` and one bad element localizes - the same
+// provable-only gating used everywhere else. With nothing to walk (bare
+// return, or a shape we can't decompose) we fall back to a whole-type
+// assignability check at spanNode, gating only when the synthesized type
+// is concrete enough to be provably wrong (typeIsGateable).
+func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNodes []rl.Node) {
 	n := len(tc.returnStack)
 	if n == 0 {
 		return
@@ -176,18 +180,14 @@ func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.N
 	if isErrorType(t) || isDynamicLike(t) {
 		return
 	}
-	if valNode != nil {
-		res := tc.check(valNode, expected)
-		if res.ok {
-			return
+	if len(valNodes) == 1 {
+		tc.emitReturnMismatch(valNodes[0], expected)
+		return
+	}
+	if tup, ok := expected.(*rl.TypingTupleT); ok && len(tup.Types()) == len(valNodes) {
+		for i, vn := range valNodes {
+			tc.emitReturnMismatch(vn, tup.Types()[i])
 		}
-		tc.info.Issues = append(tc.info.Issues, BindIssue{
-			Span:     res.offending.Span(),
-			Severity: mismatchSeverity(res),
-			Code:     rl.ErrTypeMismatch,
-			Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
-				res.got.Name(), res.want.Name()),
-		})
 		return
 	}
 	if expected.IsAssignableFrom(t) {
@@ -203,6 +203,23 @@ func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNode rl.N
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
 			t.Name(), expected.Name()),
+	})
+}
+
+// emitReturnMismatch structurally checks one return-value node against
+// the type its position expects, emitting a localized diagnostic (Error
+// or Hint per the value's provability) when it doesn't fit.
+func (tc *typeChecker) emitReturnMismatch(valNode rl.Node, expected rl.TypingT) {
+	res := tc.check(valNode, expected)
+	if res.ok {
+		return
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     res.offending.Span(),
+		Severity: mismatchSeverity(res),
+		Code:     rl.ErrTypeMismatch,
+		Message: fmt.Sprintf("Return value of type '%s' is not assignable to declared return type '%s'",
+			res.got.Name(), res.want.Name()) + res.detailSuffix(),
 	})
 }
 
@@ -770,13 +787,11 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 		// `return a, b` builds a tuple so the static return type
 		// matches what the unpack-side `x, y = f()` would expect.
 		var t rl.TypingT
-		var valNode rl.Node
 		switch len(v.Values) {
 		case 0:
 			t = rl.NewVoidType()
 		case 1:
 			t = tc.synth(v.Values[0])
-			valNode = v.Values[0]
 		default:
 			elems := make([]rl.TypingT, len(v.Values))
 			for i, val := range v.Values {
@@ -784,7 +799,7 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 			}
 			t = rl.NewTupleType(elems...)
 		}
-		tc.recordReturn(t, v, valNode)
+		tc.recordReturn(t, v, v.Values)
 	default:
 		// Generic descent. Later sub-commits replace these with
 		// kind-specific handlers (for loops, switch, return, etc.).
@@ -2337,7 +2352,7 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 		Severity: mismatchSeverity(res),
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
-			res.got.Name(), res.want.Name()),
+			res.got.Name(), res.want.Name()) + res.detailSuffix(),
 		Suggestion: suggestion,
 	})
 }
@@ -2420,7 +2435,7 @@ func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.N
 		Severity: mismatchSeverity(res),
 		Code:     rl.ErrCollectionElementMismatch,
 		Message: fmt.Sprintf("Value of type '%s' is not assignable to element type '%s'",
-			res.got.Name(), res.want.Name()),
+			res.got.Name(), res.want.Name()) + res.detailSuffix(),
 	})
 }
 
@@ -2939,7 +2954,7 @@ func (tc *typeChecker) checkArgType(argNode rl.Node, param rl.TypingFnParam) {
 		Severity: mismatchSeverity(res),
 		Code:     rl.ErrTypeMismatch,
 		Message: fmt.Sprintf("Argument type '%s' is not assignable to expected type '%s'",
-			res.got.Name(), res.want.Name()),
+			res.got.Name(), res.want.Name()) + res.detailSuffix(),
 	})
 }
 
@@ -3133,8 +3148,16 @@ func binaryOpResult(op rl.Operator, l, r rl.TypingT) (rl.TypingT, bool) {
 		return unionOf(l, r), true
 	case rl.OpIn, rl.OpNotIn:
 		// Result is always bool; the right side must be a container
-		// (str / list / map). Left can be anything.
+		// (str / list / map). Left can be anything. The runtime also
+		// probes a bare error's details map (`x in err`, core/expr_ops.go),
+		// so a bare error right operand is valid too - it survives
+		// stripping when it comes straight from error() or out of a catch.
+		// An `error?` right operand falls through to the uncertain path (it
+		// could be null at runtime), so its rejection is a Hint not a gate.
 		if isStr(r) || isList(r) || isMap(r) {
+			return rl.NewBoolType(), true
+		}
+		if _, isErr := r.(*rl.TypingErrorT); isErr {
 			return rl.NewBoolType(), true
 		}
 		return nil, false
@@ -3342,16 +3365,41 @@ func unionOf(a, b rl.TypingT) rl.TypingT {
 // the same actionable follow-up as `rad <script>` users do.
 const strPlusMigrationHint = "In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/"
 
+// listAppendHint mirrors the runtime nudge (core/expr_ops.go) shown when
+// a script adds a non-list to a list - almost always a missed `+ [item]`.
+const listAppendHint = "Did you mean to wrap the right side in a list in order to append? e.g. `myList + [item]`"
+
+// opMismatchSeverity decides whether a rejected operator pair gates as
+// an Error or only nudges as a Hint. The checker's rule everywhere is
+// that an Error must be provable: every possible runtime value of the
+// operands is incompatible. A union or optional operand breaks that -
+// one of its arms (the int in `int|str`, the present value in `any?`,
+// the error in `error?`) could be exactly what the operator accepts at
+// runtime, so the rejection is merely suspected and stays a Hint. We
+// gate only concrete pairs the runtime always rejects (`"hi" + 1`,
+// `-"x"`). This under-gates a fully-incompatible union like `bool|str +
+// int`, the safe direction: a missed Error never bricks a working
+// script, a false one does. (Mirrors gateableMismatch's union/optional
+// handling for the literal-check sites.)
+func opMismatchSeverity(operands ...rl.TypingT) IssueSeverity {
+	for _, t := range operands {
+		switch t.(type) {
+		case *rl.TypingUnionT, *rl.TypingOptionalT:
+			return IssueHint
+		}
+	}
+	return IssueError
+}
+
 // addOpIssue emits a binary-op type diagnostic.
 //
-// Severity is Error: by the time an op sees its operands, fallible
-// calls have already had their error arm stripped at the call site
-// (maybeStripFallible), so the old `int|error + int` false positive
-// can't occur - `a = parse_int(...); a + 1` types `a` as int. What
-// reaches here is a provably-wrong operand pair (e.g. `"hi" + 1`),
-// which the runtime always rejects (ErrInvalidTypeForOp). The
-// Never/Dynamic/ErrorType short-circuits in synthOpBinary keep this
-// from firing on poisoned or opted-out operands.
+// Fallible error arms are stripped at the call site (maybeStripFallible)
+// and the Never/Dynamic/ErrorType short-circuits in synthOpBinary keep
+// this from firing on poisoned or opted-out operands, so what reaches
+// here is a genuine operand-table miss. opMismatchSeverity then sets the
+// severity: a concrete miss the runtime always rejects (`"hi" + 1`)
+// gates as Error, a union/optional operand that might be a compatible
+// arm stays a Hint.
 func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.TypingT, isCompound bool) {
 	opStr := op.String()
 	if isCompound {
@@ -3359,13 +3407,16 @@ func (tc *typeChecker) addOpIssue(span rl.Span, op rl.Operator, left, right rl.T
 	}
 	issue := BindIssue{
 		Span:     span,
-		Severity: IssueError,
+		Severity: opMismatchSeverity(left, right),
 		Code:     rl.ErrInvalidTypeForOp,
 		Message: fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'",
 			left.Name(), opStr, right.Name()),
 	}
-	if op == rl.OpAdd && isStrPlusCoercible(left, right) {
+	switch {
+	case op == rl.OpAdd && isStrPlusCoercible(left, right):
 		issue.Suggestion = strPlusMigrationHint
+	case op == rl.OpAdd && isList(left) && !isList(right):
+		issue.Suggestion = listAppendHint
 	}
 	tc.info.Issues = append(tc.info.Issues, issue)
 }
@@ -3386,14 +3437,14 @@ func isBool(t rl.TypingT) bool {
 	return ok
 }
 
-// addUnaryOpIssue emits a unary-op type diagnostic. Severity is Error
-// for the same reason as addOpIssue - fallible-call error arms are
-// stripped before the operand reaches here, so only a provably-wrong
-// operand (e.g. unary `-` on a str) survives to fire.
+// addUnaryOpIssue emits a unary-op type diagnostic. Severity follows the
+// same provable-only rule as addOpIssue (opMismatchSeverity): a concrete
+// operand the runtime always rejects (`-"x"`) gates as Error, a
+// union/optional operand that might be a compatible arm stays a Hint.
 func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.TypingT) {
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
 		Span:     span,
-		Severity: IssueError,
+		Severity: opMismatchSeverity(operand),
 		Code:     rl.ErrInvalidTypeForOp,
 		Message: fmt.Sprintf("Invalid operand type '%s' for unary '%s'",
 			operand.Name(), op.String()),
@@ -3478,7 +3529,7 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 			if stmt == nil {
 				continue
 			}
-			tc.recordReturn(tc.synth(stmt), stmt, stmt)
+			tc.recordReturn(tc.synth(stmt), stmt, []rl.Node{stmt})
 		}
 	} else {
 		tc.walkStmts(n.Body)

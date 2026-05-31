@@ -1,6 +1,8 @@
 package check
 
 import (
+	"fmt"
+
 	"github.com/amterp/rad/rts/rl"
 )
 
@@ -27,6 +29,18 @@ type checkResult struct {
 	got       rl.TypingT
 	want      rl.TypingT
 	gateable  bool
+	// detail is an optional clarifying note appended to a call site's
+	// diagnostic message, for failures the got/want pair alone doesn't
+	// explain (e.g. which required struct field was missing).
+	detail string
+}
+
+// detailSuffix renders detail as a parenthetical message suffix, or "".
+func (r checkResult) detailSuffix() string {
+	if r.detail == "" {
+		return ""
+	}
+	return " (" + r.detail + ")"
 }
 
 // check is the structural companion to synth: it decides whether a value
@@ -102,7 +116,7 @@ func (tc *typeChecker) check(node rl.Node, expected rl.TypingT) checkResult {
 		return tc.checkMapLit(lit, expected, got)
 	case *rl.LitString:
 		if enum, isEnum := expected.(*rl.TypingStrEnumT); isEnum && lit.Simple {
-			if strEnumContains(enum, lit.Value) {
+			if enum.Contains(lit.Value) {
 				return accept(node, got, expected)
 			}
 			// A simple literal not among the members is provably wrong.
@@ -184,7 +198,9 @@ func (tc *typeChecker) checkMapLit(lit *rl.LitMap, expected, got rl.TypingT) che
 		if !hasComputedKey {
 			for key := range exp.Fields() {
 				if !key.IsOptional && !seen[key.Name] {
-					return reject(lit, got, expected)
+					res := reject(lit, got, expected)
+					res.detail = fmt.Sprintf("missing required field '%s'", key.Name)
+					return res
 				}
 			}
 		}
@@ -219,15 +235,6 @@ func simpleStringKey(key rl.Node) (string, bool) {
 		return "", false
 	}
 	return lit.Value, true
-}
-
-func strEnumContains(enum *rl.TypingStrEnumT, value string) bool {
-	for _, v := range enum.Values() {
-		if v == value {
-			return true
-		}
-	}
-	return false
 }
 
 func accept(node rl.Node, got, want rl.TypingT) checkResult {
@@ -304,13 +311,20 @@ func isGradualContainer(t rl.TypingT) bool {
 	return false
 }
 
-// typeIsGateable reports whether a synthesized type is concrete enough that
-// a mismatch against it is provable. Used by the non-structural return path
-// (void / multi-value returns) where there's no value node to walk: a type
-// carrying an open gradual container anywhere stays a Hint.
+// typeIsGateable reports whether a synthesized type is concrete enough
+// that a mismatch against it is provable - the fallback the return path
+// uses when there's no value node to walk (a bare return, or a
+// multi-value shape we can't decompose position-wise). It's false
+// whenever the type carries a component whose runtime value the checker
+// can't pin down: an open gradual container, or a union/optional whose
+// arms might include the compatible one. Such a mismatch stays a Hint,
+// the same provable-only rule gateableMismatch applies at the leaves.
 func typeIsGateable(t rl.TypingT) bool {
 	switch v := t.(type) {
 	case *rl.TypingAnyListT, *rl.TypingAnyMapT:
+		return false
+	case *rl.TypingUnionT, *rl.TypingOptionalT:
+		// An arm might be the compatible one at runtime - not provable.
 		return false
 	case *rl.TypingTupleT:
 		for _, e := range v.Types() {

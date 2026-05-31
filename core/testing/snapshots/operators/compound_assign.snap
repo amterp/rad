@@ -137,6 +137,7 @@ error[RAD30002]: Invalid operand types: cannot do 'int[] += int'
 2 | a += 2
   | ^^^^^^
   |
+   = help: Did you mean to wrap the right side in a list in order to append? e.g. `myList + [item]`
    = info: rad explain RAD30002
 
 

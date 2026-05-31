@@ -1,0 +1,133 @@
+### TITLE ###
+OpenListIntoTypedParamStaysHint
+### DESCRIPTION ###
+A value typed as the open gradual `list` flowing into a structured
+`int[]` parameter cannot be proven wrong - the runtime contents
+might all be ints - so the mismatch is a non-gating Hint, never an
+Error. Guards the gateableMismatch gradual-container rule.
+### INPUT ###
+fn outer(x: list):
+    want_ints(x)
+
+fn want_ints(xs: int[]):
+    print(xs)
+### STDOUT ###
+# Identifier types
+  want_ints @ 2:5 -> fn(int[]) -> void
+  x @ 2:15 -> list
+  print @ 5:5 -> dynamic
+  xs @ 5:11 -> int[]
+
+# Symbol types
+  outer (fn): fn(list) -> void
+  want_ints (fn): fn(int[]) -> void
+  x (param): list
+  xs (param): int[]
+
+# Diagnostics
+  [hint] RAD30001 @ 2:15 - Argument type 'list' is not assignable to expected type 'int[]'
+### TITLE ###
+StrVariableIntoStrEnumStaysHint
+### DESCRIPTION ###
+A plain `str` variable (value unknown to the checker) flowing into
+a str-enum parameter stays a Hint: its runtime value decides
+membership. Only a simple string *literal* outside the members is
+provably wrong (see structural.snap StrLiteralIntoStrEnum cases).
+### INPUT ###
+fn pick(mode: ["read", "write"]):
+    print(mode)
+
+fn outer(s: str):
+    pick(s)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  mode @ 2:11 -> ["read", "write"]
+  pick @ 5:5 -> fn(["read", "write"]) -> void
+  s @ 5:10 -> str
+
+# Symbol types
+  mode (param): ["read", "write"]
+  outer (fn): fn(str) -> void
+  pick (fn): fn(["read", "write"]) -> void
+  s (param): str
+
+# Diagnostics
+  [hint] RAD30001 @ 5:10 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+### TITLE ###
+UnionWithFittingArmStaysHint
+### DESCRIPTION ###
+An `int|str` argument into an `int` parameter stays a Hint: one arm
+(int) would fit at runtime, so the mismatch isn't provable. Guards
+gateableMismatch's union-arm recursion.
+### INPUT ###
+fn want_int(n: int):
+    print(n)
+
+fn outer(x: int|str):
+    want_int(x)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  n @ 2:11 -> int
+  want_int @ 5:5 -> fn(int) -> void
+  x @ 5:14 -> int|str
+
+# Symbol types
+  n (param): int
+  outer (fn): fn(int|str) -> void
+  want_int (fn): fn(int) -> void
+  x (param): int|str
+
+# Diagnostics
+  [hint] RAD30001 @ 5:14 - Argument type 'int|str' is not assignable to expected type 'int'
+### TITLE ###
+OptionalWithFittingInnerStaysHint
+### DESCRIPTION ###
+A `str?` argument into a `str` parameter stays a Hint: the value
+might be the present (str) arm rather than null. Guards the optional
+branch of gateableMismatch.
+### INPUT ###
+fn want_str(s: str):
+    print(s)
+
+fn outer(x: str?):
+    want_str(x)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  s @ 2:11 -> str
+  want_str @ 5:5 -> fn(str) -> void
+  x @ 5:14 -> str?
+
+# Symbol types
+  outer (fn): fn(str?) -> void
+  s (param): str
+  want_str (fn): fn(str) -> void
+  x (param): str?
+
+# Diagnostics
+  [hint] RAD30001 @ 5:14 - Argument type 'str?' is not assignable to expected type 'str'
+### TITLE ###
+ConcreteMismatchGates
+### DESCRIPTION ###
+The contrast case: a provably-incompatible concrete argument (int
+into str) IS an Error. Confirms the boundary - uncertainty downgrades
+to Hint, certainty gates.
+### INPUT ###
+fn want_str(s: str):
+    print(s)
+
+want_str(42)
+### STDOUT ###
+# Identifier types
+  print @ 2:5 -> dynamic
+  s @ 2:11 -> str
+  want_str @ 4:1 -> fn(str) -> void
+
+# Symbol types
+  s (param): str
+  want_str (fn): fn(str) -> void
+
+# Diagnostics
+  [error] RAD30001 @ 4:10 - Argument type 'int' is not assignable to expected type 'str'

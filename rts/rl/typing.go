@@ -786,6 +786,16 @@ func (t *TypingStrEnumT) Values() []string {
 	return t.values
 }
 
+// Contains reports whether value is one of the enum's members.
+func (t *TypingStrEnumT) Contains(value string) bool {
+	for _, v := range t.values {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
 func (t *TypingStrEnumT) IsCompatibleWith(val TypingCompatVal) bool {
 	if val.Val != nil {
 		strVal, ok := (val.Val).(string)
