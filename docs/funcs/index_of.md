@@ -37,5 +37,3 @@ strings
 | `_target`  | `any`       | The value to search for                               |
 | `n`        | `int = 0`   | Which occurrence to find (0=first, 1=second, -1=last) |
 | `start`    | `int = 0`   | Position to start searching from                      |
-
-**Examples:**

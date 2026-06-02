@@ -38,5 +38,3 @@ stash
 
 If key doesn't exist, `_loader` is called and result is cached. Cannot use `reload=true` with `override` (mutually
 exclusive).
-
-**Examples:**

@@ -41,5 +41,3 @@ lists
 **With function:** The function must return a list. Results are flattened.
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)` and is required.
-
-**Examples:**

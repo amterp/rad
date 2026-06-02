@@ -37,5 +37,3 @@ strings
 | `skip_if_single` | `bool = false` | Don't colorize if only one value in set        |
 
 Useful for automatically coloring table data or distinguishing values in lists.
-
-**Examples:**

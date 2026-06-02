@@ -20,5 +20,3 @@ lists
 ## Notes
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
-
-**Examples:**
