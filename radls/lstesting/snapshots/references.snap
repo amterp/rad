@@ -524,3 +524,104 @@ for v in [1, 2, 3]:
     }
   ]
 }
+### TITLE ###
+FnReferencedByCallsCallback
+### DOCUMENT ###
+command deploy:
+    calls do_deploy
+
+fn do_deploy():
+    print("hi")
+### REFERENCES 3:3 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 19,
+          "line": 1
+        },
+        "start": {
+          "character": 10,
+          "line": 1
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 12,
+          "line": 3
+        },
+        "start": {
+          "character": 3,
+          "line": 3
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}
+### TITLE ###
+FnReferencedByFilterArg
+### DOCUMENT ###
+fn is_active(x):
+    return x
+
+nums = filter([1, 2], is_active)
+### REFERENCES 0:3 decl ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "range": {
+        "end": {
+          "character": 12,
+          "line": 0
+        },
+        "start": {
+          "character": 3,
+          "line": 0
+        }
+      },
+      "uri": "file:///test.rad"
+    },
+    {
+      "range": {
+        "end": {
+          "character": 31,
+          "line": 3
+        },
+        "start": {
+          "character": 22,
+          "line": 3
+        }
+      },
+      "uri": "file:///test.rad"
+    }
+  ]
+}

@@ -730,17 +730,20 @@ func (b *binder) visitDefer(d *rl.Defer) {
 	}
 }
 
-// visitCmdBlock walks a cmd_block's defaults and inline-lambda
-// callback. The cmd's args were already declared at file scope by
-// bindFile's pre-pass (the runtime populates them as globals before
-// the callback runs), so this routine doesn't declare them again -
-// it just visits the default expressions (which may reference other
-// arg-block / cmd-arg names) and the lambda callback.
+// visitCmdBlock walks a cmd_block's defaults and callback. The cmd's
+// args were already declared at file scope by bindFile's pre-pass
+// (the runtime populates them as globals before the callback runs),
+// so this routine doesn't declare them again - it just visits the
+// default expressions (which may reference other arg-block / cmd-arg
+// names) and the callback.
 //
-// Identifier-style callbacks (`calls handler`) are not resolved here
-// because CmdCallback stores the name as a plain string with no AST
-// identifier node. addUnknownCommandCallbackWarnings handles the
-// "is the target visible at file scope?" question.
+// A named callback (`calls handler`) is a plain function reference:
+// we visit its Identifier through the normal path so it records a use
+// (powering go-to-def / find-refs / rename / hover / highlighting)
+// and emits the standard undefined-identifier diagnostic on a miss.
+// This is sound because the binder's file scope mirrors what the
+// runtime resolves the callback against at invoke time: hoisted fns,
+// top-level vars, args, and builtins.
 func (b *binder) visitCmdBlock(c *rl.CmdBlock) {
 	for i := range c.Decls {
 		if c.Decls[i].Default != nil {
@@ -748,8 +751,12 @@ func (b *binder) visitCmdBlock(c *rl.CmdBlock) {
 		}
 	}
 	cb := c.Callback
-	if cb.IsLambda && cb.Lambda != nil {
-		b.visitLambda(cb.Lambda)
+	if cb.IsLambda {
+		if cb.Lambda != nil {
+			b.visitLambda(cb.Lambda)
+		}
+	} else if cb.Identifier != nil {
+		b.visit(cb.Identifier)
 	}
 }
 

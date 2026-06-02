@@ -615,3 +615,58 @@ print(name)
     }
   }
 }
+### TITLE ###
+RenameFnFromCallsCallback
+### DOCUMENT ###
+command deploy:
+    calls do_deploy
+
+fn do_deploy():
+    print("hi")
+### RENAME 1:10 run_deploy ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "changes": {
+      "file:///test.rad": [
+        {
+          "newText": "run_deploy",
+          "range": {
+            "end": {
+              "character": 19,
+              "line": 1
+            },
+            "start": {
+              "character": 10,
+              "line": 1
+            }
+          }
+        },
+        {
+          "newText": "run_deploy",
+          "range": {
+            "end": {
+              "character": 12,
+              "line": 3
+            },
+            "start": {
+              "character": 3,
+              "line": 3
+            }
+          }
+        }
+      ]
+    }
+  }
+}

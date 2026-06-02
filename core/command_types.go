@@ -43,13 +43,17 @@ func FromCmdBlock(cmdBlock *rl.CmdBlock, src string) (*ScriptCommand, error) {
 	}
 
 	callback := cmdBlock.Callback
+	var callbackName *string
+	if callback.Identifier != nil {
+		callbackName = &callback.Identifier.Name
+	}
 	return &ScriptCommand{
 		Name:             commandName,
 		ExternalName:     externalName,
 		Description:      cmdBlock.Description,
 		Args:             args,
 		IsLambdaCallback: callback.IsLambda,
-		CallbackName:     callback.IdentifierName,
+		CallbackName:     callbackName,
 		CallbackLambda:   callback.Lambda,
 	}, nil
 }

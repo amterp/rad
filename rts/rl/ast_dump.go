@@ -199,6 +199,9 @@ func findASTMaxSpans(node Node) (maxRow, maxCol int) {
 		for i := range n.Decls {
 			children = append(children, &n.Decls[i])
 		}
+		if n.Callback.Identifier != nil {
+			children = append(children, n.Callback.Identifier)
+		}
 		if n.Callback.Lambda != nil {
 			children = append(children, n.Callback.Lambda)
 		}
@@ -293,8 +296,8 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 			astDumpNode(sb, fmtStr, spacePad, &n.Decls[i], depth+1)
 		}
 		cb := n.Callback
-		if cb.IdentifierName != nil {
-			fmt.Fprintf(sb, "%s%sCallback: %s\n", spacePad, indent, *cb.IdentifierName)
+		if cb.Identifier != nil {
+			fmt.Fprintf(sb, "%s%sCallback: %s\n", spacePad, indent, cb.Identifier.Name)
 		} else if cb.Lambda != nil {
 			fmt.Fprintf(sb, "%s%sCallback: lambda\n", spacePad, indent)
 			astDumpNode(sb, fmtStr, spacePad, cb.Lambda, depth+2)

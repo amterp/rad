@@ -93,7 +93,6 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addBreakContinueOutsideLoopErrorsAST(&diagnostics)
 	c.addReturnOutsideFunctionErrorsAST(&diagnostics)
 	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
-	c.addUnknownCommandCallbackWarnings(resolved, &diagnostics)
 	c.addDeprecatedBlockKeywordErrors(&diagnostics)
 	c.addRadOptionNoEffectWarnings(&diagnostics)
 	return Result{
@@ -327,34 +326,6 @@ func isIntType(t *rl.TypingT) bool {
 	}
 	_, ok := (*t).(*rl.TypingIntT)
 	return ok
-}
-
-// addUnknownCommandCallbackWarnings flags `calls <name>` callbacks
-// whose target isn't visible at file scope or as an ambient builtin.
-//
-// The file-scope check goes through the resolved view so it stays
-// consistent with the rest of the checker on what's bound where. The
-// builtin check goes through the runtime function set directly:
-// Builtin Symbols are synthesized lazily on first reference, so a
-// script that uses `print` ONLY as a cmd callback never triggers the
-// synthesis and a Resolved-only check would emit a false positive.
-func (c *RadCheckerImpl) addUnknownCommandCallbackWarnings(resolved *Resolved, d *[]Diagnostic) {
-	if c.ast == nil || len(c.ast.Cmds) == 0 || resolved == nil {
-		return
-	}
-	builtins := rts.GetBuiltInFunctions()
-	for _, cmd := range c.ast.Cmds {
-		cb := cmd.Callback
-		if cb.IsLambda || cb.IdentifierName == nil || cb.IdentifierSpan == nil {
-			continue
-		}
-		fnName := *cb.IdentifierName
-		if resolved.File.Lookup(fnName) != nil || builtins.Contains(fnName) {
-			continue
-		}
-		msg := "Function '" + fnName + "' may not be defined (only built-in and top-level functions are tracked)"
-		*d = append(*d, NewDiagnosticWarnFromSpan(*cb.IdentifierSpan, c.src, msg, rl.ErrUnknownFunction))
-	}
 }
 
 // truncate shortens a string to maxLen, adding "..." if truncated.

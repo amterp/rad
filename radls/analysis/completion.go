@@ -65,12 +65,20 @@ func buildCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion, bytePo
 	// promote builtins whose first param accepts that type ahead of
 	// unrelated builtins.
 	receiverType := receiverTypeAtCursor(snap, bytePos)
-	if snap.ast == nil {
+	switch {
+	case functionRefContextAtCursor(snap, bytePos):
+		// Function-reference slot (today: `calls <prefix>`). Only a
+		// function is valid here, so offer just functions rather than
+		// the full set of reachable names. Checked before the nil-AST
+		// guard so a mid-edit `calls ` (which may not parse yet) still
+		// offers builtin functions.
+		addFunctionRefCompletions(items, snap)
+	case snap.ast == nil:
 		// Even without an AST we can still offer builtins - they're
 		// useful when the user has started a fresh file with a typo
 		// and the parse failed.
 		addBuiltinCompletions(items, receiverType)
-	} else {
+	default:
 		addBuiltinCompletions(items, receiverType)
 		addFileScopeCompletions(items, snap, bytePos)
 		addEnclosingFnCompletions(items, snap, bytePos)
@@ -175,6 +183,147 @@ func addStructKeyCompletions(items *[]lsp.CompletionItem, receiverType rl.Typing
 			SortText: sortTierMember,
 		})
 	}
+}
+
+// functionRefContextAtCursor reports whether the cursor sits in a
+// slot that expects a function reference - today, the `calls`
+// callback of a command block (`calls <prefix>|`). In that slot only
+// a function is a valid completion, so the popup is narrowed to
+// functions instead of every reachable name.
+//
+// Detection is lexical (like receiverTypeAtCursor) rather than
+// AST-based: mid-edit the partial callback often hasn't parsed into a
+// CmdCallback node yet (e.g. right after `calls ` with nothing typed),
+// and a backward scan over the source still recognises the slot. We
+// scan past the identifier prefix being typed, require whitespace,
+// then the bare `calls` keyword at the start of an (indented) line -
+// which is the only place `calls` is a keyword.
+func functionRefContextAtCursor(snap *DocumentVersion, pos lsp.Pos) bool {
+	if snap == nil || snap.text == "" {
+		return false
+	}
+	bytePos, ok := byteOffsetFor(snap, pos)
+	if !ok {
+		return false
+	}
+	src := snap.text
+	// Skip the identifier prefix the user is typing.
+	i := bytePos
+	for i > 0 && isIdentByte(src[i-1]) {
+		i--
+	}
+	// Require at least one space/tab between `calls` and the prefix,
+	// staying on the same line (the callback name follows `calls`
+	// inline). A newline here would mean we're on a different line.
+	spaced := false
+	for i > 0 && (src[i-1] == ' ' || src[i-1] == '\t') {
+		i--
+		spaced = true
+	}
+	if !spaced {
+		return false
+	}
+	// The preceding word must be exactly the `calls` keyword.
+	end := i
+	for i > 0 && isIdentByte(src[i-1]) {
+		i--
+	}
+	if src[i:end] != "calls" {
+		return false
+	}
+	// `calls` must start the line (after indentation): that's the
+	// command-block keyword form. Guards against an expression like
+	// `x = calls foo` ever matching (calls isn't a keyword there).
+	j := i
+	for j > 0 && (src[j-1] == ' ' || src[j-1] == '\t') {
+		j--
+	}
+	return j == 0 || src[j-1] == '\n'
+}
+
+// addFunctionRefCompletions offers only functions: top-level fns,
+// top-level vars that hold a function, and builtin functions. Used in
+// a function-reference slot (`calls <prefix>`), which resolves at file
+// scope - so there's no enclosing-function tier to consider.
+func addFunctionRefCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion) {
+	if file := snap.ast; file != nil {
+		addUserFunctionCompletions(items, file, snap)
+	}
+	// Every builtin is a function and a valid callback. nil receiver =
+	// no UFCS tier promotion, which is what we want here. Reusing the
+	// shared helper keeps any future builtin-exclusion rule in one place.
+	addBuiltinCompletions(items, nil)
+}
+
+// addUserFunctionCompletions offers the file's top-level functions and
+// any top-level vars that hold a function value.
+//
+// Unlike ordinary completion, position doesn't filter here: a command
+// callback runs only after the whole top-level has executed, so every
+// top-level binding is live by the time it fires - even one defined
+// textually below the command. (The binder resolves these forward
+// references for the same reason.) So we offer all top-level fns and
+// function-valued vars regardless of where they sit relative to the
+// cursor.
+func addUserFunctionCompletions(items *[]lsp.CompletionItem, file *rl.SourceFile, snap *DocumentVersion) {
+	for _, stmt := range file.Stmts {
+		switch n := stmt.(type) {
+		case *rl.FnDef:
+			if n.Name == "" {
+				continue
+			}
+			detail := ""
+			if n.Typing != nil {
+				detail = n.Typing.Name()
+			}
+			*items = append(*items, lsp.CompletionItem{
+				Label:    n.Name,
+				Kind:     lsp.CompletionKindFunction,
+				Detail:   detail,
+				SortText: sortTierFile,
+			})
+		case *rl.Assign:
+			for idx, target := range n.Targets {
+				ident, ok := target.(*rl.Identifier)
+				if !ok || !targetHoldsFunction(n, idx, ident, snap) {
+					continue
+				}
+				*items = append(*items, lsp.CompletionItem{
+					Label:    ident.Name,
+					Kind:     lsp.CompletionKindFunction,
+					Detail:   localTypeString(ident, snap.resolved, snap.types),
+					SortText: sortTierFile,
+				})
+			}
+		}
+	}
+}
+
+// targetHoldsFunction reports whether assignment target #idx binds a
+// function value: either the RHS at that index is a lambda literal, or
+// the resolved symbol's type is a function type (covers `h =
+// make_handler()` where the RHS is a call returning a fn).
+func targetHoldsFunction(a *rl.Assign, idx int, ident *rl.Identifier, snap *DocumentVersion) bool {
+	if idx < len(a.Values) {
+		if _, ok := a.Values[idx].(*rl.Lambda); ok {
+			return true
+		}
+	}
+	sym := lookupSymbolForIdent(ident, snap.resolved)
+	if sym == nil {
+		return false
+	}
+	if snap.types != nil {
+		if t, ok := snap.types.SymbolTypes[sym]; ok {
+			if _, ok := t.(*rl.TypingFnT); ok {
+				return true
+			}
+		}
+	}
+	if _, ok := sym.Declared.(*rl.TypingFnT); ok {
+		return true
+	}
+	return false
 }
 
 // receiverTypeAtCursor inspects the source immediately before the

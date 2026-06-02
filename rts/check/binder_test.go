@@ -421,11 +421,10 @@ func TestResolve_CmdBlockArgsVisibleToNamedCallback(t *testing.T) {
 }
 
 func TestResolve_NamedCallbackTargetIsResolvable(t *testing.T) {
-	// `calls handler` is stored on CmdCallback as a plain string with
-	// no Identifier AST node, so the binder doesn't put it in
-	// Resolved.Uses. What we DO require is that the callback's target
-	// is findable in file scope so other checks (and a future LSP
-	// goto-def for the callback) can resolve it on demand.
+	// `calls handler` is a function reference: the binder records the
+	// callback identifier in Resolved.Uses, bound to the same symbol as
+	// the `fn handler` definition. That use index is what powers LSP
+	// goto-def / find-refs / rename / hover on the callback site.
 	src := "command run:\n    calls handler\n\nfn handler():\n    pass\n"
 	file := parseFile(t, src)
 	require.NotNil(t, file)
@@ -435,6 +434,12 @@ func TestResolve_NamedCallbackTargetIsResolvable(t *testing.T) {
 	handlerSym := r.File.Lookup("handler")
 	require.NotNil(t, handlerSym, "callback target must be visible at file scope")
 	assert.Equal(t, check.SymHoistedFn, handlerSym.Kind)
+
+	require.NotEmpty(t, file.Cmds)
+	cbIdent := file.Cmds[0].Callback.Identifier
+	require.NotNil(t, cbIdent, "named callback should be an Identifier node")
+	assert.Same(t, handlerSym, r.Uses[cbIdent],
+		"callback identifier must resolve to the fn's symbol")
 }
 
 func TestResolve_DuplicateFnParamEmitsIssue(t *testing.T) {
@@ -484,12 +489,11 @@ func TestResolve_ShadowingNotADuplicate(t *testing.T) {
 }
 
 func TestCheck_CmdCallbackBuiltinAlone_NoFalseWarning(t *testing.T) {
-	// Regression: previously addUnknownCommandCallbackWarnings only
-	// consulted the resolved view. Builtins are synthesized lazily on
-	// first reference, so a script whose ONLY mention of `print` was a
-	// `calls print` callback (no other call to print, nothing to
-	// trigger synthesis) would emit a false-positive "may not be
-	// defined" warning. Guard against the regression.
+	// Regression: a `calls <builtin>` callback whose builtin is never
+	// otherwise referenced must not be flagged as undefined. The binder
+	// resolves a named callback like any other identifier, including
+	// against the builtin set, so `calls print` is clean even when
+	// nothing else in the script mentions `print`.
 	src := "command run:\n    calls print\n"
 	parser, err := rts.NewRadParser()
 	require.NoError(t, err)
@@ -499,8 +503,8 @@ func TestCheck_CmdCallbackBuiltinAlone_NoFalseWarning(t *testing.T) {
 	res, err := chk.Check()
 	require.NoError(t, err)
 	for _, d := range res.Diagnostics {
-		if d.Code != nil && *d.Code == rl.ErrUnknownFunction {
-			t.Fatalf("unexpected unknown-function diagnostic: %s", d.Message)
+		if d.Code != nil && (*d.Code == rl.ErrUnknownFunction || *d.Code == rl.ErrUndefinedVariable) {
+			t.Fatalf("unexpected undefined-callback diagnostic: %s", d.Message)
 		}
 	}
 }

@@ -2182,10 +2182,16 @@ func (tc *typeChecker) walkCmd(c *rl.CmdBlock) {
 			_ = tc.synth(c.Decls[i].Default)
 		}
 	}
-	if c.Callback.IsLambda && c.Callback.Lambda != nil {
-		for _, stmt := range c.Callback.Lambda.Body {
-			tc.walkStmt(stmt)
+	if c.Callback.IsLambda {
+		if c.Callback.Lambda != nil {
+			for _, stmt := range c.Callback.Lambda.Body {
+				tc.walkStmt(stmt)
+			}
 		}
+	} else if c.Callback.Identifier != nil {
+		// A named callback is a function reference; synth it so the use
+		// node carries the function's type (hover on the `calls` site).
+		_ = tc.synth(c.Callback.Identifier)
 	}
 }
 

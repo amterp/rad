@@ -226,21 +226,26 @@ var docSnippetTolerances = map[string]Tolerance{
 	// (Gap 2), so `state` is `map` and the old `error|map` UFCS false
 	// positive is gone. The unhandled-fallible hint it now carries is
 	// globally tolerated.
+	// Intermediate tutorial steps: each shows command blocks whose
+	// callback functions are defined in a later step. A named callback
+	// is a plain function reference, so a target not yet defined in the
+	// snippet is an undefined-identifier error (RAD20028). Which targets
+	// are still missing varies by step, so the reasons stay general.
 	"docs-web/docs/examples/hm.md#19e0e50a": {
-		ExpectedCodes: []string{"RAD40003"},
-		Reason:        "intermediate tutorial step: command callbacks `do_show`/`do_edit`/`do_list` are added in the following tutorial steps. The RAD40003 warning surfaces because the tracking only sees top-level fns.",
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "intermediate tutorial step: command callbacks defined in later steps are undefined here.",
 	},
 	"docs-web/docs/examples/hm.md#03e13698": {
-		ExpectedCodes: []string{"RAD40003"},
-		Reason:        "intermediate tutorial step: `do_edit`/`do_list` not yet defined (added in later steps). The old `error|map` RAD30001 hint is gone now that load_state() strips its error arm (Gap 2).",
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "intermediate tutorial step: command callbacks defined in later steps are undefined here.",
 	},
 	"docs-web/docs/examples/hm.md#0b53f387": {
-		ExpectedCodes: []string{"RAD40003"},
-		Reason:        "intermediate tutorial step: `do_list` not yet defined. Old `error|map` RAD30001 hint gone after Gap 2 error-strip.",
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "intermediate tutorial step: command callbacks defined in later steps are undefined here.",
 	},
 	"docs-web/docs/examples/hm.md#abb66476": {
-		ExpectedCodes: []string{"RAD40003"},
-		Reason:        "intermediate tutorial step: `do_list` not yet defined. Old `error|map` RAD30001 hint gone after Gap 2 error-strip.",
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "intermediate tutorial step: command callbacks defined in later steps are undefined here.",
 	},
 
 	// ---- docs-web/docs/reference/syntax.md -------------------------
@@ -283,7 +288,7 @@ var docSnippetTolerances = map[string]Tolerance{
 	"docs-web/docs/reference/syntax.md#be6fc738": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: references placeholder helper functions"},
 	"docs-web/docs/reference/syntax.md#c023cdc8": {ExpectedCodes: []string{"RAD10001"}, Reason: "syntax-reference fragment: literal-syntax shape, not a complete statement"},
 	"docs-web/docs/reference/syntax.md#c8b1a340": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: references placeholder helper functions"},
-	"docs-web/docs/reference/syntax.md#ce0bdd06": {ExpectedCodes: []string{"RAD40003"}, Reason: "syntax-reference fragment: command callback to placeholder helper"},
+	"docs-web/docs/reference/syntax.md#ce0bdd06": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: command callback to a placeholder helper that isn't defined in the fragment - undefined-identifier error"},
 	"docs-web/docs/reference/syntax.md#d0901453": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: placeholder identifier"},
 	"docs-web/docs/reference/syntax.md#db1c71cb": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: references placeholder helper functions"},
 	"docs-web/docs/reference/syntax.md#dfc6c872": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: placeholder identifier"},
