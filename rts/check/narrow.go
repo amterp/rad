@@ -709,7 +709,7 @@ func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 			// Drop Never contributions; preserve actual types.
 			// nil from a recursive call means "this arm has no
 			// static handle for either side." Pass the arm through
-			// unchanged so the union join doesn'\''t lose it.
+			// unchanged so the union join doesn't lose it.
 			if tA == nil {
 				truthyArms = append(truthyArms, arm)
 			} else if !isNeverType(tA) {
@@ -735,7 +735,7 @@ func narrowByTypeOf(base rl.TypingT, target string) (truthy, falsy rl.TypingT) {
 			// left is null.
 			return inner, rl.NewNullType()
 		}
-		// Inner doesn'\''t match target and null doesn'\''t match any
+		// Inner doesn't match target and null doesn't match any
 		// non-null target. Truthy is empty; falsy is the original.
 		return rl.NewNeverType(), base
 	}

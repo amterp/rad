@@ -841,7 +841,7 @@ y = x
 	require.NotNil(t, ySym)
 	got := info.SymbolTypes[ySym]
 	require.NotNil(t, got)
-	// Union dedupes by Name; order isn'\''t guaranteed because the
+	// Union dedupes by Name; order isn't guaranteed because the
 	// joined symbol map iterates Go maps. Accept either ordering.
 	name := got.Name()
 	assert.Contains(t, []string{"int|str", "str|int"}, name,
@@ -966,7 +966,7 @@ func TestUnionJoin_AllNeverGivesNever(t *testing.T) {
 }
 
 func TestUnionJoin_AnyDoesNotSwallowConcrete(t *testing.T) {
-	// `int | any` keeps both arms - gradual any shouldn'\''t silently
+	// `int | any` keeps both arms - gradual any shouldn't silently
 	// erase the concrete int.
 	got := check.UnionJoinForTest([]rl.TypingT{
 		rl.NewIntType(),
@@ -1068,7 +1068,7 @@ func TestTypeCheck_ReassignmentWidens(t *testing.T) {
 
 func TestTypeCheck_WhileSorbetDropsBodyAssignedNarrowing(t *testing.T) {
 	// The body reassigns x; the post-loop frame must not assume x is
-	// the WhenFalse-narrowed type for x'\''s base. We just verify the
+	// the WhenFalse-narrowed type for x's base. We just verify the
 	// reassigned var has its widened type post-loop.
 	src := `fn f(x: int|str):
     while type_of(x) == "int":
@@ -1156,7 +1156,7 @@ func TestTypeCheck_ForLoopVarFromStringIsStr(t *testing.T) {
 }
 
 func TestTypeCheck_ForLoopVarDynamicForUnknownIter(t *testing.T) {
-	// A function call we can'\''t resolve yields Dynamic.
+	// A function call we can't resolve yields Dynamic.
 	src := `for v in unknown_fn():
     print(v)
 `
@@ -1274,7 +1274,7 @@ func TestTypeCheck_IfDoesNotLeakNarrowingAfter(t *testing.T) {
 	// After a non-exiting if, the narrowing should not persist into
 	// subsequent statements at the same scope. Use a fn param so the
 	// base type stays int? - a top-level `x: int? = 5` would narrow
-	// x to int on assignment, and the if'\''s null-predicate would have
+	// x to int on assignment, and the if's null-predicate would have
 	// nothing to strip.
 	src := `fn f(x: int?):
     if x != null:
@@ -1290,7 +1290,7 @@ func TestTypeCheck_IfDoesNotLeakNarrowingAfter(t *testing.T) {
 	// Branches contribute int (truthy exit) and int? (acc = base).
 	// The dedupe-by-Name union keeps them as int|int?; semantically
 	// equivalent to int? (since int <: int?), but a tighter
-	// representation would need union-arm subsumption that we don'\''t
+	// representation would need union-arm subsumption that we don't
 	// have today.
 	name := gotXUse.Name()
 	assert.Contains(t, []string{"int?", "int|int?", "int?|int"}, name,
