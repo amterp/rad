@@ -20,7 +20,7 @@ io
 
 ## Notes
 
-Shows an interactive multi-select menu where users can select zero or more options. =
+Shows an interactive multi-select menu where users can select zero or more options.
 Unlike `pick`, which returns a single selection, `multipick` returns a list of all selected items.
 
 **Parameters:**
