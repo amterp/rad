@@ -2249,6 +2249,8 @@ delete_path("directory/")       // -> true (if directory existed and was deleted
 
 Returns `true` if the path was successfully deleted, `false` if it didn't exist or couldn't be deleted.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 ### find_paths
 
 Returns a list of all paths under a directory.
@@ -2282,7 +2284,7 @@ paths = find_paths("src/", relative="absolute")
 - `"cwd"` - Relative to current directory
 - `"absolute"` - Full absolute paths
 
-**Examples:**
+A leading `~` in `_path` is expanded to your home directory.
 
 ### input
 
@@ -2318,8 +2320,6 @@ password = input("Password: ", secret=true)           // -> Hides typed characte
 If `secret` is true, input is hidden (useful for passwords). The `hint` parameter has no effect when `secret` is
 enabled.
 
-**Examples:**
-
 ### multipick
 
 Presents an interactive menu for selecting multiple options from a list.
@@ -2334,7 +2334,7 @@ selected = multipick(fruits)
 // selected equals e.g. [ "apple", "cherry" ]
 ```
 
-Shows an interactive multi-select menu where users can select zero or more options. =
+Shows an interactive multi-select menu where users can select zero or more options.
 Unlike `pick`, which returns a single selection, `multipick` returns a list of all selected items.
 
 **Parameters:**
@@ -2347,8 +2347,6 @@ Unlike `pick`, which returns a single selection, `multipick` returns a list of a
 | `max`      | `int?`    | Maximum number of selections allowed (optional, unlimited if not set)         |
 
 The `prompt` parameter has smart defaults that adjust based on the min/max constraints.
-
-**Example:**
 
 ### pick
 
@@ -2495,12 +2493,12 @@ if not result.success:
 
 In text mode, decodes as UTF-8 and returns a string. In bytes mode, returns a list of integers.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 **Return map contains:**
 
 - `size_bytes: int` - File size in bytes
 - `content: str|list[int]` - File contents (type depends on mode)
-
-**Examples:**
 
 ### read_stdin
 
@@ -2550,12 +2548,12 @@ if err:
 
 By default overwrites the file. Use `append=true` to append to existing content.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 **Return map contains:**
 
 - `bytes_written: int` - Number of bytes written
 - `path: str` - Full path to the written file
-
-**Examples:**
 
 ## Lists
 
@@ -2573,8 +2571,6 @@ filter({"a": 1, "b": 2}, fn(k, v) v > 1)    // -> {"b": 2}
 ```
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
-
-**Examples:**
 
 ### flat_map
 
@@ -2611,8 +2607,6 @@ flat_map(_coll: map|list, _fn: any?) -> list
 **With function:** The function must return a list. Results are flattened.
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)` and is required.
-
-**Examples:**
 
 ### join
 
@@ -2674,8 +2668,6 @@ map({"a": 1, "b": 2}, fn(k, v) v * 10)   // -> {"a": 10, "b": 20}
 ```
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
-
-**Examples:**
 
 ### sort
 
@@ -2758,8 +2750,6 @@ zip([1, 2, 3], ["a", "b"], strict=true)   // -> Error: Lists must have the same 
 - By default, truncates to the shortest list length
 - Cannot use `strict=true` with `fill` parameter (mutually exclusive)
 - Returns error if `strict=true` and lists have different lengths
-
-**Examples:**
 
 ## Math
 
@@ -3205,8 +3195,6 @@ load(cache, "data", fn() ignored(), override="forced")
 If key doesn't exist, `_loader` is called and result is cached. Cannot use `reload=true` with `override` (mutually
 exclusive).
 
-**Examples:**
-
 ### load_stash_file
 
 Loads a file from the script's stash directory, creating it with default content if it doesn't exist.
@@ -3338,8 +3326,6 @@ rad:
 
 Useful for automatically coloring table data or distinguishing values in lists.
 
-**Examples:**
-
 ### count
 
 Counts the number of non-overlapping instances of substring in string.
@@ -3415,8 +3401,6 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 | `n`        | `int = 0`   | Which occurrence to find (0=first, 1=second, -1=last) |
 | `start`    | `int = 0`   | Position to start searching from                      |
 
-**Examples:**
-
 ### lower
 
 Converts a string to lowercase. Preserves color attributes.
@@ -3462,8 +3446,6 @@ replace("abc123def", "\\d+", "XXX")           // -> "abcXXXdef"
 ```
 
 The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
-
-**Examples:**
 
 ### reverse
 
@@ -3729,7 +3711,7 @@ if info.exists:
 **Always returns:**
 
 - `exists: bool` - Whether the path exists
-- `full_path: str` - Absolute path
+- `full_path: str` - Absolute path (a leading `~` in `_path` is expanded to your home directory)
 
 **When path exists, also returns:**
 
@@ -3739,8 +3721,6 @@ if info.exists:
 - `size_bytes?: int` - File size (only for files)
 - `modified_millis?: int` - Modification time as epoch milliseconds
 - `accessed_millis?: int` - Access time as epoch milliseconds (Unix/macOS only)
-
-**Examples:**
 
 ### has_stdin
 
@@ -3802,8 +3782,6 @@ If `title` is provided, it's printed before sleeping.
 | `ms`         | Milliseconds |
 | `us` or `µs` | Microseconds |
 | `ns`         | Nanoseconds  |
-
-**Examples:**
 
 ### type_of
 
@@ -3872,8 +3850,6 @@ Map values:
 | `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
 | `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
 | `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
-
-**Examples:**
 
 ### parse_date
 
@@ -3946,8 +3922,6 @@ For strings without timezone information, the time is interpreted in the `tz` ti
 default). For strings with timezone info (e.g., `Z`, `+05:00`), the time is parsed in that timezone
 and then converted to the output `tz`.
 
-**Examples:**
-
 ### parse_epoch
 
 Parses a Unix epoch timestamp into various time formats.
@@ -3993,5 +3967,3 @@ if err:
 Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).
-
-**Examples:**

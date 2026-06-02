@@ -5005,6 +5005,7 @@ delete_path(&quot;missing.txt&quot;)      // -&gt; false (file didn&#39;t exist)
 delete_path(&quot;directory/&quot;)       // -&gt; true (if directory existed and was deleted)
 </code></pre></div>
 <p>Returns <code>true</code> if the path was successfully deleted, <code>false</code> if it didn't exist or couldn't be deleted.</p>
+<p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
 <h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
 <p>Returns a list of all paths under a directory.</p>
 <div class="highlight"><pre><span></span><code>find_paths(_path: str, *, depth: int = -1, relative: [&quot;target&quot;, &quot;cwd&quot;, &quot;absolute&quot;] = &quot;target&quot;) -&gt; error|str[]
@@ -5052,7 +5053,7 @@ paths = find_paths(&quot;src/&quot;, relative=&quot;absolute&quot;)
 <li><code>"cwd"</code> - Relative to current directory</li>
 <li><code>"absolute"</code> - Full absolute paths</li>
 </ul>
-<p><strong>Examples:</strong></p>
+<p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
 <h3 id="input">input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h3>
 <p>Gets a line of text input from the user with optional prompt, default, hint, and secret mode.</p>
 <div class="highlight"><pre><span></span><code>input(prompt: str = &quot;&gt; &quot;, *, hint: str = &quot;&quot;, default: str = &quot;&quot;, secret: bool = false) -&gt; error|str
@@ -5103,7 +5104,6 @@ password = input(&quot;Password: &quot;, secret=true)           // -&gt; Hides t
 </table>
 <p>If <code>secret</code> is true, input is hidden (useful for passwords). The <code>hint</code> parameter has no effect when <code>secret</code> is
 enabled.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="multipick">multipick<a class="headerlink" href="#multipick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting multiple options from a list.</p>
 <div class="highlight"><pre><span></span><code>multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -&gt; str[]
@@ -5112,7 +5112,7 @@ enabled.</p>
 selected = multipick(fruits)
 // selected equals e.g. [ &quot;apple&quot;, &quot;cherry&quot; ]
 </code></pre></div>
-<p>Shows an interactive multi-select menu where users can select zero or more options. =
+<p>Shows an interactive multi-select menu where users can select zero or more options.
 Unlike <code>pick</code>, which returns a single selection, <code>multipick</code> returns a list of all selected items.</p>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5147,7 +5147,6 @@ Unlike <code>pick</code>, which returns a single selection, <code>multipick</cod
 </tbody>
 </table>
 <p>The <code>prompt</code> parameter has smart defaults that adjust based on the min/max constraints.</p>
-<p><strong>Example:</strong></p>
 <h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting from a list of options.</p>
 <div class="highlight"><pre><span></span><code>pick(_options: str[], _filter: (str|str[])?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; str
@@ -5258,12 +5257,12 @@ if not result.success:
 </tbody>
 </table>
 <p>In text mode, decodes as UTF-8 and returns a string. In bytes mode, returns a list of integers.</p>
+<p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
 <p><strong>Return map contains:</strong></p>
 <ul>
 <li><code>size_bytes: int</code> - File size in bytes</li>
 <li><code>content: str|list[int]</code> - File contents (type depends on mode)</li>
 </ul>
-<p><strong>Examples:</strong></p>
 <h3 id="read_stdin">read_stdin<a class="headerlink" href="#read_stdin" title="Permanent link">&para;</a></h3>
 <p>Reads all data from stdin.</p>
 <div class="highlight"><pre><span></span><code>read_stdin() -&gt; str?|error
@@ -5318,12 +5317,12 @@ if err:
 </tbody>
 </table>
 <p>By default overwrites the file. Use <code>append=true</code> to append to existing content.</p>
+<p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
 <p><strong>Return map contains:</strong></p>
 <ul>
 <li><code>bytes_written: int</code> - Number of bytes written</li>
 <li><code>path: str</code> - Full path to the written file</li>
 </ul>
-<p><strong>Examples:</strong></p>
 <h2 id="lists">Lists<a class="headerlink" href="#lists" title="Permanent link">&para;</a></h2>
 <h3 id="filter">filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
 <p>Applies a predicate function to filter elements of a list or map. Keeps only elements where the function returns true.</p>
@@ -5333,7 +5332,6 @@ if err:
 filter({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v &gt; 1)    // -&gt; {&quot;b&quot;: 2}
 </code></pre></div>
 <p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code>.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="flat_map">flat_map<a class="headerlink" href="#flat_map" title="Permanent link">&para;</a></h3>
 <p>Flattens a list of lists, or applies a mapping function that returns lists and flattens the results.</p>
 <div class="highlight"><pre><span></span><code>flat_map(_coll: map|list, _fn: any?) -&gt; list
@@ -5361,7 +5359,6 @@ filter({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v &gt; 1)    // -&gt; {&qu
 <p><strong>For lists without function:</strong> All elements must be lists. Flattens one level.</p>
 <p><strong>With function:</strong> The function must return a list. Results are flattened.</p>
 <p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code> and is required.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="join">join<a class="headerlink" href="#join" title="Permanent link">&para;</a></h3>
 <p>Joins a list into a string with separator, prefix, and suffix.</p>
 <div class="highlight"><pre><span></span><code>join(_list: list, sep: str = &quot;&quot;, prefix: str = &quot;&quot;, suffix: str = &quot;&quot;) -&gt; str
@@ -5397,7 +5394,6 @@ len(&quot;héllo&quot;)              // -&gt; 5 (rune count, not byte count)
 map({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v * 10)   // -&gt; {&quot;a&quot;: 10, &quot;b&quot;: 20}
 </code></pre></div>
 <p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code>.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="sort">sort<a class="headerlink" href="#sort" title="Permanent link">&para;</a></h3>
 <p>Returns a new sorted list (or string with characters sorted). The
 input is not mutated. With <code>reverse=true</code>, sorts in descending order.
@@ -5475,7 +5471,6 @@ zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;], strict=true)   // -&gt; Error: Li
 <li>Cannot use <code>strict=true</code> with <code>fill</code> parameter (mutually exclusive)</li>
 <li>Returns error if <code>strict=true</code> and lists have different lengths</li>
 </ul>
-<p><strong>Examples:</strong></p>
 <h2 id="math">Math<a class="headerlink" href="#math" title="Permanent link">&para;</a></h2>
 <h3 id="abs">abs<a class="headerlink" href="#abs" title="Permanent link">&para;</a></h3>
 <p>Returns the absolute value of a number. The result's type matches
@@ -5816,7 +5811,6 @@ load(cache, &quot;data&quot;, fn() ignored(), override=&quot;forced&quot;)
 </table>
 <p>If key doesn't exist, <code>_loader</code> is called and result is cached. Cannot use <code>reload=true</code> with <code>override</code> (mutually
 exclusive).</p>
-<p><strong>Examples:</strong></p>
 <h3 id="load_stash_file">load_stash_file<a class="headerlink" href="#load_stash_file" title="Permanent link">&para;</a></h3>
 <p>Loads a file from the script's stash directory, creating it with default content if it doesn't exist.</p>
 <div class="highlight"><pre><span></span><code>load_stash_file(_path: str, _default: str = &quot;&quot;) -&gt; error|{ &quot;full_path&quot;: str, &quot;created&quot;: bool, &quot;content&quot;?: str }
@@ -5949,7 +5943,6 @@ rad:
 </tbody>
 </table>
 <p>Useful for automatically coloring table data or distinguishing values in lists.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="count">count<a class="headerlink" href="#count" title="Permanent link">&para;</a></h3>
 <p>Counts the number of non-overlapping instances of substring in string.</p>
 <div class="highlight"><pre><span></span><code>count(_str: str, _substr: str) -&gt; int
@@ -6023,7 +6016,6 @@ hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable 
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
 <h3 id="lower">lower<a class="headerlink" href="#lower" title="Permanent link">&para;</a></h3>
 <p>Converts a string to lowercase. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>lower(_val: str) -&gt; str
@@ -6050,7 +6042,6 @@ replace(&quot;Name: Charlie Brown&quot;, &quot;Charlie (.*)&quot;, &quot;Alice $
 replace(&quot;abc123def&quot;, &quot;\\d+&quot;, &quot;XXX&quot;)           // -&gt; &quot;abcXXXdef&quot;
 </code></pre></div>
 <p>The <code>_find</code> parameter is a regex pattern. The <code>_replace</code> parameter can use regex capture groups like <code>$1</code>.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="reverse">reverse<a class="headerlink" href="#reverse" title="Permanent link">&para;</a></h3>
 <p>Reverses a string or list. Preserves color attributes for strings.</p>
 <div class="highlight"><pre><span></span><code>reverse(_val: str|list) -&gt; str|list
@@ -6208,7 +6199,7 @@ if info.exists:
 <p><strong>Always returns:</strong></p>
 <ul>
 <li><code>exists: bool</code> - Whether the path exists</li>
-<li><code>full_path: str</code> - Absolute path</li>
+<li><code>full_path: str</code> - Absolute path (a leading <code>~</code> in <code>_path</code> is expanded to your home directory)</li>
 </ul>
 <p><strong>When path exists, also returns:</strong></p>
 <ul>
@@ -6219,7 +6210,6 @@ if info.exists:
 <li><code>modified_millis?: int</code> - Modification time as epoch milliseconds</li>
 <li><code>accessed_millis?: int</code> - Access time as epoch milliseconds (Unix/macOS only)</li>
 </ul>
-<p><strong>Examples:</strong></p>
 <h3 id="has_stdin">has_stdin<a class="headerlink" href="#has_stdin" title="Permanent link">&para;</a></h3>
 <p>Checks if stdin is piped to the script.</p>
 <div class="highlight"><pre><span></span><code>has_stdin() -&gt; bool
@@ -6289,7 +6279,6 @@ If <code>title</code> is provided, it's printed before sleeping.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
 <h3 id="type_of">type_of<a class="headerlink" href="#type_of" title="Permanent link">&para;</a></h3>
 <p>Returns the type of a value as a string.</p>
 <div class="highlight"><pre><span></span><code>type_of(_var: any) -&gt; [&quot;int&quot;, &quot;str&quot;, &quot;list&quot;, &quot;map&quot;, &quot;float&quot;, &quot;bool&quot;, &quot;null&quot;, &quot;error&quot;, &quot;function&quot;]
@@ -6419,7 +6408,6 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
 <h3 id="parse_date">parse_date<a class="headerlink" href="#parse_date" title="Permanent link">&para;</a></h3>
 <p>Parses a date string into the same time map format as <a href="#now"><code>now()</code></a> and <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
 <div class="highlight"><pre><span></span><code>parse_date(_date: str, *, format: str?, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
@@ -6532,7 +6520,6 @@ wrong results or parse errors.</p>
 <p>For strings without timezone information, the time is interpreted in the <code>tz</code> timezone (local by
 default). For strings with timezone info (e.g., <code>Z</code>, <code>+05:00</code>), the time is parsed in that timezone
 and then converted to the output <code>tz</code>.</p>
-<p><strong>Examples:</strong></p>
 <h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
 <p>Parses a Unix epoch timestamp into various time formats.</p>
 <div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
@@ -6591,7 +6578,6 @@ if err:
 <p>Converts an epoch timestamp to the same format as <a href="#now"><code>now()</code></a>. Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., <code>1712345678.5</code> seconds includes
 500 milliseconds).</p>
-<p><strong>Examples:</strong></p>
 
 
 
