@@ -41,8 +41,33 @@ func TestFuncDocsValid(t *testing.T) {
 			if doc.Category == "" {
 				t.Errorf("%s: empty category", name)
 			}
+			if marker := danglingNotesMarker(doc.Notes); marker != "" {
+				t.Errorf("%s: Notes ends with a dangling bold label %q with no "+
+					"content after it - drop the marker or fill it in", name, marker)
+			}
 		})
 	}
+}
+
+// danglingNotesMarker returns the last line of a Notes section when
+// that line is a lone bold label (e.g. "**Examples:**") with nothing
+// following it, otherwise "". The docs/funcs source-of-truth
+// migration left such empty markers behind, which the functions.md
+// generator then rendered as empty headers (issue 128). This guard
+// keeps the smell from recurring for any label, not just Examples.
+func danglingNotesMarker(notes string) string {
+	lines := strings.Split(strings.TrimRight(notes, "\n"), "\n")
+	for i := len(lines) - 1; i >= 0; i-- {
+		last := strings.TrimSpace(lines[i])
+		if last == "" {
+			continue
+		}
+		if strings.HasPrefix(last, "**") && strings.HasSuffix(last, ":**") {
+			return last
+		}
+		return ""
+	}
+	return ""
 }
 
 // TestParseFuncDocNormalizesCRLF guards the cross-platform bug where

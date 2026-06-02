@@ -39,5 +39,3 @@ io
 
 If `secret` is true, input is hidden (useful for passwords). The `hint` parameter has no effect when `secret` is
 enabled.
-
-**Examples:**

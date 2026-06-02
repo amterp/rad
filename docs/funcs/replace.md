@@ -21,5 +21,3 @@ strings
 ## Notes
 
 The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
-
-**Examples:**

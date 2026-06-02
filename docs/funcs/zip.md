@@ -37,5 +37,3 @@ lists
 - By default, truncates to the shortest list length
 - Cannot use `strict=true` with `fill` parameter (mutually exclusive)
 - Returns error if `strict=true` and lists have different lengths
-
-**Examples:**

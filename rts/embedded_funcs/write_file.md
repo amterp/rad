@@ -44,5 +44,3 @@ A leading `~` in `_path` is expanded to your home directory.
 
 - `bytes_written: int` - Number of bytes written
 - `path: str` - Full path to the written file
-
-**Examples:**

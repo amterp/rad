@@ -33,5 +33,3 @@ Unlike `pick`, which returns a single selection, `multipick` returns a list of a
 | `max`      | `int?`    | Maximum number of selections allowed (optional, unlimited if not set)         |
 
 The `prompt` parameter has smart defaults that adjust based on the min/max constraints.
-
-**Example:**

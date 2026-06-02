@@ -46,5 +46,3 @@ A leading `~` in `_path` is expanded to your home directory.
 
 - `size_bytes: int` - File size in bytes
 - `content: str|list[int]` - File contents (type depends on mode)
-
-**Examples:**

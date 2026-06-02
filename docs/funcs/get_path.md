@@ -42,5 +42,3 @@ system
 - `size_bytes?: int` - File size (only for files)
 - `modified_millis?: int` - Modification time as epoch milliseconds
 - `accessed_millis?: int` - Access time as epoch milliseconds (Unix/macOS only)
-
-**Examples:**

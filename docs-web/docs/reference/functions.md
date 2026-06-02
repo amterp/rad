@@ -792,8 +792,6 @@ paths = find_paths("src/", relative="absolute")
 
 A leading `~` in `_path` is expanded to your home directory.
 
-**Examples:**
-
 ### input
 
 Gets a line of text input from the user with optional prompt, default, hint, and secret mode.
@@ -828,8 +826,6 @@ password = input("Password: ", secret=true)           // -> Hides typed characte
 If `secret` is true, input is hidden (useful for passwords). The `hint` parameter has no effect when `secret` is
 enabled.
 
-**Examples:**
-
 ### multipick
 
 Presents an interactive menu for selecting multiple options from a list.
@@ -857,8 +853,6 @@ Unlike `pick`, which returns a single selection, `multipick` returns a list of a
 | `max`      | `int?`    | Maximum number of selections allowed (optional, unlimited if not set)         |
 
 The `prompt` parameter has smart defaults that adjust based on the min/max constraints.
-
-**Example:**
 
 ### pick
 
@@ -1012,8 +1006,6 @@ A leading `~` in `_path` is expanded to your home directory.
 - `size_bytes: int` - File size in bytes
 - `content: str|list[int]` - File contents (type depends on mode)
 
-**Examples:**
-
 ### read_stdin
 
 Reads all data from stdin.
@@ -1069,8 +1061,6 @@ A leading `~` in `_path` is expanded to your home directory.
 - `bytes_written: int` - Number of bytes written
 - `path: str` - Full path to the written file
 
-**Examples:**
-
 ## Lists
 
 ### filter
@@ -1087,8 +1077,6 @@ filter({"a": 1, "b": 2}, fn(k, v) v > 1)    // -> {"b": 2}
 ```
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
-
-**Examples:**
 
 ### flat_map
 
@@ -1125,8 +1113,6 @@ flat_map(_coll: map|list, _fn: any?) -> list
 **With function:** The function must return a list. Results are flattened.
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)` and is required.
-
-**Examples:**
 
 ### join
 
@@ -1188,8 +1174,6 @@ map({"a": 1, "b": 2}, fn(k, v) v * 10)   // -> {"a": 10, "b": 20}
 ```
 
 For lists, function receives `fn(value)`. For maps, function receives `fn(key, value)`.
-
-**Examples:**
 
 ### sort
 
@@ -1272,8 +1256,6 @@ zip([1, 2, 3], ["a", "b"], strict=true)   // -> Error: Lists must have the same 
 - By default, truncates to the shortest list length
 - Cannot use `strict=true` with `fill` parameter (mutually exclusive)
 - Returns error if `strict=true` and lists have different lengths
-
-**Examples:**
 
 ## Math
 
@@ -1719,8 +1701,6 @@ load(cache, "data", fn() ignored(), override="forced")
 If key doesn't exist, `_loader` is called and result is cached. Cannot use `reload=true` with `override` (mutually
 exclusive).
 
-**Examples:**
-
 ### load_stash_file
 
 Loads a file from the script's stash directory, creating it with default content if it doesn't exist.
@@ -1852,8 +1832,6 @@ rad:
 
 Useful for automatically coloring table data or distinguishing values in lists.
 
-**Examples:**
-
 ### count
 
 Counts the number of non-overlapping instances of substring in string.
@@ -1929,8 +1907,6 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 | `n`        | `int = 0`   | Which occurrence to find (0=first, 1=second, -1=last) |
 | `start`    | `int = 0`   | Position to start searching from                      |
 
-**Examples:**
-
 ### lower
 
 Converts a string to lowercase. Preserves color attributes.
@@ -1976,8 +1952,6 @@ replace("abc123def", "\\d+", "XXX")           // -> "abcXXXdef"
 ```
 
 The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
-
-**Examples:**
 
 ### reverse
 
@@ -2254,8 +2228,6 @@ if info.exists:
 - `modified_millis?: int` - Modification time as epoch milliseconds
 - `accessed_millis?: int` - Access time as epoch milliseconds (Unix/macOS only)
 
-**Examples:**
-
 ### has_stdin
 
 Checks if stdin is piped to the script.
@@ -2316,8 +2288,6 @@ If `title` is provided, it's printed before sleeping.
 | `ms`         | Milliseconds |
 | `us` or `µs` | Microseconds |
 | `ns`         | Nanoseconds  |
-
-**Examples:**
 
 ### type_of
 
@@ -2386,8 +2356,6 @@ Map values:
 | `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
 | `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
 | `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
-
-**Examples:**
 
 ### parse_date
 
@@ -2460,8 +2428,6 @@ For strings without timezone information, the time is interpreted in the `tz` ti
 default). For strings with timezone info (e.g., `Z`, `+05:00`), the time is parsed in that timezone
 and then converted to the output `tz`.
 
-**Examples:**
-
 ### parse_epoch
 
 Parses a Unix epoch timestamp into various time formats.
@@ -2507,5 +2473,3 @@ if err:
 Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).
-
-**Examples:**

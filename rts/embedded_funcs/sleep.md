@@ -37,5 +37,3 @@ If `title` is provided, it's printed before sleeping.
 | `ms`         | Milliseconds |
 | `us` or `µs` | Microseconds |
 | `ns`         | Nanoseconds  |
-
-**Examples:**

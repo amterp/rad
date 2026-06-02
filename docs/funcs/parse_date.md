@@ -76,5 +76,3 @@ wrong results or parse errors.
 For strings without timezone information, the time is interpreted in the `tz` timezone (local by
 default). For strings with timezone info (e.g., `Z`, `+05:00`), the time is parsed in that timezone
 and then converted to the output `tz`.
-
-**Examples:**
