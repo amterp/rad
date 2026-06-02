@@ -32,7 +32,7 @@ system
 **Always returns:**
 
 - `exists: bool` - Whether the path exists
-- `full_path: str` - Absolute path
+- `full_path: str` - Absolute path (a leading `~` in `_path` is expanded to your home directory)
 
 **When path exists, also returns:**
 

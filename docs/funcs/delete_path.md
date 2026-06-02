@@ -21,3 +21,5 @@ io
 ## Notes
 
 Returns `true` if the path was successfully deleted, `false` if it didn't exist or couldn't be deleted.
+
+A leading `~` in `_path` is expanded to your home directory.

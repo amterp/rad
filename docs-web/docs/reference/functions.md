@@ -755,6 +755,8 @@ delete_path("directory/")       // -> true (if directory existed and was deleted
 
 Returns `true` if the path was successfully deleted, `false` if it didn't exist or couldn't be deleted.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 ### find_paths
 
 Returns a list of all paths under a directory.
@@ -787,6 +789,8 @@ paths = find_paths("src/", relative="absolute")
 - `"target"` - Relative to input path (default)
 - `"cwd"` - Relative to current directory
 - `"absolute"` - Full absolute paths
+
+A leading `~` in `_path` is expanded to your home directory.
 
 **Examples:**
 
@@ -1001,6 +1005,8 @@ if not result.success:
 
 In text mode, decodes as UTF-8 and returns a string. In bytes mode, returns a list of integers.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 **Return map contains:**
 
 - `size_bytes: int` - File size in bytes
@@ -1055,6 +1061,8 @@ if err:
 | `append`   | `bool = false` | Append to existing content instead of overwriting |
 
 By default overwrites the file. Use `append=true` to append to existing content.
+
+A leading `~` in `_path` is expanded to your home directory.
 
 **Return map contains:**
 
@@ -2235,7 +2243,7 @@ if info.exists:
 **Always returns:**
 
 - `exists: bool` - Whether the path exists
-- `full_path: str` - Absolute path
+- `full_path: str` - Absolute path (a leading `~` in `_path` is expanded to your home directory)
 
 **When path exists, also returns:**
 

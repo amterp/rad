@@ -39,4 +39,6 @@ io
 - `"cwd"` - Relative to current directory
 - `"absolute"` - Full absolute paths
 
+A leading `~` in `_path` is expanded to your home directory.
+
 **Examples:**
