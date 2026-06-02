@@ -8,12 +8,23 @@ import (
 	"strings"
 )
 
-func ToAbsolutePath(path string) string {
-	if strings.HasPrefix(path, "~") {
-		home, _ := os.UserHomeDir()          // todo technically should handle err
-		path = filepath.Join(home, path[1:]) // drop the "~"
+// ExpandTilde resolves a leading "~" (i.e. exactly "~" or a "~/" prefix) to the
+// user's home directory. Anything else is returned unchanged: "~user" (another
+// user's home) is not supported and is left as a literal path rather than
+// silently misexpanded, and a path like "~backup" is treated as a literal name.
+// If the home dir can't be resolved, the path is returned untouched so the
+// failure surfaces honestly at the os call site.
+func ExpandTilde(path string) string {
+	if path == "~" || strings.HasPrefix(path, "~/") {
+		if home, err := os.UserHomeDir(); err == nil {
+			path = filepath.Join(home, path[1:]) // drop the "~"
+		}
 	}
-	abs, _ := filepath.Abs(path) // todo handle err?
+	return path
+}
+
+func ToAbsolutePath(path string) string {
+	abs, _ := filepath.Abs(ExpandTilde(path)) // todo handle err?
 	return abs
 }
 

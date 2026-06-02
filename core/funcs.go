@@ -790,7 +790,7 @@ func init() {
 
 				radMap.SetPrimitiveStr(constFullPath, NormalizePath(absPath))
 
-				stat, err1 := os.Stat(path)
+				stat, err1 := os.Stat(absPath)
 				if err1 == nil {
 					radMap.SetPrimitiveStr(constBaseName, stat.Name())
 					radMap.SetPrimitiveStr(constPermissions, stat.Mode().Perm().String())
@@ -835,7 +835,7 @@ func init() {
 						relativeMode, []string{constTarget, constCwd, constAbsolute})
 				}
 
-				absTarget, err := filepath.Abs(path) // todo should be abstracted away for testing
+				absTarget, err := filepath.Abs(com.ExpandTilde(path)) // todo should be abstracted away for testing
 				if err != nil {
 					return f.ReturnErrf(rl.ErrGenericRuntime, "Error resolving absolute path for target: %v", err)
 				}
@@ -901,7 +901,7 @@ func init() {
 			// todo should offer args like find_paths
 			Name: FUNC_DELETE_PATH,
 			Execute: func(f FuncInvocation) RadValue {
-				path := f.GetStr("_path").Plain()
+				path := com.ExpandTilde(f.GetStr("_path").Plain())
 				deleted := false
 
 				if _, err := os.Stat(path); err == nil {
@@ -1119,7 +1119,7 @@ func init() {
 			//   - tail              # Last N bytes
 			Name: FUNC_READ_FILE,
 			Execute: func(f FuncInvocation) RadValue {
-				path := f.GetStr("_path").Plain()
+				path := com.ExpandTilde(f.GetStr("_path").Plain())
 				mode := f.GetStr("mode").Plain()
 
 				data, err := os.ReadFile(path)
@@ -1158,7 +1158,7 @@ func init() {
 		{
 			Name: FUNC_WRITE_FILE,
 			Execute: func(f FuncInvocation) RadValue {
-				path := f.GetStr("_path").Plain()
+				path := com.ExpandTilde(f.GetStr("_path").Plain())
 				content := f.GetStr("_content").Plain()
 				appendFlag := f.GetBool("append")
 

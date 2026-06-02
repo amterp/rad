@@ -38,6 +38,8 @@ io
 
 By default overwrites the file. Use `append=true` to append to existing content.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 **Return map contains:**
 
 - `bytes_written: int` - Number of bytes written

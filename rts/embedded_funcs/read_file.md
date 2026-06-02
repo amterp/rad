@@ -40,6 +40,8 @@ io
 
 In text mode, decodes as UTF-8 and returns a string. In bytes mode, returns a list of integers.
 
+A leading `~` in `_path` is expanded to your home directory.
+
 **Return map contains:**
 
 - `size_bytes: int` - File size in bytes
