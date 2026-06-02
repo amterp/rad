@@ -187,8 +187,8 @@ func TestNarrowByTypeOf_OptionalNullTarget(t *testing.T) {
 
 func TestNarrowByTypeOf_UnionWithOptionalPreservesNullArm(t *testing.T) {
 	// int?|str narrowed by type_of=="int".
-	// Truthy: int (the optional'\''s inner matched).
-	// Falsy: int? (the optional'\''s null half stays) and str (untouched).
+	// Truthy: int (the optional's inner matched).
+	// Falsy: int? (the optional's null half stays) and str (untouched).
 	// This is the Phase 4h regression test for "union+optional drops null."
 	base := rl.NewUnionType(
 		rl.NewOptionalType(rl.NewIntType()),
@@ -200,14 +200,14 @@ func TestNarrowByTypeOf_UnionWithOptionalPreservesNullArm(t *testing.T) {
 	require.NotNil(t, falsy)
 	// Falsy should contain int? (null arm preserved) and str. Exact
 	// representation depends on the join; what matters is the null
-	// component isn'\''t silently dropped.
+	// component isn't silently dropped.
 	name := falsy.Name()
 	assert.Contains(t, name, "?",
 		"falsy must retain the nullable arm; got %q", name)
 }
 
 func TestNarrowByTypeOf_AnyShortCircuits(t *testing.T) {
-	// any can'\''t be partitioned without losing information.
+	// any can't be partitioned without losing information.
 	truthy, falsy := narrowByTypeOf(rl.NewAnyType(), "int")
 	assert.Nil(t, truthy)
 	assert.Nil(t, falsy)
@@ -268,7 +268,7 @@ func TestInterpretCondition_TypeOfSwappedOperands(t *testing.T) {
 }
 
 func TestInterpretCondition_TypeOfInvalidTargetMakesTruthyUnreachable(t *testing.T) {
-	// type_of(x) == "frobnicate" - "frobnicate" isn'\''t a valid type_of
+	// type_of(x) == "frobnicate" - "frobnicate" isn't a valid type_of
 	// return, so the equality is statically false. Truthy is Never.
 	tc, ident, sym := makeChecker(rl.NewIntType())
 	cond := rl.NewOpBinary(rl.Span{}, rl.OpEq,
@@ -344,7 +344,7 @@ func TestInterpretCondition_StrEnumNeqLiteralInverts(t *testing.T) {
 }
 
 func TestInterpretCondition_StrEnumPlainStrNoNarrowing(t *testing.T) {
-	// Plain str shouldn'\''t narrow to a singleton enum - that surprises
+	// Plain str shouldn't narrow to a singleton enum - that surprises
 	// users who declared the var as str.
 	tc, ident, sym := makeChecker(rl.NewStrType())
 	cond := rl.NewOpBinary(rl.Span{}, rl.OpEq, ident, rl.NewLitStringSimple(rl.Span{}, "x"))
