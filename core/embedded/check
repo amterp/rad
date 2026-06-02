@@ -6,13 +6,14 @@ args:
     script str?       # Path of script to check.
     from_logs str?    # Check scripts from invocation logs (duration like "30d" or "all").
     verbose v bool    # Print verbose output (e.g., skipped scripts).
+    strict bool       # Surface advisory checks (e.g. unhandled fallible calls) as warnings.
 
     script mutually excludes from_logs
 
 if from_logs:
-    _rad_check_from_logs(from_logs, verbose)
+    _rad_check_from_logs(from_logs, verbose, strict)
 else if script:
-    result = _rad_run_check(script)
+    result = _rad_run_check(script, strict)
 
     diagnostics = result.diagnostics
 

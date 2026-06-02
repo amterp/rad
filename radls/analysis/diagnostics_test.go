@@ -81,6 +81,7 @@ type stubChecker struct {
 
 func (s *stubChecker) UpdateSrc(string)                            {}
 func (s *stubChecker) Update(*rts.RadTree, string, *rl.SourceFile) {}
+func (s *stubChecker) SetStrict(bool)                              {}
 func (s *stubChecker) Check() (check.Result, error)                { return s.result, nil }
 
 // Compile-time interface check. lsp import keeps the file honest if

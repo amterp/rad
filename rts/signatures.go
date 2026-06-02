@@ -57,8 +57,8 @@ func GetSignature(name string) *FnSignature {
 var internalSignatures = []FnSignature{
 	newInternalFnSignature(`_rad_get_stash_id(*_)`),
 	newInternalFnSignature(`_rad_delete_stash(*_)`),
-	newInternalFnSignature(`_rad_run_check(*_)`),
-	newInternalFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool) -> void`),
+	newInternalFnSignature(`_rad_run_check(_script: str, _strict: bool) -> map`),
+	newInternalFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool, _strict: bool) -> void`),
 	newInternalFnSignature(`_rad_explain(_code: str) -> str?`),
 	newInternalFnSignature(`_rad_explain_list() -> str[]`),
 }

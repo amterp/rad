@@ -92,6 +92,14 @@ func TestCheckSnapshots(t *testing.T) {
 				// proceeds without an AST; snapshots should too.
 				file := safeConvertCST(tree.Root(), tc.Input)
 				checker := check.NewCheckerWithTree(tree, parser, tc.Input, file)
+				// A case opts into strict mode (advisory codes like RAD30011
+				// surfaced as warnings) via `### ARGS ###` containing
+				// --strict, mirroring the real `rad check --strict` flag.
+				for _, arg := range tc.Args {
+					if strings.TrimSpace(arg) == "--strict" {
+						checker.SetStrict(true)
+					}
+				}
 				result, err := checker.Check()
 				require.NoError(t, err, "Check should not error")
 				// Resolved / Types may be nil when the converter

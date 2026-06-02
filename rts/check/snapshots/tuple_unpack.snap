@@ -1,0 +1,142 @@
+### TITLE ###
+UnpackSingleTuple
+### DESCRIPTION ###
+`x, y = pair()` distributes the returned tuple's element types across
+the targets: x is float, y is int - not the whole `[float, int]`
+bound to x with y left untyped.
+### INPUT ###
+fn pair() -> [float, int]:
+    return 1.5, 2
+
+x, y = pair()
+### STDOUT ###
+# Identifier types
+  x @ 4:1 -> <no-type>
+  y @ 4:4 -> <no-type>
+  pair @ 4:8 -> fn() -> [float, int]
+
+# Symbol types
+  pair (fn): fn() -> [float, int]
+  x (local): float
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+UnpackUnionOfTuples
+### DESCRIPTION ###
+When the return is a union of tuples (`[float,int]|[int,int]`), each
+target gets the union of that position across arms: x is `float|int`,
+y is int. Confirms the distribution unions per-position across arms.
+### INPUT ###
+fn make_pair(flag):
+    if flag:
+        return 1.5, 2
+    return 3, 4
+
+x, y = make_pair(true)
+ep = parse_epoch(x)
+### STDOUT ###
+# Identifier types
+  flag @ 2:8 -> dynamic
+  x @ 6:1 -> <no-type>
+  y @ 6:4 -> <no-type>
+  make_pair @ 6:8 -> fn(any) -> [float, int]|[int, int]
+  ep @ 7:1 -> <no-type>
+  parse_epoch @ 7:6 -> dynamic
+  x @ 7:18 -> float|int
+
+# Symbol types
+  ep (local): { "date": str, "day": int, "epoch": { "millis": int, "nanos": int, "seconds": int }, "hour": int, "minute": int, "month": int, "second": int, "time": str, "year": int }
+  flag (param): <no-type>
+  make_pair (fn): fn(any) -> [float, int]|[int, int]
+  x (local): float|int
+  y (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+UnpackIntoDeclaredTargetsClean
+### DESCRIPTION ###
+Unpacking into pre-declared targets checks the *distributed* element type
+against each target's declared type, not the whole tuple. `a: int` gets int
+and `b: str` gets str, both assignable, so no diagnostic - the shared RHS
+node is not re-synthesized per target.
+### INPUT ###
+fn get_pair() -> [int, str]:
+    return 1, "hello"
+
+a: int = 0
+b: str = ""
+a, b = get_pair()
+### STDOUT ###
+# Identifier types
+  a @ 4:1 -> <no-type>
+  b @ 5:1 -> <no-type>
+  a @ 6:1 -> <no-type>
+  b @ 6:4 -> <no-type>
+  get_pair @ 6:8 -> fn() -> [int, str]
+
+# Symbol types
+  a (local): int
+  b (local): str
+  get_pair (fn): fn() -> [int, str]
+
+# Diagnostics
+  (none)
+### TITLE ###
+UnpackIntoDeclaredTargetMismatch
+### DESCRIPTION ###
+The distributed element is still checked: unpacking `[int, str]` into a
+`str`-declared first target is a provable mismatch (int into str), so it
+gates as an Error pointed at the target.
+### INPUT ###
+fn get_pair() -> [int, str]:
+    return 1, "hello"
+
+a: str = ""
+b: str = ""
+a, b = get_pair()
+### STDOUT ###
+# Identifier types
+  a @ 4:1 -> <no-type>
+  b @ 5:1 -> <no-type>
+  a @ 6:1 -> <no-type>
+  b @ 6:4 -> <no-type>
+  get_pair @ 6:8 -> fn() -> [int, str]
+
+# Symbol types
+  a (local): str
+  b (local): str
+  get_pair (fn): fn() -> [int, str]
+
+# Diagnostics
+  [error] RAD30001 @ 6:1 - Value of type 'int' is not assignable to declared type 'str'
+### TITLE ###
+UnpackOptionalTupleDistributesNullable
+### DESCRIPTION ###
+An optional tuple return (`[int, str]?`) unpacks by its inner shape with each
+position made nullable: x is `int|null`, y is `str|null`. (At runtime a null
+value would error on unpack; statically each target carries the nullable arm.)
+### INPUT ###
+fn maybe_pair(b: bool) -> [int, str]?:
+    if b:
+        return 1, "hello"
+    return null
+
+x, y = maybe_pair(true)
+### STDOUT ###
+# Identifier types
+  b @ 2:8 -> bool
+  x @ 6:1 -> <no-type>
+  y @ 6:4 -> <no-type>
+  maybe_pair @ 6:8 -> fn(bool) -> [int, str]?
+
+# Symbol types
+  b (param): bool
+  maybe_pair (fn): fn(bool) -> [int, str]?
+  x (local): int|null
+  y (local): str|null
+
+# Diagnostics
+  (none)

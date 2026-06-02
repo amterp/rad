@@ -398,3 +398,45 @@ func TestAssign_UnionBranchMatch(t *testing.T) {
 	assert.True(t, intOrFloatTarget.IsAssignableFrom(intOrFloat))           // int->float, float->float, both fit
 	assert.False(t, intOrStr.IsAssignableFrom(intOrFloat))                  // float doesn't fit in int|str
 }
+
+// IsAssignable is the value-flow entry point that decomposes a *union source*
+// (a union value flows into a target iff every arm does) on top of the per-type
+// IsAssignableFrom rules. Plus the gradual-container rule: bare list/map flow
+// into any parameterised T[]/{K:V}.
+
+func TestIsAssignable_UnionSourceIntoNonUnionTarget(t *testing.T) {
+	// str|null into str? - both arms fit, so the whole union does. This is the
+	// ternary-producing-optional case (#129b).
+	strOrNull := rl.NewUnionType(rl.NewStrType(), rl.NewNullType())
+	strOpt := rl.NewOptionalType(rl.NewStrType())
+	assert.True(t, rl.IsAssignable(strOpt, strOrNull))
+
+	// dynamic|list into list - dynamic is any-like, bare list is gradual (#130).
+	dynOrList := rl.NewUnionType(rl.NewDynamicType(), rl.NewAnyListType())
+	assert.True(t, rl.IsAssignable(rl.NewAnyListType(), dynOrList))
+
+	// any|str into str - any-like arm and str arm both fit (#133.4, #131).
+	anyOrStr := rl.NewUnionType(rl.NewAnyType(), rl.NewStrType())
+	assert.True(t, rl.IsAssignable(rl.NewStrType(), anyOrStr))
+
+	// int|str into int must NOT pass - the str arm can't flow into int.
+	intOrStr := rl.NewUnionType(rl.NewIntType(), rl.NewStrType())
+	assert.False(t, rl.IsAssignable(rl.NewIntType(), intOrStr))
+}
+
+func TestIsAssignable_BareListAndMapAreGradual(t *testing.T) {
+	// Bare list (what `[]` synthesises to) flows into any T[] - the gradual
+	// escape hatch (#129a).
+	assert.True(t, rl.IsAssignable(rl.NewListType(rl.NewStrType()), rl.NewAnyListType()))
+	// Bare map flows into any {K: V}.
+	typedMap := rl.NewMapType(rl.NewStrType(), rl.NewIntType())
+	assert.True(t, rl.IsAssignable(typedMap, rl.NewAnyMapType()))
+	// But a concretely-wrong element/value type still doesn't pass.
+	assert.False(t, rl.IsAssignable(rl.NewListType(rl.NewStrType()), rl.NewListType(rl.NewIntType())))
+}
+
+func TestIsAssignable_NonUnionDelegatesToIsAssignableFrom(t *testing.T) {
+	// With a non-union source, IsAssignable is a transparent passthrough.
+	assert.True(t, rl.IsAssignable(rl.NewFloatType(), rl.NewIntType())) // int->float widening
+	assert.False(t, rl.IsAssignable(rl.NewIntType(), rl.NewStrType()))
+}

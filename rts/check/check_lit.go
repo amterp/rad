@@ -79,7 +79,7 @@ func (tc *typeChecker) check(node rl.Node, expected rl.TypingT) checkResult {
 	// below exists solely to recover those false negatives, so anything
 	// IsAssignableFrom already admits (including `int?` into `int?` and
 	// `int|error` into `int|error`) must short-circuit here first.
-	if expected.IsAssignableFrom(got) {
+	if rl.IsAssignable(expected, got) {
 		return accept(node, got, expected)
 	}
 

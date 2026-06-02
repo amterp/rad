@@ -1,0 +1,66 @@
+### TITLE ###
+NumericUnionArithmetic
+### DESCRIPTION ###
+An `int|float` operand against an int literal is valid for arithmetic
+- both arms are numeric - and yields `int|float`. Operators decompose
+a numeric union over its arms rather than rejecting it.
+### INPUT ###
+fn f(x: int|float):
+    y = x - 1
+    z = x * 2
+### STDOUT ###
+# Identifier types
+  y @ 2:5 -> <no-type>
+  x @ 2:9 -> int|float
+  z @ 3:5 -> <no-type>
+  x @ 3:9 -> int|float
+
+# Symbol types
+  f (fn): fn(int|float) -> void
+  x (param): int|float
+  y (local): int|float
+  z (local): int|float
+
+# Diagnostics
+  (none)
+### TITLE ###
+NumericUnionComparison
+### DESCRIPTION ###
+The same decomposition applies to comparisons: `int|float > int` is
+valid and yields bool.
+### INPUT ###
+fn f(x: int|float):
+    b = x > 0
+### STDOUT ###
+# Identifier types
+  b @ 2:5 -> <no-type>
+  x @ 2:9 -> int|float
+
+# Symbol types
+  b (local): bool
+  f (fn): fn(int|float) -> void
+  x (param): int|float
+
+# Diagnostics
+  (none)
+### TITLE ###
+NonNumericUnionStillFlags
+### DESCRIPTION ###
+A union with a non-numeric arm (`int|str`) can't do arithmetic - the
+str arm has no `- int` overload - so it still flags, and as a Hint
+(one arm might fit at runtime), not a gating Error.
+### INPUT ###
+fn f(x: int|str):
+    y = x - 1
+### STDOUT ###
+# Identifier types
+  y @ 2:5 -> <no-type>
+  x @ 2:9 -> int|str
+
+# Symbol types
+  f (fn): fn(int|str) -> void
+  x (param): int|str
+  y (local): <error>
+
+# Diagnostics
+  [hint] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int|str - int'

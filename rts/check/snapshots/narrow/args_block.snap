@@ -123,3 +123,53 @@ maybe_str(name)
 
 # Diagnostics
   [hint] RAD30001 @ 10:10 - Argument type 'str?' is not assignable to expected type 'str'
+### TITLE ###
+ArgReassignedToNewTypeFlows
+### DESCRIPTION ###
+An args-block variable's type is mandatory, not an opt-in contract,
+so reassigning it to a new type is allowed (flow-typing): `items`
+starts as str[] and becomes str after `.join(",")`, with no mismatch
+error. Reads before the reassignment still see str[].
+### INPUT ###
+args:
+    items str[]
+
+print(items.join(","))
+items = items.join(",")
+print(items.upper())
+### STDOUT ###
+# Identifier types
+  print @ 4:1 -> dynamic
+  items @ 4:7 -> str[]
+  join @ 4:13 -> dynamic
+  items @ 5:1 -> <no-type>
+  items @ 5:9 -> str[]
+  join @ 5:15 -> dynamic
+  print @ 6:1 -> dynamic
+  items @ 6:7 -> str
+  upper @ 6:13 -> dynamic
+
+# Symbol types
+  items (arg): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedLocalReassignedToNewTypePinned
+### DESCRIPTION ###
+The contrast: an explicitly annotated local IS a contract the user
+opted into, so reassigning it to a different type is still a gating
+Error. Only args-block (mandatory) types flow-type.
+### INPUT ###
+x: int = 5
+x = "hi"
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  x @ 2:1 -> <no-type>
+
+# Symbol types
+  x (local): int
+
+# Diagnostics
+  [error] RAD30001 @ 2:5 - Value of type 'str' is not assignable to declared type 'int'

@@ -70,28 +70,29 @@ func AddInternalFuncs() {
 		{
 			Name: INTERNAL_FUNC_RUN_CHECK,
 			Execute: func(f FuncInvocation) RadValue {
-				scriptArg := f.args[0]
-				scriptPath := scriptArg.value.RequireStr(f.i, scriptArg.node).Plain()
+				scriptPath := f.GetStr("_script").Plain()
 				if !com.IsRegularFile(scriptPath) {
-					f.i.emitErrorf(rl.ErrFileRead, scriptArg.node, "Cannot check '%s': not a regular file", scriptPath)
+					f.i.emitErrorf(rl.ErrFileRead, f.callNode, "Cannot check '%s': not a regular file", scriptPath)
 				}
 				result := com.LoadFile(scriptPath)
 				if result.Error != nil {
 					// todo don't think we can point at the node -- it's an internal function. Generally true for embedded commands, actually
-					f.i.emitErrorf(rl.ErrFileRead, scriptArg.node, "Failed to load script for checking: %s", result.Error.Error())
+					f.i.emitErrorf(rl.ErrFileRead, f.callNode, "Failed to load script for checking: %s", result.Error.Error())
 				}
 
 				contents := NormalizeLineEndings(result.Content)
 				checker, err := check.NewChecker()
 				if err != nil {
-					f.i.emitErrorf(rl.ErrGenericRuntime, scriptArg.node, "Failed to create checker: %s", err.Error())
+					f.i.emitErrorf(rl.ErrGenericRuntime, f.callNode, "Failed to create checker: %s", err.Error())
 				}
+
+				checker.SetStrict(f.GetBool("_strict"))
 
 				checker.UpdateSrc(contents)
 
 				checkR, err := checker.Check()
 				if err != nil {
-					f.i.emitErrorf(rl.ErrGenericRuntime, scriptArg.node, "Failed to run checker: %s", err.Error())
+					f.i.emitErrorf(rl.ErrGenericRuntime, f.callNode, "Failed to run checker: %s", err.Error())
 				}
 
 				radMap := NewRadMap()
