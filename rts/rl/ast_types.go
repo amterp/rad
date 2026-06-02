@@ -827,11 +827,14 @@ func NewCmdBlock(span Span, name string) *CmdBlock {
 func (n *CmdBlock) Kind() NodeKind { return NCmdBlock }
 func (n *CmdBlock) Span() Span     { return n.span }
 
-// CmdCallback represents a command's callback - either a function name or inline lambda.
+// CmdCallback represents a command's callback - either a named
+// function reference or an inline lambda. For the named form, the
+// reference is a real Identifier node so it resolves and navigates
+// like any other use of the function (go-to-def, find-refs, rename,
+// hover, highlighting all key off the Identifier).
 type CmdCallback struct {
-	Span_          Span
-	IsLambda       bool
-	IdentifierName *string
-	IdentifierSpan *Span
-	Lambda         *Lambda
+	Span_      Span
+	IsLambda   bool
+	Identifier *Identifier // set only for the named-callback form
+	Lambda     *Lambda
 }

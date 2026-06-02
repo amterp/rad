@@ -140,6 +140,115 @@ fn greet():
   }
 }
 ### TITLE ###
+CallsCallbackJumpsToFnDef
+### DOCUMENT ###
+command deploy:
+    calls do_deploy
+
+fn do_deploy():
+    print("deploying")
+### DEFINITION 1:10 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "range": {
+      "end": {
+        "character": 12,
+        "line": 3
+      },
+      "start": {
+        "character": 3,
+        "line": 3
+      }
+    },
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+FilterArgRefJumpsToFnDef
+### DOCUMENT ###
+fn is_active(x):
+    return x
+
+nums = filter([1, 2], is_active)
+### DEFINITION 3:22 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "range": {
+      "end": {
+        "character": 12,
+        "line": 0
+      },
+      "start": {
+        "character": 3,
+        "line": 0
+      }
+    },
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
+RadFieldModMapRefJumpsToFnDef
+### DOCUMENT ###
+fn shorten(b):
+    return b
+
+rad "data":
+    fields Benchmark
+    Benchmark:
+        map shorten
+### DEFINITION 6:12 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "range": {
+      "end": {
+        "character": 10,
+        "line": 0
+      },
+      "start": {
+        "character": 3,
+        "line": 0
+      }
+    },
+    "uri": "file:///test.rad"
+  }
+}
+### TITLE ###
 SelfReferenceFromArgsDeclSite
 ### DOCUMENT ###
 args:

@@ -120,22 +120,27 @@ Reported 1 diagnostic.
 }
 
 func Test_Check_UnknownCommandCallbacks(t *testing.T) {
+	// A named callback is a plain function reference, so an unknown
+	// target is the standard undefined-identifier error - same as any
+	// other reference to a name that isn't in scope.
 	setupAndRunArgs(t, "check", "./rad_scripts/unknown_command_callbacks.rad", "--color=never")
-	expected := `L4:11: WARN
+	expected := `L4:11: ERROR
 
      4 |     calls missing_one
-       |           ^ Function 'missing_one' may not be defined (only built-in and top-level functions are tracked)
-       |           (code: RAD40003)
+       |           ^ Undefined identifier 'missing_one'
+       |           (code: RAD20028)
 
-L7:11: WARN
+L7:11: ERROR
 
      7 |     calls missing_two
-       |           ^ Function 'missing_two' may not be defined (only built-in and top-level functions are tracked)
-       |           (code: RAD40003)
+       |           ^ Undefined identifier 'missing_two'
+       |           (code: RAD20028)
 
 Reported 2 diagnostics.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
+	// Unknown callbacks are now errors, so `rad check` exits non-zero.
+	assertExitCode(t, 1)
 }
 
 func Test_Check_UnhandledFallible_HiddenByDefault(t *testing.T) {

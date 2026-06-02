@@ -245,6 +245,58 @@ func TestCompletionUFCSMidEditNoPriorGoodDegradesGracefully(t *testing.T) {
 	}
 }
 
+// TestCompletionCallsOffersFunctionsOnly verifies the function-
+// reference slot: at `calls <prefix>` only functions are valid, so
+// the popup offers top-level fns, function-valued top-level vars, and
+// builtin functions - and excludes plain vars and command args, which
+// the flat completion list would otherwise surface.
+func TestCompletionCallsOffersFunctionsOnly(t *testing.T) {
+	// Command (with the callback being typed) comes first; the
+	// callback targets are defined below. That's the structure real
+	// scripts use, and a callback sees every top-level binding since
+	// it runs after the whole top-level executes - so do_deploy,
+	// handler, and flag's sibling are all in scope here.
+	src := "command run:\n" +
+		"    env str\n" +
+		"    calls do_de\n" +
+		"\n" +
+		"fn do_deploy():\n" +
+		"    print(\"hi\")\n" +
+		"\n" +
+		"handler = fn():\n" +
+		"    print(\"h\")\n" +
+		"\n" +
+		"flag = \"x\"\n"
+	// Cursor sits right after `do_de` on the `calls` line (line 2).
+	items := completionFixture(t, src, lsp.NewPos(2, 15))
+
+	labels := make(map[string]lsp.CompletionItem)
+	for _, it := range items {
+		labels[it.Label] = it
+	}
+
+	// Functions are offered: a top-level fn, a function-valued var, and
+	// a builtin - all valid callbacks.
+	for _, want := range []string{"do_deploy", "handler", "print"} {
+		it, ok := labels[want]
+		if !ok {
+			t.Errorf("expected %q to be offered as a function callback", want)
+			continue
+		}
+		if it.Kind != lsp.CompletionKindFunction {
+			t.Errorf("%q: Kind=%d, want Function(%d)", want, it.Kind, lsp.CompletionKindFunction)
+		}
+	}
+
+	// Non-function names are NOT offered: a plain string var and a
+	// command arg can't be invoked as a callback.
+	for _, unwanted := range []string{"flag", "env"} {
+		if _, ok := labels[unwanted]; ok {
+			t.Errorf("%q should not be offered in a `calls` callback slot", unwanted)
+		}
+	}
+}
+
 // TestCompletionEmptySnapshotReturnsNil verifies nil-snapshot
 // path. Unreachable through the wire harness; defensive.
 func TestCompletionEmptySnapshotReturnsNil(t *testing.T) {

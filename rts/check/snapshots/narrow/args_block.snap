@@ -70,6 +70,7 @@ fn consume_int(label: int):
     print(label)
 ### STDOUT ###
 # Identifier types
+  on_build @ 3:11 -> fn() -> void
   consume_int @ 6:5 -> fn(int) -> void
   name @ 6:17 -> str
   print @ 9:5 -> dynamic

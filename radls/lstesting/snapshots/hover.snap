@@ -265,3 +265,42 @@ x = (
   "jsonrpc": "2.0",
   "result": null
 }
+### TITLE ###
+CallsCallbackShowsFnType
+### DOCUMENT ###
+command deploy:
+    calls do_deploy
+
+fn do_deploy():
+    print("hi")
+### HOVER 1:10 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "```rad\n(fn) do_deploy: fn() -\u003e void\n```"
+    },
+    "range": {
+      "end": {
+        "character": 19,
+        "line": 1
+      },
+      "start": {
+        "character": 10,
+        "line": 1
+      }
+    }
+  }
+}

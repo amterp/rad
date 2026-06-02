@@ -937,15 +937,20 @@ func (c *converter) convertCmdCallback(node *ts.Node) rl.CmdCallback {
 		return rl.CmdCallback{}
 	}
 
-	// Identifier callback
+	// Identifier callback. Build a real Identifier node (via the
+	// normal expression path) so the binder resolves it like any other
+	// function reference - that's what powers go-to-def / find-refs /
+	// rename / hover / highlighting on the callback name.
 	identifierNode := callsNode.ChildByFieldName(rl.F_CALLBACK_IDENTIFIER)
 	if identifierNode != nil {
-		name := c.src[identifierNode.StartByte():identifierNode.EndByte()]
-		span := c.makeSpan(identifierNode)
+		// safeConvertExpr (not convertExpr) so an unexpected node here
+		// degrades to a nil callback identifier rather than panicking
+		// and nuking the whole file's AST - matching safeConvertLambda
+		// on the lambda branch below.
+		ident, _ := c.safeConvertExpr(identifierNode).(*rl.Identifier)
 		return rl.CmdCallback{
-			Span_:          c.makeSpan(callsNode),
-			IdentifierName: &name,
-			IdentifierSpan: &span,
+			Span_:      c.makeSpan(callsNode),
+			Identifier: ident,
 		}
 	}
 
