@@ -67,6 +67,12 @@ func (r RadType) AsString() string {
 // maps and tuples stay invariant; function parameters are contravariant and
 // returns are covariant; `int` widens implicitly to `float` to mirror the
 // runtime rule.
+//
+// IsAssignableFrom decomposes a union *target* but not a union *source*. For a
+// top-level value-flow check prefer the free function IsAssignable, which
+// handles the union-source case (`str|null` into `str?`); call this method
+// directly only when other is known not to be a union (e.g. iterating a union's
+// own arms, or comparing already-decomposed element types).
 type TypingT interface {
 	Name() string
 	IsCompatibleWith(val TypingCompatVal) bool

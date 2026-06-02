@@ -8,6 +8,43 @@ package rl
 // compatibility logic together; the runtime IsCompatibleWith methods remain
 // alongside their types.
 
+// IsAssignable reports whether a value of type source can flow into a slot of
+// type target. It is the value-flow entry point the checker should use instead
+// of calling target.IsAssignableFrom directly, because it first decomposes a
+// *union source*: a `str|null` value is assignable to `str?` (and a
+// `dynamic|list` to `list`) iff *every* arm is individually assignable.
+//
+// The per-type IsAssignableFrom methods only decompose a union when the union
+// is the *target* (TypingUnionT.IsAssignableFrom). A union *source* against a
+// non-union target - the common shape produced by `??`, ternaries, and
+// fallible-call results - would otherwise fall through to a type-switch that
+// doesn't recognise TypingUnionT and spuriously reject it. Routing through here
+// closes that gap in one place rather than teaching every target type about
+// union sources.
+//
+// This deliberately handles only a *top-level* union source. Unions nested as
+// list/map element types still go through the invariant/covariant element rules
+// in IsAssignableFrom, where decomposing would be unsound (a `(int|str)[]` is
+// not a safe `int[]`).
+func IsAssignable(target, source TypingT) bool {
+	if u, ok := source.(*TypingUnionT); ok {
+		// A zero-arm union has no inhabitant to flow in. "every arm fits" is
+		// vacuously true, which would accept anything - guard against it. No
+		// path constructs an empty union today; this is belt-and-suspenders so
+		// a future one can't silently turn this into a hole.
+		if len(u.types) == 0 {
+			return false
+		}
+		for _, arm := range u.types {
+			if !IsAssignable(target, arm) {
+				return false
+			}
+		}
+		return true
+	}
+	return target.IsAssignableFrom(source)
+}
+
 // isAnyLike reports whether other is a "flows-into-anything" type: `any`
 // (user-written escape hatch), `dynamic` (the implicit form when inference
 // can't pin a type), `never` (the bottom type, vacuously a subtype of
@@ -324,6 +361,14 @@ func (t *TypingListT) IsAssignableFrom(other TypingT) bool {
 	if isAnyLike(other) {
 		return true
 	}
+	// A bare `list` (the unparameterized AnyList, what `[]` synthesizes to and
+	// what `any[]`/`dynamic[]` collapse to) is gradual: it carries no element
+	// constraint, so it flows into any `T[]` the same way `any`/`dynamic` do.
+	// This is what lets `xs: str[] = []` and `fn f() -> str[]: ... return list`
+	// type-check without forcing an awkward seed value.
+	if _, ok := other.(*TypingAnyListT); ok {
+		return true
+	}
 	o, ok := other.(*TypingListT)
 	if !ok {
 		return false
@@ -390,6 +435,12 @@ func (t *TypingStructT) IsAssignableFrom(other TypingT) bool {
 // as List.
 func (t *TypingMapT) IsAssignableFrom(other TypingT) bool {
 	if isAnyLike(other) {
+		return true
+	}
+	// A bare `map` is gradual in the same way a bare `list` is (see
+	// TypingListT.IsAssignableFrom): no key/value constraint, so it flows into
+	// any `{K: V}`.
+	if _, ok := other.(*TypingAnyMapT); ok {
 		return true
 	}
 	o, ok := other.(*TypingMapT)

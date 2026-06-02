@@ -1,0 +1,2 @@
+n = parse_int("5")
+print(n + 1)

@@ -68,6 +68,7 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 
 		// Get verbose flag
 		verbose := f.GetBool("_verbose")
+		strict := f.GetBool("_strict")
 
 		// read and parse invocation logs
 		scripts := parseInvocationLogs(f.i, f.callNode, durationMillis)
@@ -89,6 +90,9 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 			chk = nil
 			RP.RadStderrf("Warning! Failed to init checker once, will init per file: %v\n", err)
 		}
+		if chk != nil {
+			chk.SetStrict(strict)
+		}
 
 		// First pass: collect results and determine max path width for alignment
 		results := make([]scriptResult, 0, len(scripts))
@@ -101,7 +105,7 @@ var FuncInternalCheckFromLogs = BuiltInFunc{
 				continue
 			}
 			checkStart := time.Now()
-			counts, ok := checkScriptWith(script.Path, chk)
+			counts, ok := checkScriptWith(script.Path, chk, strict)
 			RP.RadDebugf("  checked in %s (ok=%t, errors=%d)", time.Since(checkStart), ok, counts.Errors)
 			r := scriptResult{Path: script.Path, Counts: counts, Ok: ok}
 			results = append(results, r)
@@ -374,7 +378,9 @@ func sortScriptsByLastOccurrence(scripts []scriptInfo) {
 
 // checkScriptWith runs rad checks and returns per-severity counts.
 // The bool is false when the file can't be loaded or parsed at all.
-func checkScriptWith(scriptPath string, reusable check.RadChecker) (diagCounts, bool) {
+// strict is applied to the fallback checker created when reusable is nil; the
+// caller has already set it on a non-nil reusable checker.
+func checkScriptWith(scriptPath string, reusable check.RadChecker, strict bool) (diagCounts, bool) {
 	result := com.LoadFile(scriptPath)
 	if result.Error != nil {
 		return diagCounts{}, false
@@ -387,6 +393,7 @@ func checkScriptWith(scriptPath string, reusable check.RadChecker) (diagCounts, 
 		if err != nil {
 			return diagCounts{}, false
 		}
+		chk.SetStrict(strict)
 	}
 
 	chk.UpdateSrc(NormalizeLineEndings(result.Content))

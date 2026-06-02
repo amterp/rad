@@ -9,6 +9,7 @@ import (
 type RadChecker interface {
 	UpdateSrc(src string)
 	Update(tree *rts.RadTree, src string, ast *rl.SourceFile)
+	SetStrict(strict bool)
 	Check() (Result, error)
 }
 
@@ -17,6 +18,9 @@ type RadCheckerImpl struct {
 	tree   *rts.RadTree
 	src    string
 	ast    *rl.SourceFile
+	// strict opts into advisory diagnostics that are suppressed by default
+	// (see strictOnlyCodes). Off unless the caller flips it on.
+	strict bool
 }
 
 func NewChecker() (RadChecker, error) {
@@ -62,6 +66,10 @@ func (c *RadCheckerImpl) Update(tree *rts.RadTree, src string, ast *rl.SourceFil
 	c.tree = tree
 	c.src = src
 	c.ast = ast
+}
+
+func (c *RadCheckerImpl) SetStrict(strict bool) {
+	c.strict = strict
 }
 
 func (c *RadCheckerImpl) Check() (Result, error) {
@@ -113,8 +121,27 @@ func (c *RadCheckerImpl) addTypeIssues(info *TypeInfo, d *[]Diagnostic) {
 		return
 	}
 	for _, issue := range info.Issues {
+		if strictOnlyCodes[issue.Code] {
+			// Suppressed by default; surfaced only under --strict, and then
+			// as a warning rather than its emit-time severity.
+			if !c.strict {
+				continue
+			}
+			issue.Severity = IssueWarning
+		}
 		*d = append(*d, diagnosticFromBindIssue(issue, c.src))
 	}
+}
+
+// strictOnlyCodes are advisory diagnostics that `rad check` hides by default
+// and surfaces only under --strict. RAD30011 (unhandled fallible call) is the
+// first: the concept is valuable (the parse_int-on-bad-input footgun is real),
+// but it fires on every fallible builtin - now(), round(), clamp(), zip(),
+// confirm(), ... - so on by default it drowns the signal (it was ~73% of all
+// hints in a real-script sweep). Strict mode is the opt-in for users who want
+// the nudge. Keep this table small; it's the single place a code opts in.
+var strictOnlyCodes = map[rl.Error]bool{
+	rl.ErrUnhandledFallibleCall: true,
 }
 
 // addBindIssues surfaces structural findings the binder collected

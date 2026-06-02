@@ -1,0 +1,99 @@
+### TITLE ###
+UfcsSortPreservesElementType
+### DESCRIPTION ###
+The single-list UFCS form `items.sort()` threads the receiver in as the
+implicit first argument, so refinement preserves the element type (str[])
+just like the call form `sort(items)`. Iterating then yields str.
+### INPUT ###
+items = ["b", "a"]
+items = items.sort()
+for v in items:
+    split(v, ",")
+### STDOUT ###
+# Identifier types
+  items @ 1:1 -> <no-type>
+  items @ 2:1 -> <no-type>
+  items @ 2:9 -> str[]
+  sort @ 2:15 -> dynamic
+  items @ 3:10 -> str[]
+  split @ 4:5 -> dynamic
+  v @ 4:11 -> str
+
+# Symbol types
+  items (local): str[]
+  v (loop): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+ParallelSortNotRefinedToFirstArg
+### DESCRIPTION ###
+Parallel sort (`sort(xs, ys)`) returns a list-of-lists, not its first
+argument, so refinement must NOT collapse the return to xs's type. The
+result stays the signature's wide type rather than being mis-typed int[].
+### INPUT ###
+xs = [3, 1, 2]
+ys = ["c", "a", "b"]
+a, b = sort(xs, ys)
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+  ys @ 2:1 -> <no-type>
+  a @ 3:1 -> <no-type>
+  b @ 3:4 -> <no-type>
+  sort @ 3:8 -> dynamic
+  xs @ 3:13 -> int[]
+  ys @ 3:17 -> str[]
+
+# Symbol types
+  a (local): dynamic|str
+  b (local): dynamic|null
+  xs (local): int[]
+  ys (local): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+UfcsClampFloatReceiverStaysFloat
+### DESCRIPTION ###
+`v.clamp(0, 10)` on a float receiver must include the receiver when deciding
+all-int collapse: the float receiver means the result is int|float, not the
+wrongly-collapsed int it would be if only the written args (0, 10) were seen.
+### INPUT ###
+v = 1.5
+r = v.clamp(0, 10)
+### STDOUT ###
+# Identifier types
+  v @ 1:1 -> <no-type>
+  r @ 2:1 -> <no-type>
+  v @ 2:5 -> float
+  clamp @ 2:7 -> dynamic
+
+# Symbol types
+  r (local): int|float
+  v (local): float
+
+# Diagnostics
+  (none)
+### TITLE ###
+UfcsClampIntReceiverCollapsesToInt
+### DESCRIPTION ###
+With an all-int receiver and args, `n.clamp(0, 10)` collapses to int - the
+receiver participates in the all-int check, so the precise int return is
+recovered for the UFCS form too.
+### INPUT ###
+n = 5
+r = n.clamp(0, 10)
+### STDOUT ###
+# Identifier types
+  n @ 1:1 -> <no-type>
+  r @ 2:1 -> <no-type>
+  n @ 2:5 -> int
+  clamp @ 2:7 -> dynamic
+
+# Symbol types
+  n (local): int
+  r (local): int
+
+# Diagnostics
+  (none)

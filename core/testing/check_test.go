@@ -137,3 +137,30 @@ Reported 2 diagnostics.
 `
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
+
+func Test_Check_UnhandledFallible_HiddenByDefault(t *testing.T) {
+	// RAD30011 (unhandled fallible call) is suppressed by default - it's too
+	// noisy to be on for every fallible builtin.
+	expected := `No diagnostics to report.
+`
+	setupAndRunArgs(t, "check", "./rad_scripts/unhandled_fallible.rad", "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertNoErrors(t)
+}
+
+func Test_Check_UnhandledFallible_StrictSurfacesWarning(t *testing.T) {
+	// Under --strict the advisory surfaces, as a warning (not an error), so it
+	// doesn't fail the exit code.
+	expected := `L1:5: WARN
+
+     1 | n = parse_int("5")
+       |     ^ This call can fail; the error isn't handled and would halt the script
+       |     (code: RAD30011)
+       = help: Handle it with ` + "`catch`" + ` or ` + "`??`" + `, e.g. ` + "`x = <call> catch <fallback>`" + `
+
+Reported 1 diagnostic.
+`
+	setupAndRunArgs(t, "check", "./rad_scripts/unhandled_fallible.rad", "--strict", "--color=never")
+	assertOnlyOutput(t, stdOutBuffer, expected)
+	assertExitCode(t, 0)
+}

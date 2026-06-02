@@ -1,0 +1,131 @@
+### TITLE ###
+EmptyListIntoTypedReturn
+### DESCRIPTION ###
+An empty `[]` synthesises as bare `list`; it must satisfy a `str[]`
+return annotation. The list built up with `+` stays bare `list`,
+which is the gradual escape hatch and flows into `str[]`.
+### INPUT ###
+fn collect() -> str[]:
+    out = []
+    out = out + ["a"]
+    return out
+### STDOUT ###
+# Identifier types
+  out @ 2:5 -> <no-type>
+  out @ 3:5 -> <no-type>
+  out @ 3:11 -> list
+  out @ 4:12 -> list
+
+# Symbol types
+  collect (fn): fn() -> str[]
+  out (local): list
+
+# Diagnostics
+  (none)
+### TITLE ###
+EmptyListIntoTypedLocal
+### DESCRIPTION ###
+`xs: str[] = []` - the empty-list literal flows into the declared
+typed-list local without a seed value.
+### INPUT ###
+xs: str[] = []
+### STDOUT ###
+# Identifier types
+  xs @ 1:1 -> <no-type>
+
+# Symbol types
+  xs (local): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+TernaryStrOrNullIntoOptional
+### DESCRIPTION ###
+A ternary producing `str|null` is assignable to a `str?` return:
+a union source is assignable when every arm fits (`str` and `null`
+both fit `str?`).
+### INPUT ###
+fn pick_or_none(s: str) -> str?:
+    return s == "x" ? s : null
+### STDOUT ###
+# Identifier types
+  s @ 2:12 -> str
+  s @ 2:23 -> str
+
+# Symbol types
+  pick_or_none (fn): fn(str) -> str?
+  s (param): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+DynamicUnionIntoConcreteReturn
+### DESCRIPTION ###
+`d["items"] ?? []` on an untyped (dynamic) param is `dynamic|list`;
+it flows into a `list` return because each arm does (dynamic is
+any-like, bare list is gradual).
+### INPUT ###
+fn first_items(d) -> list:
+    return d["items"] ?? []
+### STDOUT ###
+# Identifier types
+  d @ 2:12 -> dynamic
+
+# Symbol types
+  d (param): <no-type>
+  first_items (fn): fn(any) -> list
+
+# Diagnostics
+  (none)
+### TITLE ###
+AnyUnionIntoStrArg
+### DESCRIPTION ###
+sort() of a `str[]` preserves the element type, so iterating yields
+`str` (not `any|str`), and the `any`-like arm of any residual union
+is assignable to a `str` parameter.
+### INPUT ###
+items = ["a,b", "c,d"]
+items = sort(items)
+for v in items:
+    split(v, ",")
+### STDOUT ###
+# Identifier types
+  items @ 1:1 -> <no-type>
+  items @ 2:1 -> <no-type>
+  sort @ 2:9 -> dynamic
+  items @ 2:14 -> str[]
+  items @ 3:10 -> str[]
+  split @ 4:5 -> dynamic
+  v @ 4:11 -> str
+
+# Symbol types
+  items (local): str[]
+  v (loop): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+TypedListOrBareListCompoundAdd
+### DESCRIPTION ###
+`true ? defaults : []` is `str[]|list`; the bare-list arm makes the
+whole thing gradual, so `acc += "x,y".split(",")` (a `str[]`) is a
+clean list append rather than a poisoned union op.
+### INPUT ###
+defaults = ["a", "b"]
+acc = true ? defaults : []
+acc += "x,y".split(",")
+### STDOUT ###
+# Identifier types
+  defaults @ 1:1 -> <no-type>
+  acc @ 2:1 -> <no-type>
+  defaults @ 2:14 -> str[]
+  acc @ 3:1 -> <no-type>
+  acc @ 3:1 -> str[]|list
+  split @ 3:14 -> dynamic
+
+# Symbol types
+  acc (local): list
+  defaults (local): str[]
+
+# Diagnostics
+  (none)

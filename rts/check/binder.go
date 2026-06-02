@@ -157,12 +157,21 @@ func (b *binder) resolveIdentifier(ident *rl.Identifier) *Symbol {
 // runtime's FindSimilarVars so the static and runtime suggestion
 // sets line up.
 func (b *binder) emitUndefinedIdentifier(ident *rl.Identifier) {
-	var builtinNames map[string]bool
-	if b.builtins != nil {
-		builtinNames = b.builtins.Names()
+	// A removed/renamed builtin gets its migration hint rather than a generic
+	// "did you mean" - the runtime shows the same text (rl.RemovedFuncHints),
+	// so a script failing at runtime and one flagged by `rad check` guide the
+	// user identically.
+	suggestion := ""
+	if hint, ok := rl.RemovedFuncHints[ident.Name]; ok {
+		suggestion = hint
+	} else {
+		var builtinNames map[string]bool
+		if b.builtins != nil {
+			builtinNames = b.builtins.Names()
+		}
+		similar := findSimilarNames(b.current, builtinNames, ident.Name, 3)
+		suggestion = formatDidYouMean(similar)
 	}
-	similar := findSimilarNames(b.current, builtinNames, ident.Name, 3)
-	suggestion := formatDidYouMean(similar)
 	b.resolved.Issues = append(b.resolved.Issues, BindIssue{
 		Span:       ident.Span(),
 		Severity:   IssueError,
@@ -573,8 +582,8 @@ func (b *binder) bindFnLike(typing *rl.TypingFnT, body []rl.Node, kind ScopeKind
 				continue
 			}
 			sym := b.declare(p.Name, SymParam, declSpan, nil)
-			// Param type annotation acts like a typed local'\''s
-			// declared type: it'\''s an immutable contract subsequent
+			// Param type annotation acts like a typed local's
+			// declared type: it's an immutable contract subsequent
 			// reads / assigns must respect. Unannotated params stay
 			// at Declared == nil (effectively Dynamic).
 			if p.Type != nil {

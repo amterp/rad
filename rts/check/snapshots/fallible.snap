@@ -1,9 +1,11 @@
 ### TITLE ###
-UnguardedFallibleStripsAndHints
+UnguardedFallibleHiddenByDefault
 ### DESCRIPTION ###
 An unhandled fallible call (parse_int) strips its error arm to the
-success type (int), so `a + 1` type-checks. The call carries a hint
-nudging the user to handle the error. Gap 2 panic-promotion model.
+success type (int), so `a + 1` type-checks. By default the
+unhandled-fallible advisory (RAD30011) is suppressed entirely - too
+noisy to be on by default - so no diagnostic fires. Gap 2
+panic-promotion model.
 ### INPUT ###
 a = parse_int("2")
 print(a + 1)
@@ -18,7 +20,30 @@ print(a + 1)
   a (local): int
 
 # Diagnostics
-  [hint] RAD30011 @ 1:5 - This call can fail; the error isn't handled and would halt the script
+  (none)
+### TITLE ###
+UnguardedFallibleWarnsUnderStrict
+### DESCRIPTION ###
+The same unguarded call under --strict: the unhandled-fallible
+advisory surfaces, now as a warning rather than a hint. Strict mode
+is the opt-in for this nudge.
+### INPUT ###
+a = parse_int("2")
+print(a + 1)
+### ARGS ###
+--strict
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  parse_int @ 1:5 -> dynamic
+  print @ 2:1 -> dynamic
+  a @ 2:7 -> int
+
+# Symbol types
+  a (local): int
+
+# Diagnostics
+  [warn] RAD30011 @ 1:5 - This call can fail; the error isn't handled and would halt the script
     help: Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`
 ### TITLE ###
 CatchExpressionSuppressesHint
@@ -129,17 +154,20 @@ print(e)
 # Diagnostics
   (none)
 ### TITLE ###
-UserFnUnionStripsAndHints
+UserFnUnionWarnsUnderStrict
 ### DESCRIPTION ###
 A user fn declaring -> int|error panic-promotes like any call, so
-an unguarded call strips to int and gets the hint; the parse_int
-inside the fn body is guarded by its own catch.
+under --strict an unguarded call strips to int and gets the
+unhandled-fallible warning; the parse_int inside the fn body is
+guarded by its own catch.
 ### INPUT ###
 fn maybe(s: str) -> int|error:
     return parse_int(s) catch error("nope")
 
 x = maybe("2")
 print(x + 1)
+### ARGS ###
+--strict
 ### STDOUT ###
 # Identifier types
   parse_int @ 2:12 -> dynamic
@@ -156,5 +184,5 @@ print(x + 1)
   x (local): int
 
 # Diagnostics
-  [hint] RAD30011 @ 4:5 - This call can fail; the error isn't handled and would halt the script
+  [warn] RAD30011 @ 4:5 - This call can fail; the error isn't handled and would halt the script
     help: Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`

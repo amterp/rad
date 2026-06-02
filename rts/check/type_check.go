@@ -190,7 +190,7 @@ func (tc *typeChecker) recordReturn(t rl.TypingT, spanNode rl.Node, valNodes []r
 		}
 		return
 	}
-	if expected.IsAssignableFrom(t) {
+	if rl.IsAssignable(expected, t) {
 		return
 	}
 	severity := IssueHint
@@ -892,9 +892,9 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 // outer locals. Conservative but sound.
 func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 	saved := tc.frame
-	// Param defaults synth in the surrounding frame (not the body'\''s
-	// fresh frame), matching Phase 2'\''s behavior - they'\''re evaluated
-	// at the call site, which is in the caller'\''s scope.
+	// Param defaults synth in the surrounding frame (not the body's
+	// fresh frame), matching Phase 2's behavior - they're evaluated
+	// at the call site, which is in the caller's scope.
 	if n.Typing != nil {
 		for _, p := range n.Typing.Params {
 			if p.DefaultAST != nil && p.DefaultAST.Node != nil {
@@ -904,7 +904,7 @@ func (tc *typeChecker) walkFnDef(n *rl.FnDef) {
 	}
 	tc.frame = NewFrame()
 	// Push a return-collector frame so any `return E` inside the
-	// body lands in this fn'\''s slot, not whatever lambda we may
+	// body lands in this fn's slot, not whatever lambda we may
 	// be nested under at the call site. We feed the declared
 	// return (if any) so body returns get checked against it at
 	// their own span, same as lambdas.
@@ -1078,19 +1078,19 @@ func (tc *typeChecker) walkWhileLoop(n *rl.WhileLoop) {
 	// frame: `while cond: x = "hello"` leaves x as the union of
 	// its pre-body type (body never ran) and "hello" (body ran).
 	//
-	// We don'\''t special-case a "body always diverges" early exit
+	// We don't special-case a "body always diverges" early exit
 	// here. Distinguishing diverges-via-return (post-loop is dead)
 	// from diverges-via-break (post-loop gets bodyExit at break
 	// time) would need finer-grained reachability tracking than
 	// branchExits provides. Joining both unconditionally is
 	// safe - in the diverges-via-return case the post-loop is
-	// unreachable anyway, and any spurious union arms there don'\''t
+	// unreachable anyway, and any spurious union arms there don't
 	// affect a real program path.
 	//
 	// WhenFalse is applied only on the fall-through path, since
-	// that'\''s the only one where the loop exited "naturally" via
+	// that's the only one where the loop exited "naturally" via
 	// a falsy condition. The body-ran path may have exited via
-	// break, where the condition'\''s truthy state still held.
+	// break, where the condition's truthy state still held.
 	fallThrough := widened.WithMany(ref.WhenFalse)
 	tc.frame = tc.joinFrames(initial, []*Frame{bodyExit, fallThrough})
 }
@@ -1203,14 +1203,14 @@ func (tc *typeChecker) dropNarrowings(frame *Frame, syms map[*Symbol]bool) *Fram
 		if sym.Declared != nil {
 			overrides[sym] = sym.Declared
 		}
-		// No known base type. We don'\''t add an override here, so a
+		// No known base type. We don't add an override here, so a
 		// prior narrowing from an ancestor frame keeps applying via
-		// Frame.Lookup'\''s parent walk. That'\''s probably wrong for
+		// Frame.Lookup's parent walk. That's probably wrong for
 		// the Sorbet rule - the whole point is to widen vars the
 		// body may reassign - but the fix is to track base types
 		// for every symbol, not to special-case this branch. Until
 		// then, this is the conservative under-widening: we may keep
-		// a narrowing we should have dropped, but we don'\''t introduce
+		// a narrowing we should have dropped, but we don't introduce
 		// spurious narrowings.
 	}
 	return frame.WithMany(overrides)
@@ -1711,7 +1711,7 @@ func stmtDiverges(n rl.Node, ctx divergeCtx, tc *typeChecker) bool {
 		return whileDiverges(s, tc)
 	case *rl.ForLoop:
 		// For loops may iterate zero times; the body might never
-		// run. Even if the body diverges, the whole loop doesn'\''t.
+		// run. Even if the body diverges, the whole loop doesn't.
 		return false
 	case *rl.Assign:
 		// Bare assignment never diverges. An assignment with a
@@ -2102,7 +2102,7 @@ func mergeStructuralByKind(types []rl.TypingT) []rl.TypingT {
 func applySubsumption(types []rl.TypingT) []rl.TypingT {
 	var kept []rl.TypingT
 	for _, candidate := range types {
-		// Gradual candidates can'\''t be subsumed - we always want to
+		// Gradual candidates can't be subsumed - we always want to
 		// preserve an explicit `any` in the join. The asymmetry
 		// matters because gradual consistency makes IsAssignableFrom
 		// return true in both directions for any-vs-T, which would
@@ -2202,78 +2202,46 @@ func (tc *typeChecker) walkCmd(c *rl.CmdBlock) {
 // Declared, so the annotation acts as a stable contract for every
 // later read of the binding.
 func (tc *typeChecker) walkAssign(a *rl.Assign) {
-	for i, val := range a.Values {
-		// Recursive-lambda support: when a lambda RHS is assigned
-		// to an identifier whose symbol has no declared type, the
-		// recursive reference inside the lambda body would otherwise
-		// see Dynamic (SymbolTypes hasn't been populated yet). Plant
-		// a tentative TypingFnT with a Never return placeholder so
-		// the recursive callsite synths to Never (which propagates
-		// trivially and drops in unionTypesForJoin, leaving non-
-		// recursive paths to determine the inferred return). This
-		// mirrors the hoisted-fn SCC pre-pass strategy for the
-		// local-binding case. After synth completes, the lambda's
-		// real TypingFnT overwrites the placeholder via the normal
-		// SymbolTypes update below.
-		if i < len(a.Targets) {
-			if lam, ok := val.(*rl.Lambda); ok {
-				if ident, ok := a.Targets[i].(*rl.Identifier); ok {
-					if sym, ok := tc.resolved.Uses[ident]; ok && sym.Declared == nil {
-						tc.prePlantLambdaSignature(sym, lam)
+	// `x, y = pair()`: a single RHS produces multiple values. Distribute the
+	// RHS's element types across the targets rather than binding the whole
+	// tuple/union-of-tuples to the first target and leaving the rest untyped.
+	// Mirrors the runtime's destructuring in assignRightsToLefts.
+	if a.IsUnpacking && len(a.Values) == 1 && len(a.Targets) > 1 {
+		valNode := a.Values[0]
+		valType := tc.synth(valNode)
+		perTarget := distributeUnpack(valType, len(a.Targets))
+		for i, target := range a.Targets {
+			tc.bindAssignTarget(target, valNode, perTarget[i], true)
+		}
+	} else {
+		for i, val := range a.Values {
+			// Recursive-lambda support: when a lambda RHS is assigned
+			// to an identifier whose symbol has no declared type, the
+			// recursive reference inside the lambda body would otherwise
+			// see Dynamic (SymbolTypes hasn't been populated yet). Plant
+			// a tentative TypingFnT with a Never return placeholder so
+			// the recursive callsite synths to Never (which propagates
+			// trivially and drops in unionTypesForJoin, leaving non-
+			// recursive paths to determine the inferred return). This
+			// mirrors the hoisted-fn SCC pre-pass strategy for the
+			// local-binding case. After synth completes, the lambda's
+			// real TypingFnT overwrites the placeholder via the normal
+			// SymbolTypes update below.
+			if i < len(a.Targets) {
+				if lam, ok := val.(*rl.Lambda); ok {
+					if ident, ok := a.Targets[i].(*rl.Identifier); ok {
+						if sym, ok := tc.resolved.Uses[ident]; ok && sym.Declared == nil {
+							tc.prePlantLambdaSignature(sym, lam)
+						}
 					}
 				}
 			}
-		}
-		valType := tc.synth(val)
-		if i >= len(a.Targets) {
-			continue
-		}
-		// Indexed assignment (`xs[i] = v`, `m[k] = v`): the target is
-		// a VarPath whose last segment is a bracket-index. The
-		// Identifier branch below doesn't fire, so we handle it here
-		// and continue. We deliberately don't update SymbolTypes or
-		// frame for these: indexed assign mutates the container's
-		// contents, not the binding, so the symbol's type is unchanged.
-		if vp, ok := a.Targets[i].(*rl.VarPath); ok {
-			// Walk children for hover/use tracking. asTarget=true so
-			// the final segment (the write slot) doesn't fire the
-			// unknown-key check - writing an undeclared key is a
-			// legal runtime add - while intermediate reads still do.
-			_ = tc.synthVarPath(vp, true)
-			tc.checkIndexedAssignTarget(vp, val, valType)
-			continue
-		}
-		ident, ok := a.Targets[i].(*rl.Identifier)
-		if !ok {
-			continue
-		}
-		sym, ok := tc.resolved.Uses[ident]
-		if !ok {
-			continue
-		}
-		if sym.Declared != nil {
-			tc.checkAssignAgainstDeclared(val, valType, sym.Declared)
-			tc.info.SymbolTypes[sym] = sym.Declared
-			// The frame tracks the RHS-derived type within the
-			// current flow: a typed local can have a stricter
-			// type than Declared at a given point (after `x =
-			// 5` inside a branch, x is int even though declared
-			// int|str). On a mismatch the runtime would error;
-			// the frame stays at Declared so downstream reads
-			// don'\''t cascade.
-			actual := sym.Declared
-			if sym.Declared.IsAssignableFrom(valType) {
-				actual = valType
+			valType := tc.synth(val)
+			if i >= len(a.Targets) {
+				continue
 			}
-			tc.frame = tc.frame.With(sym, actual)
-			continue
+			tc.bindAssignTarget(a.Targets[i], val, valType, false)
 		}
-		// Unannotated: SymbolTypes records the base/initial inferred
-		// type for hover and for join'\''s "branch didn'\''t narrow this"
-		// fallback. The frame holds the flow-sensitive override,
-		// which gets unioned at branch joins.
-		tc.info.SymbolTypes[sym] = valType
-		tc.frame = tc.frame.With(sym, valType)
 	}
 	// Walk the catch block (if any) with assignment targets narrowed
 	// to their error component. The catch runs when the RHS errored,
@@ -2284,7 +2252,7 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 	// For a typed local `x: int|error = parse_int(...)` the override
 	// is the error arm of the declared type. For an unannotated
 	// local where the RHS synthed to int|error, we pick out the
-	// error arm. Falls back to a bare TypingErrorT when we can'\''t
+	// error arm. Falls back to a bare TypingErrorT when we can't
 	// extract one (the runtime guarantee is "RHS errored," so error
 	// is always sound).
 	if a.Catch != nil {
@@ -2313,6 +2281,149 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		tc.walkStmts(a.Catch.Stmts)
 		tc.frame = savedFrame
 	}
+}
+
+// bindAssignTarget records the type flowing into one assignment target. Shared
+// by direct (`x = v`) and unpacking (`x, y = pair()`) assignment so both honor
+// the same indexed-assign, declared-type, and flow-typing rules.
+//
+// fromUnpack distinguishes the two callers. On the direct path valNode is the
+// actual RHS value, so the declared/element checks walk it structurally (a
+// literal can match a tuple/struct target that its widened synth type can't).
+// On the unpack path valNode is the *shared* RHS expression for every target -
+// re-synthesizing it would recover the whole tuple/list, not the per-target
+// element distributed into valType - so we check valType directly instead.
+func (tc *typeChecker) bindAssignTarget(target rl.Node, valNode rl.Node, valType rl.TypingT, fromUnpack bool) {
+	// Indexed assignment (`xs[i] = v`, `m[k] = v`): the target is a VarPath
+	// whose last segment is a bracket-index. We deliberately don't update
+	// SymbolTypes or frame: an indexed assign mutates the container's
+	// contents, not the binding, so the symbol's type is unchanged.
+	if vp, ok := target.(*rl.VarPath); ok {
+		// asTarget=true so the final (write) segment doesn't fire the
+		// unknown-key check - writing an undeclared key is a legal runtime
+		// add - while intermediate reads still do.
+		_ = tc.synthVarPath(vp, true)
+		tc.checkIndexedAssignTarget(vp, valNode, valType, fromUnpack)
+		return
+	}
+	ident, ok := target.(*rl.Identifier)
+	if !ok {
+		return
+	}
+	sym, ok := tc.resolved.Uses[ident]
+	if !ok {
+		return
+	}
+	if sym.Declared != nil && !isMandatoryTypedKind(sym.Kind) {
+		if fromUnpack {
+			tc.checkAssignTypeAgainstDeclared(target, valType, sym.Declared)
+		} else {
+			tc.checkAssignAgainstDeclared(valNode, valType, sym.Declared)
+		}
+		tc.info.SymbolTypes[sym] = sym.Declared
+		// The frame tracks the RHS-derived type within the current flow: a
+		// typed local can have a stricter type than Declared at a given
+		// point (after `x = 5` in a branch, x is int even though declared
+		// int|str). On a mismatch the frame stays at Declared so downstream
+		// reads don't cascade.
+		actual := sym.Declared
+		if rl.IsAssignable(sym.Declared, valType) {
+			actual = valType
+		}
+		tc.frame = tc.frame.With(sym, actual)
+		return
+	}
+	// Unannotated locals - and args-block vars, whose type is mandatory
+	// rather than an opt-in contract (see isMandatoryTypedKind) - flow-type:
+	// the binding takes the new RHS type going forward. SymbolTypes records
+	// the base/initial inferred type for hover and for join's "branch didn't
+	// narrow this" fallback; the frame holds the flow-sensitive override,
+	// unioned at branch joins.
+	tc.info.SymbolTypes[sym] = valType
+	tc.frame = tc.frame.With(sym, valType)
+}
+
+// isMandatoryTypedKind reports whether a symbol's declared type was forced by
+// the language rather than opted into by the user. Args-block entries (`args:`
+// and cmd-block args) have no untyped form, so pinning them to their declared
+// type for their whole lifetime would reject idiomatic, runtime-correct
+// reassignment - e.g. folding a `str[]` arg into a string with `.join(",")`.
+// Explicitly annotated locals and params, by contrast, are a deliberate
+// contract the user chose, so they stay pinned.
+func isMandatoryTypedKind(k SymbolKind) bool {
+	return k == SymArg || k == SymCmdArg
+}
+
+// distributeUnpack computes the static type bound to each of n targets in an
+// unpacking assignment `t0, t1, ... = rhs`, mirroring the runtime
+// (assignRightsToLefts): a list/tuple RHS distributes element-wise (targets
+// past the known arity get null), a union RHS distributes per-arm and unions
+// each position, and any other RHS lands wholly on the first target with the
+// rest null.
+func distributeUnpack(rhs rl.TypingT, n int) []rl.TypingT {
+	out := make([]rl.TypingT, n)
+	for _, arm := range unionArms(rhs) {
+		armTypes := distributeUnpackArm(arm, n)
+		for i := 0; i < n; i++ {
+			out[i] = unionOf(out[i], armTypes[i])
+		}
+	}
+	return out
+}
+
+// distributeUnpackArm distributes a single (non-union) RHS type across n
+// unpack targets. See distributeUnpack for the shape rules.
+func distributeUnpackArm(t rl.TypingT, n int) []rl.TypingT {
+	out := make([]rl.TypingT, n)
+	switch tt := t.(type) {
+	case *rl.TypingTupleT:
+		elems := tt.Types()
+		for i := 0; i < n; i++ {
+			if i < len(elems) {
+				out[i] = elems[i]
+			} else {
+				out[i] = rl.NewNullType()
+			}
+		}
+	case *rl.TypingListT:
+		// Homogeneous list: every position carries the element type. (Targets
+		// past the list's runtime length get null, but the length is unknown
+		// statically; the element type matches the expected-enough case.)
+		for i := 0; i < n; i++ {
+			out[i] = tt.Elem()
+		}
+	case *rl.TypingAnyListT:
+		for i := 0; i < n; i++ {
+			out[i] = rl.NewDynamicType()
+		}
+	case *rl.TypingOptionalT:
+		// `[int, str]?` (or `int[]?`): if the value is non-null it unpacks by
+		// the inner shape; if it's null the unpack errors at runtime. Statically
+		// we can't tell, so each target carries its inner-shape type unioned with
+		// null - the same per-position nullability the value itself has.
+		inner := distributeUnpackArm(tt.Inner(), n)
+		for i := 0; i < n; i++ {
+			out[i] = unionOf(inner[i], rl.NewNullType())
+		}
+	default:
+		if isDynamicLike(t) {
+			// Can't tell whether a dynamic value is a list at runtime, so stay
+			// permissive and hand every target dynamic.
+			for i := 0; i < n; i++ {
+				out[i] = rl.NewDynamicType()
+			}
+			return out
+		}
+		// Non-list scalar: the runtime puts it on the first target, nulls rest.
+		for i := 0; i < n; i++ {
+			if i == 0 {
+				out[i] = t
+			} else {
+				out[i] = rl.NewNullType()
+			}
+		}
+	}
+	return out
 }
 
 // checkAssignAgainstDeclared emits a type-mismatch when the assigned
@@ -2357,6 +2468,38 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 	})
 }
 
+// checkAssignTypeAgainstDeclared is the type-based counterpart to
+// checkAssignAgainstDeclared, for when we hold the value's type directly and
+// have no per-value node to walk structurally - the unpacking case, where each
+// target's type is distributed from a shared RHS (see bindAssignTarget). It
+// mirrors recordReturn's no-node fallback: provable mismatches gate as Errors,
+// uncertain ones (gradual containers, unions whose arms might fit) stay Hints.
+// spanNode is the target the diagnostic points at.
+func (tc *typeChecker) checkAssignTypeAgainstDeclared(spanNode rl.Node, valType, declared rl.TypingT) {
+	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
+		return
+	}
+	if rl.IsAssignable(declared, valType) {
+		return
+	}
+	severity := IssueHint
+	if typeIsGateable(valType) {
+		severity = IssueError
+	}
+	var suggestion string
+	if _, isNull := valType.(*rl.TypingNullT); isNull {
+		suggestion = fmt.Sprintf("To allow null here, declare the slot as '%s?'", declared.Name())
+	}
+	tc.info.Issues = append(tc.info.Issues, BindIssue{
+		Span:     spanNode.Span(),
+		Severity: severity,
+		Code:     rl.ErrTypeMismatch,
+		Message: fmt.Sprintf("Value of type '%s' is not assignable to declared type '%s'",
+			valType.Name(), declared.Name()),
+		Suggestion: suggestion,
+	})
+}
+
 // checkIndexedAssignTarget fires the ErrCollectionElementMismatch
 // diagnostic when an indexed assignment like `xs[i] = v` or
 // `m[k] = v` would put a value of the wrong type into a statically
@@ -2382,7 +2525,7 @@ func (tc *typeChecker) checkAssignAgainstDeclared(valNode rl.Node, valType, decl
 // and check downgrades to a Hint when the value is unknown. Other forms
 // of mutation (struct field assignment, slice assignment) aren't checked
 // here.
-func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.Node, valType rl.TypingT) {
+func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.Node, valType rl.TypingT, fromUnpack bool) {
 	if valType == nil || isErrorType(valType) || isDynamicLike(valType) {
 		return
 	}
@@ -2424,6 +2567,25 @@ func (tc *typeChecker) checkIndexedAssignTarget(target *rl.VarPath, valNode rl.N
 		return
 	}
 	if isErrorType(expected) || isDynamicLike(expected) {
+		return
+	}
+	// On the unpack path valNode is the shared RHS, not this target's element,
+	// so check the distributed valType directly rather than re-synthesizing.
+	if fromUnpack {
+		if rl.IsAssignable(expected, valType) {
+			return
+		}
+		severity := IssueHint
+		if typeIsGateable(valType) {
+			severity = IssueError
+		}
+		tc.info.Issues = append(tc.info.Issues, BindIssue{
+			Span:     target.Span(),
+			Severity: severity,
+			Code:     rl.ErrCollectionElementMismatch,
+			Message: fmt.Sprintf("Value of type '%s' is not assignable to element type '%s'",
+				valType.Name(), expected.Name()),
+		})
 		return
 	}
 	res := tc.check(valNode, expected)
@@ -2497,7 +2659,7 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 	case *rl.Identifier:
 		return tc.synthIdentifier(v)
 	case *rl.Call:
-		return tc.synthCall(v, 0)
+		return tc.synthCall(v, 0, nil)
 	case *rl.VarPath:
 		return tc.synthVarPath(v, false)
 	case *rl.OpBinary:
@@ -2539,7 +2701,7 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 // (`expr.method(args)`), where the receiver of the chain is the
 // implicit first positional argument. The arity check then expects
 // `len(args) + implicitReceiverCount` to match the formal signature.
-func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.TypingT {
+func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int, recvType rl.TypingT) rl.TypingT {
 	// Always synth the args themselves so identifier-uses get recorded.
 	for _, a := range call.Args {
 		_ = tc.synth(a)
@@ -2559,9 +2721,104 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int) rl.Ty
 	tc.checkCall(call, typing, implicitReceiverCount)
 
 	if typing.ReturnT != nil {
-		return tc.record(call, tc.maybeStripFallible(call, *typing.ReturnT))
+		ret := tc.refineBuiltinReturn(call, recvType, *typing.ReturnT)
+		return tc.record(call, tc.maybeStripFallible(call, ret))
 	}
 	return tc.record(call, rl.NewDynamicType())
+}
+
+// refineBuiltinReturn sharpens a few builtin return types the signature DSL
+// can't express precisely. The signatures are deliberately wide because they
+// must cover every input shape: `sort(...) -> list|str` can't say "returns its
+// argument's type", and `clamp(...) -> int|float|error` can't say "int when all
+// args are int". For a *given* call we often know more, and the wide type
+// otherwise leaks downstream (`sort(str[])` iterating to `any|str`, `clamp` of
+// ints widening `n-1` to `int|float`). This is a deliberately tight allow-list,
+// not a general mechanism - resist growing it without a concrete need.
+func (tc *typeChecker) refineBuiltinReturn(call *rl.Call, recvType rl.TypingT, ret rl.TypingT) rl.TypingT {
+	ident, ok := call.Func.(*rl.Identifier)
+	if !ok {
+		return ret
+	}
+	sym, ok := tc.resolved.Uses[ident]
+	if !ok || sym == nil || sym.Kind != SymBuiltin {
+		return ret
+	}
+	// For UFCS calls (`v.clamp(...)`) the receiver is the implicit first
+	// argument and isn't in call.Args; prepend it so refinement reasons over
+	// every argument, not just the written ones.
+	args := tc.positionalArgTypes(call)
+	if recvType != nil {
+		args = append([]rl.TypingT{recvType}, args...)
+	}
+	switch ident.Name {
+	case "sort":
+		// Single-list/str sort returns its argument unchanged in shape, so the
+		// element type survives. Parallel sort (`sort(xs, ys)`) returns a
+		// list-of-lists, not args[0], so only refine the single-arg form;
+		// otherwise keep the signature's wide type.
+		if len(args) == 1 {
+			switch args[0].(type) {
+			case *rl.TypingListT, *rl.TypingAnyListT, *rl.TypingStrT:
+				return args[0]
+			}
+		}
+	case "clamp", "min", "max", "abs":
+		// These select/transform among numeric inputs without changing
+		// int-ness, so all-int scalar args produce an int result. The
+		// `float` arm of the signature only matters once a float is in play.
+		// (List-valued min/max args are left at the wide type - no harm,
+		// just less precise.)
+		if len(args) > 0 && allIntScalar(args) {
+			return collapseNumericToInt(ret)
+		}
+	}
+	return ret
+}
+
+// positionalArgTypes returns the synthesized types of a call's positional
+// arguments, read from the type index populated when the call's args were
+// synthed. nil entries mark args whose type we couldn't pin.
+func (tc *typeChecker) positionalArgTypes(call *rl.Call) []rl.TypingT {
+	out := make([]rl.TypingT, len(call.Args))
+	for i, a := range call.Args {
+		out[i] = tc.info.ExprTypes[a]
+	}
+	return out
+}
+
+// allIntScalar reports whether every type is a plain int (not a list, float,
+// or union). Drives the all-int return refinement for numeric builtins.
+func allIntScalar(types []rl.TypingT) bool {
+	for _, t := range types {
+		if _, ok := t.(*rl.TypingIntT); !ok {
+			return false
+		}
+	}
+	return true
+}
+
+// collapseNumericToInt rewrites the int/float arms of a type to int, preserving
+// every other arm (notably the error arm of a fallible signature, so fallible
+// detection still fires). `int|float|error` becomes `int|error`. Arms are
+// deduped by Name so the collapsed int arms don't pile up.
+func collapseNumericToInt(t rl.TypingT) rl.TypingT {
+	seen := make(map[string]bool)
+	var arms []rl.TypingT
+	for _, arm := range unionArms(t) {
+		if isInt(arm) || isFloat(arm) {
+			arm = rl.NewIntType()
+		}
+		if seen[arm.Name()] {
+			continue
+		}
+		seen[arm.Name()] = true
+		arms = append(arms, arm)
+	}
+	if len(arms) == 1 {
+		return arms[0]
+	}
+	return rl.NewUnionType(arms...)
 }
 
 // maybeStripFallible models Rad's panic-promotion. Every call except
@@ -2637,7 +2894,9 @@ func (tc *typeChecker) synthVarPath(v *rl.VarPath, asTarget bool) rl.TypingT {
 		switch {
 		case seg.IsUFCS:
 			if call, ok := seg.Index.(*rl.Call); ok {
-				cur = tc.synthCall(call, 1)
+				// The chain so far (cur) is the implicit first argument; pass it
+				// so builtin-return refinement sees the receiver's type too.
+				cur = tc.synthCall(call, 1, cur)
 			} else {
 				// Defensive: the converter always sets Index to the
 				// Call when IsUFCS, so this branch is unreachable.
@@ -3041,12 +3300,55 @@ func (tc *typeChecker) synthOpBinary(n *rl.OpBinary) rl.TypingT {
 		return tc.record(n, rl.NewDynamicType())
 	}
 
-	result, ok := binaryOpResult(n.Op, left, right)
+	result, ok := binaryOpResultOverUnions(n.Op, left, right)
 	if !ok {
 		tc.addOpIssue(n.Span(), n.Op, left, right, n.IsCompound)
 		return tc.record(n, rl.NewErrorTypeType())
 	}
 	return tc.record(n, result)
+}
+
+// unionArms returns the members of a union, or the type itself as a single-arm
+// slice. Lets callers treat union and non-union operands uniformly.
+func unionArms(t rl.TypingT) []rl.TypingT {
+	if u, ok := t.(*rl.TypingUnionT); ok {
+		return u.Types()
+	}
+	return []rl.TypingT{t}
+}
+
+// binaryOpResultOverUnions distributes a binary op across union operands. An
+// `int|float - int` should be valid (both arms are numeric) and yield
+// `int|float`; a `str[]|list += str[]` should reduce to a clean list op. We try
+// the op on the cartesian product of the operands' arms: only when *every*
+// combination is individually valid do we return the union of their results.
+// A single invalid combination returns ok=false so the caller falls through to
+// its normal mismatch handling - which already treats a union operand as a
+// non-gating Hint (one arm might fit), exactly the right severity here.
+//
+// Non-union operands have a single arm, so this is a transparent passthrough to
+// binaryOpResult for the common scalar case.
+func binaryOpResultOverUnions(op rl.Operator, l, r rl.TypingT) (rl.TypingT, bool) {
+	lArms := unionArms(l)
+	rArms := unionArms(r)
+	if len(lArms) == 1 && len(rArms) == 1 {
+		return binaryOpResult(op, l, r)
+	}
+	var result rl.TypingT
+	for _, la := range lArms {
+		for _, ra := range rArms {
+			res, ok := binaryOpResult(op, la, ra)
+			if !ok {
+				return nil, false
+			}
+			if result == nil {
+				result = res
+			} else {
+				result = unionOf(result, res)
+			}
+		}
+	}
+	return result, result != nil
 }
 
 func (tc *typeChecker) synthOpUnary(n *rl.OpUnary) rl.TypingT {
@@ -3488,9 +3790,9 @@ func (tc *typeChecker) addUnaryOpIssue(span rl.Span, op rl.Operator, operand rl.
 // already describes for hoisted fns.
 func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	enclosing := tc.frame
-	// Lambdas inherit the enclosing frame'\''s narrowings - that'\''s
-	// closure semantics. Pyright'\''s closure rule: drop narrowings
-	// on any captured path that gets reassigned AFTER the lambda'\''s
+	// Lambdas inherit the enclosing frame's narrowings - that's
+	// closure semantics. Pyright's closure rule: drop narrowings
+	// on any captured path that gets reassigned AFTER the lambda's
 	// definition in the enclosing scope. The lambda may run after
 	// such a reassignment, at which point the captured narrowing
 	// no longer holds. The overrides layer on top of the enclosing
@@ -3512,7 +3814,7 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	tc.pushReturnFrame(declaredReturn)
 
 	// Swap reassignedInScope so any lambda nested inside this one
-	// sees this body'\''s reassignments as its enclosing scope.
+	// sees this body's reassignments as its enclosing scope.
 	prevReassigned := tc.reassignedInScope
 	tc.reassignedInScope = tc.scanReassignments(n.Body)
 
@@ -3520,7 +3822,7 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	// node directly in Body (verified against the converter output -
 	// it does not wrap in ExprStmt). Each body entry is the value to
 	// return; synth it to feed the inferred return type. We pass
-	// the body node itself as the diagnostic span - it'\''s the
+	// the body node itself as the diagnostic span - it's the
 	// implicit return for these. Block-form lambdas walk via
 	// walkStmts and rely on the `*rl.Return` case to populate
 	// returnStack.
@@ -3554,7 +3856,7 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 		}
 	}
 
-	// Construct a fresh TypingFnT so we don'\''t mutate the parsed
+	// Construct a fresh TypingFnT so we don't mutate the parsed
 	// l.Typing (other readers - signature display, hover - rely on
 	// the AST being immutable). Params are shared by value; the
 	// caller never writes through ReturnT, so a fresh pointer is

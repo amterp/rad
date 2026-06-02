@@ -1,10 +1,13 @@
 ### TITLE ###
-OpenListIntoTypedParamStaysHint
+OpenListIntoTypedParamAccepted
 ### DESCRIPTION ###
-A value typed as the open gradual `list` flowing into a structured
-`int[]` parameter cannot be proven wrong - the runtime contents
-might all be ints - so the mismatch is a non-gating Hint, never an
-Error. Guards the gateableMismatch gradual-container rule.
+A value typed as the open gradual `list` (no element constraint -
+what `[]` synthesizes to and what `any[]`/`dynamic[]` collapse to)
+flows into a structured `int[]` parameter without complaint, the
+same way `any`/`dynamic` do. Bare `list` is the gradual escape
+hatch; gating it would brick the idiomatic `xs: str[] = []` and
+`return <list>` patterns. Guards the bare-list gradual rule in
+TypingListT.IsAssignableFrom.
 ### INPUT ###
 fn outer(x: list):
     want_ints(x)
@@ -25,7 +28,7 @@ fn want_ints(xs: int[]):
   xs (param): int[]
 
 # Diagnostics
-  [hint] RAD30001 @ 2:15 - Argument type 'list' is not assignable to expected type 'int[]'
+  (none)
 ### TITLE ###
 StrVariableIntoStrEnumStaysHint
 ### DESCRIPTION ###

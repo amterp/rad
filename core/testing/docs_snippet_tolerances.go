@@ -98,12 +98,12 @@ var docSnippetTolerances = map[string]Tolerance{
 		Reason:        "demo: scope leak - `config` defined inside setup() isn't visible after.",
 	},
 	"core/error_docs/20030.md#63c4f300": {
-		ExpectedCodes: []string{"RAD20030", "RAD30002"},
-		Reason:        "demo: break outside a loop. RAD30002 is incidental - `i > 5` in the Correct half fires a Hint because iterating `range(10)` binds `i` as `float|int` and `>` doesn't yet narrow that union against the int literal.",
+		ExpectedCodes: []string{"RAD20030"},
+		Reason:        "demo: break outside a loop. (The old incidental RAD30002 on `i > 5` is gone now that comparisons decompose a numeric `float|int` union.)",
 	},
 	"core/error_docs/20031.md#34cd8497": {
-		ExpectedCodes: []string{"RAD20031", "RAD30002"},
-		Reason:        "demo: continue outside a loop. RAD30002 is incidental for the same reason as 20030 (range element binds as float|int).",
+		ExpectedCodes: []string{"RAD20031"},
+		Reason:        "demo: continue outside a loop. (Old incidental RAD30002 gone now that numeric-union comparisons type-check.)",
 	},
 	"core/error_docs/30002.md#39029f35": {
 		ExpectedCodes: []string{"RAD30002"},
@@ -324,12 +324,6 @@ var docSnippetTolerances = map[string]Tolerance{
 	"docs-web/docs/migrations/v0.9.md#99b3964d": {Skip: true, Reason: "migration guide: before/after example"},
 	"docs-web/docs/migrations/v0.9.md#b0cf666d": {Skip: true, Reason: "migration guide: before/after example"},
 
-	// ---- docs-web/docs/guide/args.md -------------------------------
-	"docs-web/docs/guide/args.md#9b627343": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "checker hint: `[upper(w) for w in words]` synthesises as `dynamic|str[]` (list-comprehension result loses its precise list typing), so the subsequent `join(words, joiner)` call flags a hint. The script is correct at runtime.",
-	},
-
 	// ---- docs-web/docs/guide/basics.md ------------------------------
 	"docs-web/docs/guide/basics.md#210039b1": {
 		Skip:   true,
@@ -528,44 +522,24 @@ var docSnippetTolerances = map[string]Tolerance{
 	},
 
 	// ---- docs-web/docs/guide/type-annotations.md --------------------
-	// Type-annotation examples often demonstrate function signatures
-	// against typed returns. The remaining pins here hit an *inference*
-	// fidelity gap: the returned value is a variable built up in a loop
-	// (`counts = {}; counts[k] = 1; return counts`), so its synthesised
-	// type stays wider than the declared annotated shape and the static
-	// check fires a Hint even though the code is correct at runtime.
-	// (The literal-at-site cases - returning a map/list literal directly -
-	// are now handled structurally by check and no longer fire.) Pinned
-	// to RAD30001 (Hint) so language changes that surface a different
-	// code show up.
+	// Type-annotation examples demonstrate function signatures against
+	// typed returns. The loop-built-collection cases (`counts = {};
+	// counts[k] = 1; return counts`) no longer fire: a bare `list`/`map`
+	// now flows into a typed `T[]`/`{K: V}` as the gradual escape hatch.
+	// The remaining pins are intentional teaching demos (bad arg type,
+	// missing `T?`) or a still-imprecise vararg-into-typed-param case.
 
 	"docs-web/docs/guide/type-annotations.md#8bcb60a4": {
-		ExpectedCodes: []string{"RAD30001", "RAD30002"},
-		Reason:        "checker hint: vararg `*data_points: int|float` doesn't refine into `sum()`'s `float[]` or `join()`'s `str|list|map` parameters. RAD30002 cascades on the division because total/len both produce union types.",
+		ExpectedCodes: []string{"RAD30001"},
+		Reason:        "checker hint: vararg `*data_points: int|float` doesn't refine into `sum()`'s `float[]` parameter. (The old RAD30002 on the division is gone now that numeric-union operands decompose.)",
 	},
 	"docs-web/docs/guide/type-annotations.md#b264b53b": {
 		ExpectedCodes: []string{"RAD30001"},
 		Reason:        "intentional demo: returning null from fn typed as str (without ?). Doc teaches that T? is required for nullable returns.",
 	},
-	"docs-web/docs/guide/type-annotations.md#b4fcceab": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "literal-fidelity hint: list-literal append into a typed list parameter.",
-	},
 	"docs-web/docs/guide/type-annotations.md#b9ca5c02": {
 		ExpectedCodes: []string{"RAD30001"},
 		Reason:        "intentional demo: calling greet(42) where greet expects str - the doc teaches arg-type checking.",
-	},
-	"docs-web/docs/guide/type-annotations.md#ca9eb821": {
-		ExpectedCodes: []string{"RAD30002"},
-		Reason:        "literal-fidelity hint on words.join(' ') return type vs declared str.",
-	},
-	"docs-web/docs/guide/type-annotations.md#defd0b86": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "literal-fidelity hint on map-of-list return shape.",
-	},
-	"docs-web/docs/guide/type-annotations.md#efadde9e": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "literal-fidelity hint on map-of-int return shape.",
 	},
 
 	// ---- docs-web/docs/releases.md ----------------------------------
