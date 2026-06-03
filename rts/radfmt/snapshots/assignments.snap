@@ -1,0 +1,38 @@
+### TITLE ###
+Simple assignment spacing
+### INPUT ###
+x=1
+y   =   2
+### STDOUT ###
+x = 1
+y = 2
+### TITLE ###
+Multi-assign
+### INPUT ###
+a,b ,c = f()
+### STDOUT ###
+a, b, c = f()
+### TITLE ###
+Compound and incr/decr
+### INPUT ###
+x  +=  1
+y -=2
+i++
+j  --
+### STDOUT ###
+x += 1
+y -= 2
+i++
+j--
+### TITLE ###
+Arithmetic operators
+### INPUT ###
+x = 1+2*3-4/5%6
+### STDOUT ###
+x = 1 + 2 * 3 - 4 / 5 % 6
+### TITLE ###
+Boolean and comparison
+### INPUT ###
+ok = a>1 and b==2 or not c
+### STDOUT ###
+ok = a > 1 and b == 2 or not c

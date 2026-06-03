@@ -1,0 +1,52 @@
+### TITLE ###
+If else-if else
+### INPUT ###
+if x>1:
+    print(1)
+else if y:
+    print(2)
+else:
+    print(3)
+### STDOUT ###
+if x > 1:
+    print(1)
+else if y:
+    print(2)
+else:
+    print(3)
+### TITLE ###
+For loop
+### INPUT ###
+for i in range(3):
+    print(i)
+### STDOUT ###
+for i in range(3):
+    print(i)
+### TITLE ###
+For loop multiple vars
+### INPUT ###
+for i,x in items:
+    print(x)
+### STDOUT ###
+for i, x in items:
+    print(x)
+### TITLE ###
+While loop
+### INPUT ###
+while x:
+    x=x-1
+### STDOUT ###
+while x:
+    x = x - 1
+### TITLE ###
+Nested blocks
+### INPUT ###
+if a:
+    for i in xs:
+        if i>0:
+            print(i)
+### STDOUT ###
+if a:
+    for i in xs:
+        if i > 0:
+            print(i)

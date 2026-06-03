@@ -7,6 +7,7 @@ import (
 
 	com "github.com/amterp/rad/core/common"
 	"github.com/amterp/rad/rts/check"
+	radfmt "github.com/amterp/rad/rts/radfmt"
 	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/rad/rts"
@@ -121,6 +122,19 @@ func AddInternalFuncs() {
 				}
 				radMap.SetPrimitiveList("diagnostics", diagnostics)
 
+				return newRadValues(f.i, f.callNode, radMap)
+			},
+		},
+		{
+			Name: INTERNAL_FUNC_FMT,
+			Execute: func(f FuncInvocation) RadValue {
+				// Format normalizes line endings itself, so pass the raw source.
+				formatted, changed, ok := radfmt.Format(f.GetStr("_src").Plain())
+
+				radMap := NewRadMap()
+				radMap.SetPrimitiveStr("formatted", formatted)
+				radMap.SetPrimitiveBool("changed", changed)
+				radMap.SetPrimitiveBool("ok", ok)
 				return newRadValues(f.i, f.callNode, radMap)
 			},
 		},

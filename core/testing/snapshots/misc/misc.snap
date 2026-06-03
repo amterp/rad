@@ -134,6 +134,7 @@ Commands:
   completion    Generate shell tab-completion scripts.
   docs          Opens rad's documentation website.
   explain       Explains Rad error codes with detailed documentation.
+  fmt           Formats Rad scripts.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.
   new           Sets up a new Rad script.
@@ -223,6 +224,7 @@ Commands:
   completion    Generate shell tab-completion scripts.
   docs          Opens rad's documentation website.
   explain       Explains Rad error codes with detailed documentation.
+  fmt           Formats Rad scripts.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.
   new           Sets up a new Rad script.

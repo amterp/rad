@@ -1,0 +1,63 @@
+### TITLE ###
+Leading and trailing comments
+### INPUT ###
+// leading
+x = 1 // trailing
+### STDOUT ###
+// leading
+x = 1 // trailing
+### TITLE ###
+Multiple blank lines collapse to one
+### INPUT ###
+a = 1
+
+
+
+b = 2
+### STDOUT ###
+a = 1
+
+b = 2
+### TITLE ###
+Blank lines stripped at file edges
+### INPUT ###
+
+
+
+x = 1
+
+
+### STDOUT ###
+x = 1
+### TITLE ###
+Comment inside block
+### INPUT ###
+if x:
+    // note
+    print(1)
+### STDOUT ###
+if x:
+    // note
+    print(1)
+### TITLE ###
+Standalone comment between statements
+### INPUT ###
+a = 1
+// a section
+b = 2
+### STDOUT ###
+a = 1
+// a section
+b = 2
+### TITLE ###
+Comment trailing a block header stays on the header line
+### INPUT ###
+if x: // why this
+    a = 1
+for i in xs: // each item
+    print(i)
+### STDOUT ###
+if x: // why this
+    a = 1
+for i in xs: // each item
+    print(i)
