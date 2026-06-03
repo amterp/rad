@@ -18,6 +18,7 @@ const (
 	EmbCmdGenId   = "gen-id"
 	EmbCmdStash   = "stash"
 	EmbCmdCheck   = "check"
+	EmbCmdFmt     = "fmt"
 	EmbCmdExplain = "explain"
 )
 
@@ -43,6 +44,7 @@ func init() {
 		createEmbeddedCmd(EmbCmdNew),
 		createEmbeddedCmd(EmbCmdDocs),
 		createEmbeddedCmd(EmbCmdCheck),
+		createEmbeddedCmd(EmbCmdFmt),
 		createEmbeddedCmd(EmbCmdHome),
 		createEmbeddedCmd(EmbCmdGenId),
 		createEmbeddedCmd(EmbCmdStash),

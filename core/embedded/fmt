@@ -1,0 +1,66 @@
+#!/usr/bin/env rad
+---
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+---
+args:
+    *paths str       # Paths of Rad scripts to format.
+    stdout bool      # Print formatted output to stdout instead of writing files.
+    check bool       # Don't write; exit non-zero if any file isn't formatted.
+
+    stdout excludes check
+
+// No paths + piped stdin: format stdin to stdout (editor / pipe friendly).
+if not paths and has_stdin():
+    result = _rad_fmt(read_stdin())
+    if not result.ok:
+        print_err("stdin: could not parse.")
+        exit(1)
+    if check:
+        // In check mode, don't emit the formatted text; just signal via exit code.
+        exit(result.changed)
+    print(result.formatted, end="")
+    exit()
+
+if not paths:
+    print_err("Error: provide at least one path to format (or pipe a script via stdin).")
+    exit(1)
+
+any_unformatted = false
+any_error = false
+
+for path in paths:
+    file = read_file(path) catch:
+        pass
+    if type_of(file) == "error":
+        print_err("{path}: {file}")
+        any_error = true
+        continue
+
+    result = _rad_fmt(file.content)
+    if not result.ok:
+        print_err("{path}: could not parse, skipping.")
+        any_error = true
+        continue
+
+    if stdout:
+        print(result.formatted, end="")
+    else if check:
+        if result.changed:
+            print(path)
+            any_unformatted = true
+    else if result.changed:
+        write = write_file(path, result.formatted) catch:
+            pass
+        if type_of(write) == "error":
+            print_err("{path}: {write}")
+            any_error = true
+            continue
+        print("Formatted {path}")
+
+if any_error:
+    exit(1)
+if check and any_unformatted:
+    exit(1)

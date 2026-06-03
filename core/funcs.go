@@ -137,6 +137,7 @@ const (
 	INTERNAL_FUNC_GET_STASH_ID    = "_rad_get_stash_id"
 	INTERNAL_FUNC_DELETE_STASH    = "_rad_delete_stash"
 	INTERNAL_FUNC_RUN_CHECK       = "_rad_run_check"
+	INTERNAL_FUNC_FMT             = "_rad_fmt"
 	INTERNAL_FUNC_CHECK_FROM_LOGS = "_rad_check_from_logs"
 	INTERNAL_FUNC_EXPLAIN         = "_rad_explain"
 	INTERNAL_FUNC_EXPLAIN_LIST    = "_rad_explain_list"

@@ -1,0 +1,47 @@
+### TITLE ###
+Call argument spacing
+### INPUT ###
+print(  a ,b )
+### STDOUT ###
+print(a, b)
+### TITLE ###
+Nested calls
+### INPUT ###
+x = f(g(h( 1 )), 2)
+### STDOUT ###
+x = f(g(h(1)), 2)
+### TITLE ###
+Dotted and indexed paths
+### INPUT ###
+x = obj . method( 1 )
+y = a.b.c
+z = a[ 0 ]
+### STDOUT ###
+x = obj.method(1)
+y = a.b.c
+z = a[0]
+### TITLE ###
+Slice
+### INPUT ###
+s = data[ 1 : 2 ]
+### STDOUT ###
+s = data[1:2]
+### TITLE ###
+Ternary
+### INPUT ###
+v = cond?a:b
+### STDOUT ###
+v = cond ? a : b
+### TITLE ###
+Long call wraps one arg per line
+### INPUT ###
+result = compute(first_argument, second_argument, third_argument, fourth_argument, fifth_argument, sixth)
+### STDOUT ###
+result = compute(
+    first_argument,
+    second_argument,
+    third_argument,
+    fourth_argument,
+    fifth_argument,
+    sixth,
+)
