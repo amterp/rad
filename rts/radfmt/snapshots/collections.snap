@@ -1,23 +1,23 @@
 ### TITLE ###
-List spacing
+[F27] List spacing
 ### INPUT ###
 l = [ 1,2 ,3 ]
 ### STDOUT ###
 l = [1, 2, 3]
 ### TITLE ###
-Nested lists
+[F27] Nested lists
 ### INPUT ###
 m = [[1,2],[3 ,4]]
 ### STDOUT ###
 m = [[1, 2], [3, 4]]
 ### TITLE ###
-Map spacing
+[F28] Map spacing
 ### INPUT ###
 m = {"x":1,  y :2}
 ### STDOUT ###
-m = {"x": 1, y: 2}
+m = { "x": 1, y: 2 }
 ### TITLE ###
-Empty collections
+[F24][F27][F28] Empty collections stay tight
 ### INPUT ###
 a = [  ]
 b = {  }
@@ -27,9 +27,9 @@ a = []
 b = {}
 c = f()
 ### TITLE ###
-Long list wraps one per line
+[F5][F29] Long list wraps one element per line
 ### INPUT ###
-items = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliet", "kilo"]
+items = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliet", "kilo", "lima", "mike", "november"]
 ### STDOUT ###
 items = [
     "alpha",
@@ -43,4 +43,7 @@ items = [
     "india",
     "juliet",
     "kilo",
+    "lima",
+    "mike",
+    "november",
 ]

@@ -20,6 +20,8 @@ func (p *printer) formatExprStmt(n *ts.Node) Doc {
 }
 
 // formatAssign formats `a = expr` and multi-assign `a, b = expr`.
+//
+// [F12] one space around `=`    [F13] multi-assign: ", " between targets
 func (p *printer) formatAssign(n *ts.Node) Doc {
 	var lefts []Doc
 	var right *ts.Node
@@ -37,7 +39,32 @@ func (p *printer) formatAssign(n *ts.Node) Doc {
 	return concat(join(text(", "), lefts), text(" = "), p.formatExpr(right))
 }
 
+// formatTypedAssign formats a typed assignment `x: int = 1` - a space after the
+// type colon and around `=`. The declared type is emitted verbatim for now
+// (canonical spacing of `|`-union types is a noted follow-up). A trailing catch
+// block (`... catch:`) is not yet handled, so fall back to verbatim when present
+// rather than silently dropping it.
+//
+// [F31] typed assignment `x: int = 1`
+func (p *printer) formatTypedAssign(n *ts.Node) Doc {
+	if childByField(n, rl.F_CATCH) != nil {
+		return p.verbatim(n)
+	}
+	left := childByField(n, rl.F_LEFT)
+	typ := childByField(n, rl.F_DECLARED_TYPE)
+	right := childByField(n, rl.F_RIGHT)
+	if left == nil || typ == nil || right == nil {
+		return p.verbatim(n)
+	}
+	return concat(
+		text(p.nodeText(left)), text(": "), rawText(p.nodeText(typ)),
+		text(" = "), p.formatExpr(right),
+	)
+}
+
 // formatCompoundAssign formats `x += expr` (and -=, *=, /=, %=).
+//
+// [F14] one space around compound-assignment operators
 func (p *printer) formatCompoundAssign(n *ts.Node) Doc {
 	left := childByField(n, rl.F_LEFT)
 	op := childByField(n, rl.F_OP)
@@ -49,6 +76,8 @@ func (p *printer) formatCompoundAssign(n *ts.Node) Doc {
 }
 
 // formatIncrDecr formats `i++` / `i--` tightly.
+//
+// [F15] increment/decrement bind tight (no inner space)
 func (p *printer) formatIncrDecr(n *ts.Node) Doc {
 	left := childByField(n, rl.F_LEFT)
 	op := childByField(n, rl.F_OP)
@@ -60,6 +89,8 @@ func (p *printer) formatIncrDecr(n *ts.Node) Doc {
 
 // formatKeywordExpr formats statements that are a keyword optionally followed by
 // an expression: `return`, `return expr`, `yield expr`.
+//
+// [F16] single space after return/yield keyword
 func (p *printer) formatKeywordExpr(keyword string, n *ts.Node) Doc {
 	for _, c := range namedChildrenOf(n) {
 		return concat(text(keyword+" "), p.formatExpr(c))
@@ -68,6 +99,8 @@ func (p *printer) formatKeywordExpr(keyword string, n *ts.Node) Doc {
 }
 
 // formatIf formats an if / else-if / else chain, each clause's body indented.
+//
+// [F17] if/else-if/else: header ends in `:`, body indented; `else if` on one line
 func (p *printer) formatIf(n *ts.Node) Doc {
 	var parts []Doc
 	sawElse := false
@@ -112,6 +145,8 @@ func (p *printer) formatClause(prefix string, alt *ts.Node, leadingBreak bool) D
 }
 
 // formatFor formats `for x in expr:` (and `for i, x in expr:`).
+//
+// [F18] for loop: ", " between loop vars, " in ", header ends in `:`
 func (p *printer) formatFor(n *ts.Node) Doc {
 	lefts := childByField(n, rl.F_LEFTS)
 	right := childByField(n, rl.F_RIGHT)
@@ -135,6 +170,8 @@ func (p *printer) formatForLefts(n *ts.Node) Doc {
 }
 
 // formatWhile formats `while cond:`.
+//
+// [F19] while loop: `while <cond>:`, body indented
 func (p *printer) formatWhile(n *ts.Node) Doc {
 	cond := childByField(n, rl.F_CONDITION)
 	if cond == nil {
@@ -157,6 +194,8 @@ func (p *printer) indentedBody(items []*ts.Node) Doc {
 // blockTail renders the `:` that opens a block, an optional comment that
 // trailed the header on the same line (kept on the header line as a line-suffix
 // rather than pulled into the body), and the indented body.
+//
+// [F11] a comment trailing a block header stays on the header line
 func (p *printer) blockTail(n *ts.Node) Doc {
 	headerComment, body := blockBody(n)
 	tail := Doc(text(tColon))

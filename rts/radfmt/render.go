@@ -13,9 +13,11 @@ func stringWidth(s string) int { return utf8.RuneCountInString(s) }
 // MaxWidth is the target line width. It is a target, not a hard cap: long
 // unbreakable tokens (string literals, comments) may exceed it. Tests assert
 // idempotence and structural equivalence, never a hard column maximum.
-const MaxWidth = 100
+// [F5] line width 120
+const MaxWidth = 120
 
 // IndentUnit is one level of indentation.
+// [F1] 4-space indentation, never tabs
 const IndentUnit = "    " // 4 spaces
 
 type mode uint8
@@ -315,6 +317,7 @@ func fits(next cmd, rest []cmd, width int, hasLineSuffix bool, gmm map[GroupID]m
 // trimTrailing strips trailing spaces/tabs from the already-emitted output's
 // last segment(s) and returns how many characters were removed (used to correct
 // the column counter).
+// [F4] strip trailing whitespace from every line
 func trimTrailing(out *[]string) int {
 	o := *out
 	trimmed := 0

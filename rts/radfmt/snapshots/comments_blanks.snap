@@ -1,5 +1,5 @@
 ### TITLE ###
-Leading and trailing comments
+[F9][F10] Leading and trailing comments
 ### INPUT ###
 // leading
 x = 1 // trailing
@@ -7,7 +7,7 @@ x = 1 // trailing
 // leading
 x = 1 // trailing
 ### TITLE ###
-Multiple blank lines collapse to one
+[F6][F8] Multiple blank lines collapse to one
 ### INPUT ###
 a = 1
 
@@ -19,7 +19,7 @@ a = 1
 
 b = 2
 ### TITLE ###
-Blank lines stripped at file edges
+[F7] Blank lines stripped at file edges
 ### INPUT ###
 
 
@@ -30,7 +30,7 @@ x = 1
 ### STDOUT ###
 x = 1
 ### TITLE ###
-Comment inside block
+[F9] Comment inside block
 ### INPUT ###
 if x:
     // note
@@ -40,7 +40,7 @@ if x:
     // note
     print(1)
 ### TITLE ###
-Standalone comment between statements
+[F9] Standalone comment between statements
 ### INPUT ###
 a = 1
 // a section
@@ -50,7 +50,7 @@ a = 1
 // a section
 b = 2
 ### TITLE ###
-Comment trailing a block header stays on the header line
+[F11] Comment trailing a block header stays on the header line
 ### INPUT ###
 if x: // why this
     a = 1

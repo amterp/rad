@@ -1,5 +1,5 @@
 ### TITLE ###
-Simple assignment spacing
+[F12] Assignment spacing
 ### INPUT ###
 x=1
 y   =   2
@@ -7,13 +7,13 @@ y   =   2
 x = 1
 y = 2
 ### TITLE ###
-Multi-assign
+[F13] Multi-assign
 ### INPUT ###
 a,b ,c = f()
 ### STDOUT ###
 a, b, c = f()
 ### TITLE ###
-Compound and incr/decr
+[F14][F15] Compound assign and increment/decrement
 ### INPUT ###
 x  +=  1
 y -=2
@@ -25,14 +25,22 @@ y -= 2
 i++
 j--
 ### TITLE ###
-Arithmetic operators
+[F20] Arithmetic operators
 ### INPUT ###
 x = 1+2*3-4/5%6
 ### STDOUT ###
 x = 1 + 2 * 3 - 4 / 5 % 6
 ### TITLE ###
-Boolean and comparison
+[F20][F21] Boolean, comparison, and unary not
 ### INPUT ###
 ok = a>1 and b==2 or not c
 ### STDOUT ###
 ok = a > 1 and b == 2 or not c
+### TITLE ###
+[F31] Typed assignment
+### INPUT ###
+x:int=1
+msg : str = "hi"
+### STDOUT ###
+x: int = 1
+msg: str = "hi"

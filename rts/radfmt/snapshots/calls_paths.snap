@@ -1,17 +1,17 @@
 ### TITLE ###
-Call argument spacing
+[F24] Call argument spacing
 ### INPUT ###
 print(  a ,b )
 ### STDOUT ###
 print(a, b)
 ### TITLE ###
-Nested calls
+[F24] Nested calls
 ### INPUT ###
 x = f(g(h( 1 )), 2)
 ### STDOUT ###
 x = f(g(h(1)), 2)
 ### TITLE ###
-Dotted and indexed paths
+[F25] Dotted and indexed paths
 ### INPUT ###
 x = obj . method( 1 )
 y = a.b.c
@@ -21,21 +21,27 @@ x = obj.method(1)
 y = a.b.c
 z = a[0]
 ### TITLE ###
-Slice
+[F26] Slice
 ### INPUT ###
 s = data[ 1 : 2 ]
 ### STDOUT ###
 s = data[1:2]
 ### TITLE ###
-Ternary
+[F22] Ternary
 ### INPUT ###
 v = cond?a:b
 ### STDOUT ###
 v = cond ? a : b
 ### TITLE ###
-Long call wraps one arg per line
+[F32] Named call arguments bind tight
 ### INPUT ###
-result = compute(first_argument, second_argument, third_argument, fourth_argument, fifth_argument, sixth)
+connect( host="localhost" ,port= 8080,retries =3 )
+### STDOUT ###
+connect(host="localhost", port=8080, retries=3)
+### TITLE ###
+[F5][F29] Long call wraps one argument per line
+### INPUT ###
+result = compute(first_argument, second_argument, third_argument, fourth_argument, fifth_argument, sixth_argument, seventh)
 ### STDOUT ###
 result = compute(
     first_argument,
@@ -43,5 +49,6 @@ result = compute(
     third_argument,
     fourth_argument,
     fifth_argument,
-    sixth,
+    sixth_argument,
+    seventh,
 )

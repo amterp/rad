@@ -23,7 +23,7 @@ type printer struct {
 //   - arg_block, cmd_block, rad_block
 //   - fn_named / fn_lambda
 //   - switch_stmt, defer_block, shell_stmt
-//   - typed_assign, list_comprehension
+//   - list_comprehension
 //
 // To add one: handle its kind here (or in formatExpr for expressions), build a
 // Doc from its fields, and add a snapshot case. The structural-equivalence guard
@@ -38,6 +38,8 @@ func (p *printer) format(node *ts.Node) Doc {
 		return p.formatExprStmt(node)
 	case rl.K_ASSIGN:
 		return p.formatAssign(node)
+	case rl.K_TYPED_ASSIGN:
+		return p.formatTypedAssign(node)
 	case rl.K_COMPOUND_ASSIGN:
 		return p.formatCompoundAssign(node)
 	case rl.K_INCR_DECR:
@@ -71,6 +73,8 @@ func (p *printer) format(node *ts.Node) Doc {
 // file edges), comments placed as leading/standalone/trailing, and exactly one
 // trailing newline. Individual statements are formatted by format(); any not yet
 // handled fall through to verbatim.
+//
+// [F3] exactly one trailing newline at end of file
 func (p *printer) formatSourceFile(node *ts.Node) Doc {
 	body := p.formatSeq(childPtrs(node))
 	if body == nil {
@@ -87,6 +91,10 @@ func (p *printer) formatSourceFile(node *ts.Node) Doc {
 //     line-suffix rather than starting a new line.
 //
 // It returns nil for an empty sequence so callers can special-case emptiness.
+//
+// [F6] collapse 2+ blank lines to one    [F7] strip blanks at block/file edges
+// [F8] preserve a single blank line       [F9] standalone comment keeps its line
+// [F10] trailing same-line comment stays on the statement's line
 func (p *printer) formatSeq(items []*ts.Node) Doc {
 	if len(items) == 0 {
 		return nil
@@ -100,18 +108,18 @@ func (p *printer) formatSeq(items []*ts.Node) Doc {
 		item := items[i]
 
 		if emitted {
-			parts = append(parts, hardLine())
+			parts = append(parts, hardLine()) // [F8] one hardline between items
 			if blankBetween(prev, item) {
-				parts = append(parts, hardLine())
+				parts = append(parts, hardLine()) // [F6][F8] at most one blank line
 			}
 		}
 
 		if isComment(item) {
-			parts = append(parts, text(p.nodeText(item)))
+			parts = append(parts, text(p.nodeText(item))) // [F9] standalone comment
 			prev = item
 		} else {
 			doc := p.format(item)
-			// Fold a trailing same-line comment into this statement's line.
+			// Fold a trailing same-line comment into this statement's line. [F10]
 			if i+1 < len(items) && isComment(items[i+1]) && sameRow(item, items[i+1]) {
 				c := items[i+1]
 				doc = concat(doc, lineSuffix(concat(text(" "), text(p.nodeText(c)))))
@@ -145,6 +153,10 @@ func childPtrs(n *ts.Node) []*ts.Node {
 // comments and original layout are preserved because they're part of the span;
 // embedded newlines render as literal (no-indent) breaks so the column counter
 // stays correct.
+//
+// This is also the path by which deliberately-untouched constructs are emitted:
+// [F34] the shebang line and [F35] the `--- ... ---` file header are preserved
+// exactly (along with any construct not yet given a dedicated formatter).
 func (p *printer) verbatim(node *ts.Node) Doc {
 	raw := strings.TrimRight(p.src[node.StartByte():node.EndByte()], "\n")
 	return rawText(raw)

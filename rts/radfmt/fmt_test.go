@@ -2,16 +2,17 @@ package radfmt
 
 import "testing"
 
-// Pipeline-spine guarantee: while every construct is still verbatim, Format must
-// return valid source byte-for-byte unchanged (changed=false, ok=true). This is
-// the safety net that lets us grow construct formatters incrementally.
+// Stability guarantee: already-canonical source must round-trip byte-for-byte
+// unchanged (changed=false, ok=true). These cases mix formatted constructs with
+// still-verbatim ones (the args block), so they double as a regression net that
+// formatting an idiomatic script is a no-op.
 func TestFormat_SpineRoundTrips(t *testing.T) {
 	cases := []string{
 		"a = 1\n",
 		"#!/usr/bin/env rad\nprint(\"hi\")\n",
 		"args:\n    name str\n    age int = 30 # An age.\n\nprint(name)\n",
 		"// leading comment\nx = 1 // trailing\n",
-		"a = {\"x\": 1, y: 2}\nb = [1, 2, 3]\n",
+		"a = { \"x\": 1, y: 2 }\nb = [1, 2, 3]\n",
 	}
 	for _, src := range cases {
 		out, changed, ok := Format(src)

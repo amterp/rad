@@ -1,0 +1,24 @@
+### TITLE ###
+[F2][raw] CRLF and bare CR normalized to LF
+### INPUT ###
+"x = 1\r\ny = 2\r\n"
+### STDOUT ###
+"x = 1\ny = 2\n"
+### TITLE ###
+[F3][raw] Exactly one trailing newline at end of file
+### INPUT ###
+"x = 1"
+### STDOUT ###
+"x = 1\n"
+### TITLE ###
+[F3][raw] Multiple trailing newlines collapse to one
+### INPUT ###
+"x = 1\n\n\n"
+### STDOUT ###
+"x = 1\n"
+### TITLE ###
+[F4][raw] Trailing whitespace stripped from every line
+### INPUT ###
+"x = 1   \ny = 2\t\n"
+### STDOUT ###
+"x = 1\ny = 2\n"
