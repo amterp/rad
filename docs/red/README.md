@@ -9,9 +9,18 @@ Start with [RED-1](0001-red-process.md), which defines the process itself. New R
 
 > This index is maintained by hand for now. The frontmatter is structured so it can later be
 > generated automatically.
+>
+> Letter IDs (RED-A, RED-B) are **provisional**: backfilled records whose chronological number
+> isn't yet settled, pending the backfill of earlier decisions. They'll be renumbered into their
+> proper slots later. RED-2 is **reserved** for a forthcoming RED on the creation of the language
+> as a whole.
 
 ## Index
 
-| ID                           | Title           | Kind    | Status   |
-|------------------------------|-----------------|---------|----------|
-| [RED-1](0001-red-process.md) | The RED process | Process | Accepted |
+| ID                                  | Title                               | Kind     | Status      |
+|-------------------------------------|-------------------------------------|----------|-------------|
+| [RED-1](0001-red-process.md)        | The RED process                     | Process  | Accepted    |
+| RED-2                               | The Rad language *(reserved)*       | Language | Planned     |
+| [RED-3](0003-rad-block.md)          | The rad block                       | Language | Implemented |
+| [RED-A](A-request-display-split.md) | Separate request and display blocks | Language | Superseded  |
+| [RED-B](B-rad-block-unification.md) | Unify the rad block keywords        | Language | Implemented |
