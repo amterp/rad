@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-122-list-comprehensions",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "p3",
   "title": "RAD-122: List comprehensions for-loop should behave like general forloops",
   "type": "bug",
-  "updated_at_millis": 1767762151910
+  "updated_at_millis": 1767762151910,
+  "history": [
+    {"field":"column","value":"done","at":1767762151910}
+  ]
 }

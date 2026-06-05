@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-118-sanity-check-defer",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "I6",
   "title": "RAD-118: sanity check: defer blocks *within* defer blocks?",
   "type": "excellence",
-  "updated_at_millis": 1770438149876
+  "updated_at_millis": 1770438149876,
+  "history": [
+    {"field":"column","value":"low","at":1767762149512}
+  ]
 }

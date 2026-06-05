@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-split-with-limit-parameter",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "6o",
   "title": "Add split() with limit parameter",
   "type": "feature",
-  "updated_at_millis": 1770438067712
+  "updated_at_millis": 1770438067712,
+  "history": [
+    {"field":"column","value":"done","at":1769827717644}
+  ]
 }

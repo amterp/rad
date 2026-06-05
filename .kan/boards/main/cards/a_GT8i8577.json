@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "undo-r-n-normalization",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "Ec",
   "title": "undo \\r\\n normalization",
   "type": "bug",
-  "updated_at_millis": 1770522510208
+  "updated_at_millis": 1770522510208,
+  "history": [
+    {"field":"column","value":"done","at":1769659263786}
+  ]
 }

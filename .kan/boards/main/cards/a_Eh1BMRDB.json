@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "re-assess-absolute-find-paths",
   "alias_explicit": false,
   "column": "next",
@@ -12,5 +12,8 @@
   "position": "6!",
   "title": "re-assess 'absolute' find_paths arg, is that necessary?",
   "type": "bug",
-  "updated_at_millis": 1770438136514
+  "updated_at_millis": 1770438136514,
+  "history": [
+    {"field":"column","value":"next","at":1769396813590}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "silent-integer",
   "alias_explicit": false,
   "column": "todo-lo",
@@ -10,5 +10,8 @@
   "position": "Ig",
   "severity": "medium",
   "title": "Silent integer overflow wraparound with no error or warning",
-  "updated_at_millis": 1775232135771
+  "updated_at_millis": 1775232135771,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1775232135771}
+  ]
 }

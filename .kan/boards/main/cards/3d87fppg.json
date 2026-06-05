@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-288-if-incomplete-args",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "bf",
   "title": "RAD-288: If incomplete args, allow going into interactive mode",
   "type": "feature",
-  "updated_at_millis": 1767762150272
+  "updated_at_millis": 1767762150272,
+  "history": [
+    {"field":"column","value":"low","at":1767762150272}
+  ]
 }

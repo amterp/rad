@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-352-make-pr-comment",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "p!",
   "title": "RAD-352: Make PR comment appear earlier, don't block on benchmarks",
   "type": "excellence",
-  "updated_at_millis": 1770438067747
+  "updated_at_millis": 1770438067747,
+  "history": [
+    {"field":"column","value":"low","at":1767762150920}
+  ]
 }

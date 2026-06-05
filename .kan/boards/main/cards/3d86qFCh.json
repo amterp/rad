@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-153-highlight-function",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "Om",
   "title": "RAD-153: highlight function (highlight regex matches in string)",
   "type": "feature",
-  "updated_at_millis": 1770438067684
+  "updated_at_millis": 1770438067684,
+  "history": [
+    {"field":"column","value":"low","at":1767762149766}
+  ]
 }

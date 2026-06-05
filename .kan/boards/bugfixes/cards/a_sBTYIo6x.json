@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "zip-fill-null",
   "alias_explicit": false,
   "column": "todo-lo",
@@ -10,5 +10,8 @@
   "position": "gI",
   "severity": "low",
   "title": "zip(fill=null) behaves same as no fill argument",
-  "updated_at_millis": 1775232173549
+  "updated_at_millis": 1775232173549,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1775232173549}
+  ]
 }

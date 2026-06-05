@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-143-include-commit-hash",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "N!",
   "title": "RAD-143: Include commit hash in the -V version info",
   "type": "feature",
-  "updated_at_millis": 1770438048988
+  "updated_at_millis": 1770438048988,
+  "history": [
+    {"field":"column","value":"low","at":1767762149698}
+  ]
 }

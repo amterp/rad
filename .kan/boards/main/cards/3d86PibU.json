@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-114-invoking-mock",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "Hf",
   "title": "RAD-114: Invoking MOCK-RESPONSE with \"asd\" i.e. invalid format gives segfault error",
   "type": "bug",
-  "updated_at_millis": 1770438049031
+  "updated_at_millis": 1770438049031,
+  "history": [
+    {"field":"column","value":"low","at":1767762149496}
+  ]
 }

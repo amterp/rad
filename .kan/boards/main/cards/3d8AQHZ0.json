@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-399-unexpected",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "nl",
   "title": "RAD-399: unexpected syntax error",
   "type": "bug",
-  "updated_at_millis": 1770523356583
+  "updated_at_millis": 1770523356583,
+  "history": [
+    {"field":"column","value":"done","at":1767762151989}
+  ]
 }

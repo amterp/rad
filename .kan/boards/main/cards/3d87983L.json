@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-206-code-comment-in-arg",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "Tf",
   "title": "RAD-206: Code comment in arg comment gets incorrectly included",
   "type": "bug",
-  "updated_at_millis": 1770438123942
+  "updated_at_millis": 1770438123942,
+  "history": [
+    {"field":"column","value":"low","at":1767762149951}
+  ]
 }

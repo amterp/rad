@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-370-rad-check-from-logs",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "wi",
   "title": "RAD-370: rad check from-logs: create folder w/ symlinked scripts to fix",
   "type": "feature",
-  "updated_at_millis": 1767762151015
+  "updated_at_millis": 1767762151015,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151015}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "update-go-tbl-to",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "xRU",
   "title": "Update go-tbl to support style attrs (bold, dim, italic, underline) in Color enum, enabling style attributes in rad block color modifiers",
   "type": "enhancement",
-  "updated_at_millis": 1775441182757
+  "updated_at_millis": 1775441182757,
+  "history": [
+    {"field":"column","value":"low","at":1775441177643}
+  ]
 }

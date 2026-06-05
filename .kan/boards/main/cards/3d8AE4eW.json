@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-241-update-docs-w-stash",
   "alias_explicit": false,
   "column": "done",
@@ -12,5 +12,8 @@
   "position": "QK",
   "title": "RAD-241: Update docs w/ stash functionality",
   "type": "excellence",
-  "updated_at_millis": 1770438049025
+  "updated_at_millis": 1770438049025,
+  "history": [
+    {"field":"column","value":"done","at":1767762151872}
+  ]
 }

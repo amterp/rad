@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-58-arg-enum-constraint",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "9D",
   "title": "RAD-58: arg enum constraint - apply pick/filter logic",
   "type": "feature",
-  "updated_at_millis": 1767762149150
+  "updated_at_millis": 1767762149150,
+  "history": [
+    {"field":"column","value":"low","at":1767762149150}
+  ]
 }

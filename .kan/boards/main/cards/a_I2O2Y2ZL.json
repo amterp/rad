@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-issue-77",
   "alias_explicit": false,
   "column": "high",
@@ -12,5 +12,8 @@
   "position": "f!",
   "title": "fix issue #77",
   "type": "feature",
-  "updated_at_millis": 1770438195214
+  "updated_at_millis": 1770438195214,
+  "history": [
+    {"field":"column","value":"high","at":1769891031195}
+  ]
 }

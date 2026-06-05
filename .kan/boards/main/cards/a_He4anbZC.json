@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-dependabot-issues",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "UE",
   "title": "fix dependabot issues",
   "type": "bug",
-  "updated_at_millis": 1769833085022
+  "updated_at_millis": 1769833085022,
+  "history": [
+    {"field":"column","value":"done","at":1769833084912}
+  ]
 }

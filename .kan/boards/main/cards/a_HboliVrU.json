@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "use-strings-builder-in-plain",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "sy",
   "title": "Use strings.Builder in Plain()",
   "type": "bug",
-  "updated_at_millis": 1769827710072
+  "updated_at_millis": 1769827710072,
+  "history": [
+    {"field":"column","value":"done","at":1769827710072}
+  ]
 }

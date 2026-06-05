@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-release-notes-ci-2",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "ak",
   "title": "fix release notes CI",
   "type": "bug",
-  "updated_at_millis": 1769661503243
+  "updated_at_millis": 1769661503243,
+  "history": [
+    {"field":"column","value":"done","at":1769661498369}
+  ]
 }

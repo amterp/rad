@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-198-rls-additional",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "TD",
   "title": "RAD-198: RLS: Additional highlighting",
   "type": "feature",
-  "updated_at_millis": 1767762149934
+  "updated_at_millis": 1767762149934,
+  "history": [
+    {"field":"column","value":"low","at":1767762149934}
+  ]
 }

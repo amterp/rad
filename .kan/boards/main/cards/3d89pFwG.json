@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-400-rad-blocks-allow",
   "alias_explicit": false,
   "column": "high",
@@ -10,5 +10,8 @@
   "position": "D!",
   "title": "RAD-400: rad blocks: allow graceful query recovery \u0026 handling",
   "type": "feature",
-  "updated_at_millis": 1767762151618
+  "updated_at_millis": 1767762151618,
+  "history": [
+    {"field":"column","value":"high","at":1767762151618}
+  ]
 }

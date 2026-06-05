@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-76-pass-csv-or-map-column",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "Bt",
   "title": "RAD-76: Pass csv or map\u003ccolumn, values\u003e to display block",
   "type": "feature",
-  "updated_at_millis": 1767762149249
+  "updated_at_millis": 1767762149249,
+  "history": [
+    {"field":"column","value":"low","at":1767762149249}
+  ]
 }

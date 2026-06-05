@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "and-catch-cannot",
   "alias_explicit": false,
   "column": "todo-hi",
@@ -11,5 +11,8 @@
   "position": "m!",
   "severity": "high",
   "title": "?? and catch cannot parse negative literal on right side",
-  "updated_at_millis": 1775241425884
+  "updated_at_millis": 1775241425884,
+  "history": [
+    {"field":"column","value":"todo-hi","at":1775232036608}
+  ]
 }

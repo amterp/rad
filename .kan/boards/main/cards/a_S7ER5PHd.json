@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "d-flag-not-allowed",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "86",
   "title": "-d flag not allowed in commands with var arg",
   "type": "bug",
-  "updated_at_millis": 1771380212354
+  "updated_at_millis": 1771380212354,
+  "history": [
+    {"field":"column","value":"done","at":1771380212030}
+  ]
 }

@@ -1,0 +1,18 @@
+{
+  "_v": 3,
+  "alias": "ufcs-aware",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779756144996,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 LSP verification (2026-05-25), tests 19a/b/c.\n\nAfter typing `aaa.` where `aaa: int` or `\"hello\".`, completion is still pure alphabetical. int-relevant fns (`abs`, `ceil`, `clamp`, `range`, conversions) should rank above unrelated fns like `black`, `blue`, `bold` - they don't. Same for str-relevant fns (`upper`, `lower`, `split`) on a `\"hello\".` receiver.\n\n**The code IS wired** (`radls/analysis/completion.go:97-133`):\n- `sortTierBuiltinRelevant = \"1z\"` exists, sorts between file (\"1\") and irrelevant builtin (\"2\")\n- `firstParamAccepts` does the UFCS-shape check\n- `receiverTypeAtCursor` walks back from cursor to find the receiver\n\n**Why it doesn't fire:** `receiverTypeAtCursor` has an explicit graceful-degradation path (lines 142-152):\n\n```go\nif snap == nil || snap.text == \"\" ||\n    snap.resolved == nil || snap.types == nil ||\n    snap.resolved.File == nil {\n    // When the document is mid-edit (e.g. `xs.` with no\n    // trailing call) the converter typically bails and we get\n    // nil indexes.\n    return nil\n}\n```\n\nSo during the user's actual typing flow (trigger completion right after `aaa.`), the CST→AST converter bails on the incomplete `aaa.` expression. `snap.resolved` is nil. Ranking can't fire. Falls back to alphabetical.\n\n**The whole feature is essentially never-triggered today** because completion is mostly invoked mid-edit. After the user finishes (e.g. `aaa.print()`) the AST converts cleanly, but then they're not asking for completion any more.\n\n**Fix options:**\n1. **Use the last-known-good snapshot:** keep the most recent valid `resolved`/`types` from a successful conversion. When the current snapshot is mid-edit, fall back to the previous good one for the receiver lookup. Cheap and usually correct (receiver type is stable across the in-progress edit).\n2. **More resilient converter:** make CST→AST recover from a trailing `.` by treating the dot-prefix as a partial UFCS access. More work; helps other features too.\n3. **Bypass the AST entirely for receiver lookup:** walk the CST directly to find the receiver identifier, look up its type via the binder's scope tree (which is more resilient). Most decoupled approach.\n\nLean toward option 1 - smallest change, biggest win.\n\n**Snapshot/integration tests:**\n- A test that simulates the LSP mid-edit scenario (`xs.` cursor, document otherwise valid) and asserts `sortTierBuiltinRelevant` items rank above plain `sortTierBuiltin` for int-shaped builtins on an int receiver.\n- Same for str, list, map.",
+  "id": "a_1MngiRqcW",
+  "position": "yAU",
+  "title": "UFCS-aware completion ranking doesn't fire during mid-edit",
+  "type": "bug",
+  "updated_at_millis": 1780366869871,
+  "history": [
+    {"field":"column","value":"next","at":1779756144996},
+    {"field":"column","value":"done","at":1780366869871}
+  ]
+}

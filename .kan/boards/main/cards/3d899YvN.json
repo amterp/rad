@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-398-http-queries-can-fail",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "2u",
   "title": "RAD-398: http queries can fail on e.g. invalid certificate",
   "type": "feature",
-  "updated_at_millis": 1770438112714
+  "updated_at_millis": 1770438112714,
+  "history": [
+    {"field":"column","value":"done","at":1767762151201}
+  ]
 }

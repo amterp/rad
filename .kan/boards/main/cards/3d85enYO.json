@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-32-pre-entering-filter",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "3t",
   "title": "RAD-32: Pre-entering filter into huh select should enter that into the filter, allowing to iterate/undo filter",
   "type": "feature",
-  "updated_at_millis": 1767762149024
+  "updated_at_millis": 1767762149024,
+  "history": [
+    {"field":"column","value":"low","at":1767762149024}
+  ]
 }

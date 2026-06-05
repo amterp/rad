@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "large-floats-printed",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "XH",
   "severity": "low",
   "title": "Large floats printed in full decimal notation instead of scientific",
-  "updated_at_millis": 1775232191221
+  "updated_at_millis": 1775232191221,
+  "history": [
+    {"field":"column","value":"done","at":1775232191221}
+  ]
 }

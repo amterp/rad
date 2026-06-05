@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-243-dot-syntax-for-list",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -9,5 +9,8 @@
   "position": "Ei",
   "title": "RAD-243: dot syntax for list indexing? i.e. mylist.0, .1, etc?",
   "type": "feature",
-  "updated_at_millis": 1767762151332
+  "updated_at_millis": 1767762151332,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151332}
+  ]
 }

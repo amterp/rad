@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "loop-context",
   "alias_explicit": false,
   "column": "todo-hi",
@@ -13,5 +13,8 @@
     "design"
   ],
   "title": "Loop context variable (with) leaks after loop and overwrites existing vars",
-  "updated_at_millis": 1775233428322
+  "updated_at_millis": 1775233428322,
+  "history": [
+    {"field":"column","value":"todo-hi","at":1775232095072}
+  ]
 }

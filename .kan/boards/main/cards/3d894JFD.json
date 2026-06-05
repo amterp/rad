@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-388-regex-constraint",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "tR",
   "title": "RAD-388: regex constraint multi args invalid syntax, but not in LSP?",
   "type": "bug",
-  "updated_at_millis": 1770438170937
+  "updated_at_millis": 1770438170937,
+  "history": [
+    {"field":"column","value":"low","at":1767762151144}
+  ]
 }

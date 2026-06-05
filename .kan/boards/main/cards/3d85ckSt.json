@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-20-generate-textmate",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "3R",
   "title": "RAD-20: Generate TextMate bundle from code",
   "type": "excellence",
-  "updated_at_millis": 1770438936402
+  "updated_at_millis": 1770438936402,
+  "history": [
+    {"field":"column","value":"low","at":1767762149008}
+  ]
 }

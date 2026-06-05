@@ -1,13 +1,16 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-9-transposing-tables",
   "alias_explicit": false,
-  "column": "in-progress",
+  "column": "done",
   "created_at_millis": 1767762148915,
   "creator": "Alexander Terp",
   "id": "3d85TpNT",
-  "position": "U",
+  "position": "!E",
   "title": "RAD-9: Transposing tables",
   "type": "feature",
-  "updated_at_millis": 1775785559110
+  "updated_at_millis": 1779502077102,
+  "history": [
+    {"field":"column","value":"done","at":1767762148915}
+  ]
 }

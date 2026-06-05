@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "int-silently",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "G8",
   "severity": "low",
   "title": "int() silently converts Inf/NaN to garbage integer values",
-  "updated_at_millis": 1775232141678
+  "updated_at_millis": 1775232141678,
+  "history": [
+    {"field":"column","value":"done","at":1775232141678}
+  ]
 }

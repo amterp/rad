@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-403-implement-conformance",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -13,5 +13,8 @@
   "position": "28",
   "title": "RAD-403: Implement conformance tests",
   "type": "feature",
-  "updated_at_millis": 1770438936379
+  "updated_at_millis": 1770438936379,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151257}
+  ]
 }

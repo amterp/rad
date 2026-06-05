@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "division-always",
   "alias_explicit": false,
   "column": "todo-lo",
@@ -13,5 +13,8 @@
     "design"
   ],
   "title": "Division always returns float, unusable as list index",
-  "updated_at_millis": 1775233450471
+  "updated_at_millis": 1775233450471,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1775232030347}
+  ]
 }

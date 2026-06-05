@@ -1,10 +1,12 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-llms-txt",
   "alias_explicit": false,
+  "column": "",
   "created_at_millis": 1774217177596,
   "creator": "Alexander Terp",
   "id": "a_lJarzcUb",
+  "position": "",
   "title": "add llms.txt",
   "type": "chore",
   "updated_at_millis": 1774217178140

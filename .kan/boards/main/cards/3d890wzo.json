@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-382-function-type",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "sY",
   "title": "RAD-382: function type annotation invalidation should propagate error",
   "type": "feature",
-  "updated_at_millis": 1770438184416
+  "updated_at_millis": 1770438184416,
+  "history": [
+    {"field":"column","value":"low","at":1767762151108}
+  ]
 }

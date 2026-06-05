@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-71-cannot-parse",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "B!",
   "title": "RAD-71: cannot parse positional negative numbers from cli without flag in front",
   "type": "bug",
-  "updated_at_millis": 1770438184393
+  "updated_at_millis": 1770438184393,
+  "history": [
+    {"field":"column","value":"low","at":1767762149217}
+  ]
 }

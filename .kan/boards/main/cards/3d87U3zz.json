@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-261-mut-excl-wrongly",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "Z!",
   "title": "RAD-261: mut excl: wrongly complains if one is default",
   "type": "bug",
-  "updated_at_millis": 1770438136490
+  "updated_at_millis": 1770438136490,
+  "history": [
+    {"field":"column","value":"low","at":1767762150163}
+  ]
 }

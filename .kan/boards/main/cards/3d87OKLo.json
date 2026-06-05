@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-246-symbol-function",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "Xf",
   "title": "RAD-246: Symbol/function module import system",
   "type": "feature",
-  "updated_at_millis": 1767762150110
+  "updated_at_millis": 1767762150110,
+  "history": [
+    {"field":"column","value":"low","at":1767762150110}
+  ]
 }

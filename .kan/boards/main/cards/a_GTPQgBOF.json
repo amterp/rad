@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "slicing-should-be-rune-not-2",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "Y8",
   "title": "slicing should be rune, not bytes",
   "type": "bug",
-  "updated_at_millis": 1769659914517
+  "updated_at_millis": 1769659914517,
+  "history": [
+    {"field":"column","value":"done","at":1769659906453}
+  ]
 }

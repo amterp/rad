@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-372-update-docs",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "hF",
   "title": "RAD-372: Update docs",
   "type": "feature",
-  "updated_at_millis": 1767762152049
+  "updated_at_millis": 1767762152049,
+  "history": [
+    {"field":"column","value":"done","at":1767762152049}
+  ]
 }

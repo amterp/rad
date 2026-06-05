@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "cannot-immediately",
   "alias_explicit": false,
   "column": "todo-hi",
@@ -11,5 +11,8 @@
   "position": "t!",
   "severity": "high",
   "title": "Cannot immediately call result of an expression",
-  "updated_at_millis": 1775355523809
+  "updated_at_millis": 1775355523809,
+  "history": [
+    {"field":"column","value":"todo-hi","at":1775232042140}
+  ]
 }

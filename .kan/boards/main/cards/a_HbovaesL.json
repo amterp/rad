@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "preserve-attributes-in-trim",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "Nj",
   "title": "Preserve attributes in Trim/Reverse",
   "type": "feature",
-  "updated_at_millis": 1770438184441
+  "updated_at_millis": 1770438184441,
+  "history": [
+    {"field":"column","value":"done","at":1769827716195}
+  ]
 }

@@ -1,16 +1,20 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "docs-ensure-we-explain-the",
   "alias_explicit": false,
-  "column": "next",
+  "column": "done",
   "created_at_millis": 1769378826728,
   "creator": "Alexander Terp",
   "id": "a_EZTGHdMN",
   "labels": [
     "ai-hi"
   ],
-  "position": "Y!",
+  "position": "yAUUUU",
   "title": "docs: ensure we explain the full Ra parsing model",
   "type": "excellence",
-  "updated_at_millis": 1770438112744
+  "updated_at_millis": 1780366870069,
+  "history": [
+    {"field":"column","value":"next","at":1769378826728},
+    {"field":"column","value":"done","at":1780366870069}
+  ]
 }

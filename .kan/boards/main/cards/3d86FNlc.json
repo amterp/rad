@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-97-lexer-handle-opening",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "F!",
   "title": "RAD-97: Lexer: Handle opening brace without a close",
   "type": "bug",
-  "updated_at_millis": 1770438149834
+  "updated_at_millis": 1770438149834,
+  "history": [
+    {"field":"column","value":"low","at":1767762149396}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-282-write-hm-example",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "am",
   "title": "RAD-282: Write hm example",
   "type": "feature",
-  "updated_at_millis": 1767762150235
+  "updated_at_millis": 1767762150235,
+  "history": [
+    {"field":"column","value":"low","at":1767762150235}
+  ]
 }

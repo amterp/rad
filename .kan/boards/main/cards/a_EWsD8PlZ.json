@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "docs-add-complete-reference",
   "alias_explicit": false,
   "column": "next",
@@ -12,5 +12,8 @@
   "position": "K!",
   "title": "docs: add complete reference/explainer on json paths",
   "type": "excellence",
-  "updated_at_millis": 1770438112733
+  "updated_at_millis": 1770438112733,
+  "history": [
+    {"field":"column","value":"next","at":1769372635926}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "docs-website-maybe-should-not",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "3!",
   "title": "docs website maybe should not deploy if version hasn't been released yet",
   "type": "bug",
-  "updated_at_millis": 1770438123935
+  "updated_at_millis": 1770438123935,
+  "history": [
+    {"field":"column","value":"low","at":1769834473850}
+  ]
 }

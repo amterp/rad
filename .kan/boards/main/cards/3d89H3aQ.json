@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-375-should-boolean-flags",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "5H",
   "title": "RAD-375: should boolean flags be positional also?",
   "type": "feature",
-  "updated_at_millis": 1767762151276
+  "updated_at_millis": 1767762151276,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151276}
+  ]
 }

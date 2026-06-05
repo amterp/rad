@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "escaping-closures",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "u8",
   "severity": "critical",
   "title": "Escaping closures are broken - returned functions lose enclosing scope",
-  "updated_at_millis": 1775232013740
+  "updated_at_millis": 1775232013740,
+  "history": [
+    {"field":"column","value":"done","at":1775232013740}
+  ]
 }

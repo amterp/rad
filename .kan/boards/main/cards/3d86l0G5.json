@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-146-investigate",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "NR",
   "title": "RAD-146: Investigate performance after revamp",
   "type": "feature",
-  "updated_at_millis": 1770438925479
+  "updated_at_millis": 1770438925479,
+  "history": [
+    {"field":"column","value":"low","at":1767762149715}
+  ]
 }

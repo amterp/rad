@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-128-regex-arg-constraint",
   "alias_explicit": false,
   "column": "low",
@@ -14,5 +14,8 @@
   "position": "KK",
   "title": "RAD-128: regex arg constraint should be a complete match?",
   "type": "feature",
-  "updated_at_millis": 1770522518710
+  "updated_at_millis": 1770522518710,
+  "history": [
+    {"field":"column","value":"low","at":1767762149596}
+  ]
 }

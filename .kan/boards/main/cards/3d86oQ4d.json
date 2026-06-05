@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-148-typed-checked-input",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "OK",
   "title": "RAD-148: typed/checked input methods",
   "type": "feature",
-  "updated_at_millis": 1770438149962
+  "updated_at_millis": 1770438149962,
+  "history": [
+    {"field":"column","value":"low","at":1767762149750}
+  ]
 }

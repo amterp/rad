@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-369-catch-else",
   "alias_explicit": false,
   "column": "high",
@@ -10,5 +10,8 @@
   "position": "R!",
   "title": "RAD-369: catch-else syntax",
   "type": "feature",
-  "updated_at_millis": 1771040535022
+  "updated_at_millis": 1771040535022,
+  "history": [
+    {"field":"column","value":"high","at":1767762151695}
+  ]
 }

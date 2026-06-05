@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "replace-and-split",
   "alias_explicit": false,
   "column": "todo-lo",
@@ -13,5 +13,8 @@
     "design"
   ],
   "title": "replace() and split() treat first arg as regex, not literal string",
-  "updated_at_millis": 1775233443323
+  "updated_at_millis": 1775233443323,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1775232007714}
+  ]
 }

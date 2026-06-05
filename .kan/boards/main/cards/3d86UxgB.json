@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-120-flag-on-http-funcs-to",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "J!",
   "title": "RAD-120: Flag on http funcs to fail script if non-OK status code",
   "type": "feature",
-  "updated_at_millis": 1770438112722
+  "updated_at_millis": 1770438112722,
+  "history": [
+    {"field":"column","value":"low","at":1767762149546}
+  ]
 }

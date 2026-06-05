@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-395-cmds-do-not-display",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "C0",
   "title": "RAD-395: cmds: do not display \"subcommand\" in help",
   "type": "bug",
-  "updated_at_millis": 1770438049018
+  "updated_at_millis": 1770438049018,
+  "history": [
+    {"field":"column","value":"done","at":1767762152009}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-49-json-path-extensions",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "7R",
   "title": "RAD-49: JSON Path Extensions",
   "type": "epic",
-  "updated_at_millis": 1767762151929
+  "updated_at_millis": 1767762151929,
+  "history": [
+    {"field":"column","value":"low","at":1767762151929}
+  ]
 }

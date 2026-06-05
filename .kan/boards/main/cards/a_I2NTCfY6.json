@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "cli-superpowers-is-cringe-2",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "4C",
   "title": "CLI superpowers is cringe",
   "type": "excellence",
-  "updated_at_millis": 1769891021466
+  "updated_at_millis": 1769891021466,
+  "history": [
+    {"field":"column","value":"done","at":1769891009280}
+  ]
 }

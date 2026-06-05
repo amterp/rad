@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-379-assess-jsonpath",
   "alias_explicit": false,
   "column": "high",
@@ -12,5 +12,8 @@
   "position": "K!",
   "title": "RAD-379: Assess JSONPath",
   "type": "feature",
-  "updated_at_millis": 1770438925521
+  "updated_at_millis": 1770438925521,
+  "history": [
+    {"field":"column","value":"high","at":1767762151655}
+  ]
 }

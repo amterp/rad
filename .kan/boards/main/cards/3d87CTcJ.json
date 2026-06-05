@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-218-allow-quieting",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "UY",
   "title": "RAD-218: Allow quieting 'Querying...' log in http requests and rad blocks",
   "type": "feature",
-  "updated_at_millis": 1770438112703
+  "updated_at_millis": 1770438112703,
+  "history": [
+    {"field":"column","value":"low","at":1767762149986}
+  ]
 }

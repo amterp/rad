@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "map-in-list-not",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "RZ",
   "severity": "medium",
   "title": "map in list not supported by in operator",
-  "updated_at_millis": 1775232099319
+  "updated_at_millis": 1775232099319,
+  "history": [
+    {"field":"column","value":"done","at":1775232099319}
+  ]
 }

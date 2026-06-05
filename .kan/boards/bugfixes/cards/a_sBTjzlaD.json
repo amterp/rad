@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "switch-evaluates-all",
   "alias_explicit": false,
   "column": "todo-lo",
@@ -10,5 +10,8 @@
   "position": "kE",
   "severity": "medium",
   "title": "Switch evaluates ALL case expressions eagerly, even after match found",
-  "updated_at_millis": 1775232180791
+  "updated_at_millis": 1775232180791,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1775232180791}
+  ]
 }

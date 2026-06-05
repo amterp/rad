@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-truncate-byte-slicing-bug",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "qM",
   "title": "Fix Truncate() byte slicing bug",
   "type": "bug",
-  "updated_at_millis": 1769827708494
+  "updated_at_millis": 1769827708494,
+  "history": [
+    {"field":"column","value":"done","at":1769827708494}
+  ]
 }

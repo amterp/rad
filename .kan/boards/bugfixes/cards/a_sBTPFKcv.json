@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "strings-are-sortable",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
     "design"
   ],
   "title": "Strings are sortable but \u003c comparison errors",
-  "updated_at_millis": 1775233429071
+  "updated_at_millis": 1775233429071,
+  "history": [
+    {"field":"column","value":"done","at":1775232167937}
+  ]
 }

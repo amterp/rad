@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "in-operator-broken",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "ii",
   "severity": "high",
   "title": "in operator broken for list-in-list checks (operands swapped)",
-  "updated_at_millis": 1775232047675
+  "updated_at_millis": 1775232047675,
+  "history": [
+    {"field":"column","value":"done","at":1775232047675}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-117-import-functions-from",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "RH",
   "title": "RAD-117: Import functions from other scripts (SEO: std lib, stdlib)",
   "type": "feature",
-  "updated_at_millis": 1767762151406
+  "updated_at_millis": 1767762151406,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151406}
+  ]
 }

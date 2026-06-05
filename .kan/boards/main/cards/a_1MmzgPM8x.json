@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "null-type-annotation",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779754490817,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 verification (2026-05-25).\n\nThe new TypingNullT (commit 44b910f1) is correctly used internally by the narrower:\n\n```rad\nfn f(x: int?):\n    if x != null:\n        a = x        # narrowed: int\n    else:\n        b: int = x   # fires RAD30001 - proves else-branch narrowed x to null  ✓\n        c: null = x  # fires RAD10009 'Unexpected \": null\"'  - unhelpful\n```\n\n**Decision:** `: null` should remain disallowed - no real use case for declaring a variable that's only ever null. The narrower internally producing TypingNullT for control-flow analysis is fine; user-written `: null` is not.\n\n**Fix needed:** the current `RAD10009 Unexpected ': null'` diagnostic doesn't explain *why* it's rejected. Replace with a targeted message steering users to the useful form:\n\n\"`null` isn't a declarable slot type. For values that may be null, declare the slot as `T?` (e.g. `int?`) instead.\"\n\n**Implementation sketch:** detect the bare-`null` case during type-annotation parsing/conversion and emit a tailored diagnostic instead of falling through to the generic parser error. Probably lands in `rts/converter*.go` or wherever type annotations get resolved, mirroring the `int|null` → `T?` pattern that landed in commit 4baa34d0.",
+  "id": "a_1MmzgPM8x",
+  "position": "!2",
+  "title": "': null' type annotation: improve diagnostic (don't allow, just explain)",
+  "type": "enhancement",
+  "updated_at_millis": 1780023477501,
+  "history": [
+    {"field":"column","value":"done","at":1779754490817}
+  ]
+}

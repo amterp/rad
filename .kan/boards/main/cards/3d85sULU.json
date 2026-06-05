@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-63-pprint-loses-ordering",
   "alias_explicit": false,
   "column": "low",
@@ -14,5 +14,8 @@
   "position": "9f",
   "title": "RAD-63: pprint loses ordering when printing maps",
   "type": "bug",
-  "updated_at_millis": 1770439001088
+  "updated_at_millis": 1770439001088,
+  "history": [
+    {"field":"column","value":"low","at":1767762149167}
+  ]
 }

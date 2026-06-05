@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-343-allow-better-tty",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "mm",
   "title": "RAD-343: allow better tty handling for interactive functions",
   "type": "feature",
-  "updated_at_millis": 1770438195294
+  "updated_at_millis": 1770438195294,
+  "history": [
+    {"field":"column","value":"low","at":1767762150827}
+  ]
 }

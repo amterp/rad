@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "error-line",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "9P",
   "title": "error line # formatting doesn't transition digits right",
   "type": "bug",
-  "updated_at_millis": 1771380235609
+  "updated_at_millis": 1771380235609,
+  "history": [
+    {"field":"column","value":"done","at":1771380226699}
+  ]
 }

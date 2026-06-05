@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-42-turn-the-aoc-solutions",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -12,5 +12,8 @@
   "position": "h!",
   "title": "RAD-42: Turn the AOC solutions into ITs?",
   "type": "excellence",
-  "updated_at_millis": 1770438205995
+  "updated_at_millis": 1770438205995,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151522}
+  ]
 }

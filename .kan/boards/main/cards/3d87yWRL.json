@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-307-support-returning",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "gY",
   "title": "RAD-307: Support returning json paths in switch stmts, as part of assignments",
   "type": "feature",
-  "updated_at_millis": 1767762150471
+  "updated_at_millis": 1767762150471,
+  "history": [
+    {"field":"column","value":"low","at":1767762150471}
+  ]
 }

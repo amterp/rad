@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "multi-line-string",
   "alias_explicit": false,
   "column": "todo-hi",
@@ -10,5 +10,8 @@
   "position": "K!",
   "severity": "medium",
   "title": "Multi-line string indentation error has unhelpful error message",
-  "updated_at_millis": 1775233500610
+  "updated_at_millis": 1775233500610,
+  "history": [
+    {"field":"column","value":"todo-hi","at":1775232111520}
+  ]
 }

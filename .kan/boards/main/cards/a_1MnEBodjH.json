@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "switch-with-default",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779755048454,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 verification (2026-05-25), test 13a (minor UX).\n\n```rad\nfn f(x: str):\n    switch x:\n        default:\n            print(\"d\")\n        case \"a\":\n            print(\"a\")\n```\n\n`./bin/radd check` reports:\n```\nL1:1: ERROR Invalid syntax (RAD10001)\nL2:5: ERROR Invalid function syntax\n```\n\nThe errors point at the function definition and the switch header, not at the actual issue: `default:` is the first arm in the switch, before any `case` arms. Swapping to `default` last makes it parse cleanly. So the structural constraint is real (default must come last), but the parser bails with a misleading message far from the actual problem.\n\n**Fix shape:** tree-sitter error recovery or post-parse AST check that detects default-before-case and emits something like:\n```\nRAD????: 'default' arm must appear last in a switch; reorder it after all 'case' arms.\n```\n\nLow priority - users hitting this will eventually figure it out. But the current error sends them looking at their function signature, which is unrelated.",
+  "id": "a_1MnEBodjH",
+  "position": "!!E",
+  "title": "Switch with default-arm before case-arms gives misleading 'Invalid function syntax' error",
+  "type": "enhancement",
+  "updated_at_millis": 1780023488538,
+  "history": [
+    {"field":"column","value":"done","at":1779755048454}
+  ]
+}

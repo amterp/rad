@@ -1,14 +1,17 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-393-cmds-support-sub",
   "alias_explicit": false,
-  "column": "next",
+  "column": "high",
   "created_at_millis": 1767762152029,
   "creator": "Alexander Terp",
   "description": "Currently cannot do `command add file:`.",
   "id": "3d8AUEYG",
-  "position": "R!",
+  "position": "9",
   "title": "RAD-393: cmds: support sub commands",
   "type": "feature",
-  "updated_at_millis": 1767762152029
+  "updated_at_millis": 1779756055405,
+  "history": [
+    {"field":"column","value":"high","at":1767762152029}
+  ]
 }

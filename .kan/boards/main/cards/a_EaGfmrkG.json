@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "should-get-stash-dir",
   "alias_explicit": false,
   "column": "done",
@@ -14,5 +14,8 @@
   "position": "Rd",
   "title": "should get_stash_dir be renamed get_stash_path?",
   "type": "bug",
-  "updated_at_millis": 1770523874629
+  "updated_at_millis": 1770523874629,
+  "history": [
+    {"field":"column","value":"done","at":1769380726096}
+  ]
 }

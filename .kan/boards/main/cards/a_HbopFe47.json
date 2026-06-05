@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-torunelist-o-n-complexity",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "vZ",
   "title": "Fix ToRuneList() O(n²) complexity",
   "type": "bug",
-  "updated_at_millis": 1769827712265
+  "updated_at_millis": 1769827712265,
+  "history": [
+    {"field":"column","value":"done","at":1769827712265}
+  ]
 }

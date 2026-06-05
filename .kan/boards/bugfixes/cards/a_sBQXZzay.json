@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "map-key-type",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "d!",
   "severity": "high",
   "title": "Map key type coercion causes silent data loss",
-  "updated_at_millis": 1775232057774
+  "updated_at_millis": 1775232057774,
+  "history": [
+    {"field":"column","value":"done","at":1775232057774}
+  ]
 }

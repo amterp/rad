@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-135-enum-constraint",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "Lf",
   "title": "RAD-135: Enum constraint complains if no args passed",
   "type": "bug",
-  "updated_at_millis": 1770438136498
+  "updated_at_millis": 1770438136498,
+  "history": [
+    {"field":"column","value":"low","at":1767762149646}
+  ]
 }

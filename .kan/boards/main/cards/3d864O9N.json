@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-81-multiline-strings",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "Cm",
   "title": "RAD-81: Multiline strings - Additional # quotes in delimiter to avoid escaping",
   "type": "feature",
-  "updated_at_millis": 1770438170868
+  "updated_at_millis": 1770438170868,
+  "history": [
+    {"field":"column","value":"low","at":1767762149281}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-index-of-built",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "Jp",
   "title": "Add index_of() built-in function",
   "type": "feature",
-  "updated_at_millis": 1770779078643
+  "updated_at_millis": 1770779078643,
+  "history": [
+    {"field":"column","value":"done","at":1769827695266}
+  ]
 }

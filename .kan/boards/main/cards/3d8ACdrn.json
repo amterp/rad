@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-354-add-iterators-range",
   "alias_explicit": false,
   "column": "high",
@@ -10,5 +10,8 @@
   "position": "6!",
   "title": "RAD-354: Add iterators - range, streaming stdin, generator fn",
   "type": "feature",
-  "updated_at_millis": 1767762151853
+  "updated_at_millis": 1767762151853,
+  "history": [
+    {"field":"column","value":"high","at":1767762151853}
+  ]
 }

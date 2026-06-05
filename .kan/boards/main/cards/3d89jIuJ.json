@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-26-allow-file-header-args",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "nH",
   "title": "RAD-26: Allow file header/args block to not be the first thing",
   "type": "feature",
-  "updated_at_millis": 1767762151560
+  "updated_at_millis": 1767762151560,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151560}
+  ]
 }

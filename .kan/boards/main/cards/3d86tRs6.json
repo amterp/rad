@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-156-shell-confirm-don-t",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "Pf",
   "title": "RAD-156: shell confirm: don't fail if not critical command",
   "type": "feature",
-  "updated_at_millis": 1767762149801
+  "updated_at_millis": 1767762149801,
+  "history": [
+    {"field":"column","value":"low","at":1767762149801}
+  ]
 }

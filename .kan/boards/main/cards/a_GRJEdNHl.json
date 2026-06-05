@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "make-work-for-key-lookups",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "c2",
   "title": "make ?? work for key lookups",
   "type": "feature",
-  "updated_at_millis": 1769654908750
+  "updated_at_millis": 1769654908750,
+  "history": [
+    {"field":"column","value":"done","at":1769654901773}
+  ]
 }

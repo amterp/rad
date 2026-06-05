@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "void-value-in",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "oQ",
   "severity": "critical",
   "title": "Void value in expressions causes Go panic",
-  "updated_at_millis": 1775232022869
+  "updated_at_millis": 1775232022869,
+  "history": [
+    {"field":"column","value":"done","at":1775232022869}
+  ]
 }

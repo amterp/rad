@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-335-one-line-help-usage",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "lt",
   "title": "RAD-335: one-line help/usage print option",
   "type": "feature",
-  "updated_at_millis": 1770438049044
+  "updated_at_millis": 1770438049044,
+  "history": [
+    {"field":"column","value":"low","at":1767762150695}
+  ]
 }

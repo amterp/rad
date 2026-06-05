@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "windows-docs-for",
   "alias_explicit": false,
   "column": "high",
@@ -10,5 +10,8 @@
   "position": "t!U",
   "title": "Windows: docs for building from source (CGO/MinGW)",
   "type": "chore",
-  "updated_at_millis": 1778119792090
+  "updated_at_millis": 1778119792090,
+  "history": [
+    {"field":"column","value":"high","at":1778118731762}
+  ]
 }

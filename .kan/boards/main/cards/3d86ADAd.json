@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-92-equality-should-work",
   "alias_explicit": false,
   "column": "done",
@@ -12,5 +12,8 @@
   "position": "yA",
   "title": "RAD-92: equality should work on lists and maps",
   "type": "feature",
-  "updated_at_millis": 1770438067726
+  "updated_at_millis": 1770438067726,
+  "history": [
+    {"field":"column","value":"done","at":1767762149347}
+  ]
 }

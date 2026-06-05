@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-371-rad-block-inline-json",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "8Q",
   "title": "RAD-371: Rad block inline json path syntax",
   "type": "feature",
-  "updated_at_millis": 1767762151295
+  "updated_at_millis": 1767762151295,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151295}
+  ]
 }

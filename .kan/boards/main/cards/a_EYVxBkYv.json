@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "detect-more-aggresively-v0-7",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "fx",
   "title": "detect more aggresively v0.7 migrations",
   "type": "feature",
-  "updated_at_millis": 1769376554217
+  "updated_at_millis": 1769376554217,
+  "history": [
+    {"field":"column","value":"done","at":1769376546917}
+  ]
 }

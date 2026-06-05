@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "2026-07-delete",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "xR",
   "title": "2026-07: delete dispaly/request blocks",
   "type": "enhancement",
-  "updated_at_millis": 1773005871569
+  "updated_at_millis": 1773005871569,
+  "history": [
+    {"field":"column","value":"low","at":1773005853805}
+  ]
 }

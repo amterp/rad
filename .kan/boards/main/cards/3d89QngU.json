@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-158-should-maybe-be",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "L!",
   "title": "RAD-158: Should (maybe) be possible to index returned values from multi-return functions",
   "type": "bug",
-  "updated_at_millis": 1767762151369
+  "updated_at_millis": 1767762151369,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151369}
+  ]
 }

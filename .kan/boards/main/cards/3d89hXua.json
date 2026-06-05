@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-27-better-supported-way",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "k8",
   "title": "RAD-27: Better-supported way to invoke other rad scripts (almost like RSL functions?)",
   "type": "feature",
-  "updated_at_millis": 1767762151541
+  "updated_at_millis": 1767762151541,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1767762151541}
+  ]
 }

@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "nested-paren-union",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779755041387,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 verification (2026-05-25), test 15a.\n\n```rad\nxs: ((int|str)|bool)[] = [1, \"hi\", true]\n# OR\nxs: (int|(str|bool))[] = [1, \"hi\", true]\n```\n\nBoth fire HINT RAD30001 with a message that says **the same type on both sides**:\n`Value of type '(int|str|bool)[]' is not assignable to declared type '(int|str|bool)[]'`\n\nThe type printer normalises both to identical strings, but `IsAssignableFrom` returns false.\n\n**Scope of the bug:** specific to **list-of-nested-paren-union**. These work cleanly:\n- `xs: (int|str|bool)[] = ...` (flat union in list)  ✓\n- `((int|str)|bool)` non-list (`ys: ((int|str)|bool) = true`)  ✓\n- `((int|str))[]` (parens around already-grouped union)  ✓\n\nSo the assembly is: nested-paren union + [] suffix + value of the synthesised union type → false negative on assignability.\n\n**Likely root cause:** the converter creates a slightly different internal type tree for the nested-paren form than for the flat form. The list element type carries that nested structure; `IsAssignableFrom` on the element types doesn't normalise before comparison. Adding union flattening at the assignability boundary should close it.\n\n**Files to investigate:** `rts/rl/typing_assignable.go` (specifically the TypingUnionT branch), `rts/rl/typing_resolution.go` (parens production handling). Probably needs a normalise-before-compare or a smarter element-wise IsAssignableFrom.\n\n**Snapshot tests:**\n- The two repros above → no diagnostic.\n- The variants that already work → keep working (regression lock).",
+  "id": "a_1MnE0Q1DA",
+  "position": "!!U",
+  "title": "Nested-paren union in list type produces bogus 'X is not assignable to X' diagnostic",
+  "type": "bug",
+  "updated_at_millis": 1780023480798,
+  "history": [
+    {"field":"column","value":"done","at":1779755041387}
+  ]
+}

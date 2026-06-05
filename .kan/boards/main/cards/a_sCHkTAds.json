@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-thorough-radls",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "0I",
   "title": "Add thorough radls (LSP) test coverage",
   "type": "excellence",
-  "updated_at_millis": 1775234150788
+  "updated_at_millis": 1775234150788,
+  "history": [
+    {"field":"column","value":"done","at":1775234103107}
+  ]
 }

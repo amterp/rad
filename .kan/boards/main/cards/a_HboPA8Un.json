@@ -1,8 +1,8 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-pad-start-pad-end-string-2",
   "alias_explicit": false,
-  "column": "next",
+  "column": "low",
   "created_at_millis": 1769827696093,
   "creator": "Alexander Terp",
   "description": "Missing common string padding operations. Python has ljust/rjust/zfill, JS has padStart/padEnd.",
@@ -10,8 +10,11 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "D!",
+  "position": "!6",
   "title": "Add pad_start()/pad_end() string functions",
   "type": "feature",
-  "updated_at_millis": 1770438029211
+  "updated_at_millis": 1779756048432,
+  "history": [
+    {"field":"column","value":"low","at":1769827696093}
+  ]
 }

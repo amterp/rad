@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-321-int-float-arg-typing",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "jf",
   "title": "RAD-321: int/float arg typing: range",
   "type": "feature",
-  "updated_at_millis": 1767762150597
+  "updated_at_millis": 1767762150597,
+  "history": [
+    {"field":"column","value":"low","at":1767762150597}
+  ]
 }

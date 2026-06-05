@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-297-rad-home-directory",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "d!",
   "title": "RAD-297: rad home directory 'bin' on PATH for scripts. can symlink into it, or create scripts in it with `rad new --home` for example",
   "type": "feature",
-  "updated_at_millis": 1767762150324
+  "updated_at_millis": 1767762150324,
+  "history": [
+    {"field":"column","value":"low","at":1767762150324}
+  ]
 }

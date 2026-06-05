@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-example-for-json-paths",
   "alias_explicit": false,
   "column": "high",
@@ -12,5 +12,8 @@
   "position": "m!",
   "title": "add example for json paths",
   "type": "excellence",
-  "updated_at_millis": 1770438112753
+  "updated_at_millis": 1770438112753,
+  "history": [
+    {"field":"column","value":"high","at":1769398050737}
+  ]
 }

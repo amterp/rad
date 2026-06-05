@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-182-add-functions-for",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "QY",
   "title": "RAD-182: add functions for adding days, etc to time",
   "type": "feature",
-  "updated_at_millis": 1770438049011
+  "updated_at_millis": 1770438049011,
+  "history": [
+    {"field":"column","value":"low","at":1767762149834}
+  ]
 }

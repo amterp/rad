@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "website-light-theme-sucks",
   "alias_explicit": false,
   "column": "high",
@@ -12,5 +12,8 @@
   "position": "Y!",
   "title": "website light theme sucks",
   "type": "feature",
-  "updated_at_millis": 1770438184466
+  "updated_at_millis": 1770438184466,
+  "history": [
+    {"field":"column","value":"high","at":1769890992556}
+  ]
 }

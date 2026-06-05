@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "add-and-catch",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "HD",
   "title": "add ?. and catch operator and null-coalesce ??",
   "type": "feature",
-  "updated_at_millis": 1770778326281
+  "updated_at_millis": 1770778326281,
+  "history": [
+    {"field":"column","value":"done","at":1770778296805}
+  ]
 }

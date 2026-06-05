@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-155-bool-flags-should-not",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "PD",
   "title": "RAD-155: Bool flags should not be displayed as positional args",
   "type": "feature",
-  "updated_at_millis": 1767762149783
+  "updated_at_millis": 1767762149783,
+  "history": [
+    {"field":"column","value":"low","at":1767762149783}
+  ]
 }

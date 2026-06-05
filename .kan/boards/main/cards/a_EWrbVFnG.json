@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "docs-add-1-or-2-more-examples",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "ee",
   "title": "docs: add 1 or 2 more examples",
   "type": "excellence",
-  "updated_at_millis": 1769372619829
+  "updated_at_millis": 1769372619829,
+  "history": [
+    {"field":"column","value":"done","at":1769372612598}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-194-relational-args-usage",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "SK",
   "title": "RAD-194: Relational args: usage strings",
   "type": "feature",
-  "updated_at_millis": 1770438170830
+  "updated_at_millis": 1770438170830,
+  "history": [
+    {"field":"column","value":"low","at":1767762149901}
+  ]
 }

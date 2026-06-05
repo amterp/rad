@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "null-as-map-key",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "4i",
   "severity": "medium",
   "title": "Null as map key causes Go panic instead of clean error",
-  "updated_at_millis": 1775232132081
+  "updated_at_millis": 1775232132081,
+  "history": [
+    {"field":"column","value":"done","at":1775232132081}
+  ]
 }

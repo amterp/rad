@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "somehow-allow-str-to",
   "alias_explicit": false,
   "column": "low",
@@ -9,5 +9,8 @@
   "position": "x!",
   "title": "somehow allow str? To allow -s but not complain about missing value. Should we just allow the flag and make the value null?",
   "type": "feature",
-  "updated_at_millis": 1772916685445
+  "updated_at_millis": 1772916685445,
+  "history": [
+    {"field":"column","value":"low","at":1772916685361}
+  ]
 }

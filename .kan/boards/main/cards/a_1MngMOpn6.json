@@ -1,0 +1,18 @@
+{
+  "_v": 3,
+  "alias": "list-covariance-t",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779756131335,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 LSP verification (2026-05-25), test 20 follow-up.\n\n```rad\nxs: (int|str)[] = [1, 2, 3]     # HINT: 'int[]' not assignable to '(int|str)[]'  ✗\nys: (int|str)[] = [\"a\", \"b\"]    # HINT: 'str[]' not assignable to '(int|str)[]'  ✗\nzs: (int|str)[] = [1, \"two\"]    # clean (mixed literal synths directly to (int|str)[])  ✓\n```\n\nBut the scalar case works correctly:\n\n```rad\nx: int|str = 5      # clean  ✓\ny: int|str = \"hi\"   # clean  ✓\n```\n\nSo the bug is in **list element variance**: `T[]` is not considered assignable to `(T|U)[]` even though every element of T[] is by definition a T, and T \u003c: (T|U). This is the textbook covariant-list rule and is sound for read-only collections (and Rad doesn't enforce read-only semantics here anyway).\n\n**Root cause hypothesis:** `TypingListT.IsAssignableFrom` is likely checking element-type equality rather than element-type assignability. Should be: `list[A]` is assignable to `list[B]` iff `A` is assignable to `B`. For unions, that means `A` is assignable to `B` iff every member of A is assignable to some member of B.\n\n**Files to investigate:** `rts/rl/typing_assignable.go` (the `TypingListT` branch).\n\n**User impact:** today users have to write the literal in already-widened form (`[1, \"two\"]`) to get a clean type-check on a `(int|str)[]` slot. Hand-typing a uniform-element list and assigning to a wider declared type fires a spurious hint. Common pattern when seeding a heterogeneous container.\n\n**Snapshot tests:**\n- `xs: (int|str)[] = [1, 2, 3]` clean\n- `xs: (int|str)[] = [\"a\"]` clean\n- `xs: int[] = [\"a\"]` still fires (genuine mismatch)\n- `x: int|str = 5` clean (regression lock)\n\n**Probably related to** the nested-paren-union bug (card 'nested-paren-union') - both look like sloppy assignability comparison on unions. Could share the same fix.",
+  "id": "a_1MngMOpn6",
+  "position": "yAUU",
+  "title": "List covariance: T[] not assignable to (T|U)[]",
+  "type": "bug",
+  "updated_at_millis": 1780366869919,
+  "history": [
+    {"field":"column","value":"next","at":1779756131335},
+    {"field":"column","value":"done","at":1780366869919}
+  ]
+}

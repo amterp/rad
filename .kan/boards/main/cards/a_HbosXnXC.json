@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "consider-caching-plain-len-2",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "Ai",
   "title": "Consider caching Plain()/Len()/Runes()",
   "type": "feature",
-  "updated_at_millis": 1770438123967
+  "updated_at_millis": 1770438123967,
+  "history": [
+    {"field":"column","value":"done","at":1769827714304}
+  ]
 }

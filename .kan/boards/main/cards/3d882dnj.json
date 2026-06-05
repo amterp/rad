@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-312-switch-case-1-return",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "hR",
   "title": "RAD-312: switch case 1 -\u003e return 1 should be allowed",
   "type": "feature",
-  "updated_at_millis": 1770438123927
+  "updated_at_millis": 1770438123927,
+  "history": [
+    {"field":"column","value":"low","at":1767762150506}
+  ]
 }

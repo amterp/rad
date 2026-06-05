@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-4-add-huh-test-coverage",
   "alias_explicit": false,
   "column": "low",
@@ -12,5 +12,8 @@
   "position": "!R",
   "title": "RAD-4: add huh test coverage",
   "type": "excellence",
-  "updated_at_millis": 1770438184458
+  "updated_at_millis": 1770438184458,
+  "history": [
+    {"field":"column","value":"low","at":1767762148884}
+  ]
 }

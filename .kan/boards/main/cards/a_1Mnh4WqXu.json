@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "complete-docs-funcs",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779756158687,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 LSP verification (2026-05-25), test 18a.\n\nThe codegen infrastructure from commit 2141aa75 landed cleanly. `docs/funcs/` exists with 5 migrated builtins: `abs`, `len`, `print`, `range`, `sort`. Hover on these shows rich docs (signature + prose + examples). Hover on any other builtin (e.g. `print_err`, `filter`, `trim`, `parse_int`) falls back gracefully to bare-signature display.\n\n**Work to complete the picture:**\n- Migrate the remaining ~70 builtins listed in `rts/signatures.go` into individual `docs/funcs/*.md` files.\n- Each file follows the structure already documented in `docs/funcs/README.md`: `# \u003cname\u003e`, `## Signature`, `## Parameters`, `## Examples`, `## Category` (+ optional `## Notes`, `## See also`).\n- Existing 5 files (`abs.md`, `len.md`, `print.md`, `range.md`, `sort.md`) are canonical references.\n\n**Phasing:** batch ~10 at a time, re-running codegen each batch. Land in small commits so each batch is reviewable.\n\n**Suggested grouping by category (rough cuts):**\n- io: print_err, pprint, debug, input, read_file, write_file, read_stdin, has_stdin, get_path, find_paths, delete_path\n- strings: replace, lower, upper, trim, trim_*, starts_with, ends_with, count, split, split_lines, index_of, matches, hyperlink, plain\n- collections: keys, values, unique, reverse, join, filter, map, flat_map, zip\n- math/numeric: rand, rand_int, seed_random, pow, ceil, floor, round, min, max, clamp, sum\n- parsing/conversion: parse_int, parse_float, parse_json, parse_duration, parse_date, parse_epoch, convert_duration, str, int, float, type_of, is_defined\n- time: now, sleep\n- http: http_get/post/put/patch/delete/head/options/trace/connect\n- system: get_env, get_args, exit, error, confirm, pick, pick_kv, pick_from_resource, multipick\n- formatting/color: red, green, yellow, blue, magenta, cyan, white, orange, pink, black, bold, dim, italic, underline, strikethrough, color_rgb, colorize\n- stash/state: get_stash_path, load_state, save_state, load_stash_file, write_stash_file, get_rad_home, gen_fid, load\n- crypto/encoding: hash, encode_base64, decode_base64, encode_base16, decode_base16, uuid_v4, uuid_v7\n\n**Completeness gate:** before/during the migration, add a codegen test that fails if any registered builtin in `signatures.go` has no `.md` file. Once that gate is in place, the migration becomes a forced march - can't ship until every builtin is covered. Worth landing the gate BEFORE finishing the migration so it acts as a checklist.\n\n**No deep design decisions left** - this is execution. Could be parcelled out to multiple sessions / contributors / agents.",
+  "id": "a_1Mnh4WqXu",
+  "position": "!!6",
+  "title": "Complete docs/funcs/ migration: 5 of ~75 builtins have structured hover docs",
+  "type": "chore",
+  "updated_at_millis": 1780023492116,
+  "history": [
+    {"field":"column","value":"done","at":1779756158687}
+  ]
+}

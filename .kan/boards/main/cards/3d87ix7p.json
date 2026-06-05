@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-295-docs-write-rad-code",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "cY",
   "title": "RAD-295: Docs: write rad code validation script",
   "type": "excellence",
-  "updated_at_millis": 1770438184450
+  "updated_at_millis": 1770438184450,
+  "history": [
+    {"field":"column","value":"low","at":1767762150307}
+  ]
 }

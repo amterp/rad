@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-124-confirm-should-maybe",
   "alias_explicit": false,
   "column": "low",
@@ -14,5 +14,8 @@
   "position": "Jt",
   "title": "RAD-124: confirm() should maybe accept 'enter' as well?",
   "type": "feature",
-  "updated_at_millis": 1770522510223
+  "updated_at_millis": 1770522510223,
+  "history": [
+    {"field":"column","value":"low","at":1767762149579}
+  ]
 }

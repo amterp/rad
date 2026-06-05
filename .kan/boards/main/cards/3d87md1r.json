@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-298-gross-error-if",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "dR",
   "title": "RAD-298: Gross error if duplicate short flags",
   "type": "bug",
-  "updated_at_millis": 1770438049037
+  "updated_at_millis": 1770438049037,
+  "history": [
+    {"field":"column","value":"low","at":1767762150342}
+  ]
 }

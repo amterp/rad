@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-106-decide-on-rules",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "GK",
   "title": "RAD-106: Decide on rules around legal statements in rad/display/request blocks",
   "type": "feature",
-  "updated_at_millis": 1770438936387
+  "updated_at_millis": 1770438936387,
+  "history": [
+    {"field":"column","value":"low","at":1767762149446}
+  ]
 }

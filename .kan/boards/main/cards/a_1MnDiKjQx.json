@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "switch-checker-doesn",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1779755030167,
+  "creator": "Alexander Terp",
+  "description": "Surfaced during round-2 verification (2026-05-25), test 13b.\n\n```rad\nfn f(name: [\"a\", \"b\", \"c\"]):\n    switch name:\n        case \"a\":\n            x = 1\n        case \"b\":\n            x = 2\n        case \"c\":\n            x = 3\n        case \"wat\":   # \u003c- this can never match; name is only ever \"a\", \"b\", or \"c\"\n            x = 4\n```\n\n`./bin/radd check` reports no diagnostics. The `case \"wat\":` arm is unreachable because the discriminant's static type cannot produce \"wat\".\n\n**Why it matters:** classic refactor stale-arm bug. Someone renamed an enum variant; the old name lingers in a switch and is silently dead code.\n\n**Relationship to RAD40012:** the new unreachable-case detection (commit bd93a86e) catches duplicate keys *across arms within the switch*. This case is different: the key is unreachable because of the *discriminant's type*, not because of a prior arm.\n\n**Fix shape:** during switch-walk, when the discriminant's narrowed type is a known enum (e.g. `TypingStrEnumT`), check each case key against the enum's value set. Keys outside the set fire RAD40012 (or a sibling code) with a message like:\n\"Case 'wat' is unreachable; 'name' is of type [\\\"a\\\", \\\"b\\\", \\\"c\\\"] and can never equal 'wat'\"\n\n**Snapshot test (per working principle):** the script above with the expected new diagnostic on the bad case.",
+  "id": "a_1MnDiKjQx",
+  "position": "!0",
+  "title": "Switch checker doesn't flag case-key not in the matched enum type",
+  "type": "bug",
+  "updated_at_millis": 1780023479593,
+  "history": [
+    {"field":"column","value":"done","at":1779755030167}
+  ]
+}

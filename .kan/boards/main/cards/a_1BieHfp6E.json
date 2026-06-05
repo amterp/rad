@@ -1,14 +1,18 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "windows-uplift-cross",
   "alias_explicit": false,
-  "column": "next",
+  "column": "done",
   "created_at_millis": 1778118738164,
   "creator": "Alexander Terp",
   "description": "The 'windows' branch has commits adding cross-platform testing for macOS/Windows (e085011a) and platform-normalization improvements (64227082, 5fdf8fd8). Review and uplift the relevant pieces to main so we get Windows coverage in CI. Without this, Windows fixes (like the auto-shell-detect for #123) only get verified by users hitting issues, not by automation.",
   "id": "a_1BieHfp6E",
-  "position": "t!UU",
+  "position": "yAUUU",
   "title": "Windows: uplift cross-platform CI from windows branch",
   "type": "excellence",
-  "updated_at_millis": 1778119788265
+  "updated_at_millis": 1780366869972,
+  "history": [
+    {"field":"column","value":"next","at":1778118738164},
+    {"field":"column","value":"done","at":1780366869972}
+  ]
 }

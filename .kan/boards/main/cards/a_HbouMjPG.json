@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "preserve-attributes-in-string",
   "alias_explicit": false,
   "column": "done",
@@ -13,5 +13,8 @@
   "position": "MQ",
   "title": "Preserve attributes in string slicing",
   "type": "feature",
-  "updated_at_millis": 1770438184433
+  "updated_at_millis": 1770438184433,
+  "history": [
+    {"field":"column","value":"done","at":1769827715430}
+  ]
 }

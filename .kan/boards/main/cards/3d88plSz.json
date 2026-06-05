@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-365-clean-up-printer-api",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "qK",
   "title": "RAD-365: Clean up Printer API",
   "type": "excellence",
-  "updated_at_millis": 1770438925503
+  "updated_at_millis": 1770438925503,
+  "history": [
+    {"field":"column","value":"low","at":1767762150996}
+  ]
 }

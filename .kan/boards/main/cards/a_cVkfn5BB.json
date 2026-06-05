@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "regex-text-match",
   "alias_explicit": false,
   "column": "next",
@@ -9,5 +9,8 @@
   "position": "f!",
   "title": "regex text match function",
   "type": "feature",
-  "updated_at_millis": 1772916377865
+  "updated_at_millis": 1772916377865,
+  "history": [
+    {"field":"column","value":"next","at":1772916283540}
+  ]
 }

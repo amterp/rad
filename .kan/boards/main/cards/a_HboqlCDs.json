@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-indexat-efficiency",
   "alias_explicit": false,
   "column": "done",
@@ -10,5 +10,8 @@
   "position": "ws",
   "title": "Fix IndexAt() efficiency",
   "type": "bug",
-  "updated_at_millis": 1769827713203
+  "updated_at_millis": 1769827713203,
+  "history": [
+    {"field":"column","value":"done","at":1769827713203}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "fix-up-cross-platform-ci",
   "alias_explicit": false,
   "column": "done",
@@ -9,5 +9,8 @@
   "position": "iY",
   "title": "fix up \"cross platform\" CI framing",
   "type": "excellence",
-  "updated_at_millis": 1769311124873
+  "updated_at_millis": 1769311124873,
+  "history": [
+    {"field":"column","value":"done","at":1769311122216}
+  ]
 }

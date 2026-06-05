@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-48-allow-json-paths-with",
   "alias_explicit": false,
   "column": "low",
@@ -10,5 +10,8 @@
   "position": "8K",
   "title": "RAD-48: Allow JSON paths with spaces in them",
   "type": "feature",
-  "updated_at_millis": 1767762149119
+  "updated_at_millis": 1767762149119,
+  "history": [
+    {"field":"column","value":"low","at":1767762149119}
+  ]
 }

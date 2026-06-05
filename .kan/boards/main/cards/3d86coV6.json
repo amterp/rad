@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-130-rad-fmt",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "LD",
   "title": "RAD-130: rad fmt",
   "type": "feature",
-  "updated_at_millis": 1770438925528
+  "updated_at_millis": 1770438925528,
+  "history": [
+    {"field":"column","value":"low","at":1767762149629}
+  ]
 }

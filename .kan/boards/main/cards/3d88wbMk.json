@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "rad-380-support-trailing",
   "alias_explicit": false,
   "column": "low",
@@ -13,5 +13,8 @@
   "position": "rf",
   "title": "RAD-380: support trailing commas on multiline function signature declaration",
   "type": "feature",
-  "updated_at_millis": 1770438067740
+  "updated_at_millis": 1770438067740,
+  "history": [
+    {"field":"column","value":"low","at":1767762151071}
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "large-int-vs-float",
   "alias_explicit": false,
   "column": "todo-lo",
@@ -10,5 +10,8 @@
   "position": "QY",
   "severity": "low",
   "title": "Large int vs float comparison gives wrong result due to precision loss",
-  "updated_at_millis": 1775232149323
+  "updated_at_millis": 1775232149323,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1775232149323}
+  ]
 }

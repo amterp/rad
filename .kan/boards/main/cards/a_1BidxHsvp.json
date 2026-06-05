@@ -1,5 +1,5 @@
 {
-  "_v": 2,
+  "_v": 3,
   "alias": "windows-shell-macro",
   "alias_explicit": false,
   "column": "uncommitted",
@@ -10,5 +10,8 @@
   "position": "wiU",
   "title": "Windows: @shell macro for pinning shell target",
   "type": "feature",
-  "updated_at_millis": 1778118725524
+  "updated_at_millis": 1778118725524,
+  "history": [
+    {"field":"column","value":"uncommitted","at":1778118725524}
+  ]
 }
