@@ -1,5 +1,5 @@
 ### TITLE ###
-If else-if else
+[F17] If / else-if / else chain
 ### INPUT ###
 if x>1:
     print(1)
@@ -15,7 +15,7 @@ else if y:
 else:
     print(3)
 ### TITLE ###
-For loop
+[F18] For loop
 ### INPUT ###
 for i in range(3):
     print(i)
@@ -23,7 +23,7 @@ for i in range(3):
 for i in range(3):
     print(i)
 ### TITLE ###
-For loop multiple vars
+[F18] For loop with multiple vars
 ### INPUT ###
 for i,x in items:
     print(x)
@@ -31,7 +31,7 @@ for i,x in items:
 for i, x in items:
     print(x)
 ### TITLE ###
-While loop
+[F19] While loop
 ### INPUT ###
 while x:
     x=x-1
@@ -39,7 +39,7 @@ while x:
 while x:
     x = x - 1
 ### TITLE ###
-Nested blocks
+[F1][F17][F18] Nested blocks indent four spaces
 ### INPUT ###
 if a:
     for i in xs:

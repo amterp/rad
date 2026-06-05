@@ -3,6 +3,7 @@ package radfmt_test
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -12,6 +13,19 @@ import (
 	"github.com/amterp/rad/rts/radfmt"
 	"github.com/stretchr/testify/require"
 )
+
+// rawMarker in a snapshot title marks a byte-level case whose INPUT and STDOUT
+// are Go-quoted strings (e.g. "x = 1\r\n"). Line-ending, trailing-whitespace,
+// and exact-trailing-newline rules can't be represented as literal snapshot text
+// - the scanner strips CRs and editors strip trailing spaces - so these cases
+// encode the bytes as visible escapes and are compared byte-for-byte.
+const rawMarker = "[raw]"
+
+func unquoteSnap(t *testing.T, s string) string {
+	v, err := strconv.Unquote(s)
+	require.NoErrorf(t, err, "[raw] snapshot section must be a Go-quoted string, got: %s", s)
+	return v
+}
 
 // TestFmtSnapshots runs every .snap file under rts/radfmt/snapshots/ through
 // Format and compares the result against the snapshot's STDOUT section. The
@@ -69,20 +83,41 @@ func TestFmtSnapshots(t *testing.T) {
 					t.Skip(tc.SkipReason)
 				}
 
-				out, _, ok := radfmt.Format(tc.Input)
-				require.True(t, ok, "Format returned ok=false (parse error?) for input:\n%s", tc.Input)
+				// A [raw] case carries its input and expected output as Go-quoted
+				// strings; decode them and compare byte-for-byte (no trailing-
+				// newline trim) so byte-level rules are precisely testable.
+				raw := strings.Contains(tc.Title, rawMarker)
+				input, expected := tc.Input, tc.Stdout
+				if raw {
+					input = unquoteSnap(t, tc.Input)
+					expected = unquoteSnap(t, tc.Stdout)
+				}
 
-				actual := strings.TrimRight(out, "\n")
-				if actual != tc.Stdout {
+				out, _, ok := radfmt.Format(input)
+				require.True(t, ok, "Format returned ok=false (parse error?) for input:\n%s", input)
+
+				actual := out
+				if !raw {
+					actual = strings.TrimRight(out, "\n")
+				}
+
+				if actual != expected {
 					if *radtesting.UpdateSnapshots {
 						updateMu.Lock()
-						tc.Stdout = actual
+						if raw {
+							tc.Stdout = strconv.Quote(actual)
+						} else {
+							tc.Stdout = actual
+						}
 						filesToUpdate[snapFile] = cases
 						updateMu.Unlock()
+					} else if raw {
+						t.Errorf("Snapshot mismatch for %s:\n expected %s\n   actual %s",
+							tc.Title, strconv.Quote(expected), strconv.Quote(actual))
 					} else {
 						t.Errorf("Snapshot mismatch for %s:\n%s",
 							tc.Title,
-							gd.DiffWith(tc.Stdout, actual,
+							gd.DiffWith(expected, actual,
 								gd.WithColor(true),
 								gd.WithLayout(gd.LayoutPreferSideBySide),
 								gd.WithWidth(120)))

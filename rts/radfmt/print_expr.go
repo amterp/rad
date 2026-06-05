@@ -60,11 +60,14 @@ func (p *printer) formatExpr(n *ts.Node) Doc {
 	// yet. Rather than risk dropping one, emit any comment-bearing expression
 	// verbatim - structurally safe, just not reflowed. Per-construct interior
 	// comment handling (see DESIGN.md) can replace this as constructs mature.
+	//
+	// [F36] an expression containing an interior comment is emitted verbatim
 	if containsComment(n) {
 		return p.verbatim(n)
 	}
 
 	switch n.Kind() {
+	// [F33] number/bool/null/identifier literals are preserved verbatim
 	case rl.K_IDENTIFIER, rl.K_INT, rl.K_FLOAT, rl.K_BOOL, rl.K_NULL:
 		return text(p.nodeText(n))
 
@@ -106,7 +109,10 @@ func (p *printer) formatExpr(n *ts.Node) Doc {
 	}
 }
 
-// formatBinary renders `left op right` with single spaces around the operator.
+// formatBinary renders `left op right` with single spaces around the operator -
+// covers and/or, comparisons, in/not in, and arithmetic.
+//
+// [F20] binary operators get single spaces around them
 func (p *printer) formatBinary(n *ts.Node) Doc {
 	left := childByField(n, rl.F_LEFT)
 	op := childByField(n, rl.F_OP)
@@ -123,6 +129,8 @@ func (p *printer) formatBinary(n *ts.Node) Doc {
 
 // formatUnary renders a prefix operator. Word operators (not) take a trailing
 // space; symbolic ones (-, !) bind tight to their operand.
+//
+// [F21] unary: word ops (`not`) spaced, symbolic ops (`-`, `!`) tight
 func (p *printer) formatUnary(n *ts.Node) Doc {
 	op := childByField(n, rl.F_OP)
 	arg := childByField(n, rl.F_ARG)
@@ -138,6 +146,8 @@ func (p *printer) formatUnary(n *ts.Node) Doc {
 }
 
 // formatTernary renders `cond ? a : b`.
+//
+// [F22] ternary: spaces around `?` and `:`
 func (p *printer) formatTernary(n *ts.Node) Doc {
 	cond := childByField(n, rl.F_CONDITION)
 	tb := childByField(n, rl.F_TRUE_BRANCH)
@@ -153,7 +163,11 @@ func (p *printer) formatTernary(n *ts.Node) Doc {
 }
 
 // formatCall renders a function call: `f(a, b)`, wrapping one-arg-per-line with
-// a trailing comma when it exceeds the line width.
+// a trailing comma when it exceeds the line width. Positional and named args are
+// selected by field name (the func, parens, and commas have other/no field, so
+// they're skipped without special-casing).
+//
+// [F24] call args: tight parens, ", " between args
 func (p *printer) formatCall(n *ts.Node) Doc {
 	fn := childByField(n, rl.F_FUNC)
 	var fnDoc Doc = text("")
@@ -162,27 +176,37 @@ func (p *printer) formatCall(n *ts.Node) Doc {
 	}
 
 	var args []Doc
-	for _, c := range childPtrs(n) {
-		switch c.Kind() {
-		case tLParen, tRParen, tComma:
-			continue
+	for i, c := range childPtrs(n) {
+		switch n.FieldNameForChild(uint32(i)) {
+		case rl.F_ARG:
+			args = append(args, p.formatExpr(c))
+		case rl.F_NAMED_ARG:
+			args = append(args, p.formatNamedArg(c))
 		}
-		// Skip the function-name child (matched by node id - childByField and
-		// childPtrs return distinct *Node values for the same node, so pointer
-		// equality would never hold).
-		if fn != nil && c.Id() == fn.Id() {
-			continue
-		}
-		if !c.IsNamed() {
-			continue
-		}
-		args = append(args, p.formatExpr(c))
 	}
 
-	return concat(fnDoc, p.delimited(tLParen, tRParen, args))
+	return concat(fnDoc, p.delimited(tLParen, tRParen, args, false))
+}
+
+// formatNamedArg formats a named call argument `key=val` tightly - no spaces
+// around `=`. This distinguishes a call-site binding from an assignment
+// statement (which does space its `=`).
+//
+// [F32] named call args bind tight: `f(key=val)`
+func (p *printer) formatNamedArg(n *ts.Node) Doc {
+	name := childByField(n, rl.F_NAME)
+	value := childByField(n, rl.F_VALUE)
+	if name == nil || value == nil {
+		return p.verbatim(n)
+	}
+	return concat(text(p.nodeText(name)), text("="), p.formatExpr(value))
 }
 
 // formatParen renders `(expr)` tightly around its single inner expression.
+// Parens are preserved exactly as written - never added or removed - so the
+// author's grouping is respected.
+//
+// [F23] parentheses tight inside; never added or removed
 func (p *printer) formatParen(n *ts.Node) Doc {
 	for _, c := range namedChildrenOf(n) {
 		return concat(text(tLParen), p.formatExpr(c), text(tRParen))
@@ -193,6 +217,8 @@ func (p *printer) formatParen(n *ts.Node) Doc {
 // formatPath renders a variable path / postfix chain (`a.b.c`, `a[0]`,
 // `obj.method(1)`) tightly, with no stray spaces, formatting interior index and
 // call expressions.
+//
+// [F25] paths/postfix chains are tight (no spaces around `.` or `[]`)
 func (p *printer) formatPath(n *ts.Node) Doc {
 	var parts []Doc
 	for i, c := range childPtrs(n) {
@@ -212,6 +238,8 @@ func (p *printer) formatPath(n *ts.Node) Doc {
 }
 
 // formatSlice renders `start:end` (and `::step` forms) tightly.
+//
+// [F26] slices are tight (no spaces around the slice colons)
 func (p *printer) formatSlice(n *ts.Node) Doc {
 	var parts []Doc
 	for _, c := range childPtrs(n) {
@@ -226,18 +254,27 @@ func (p *printer) formatSlice(n *ts.Node) Doc {
 
 // delimited renders a comma-separated list inside open/close delimiters, flat
 // when it fits and one-item-per-line (with a trailing comma) when it doesn't.
-func (p *printer) delimited(open, close string, items []Doc) Doc {
+// When pad is set, the flat form keeps a space just inside each delimiter
+// (`{ a, b }`); otherwise it's tight (`[a, b]`, `f(a, b)`). The broken form is
+// identical either way. An empty collection is always tight (`[]`, `{}`).
+//
+// [F29] over-width calls/collections wrap one item per line with a trailing comma
+func (p *printer) delimited(open, close string, items []Doc, pad bool) Doc {
 	if len(items) == 0 {
 		return concat(text(open), text(close))
+	}
+	gap := softLine()
+	if pad {
+		gap = lineOrSpace()
 	}
 	return group(concat(
 		text(open),
 		indent(concat(
-			softLine(),
+			gap,
 			join(concat(text(tComma), lineOrSpace()), items),
 			ifBreak(text(tComma), text("")),
 		)),
-		softLine(),
+		gap,
 		text(close),
 	))
 }

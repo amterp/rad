@@ -10,6 +10,7 @@ import (
 // line-ending agnostic and output is canonical. (radfmt is below core in the
 // import graph, so it can't reuse core's helper - and this handles bare CR,
 // which core's CRLF-only version does not.)
+// [F2] normalize line endings to LF
 func normalizeLineEndings(s string) string {
 	s = strings.ReplaceAll(s, "\r\n", "\n")
 	return strings.ReplaceAll(s, "\r", "\n")

@@ -106,9 +106,16 @@ func collectSnapshotInputs(t *testing.T) []snapshotInput {
 func parseSnapInputs(body string) []string {
 	var inputs []string
 	lines := strings.Split(body, "\n")
+	title := ""
 	i := 0
 	for i < len(lines) {
-		if strings.TrimSpace(lines[i]) == "### INPUT ###" {
+		trimmed := strings.TrimSpace(lines[i])
+		if trimmed == "### TITLE ###" && i+1 < len(lines) {
+			title = lines[i+1]
+			i += 2
+			continue
+		}
+		if trimmed == "### INPUT ###" {
 			i++
 			var b strings.Builder
 			for i < len(lines) && !strings.HasPrefix(strings.TrimSpace(lines[i]), "### ") {
@@ -116,7 +123,16 @@ func parseSnapInputs(body string) []string {
 				b.WriteByte('\n')
 				i++
 			}
-			inputs = append(inputs, strings.TrimSuffix(b.String(), "\n"))
+			// Skip [raw] cases: their INPUT is a Go-quoted string (decoded only by
+			// the snapshot harness), and byte-level whitespace rules don't change
+			// node structure anyway, so there's nothing to assert here.
+			if !strings.Contains(title, "[raw]") {
+				inputs = append(inputs, strings.TrimSuffix(b.String(), "\n"))
+			}
+			// Each case carries its own title; clear it so an INPUT block missing
+			// its TITLE header can't silently inherit a prior [raw] title and be
+			// dropped from the structure check.
+			title = ""
 			continue
 		}
 		i++
