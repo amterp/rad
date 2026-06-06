@@ -31,7 +31,7 @@ Language); renamed to Rad in 2025-05 (`AG`). Commit messages in this repo explai
 
 ### Genesis & v0.1–v0.2 (2024-08 to 2024-09)
 
-- **`2` Why build a language + founding principles** · Language · v0.1.0 · **T1** · ⊘ reserved
+- **`2` Why build a language + founding principles** · Language · v0.1.0 · **T1** · ✅ (RED-2)
   Why a purpose-built CLI language over Bash / general-purpose lang + library; the founding principles.
   *Also absorbs genesis-level facets too small to stand alone:* interpreter (tree-walk) over compiler;
   EBNF-first design (Crafting-Interpreters-influenced) + the AST codegen pipeline; the Go implementation
