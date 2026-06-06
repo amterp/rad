@@ -75,13 +75,17 @@ const ignorePanicMsg = "TESTING - IGNORE ME"
 
 var (
 	// stateful, reset for each test
-	stdInBuffer      = new(bytes.Buffer)
-	stdOutBuffer     = new(bytes.Buffer)
-	stdErrBuffer     = new(bytes.Buffer)
-	errorOrExit      = ErrorOrExit{}
-	millisSlept      = make([]int64, 0)
-	shellInvocations = make([]core.ShellInvocation, 0)
-	httpInvocations  = make([]core.HttpRequest, 0)
+	stdInBuffer        = new(bytes.Buffer)
+	stdOutBuffer       = new(bytes.Buffer)
+	stdErrBuffer       = new(bytes.Buffer)
+	errorOrExit        = ErrorOrExit{}
+	millisSlept        = make([]int64, 0)
+	shellInvocations   = make([]core.ShellInvocation, 0)
+	httpInvocations    = make([]core.HttpRequest, 0)
+	confirmInvocations = make([]string, 0)
+	// confirmResponder lets a test drive the shell-confirmation prompt. nil
+	// means auto-confirm, so tests that don't care don't block on a prompt.
+	confirmResponder func(title, prompt string) (bool, error)
 	runnerInput      = newRunnerInput()
 )
 
@@ -105,6 +109,13 @@ func newRunnerInput() core.RunnerInput {
 		// Return empty strings and exit code 0 for test mock
 		return "", "", 0
 	}
+	confirmExec := func(title, prompt string) (bool, error) {
+		confirmInvocations = append(confirmInvocations, title)
+		if confirmResponder != nil {
+			return confirmResponder(title, prompt)
+		}
+		return true, nil
+	}
 	requester := core.NewRequester()
 	requester.SetCaptureCallback(func(inv core.HttpRequest) {
 		httpInvocations = append(httpInvocations, inv)
@@ -116,21 +127,23 @@ func newRunnerInput() core.RunnerInput {
 			StdOut: stdOutBuffer,
 			StdErr: stdErrBuffer,
 		},
-		RExit:   &testExitFunc,
-		RClock:  core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
-		RSleep:  &sleepFunc,
-		RShell:  &shellExec,
-		RReq:    requester,
-		RadHome: &radTestHome,
+		RExit:    &testExitFunc,
+		RClock:   core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
+		RSleep:   &sleepFunc,
+		RShell:   &shellExec,
+		RConfirm: &confirmExec,
+		RReq:     requester,
+		RadHome:  &radTestHome,
 	}
 }
 
 type TestParams struct {
-	script        string
-	stdinInput    string
-	stdinInputSet bool
-	args          []string
-	termWidth     int // 0 means not set
+	script           string
+	stdinInput       string
+	stdinInputSet    bool
+	args             []string
+	termWidth        int // 0 means not set
+	confirmResponder func(title, prompt string) (bool, error)
 }
 
 func NewTestParams(script string, args ...string) *TestParams {
@@ -151,6 +164,14 @@ func (tp *TestParams) TermWidth(width int) *TestParams {
 	return tp
 }
 
+// ConfirmResponder drives the shell-confirmation prompt for this run. Returning
+// (false, nil) simulates declining ("n"); a non-nil error simulates an abort
+// (Ctrl-C / Esc).
+func (tp *TestParams) ConfirmResponder(f func(title, prompt string) (bool, error)) *TestParams {
+	tp.confirmResponder = f
+	return tp
+}
+
 func setupAndRunCode(t *testing.T, script string, args ...string) {
 	setupAndRun(t, NewTestParams(script, args...))
 }
@@ -167,6 +188,10 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 
 	if tp.termWidth > 0 {
 		runnerInput.RTermWidth = &tp.termWidth
+	}
+
+	if tp.confirmResponder != nil {
+		confirmResponder = tp.confirmResponder
 	}
 
 	args := tp.args
@@ -252,6 +277,8 @@ func resetTestState() {
 	millisSlept = make([]int64, 0)
 	shellInvocations = make([]core.ShellInvocation, 0)
 	httpInvocations = make([]core.HttpRequest, 0)
+	confirmInvocations = make([]string, 0)
+	confirmResponder = nil
 	core.ResetGlobals()
 	// ResetGlobals sets color.NoColor = false (production default).
 	// Tests should default to no color; individual tests opt in via --color=always.
@@ -372,6 +399,13 @@ func assertShellCount(t *testing.T, count int) {
 	t.Helper()
 	if len(shellInvocations) != count {
 		t.Errorf("Expected %d shell invocations, but got %d: %v", count, len(shellInvocations), shellInvocations)
+	}
+}
+
+func assertConfirmCount(t *testing.T, count int) {
+	t.Helper()
+	if len(confirmInvocations) != count {
+		t.Errorf("Expected %d confirm prompts, but got %d: %v", count, len(confirmInvocations), confirmInvocations)
 	}
 }
 

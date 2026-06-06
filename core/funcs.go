@@ -685,9 +685,9 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				prompt := f.GetStr("prompt").Plain()
 
-				response, err := InputConfirm("", prompt)
+				response, err := RConfirm("", prompt)
 				if err != nil {
-					// todo I think this errors if user aborts
+					// Includes the user aborting the prompt (Ctrl-C / Esc).
 					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 
