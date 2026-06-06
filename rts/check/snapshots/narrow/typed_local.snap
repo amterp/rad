@@ -50,9 +50,9 @@ y = x
 ### TITLE ###
 TypedLocalRHSMismatchDoesNotNarrow
 ### DESCRIPTION ###
-RHS that isn't assignable to the declared type fires a Hint
-diagnostic; the frame stays at Declared (so downstream reads
-don't cascade).
+RHS that isn't assignable to the declared type fires an Error
+diagnostic (the str-into-int mismatch is provable); the frame
+stays at Declared (so downstream reads don't cascade).
 ### INPUT ###
 x: int = "wrong"
 y = x
