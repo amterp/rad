@@ -10,13 +10,18 @@
 > The `Evidence` pointers are the *starting trail* for archaeology, not exhaustive; the
 > `red-archaeologist` Phase 1 should still dig fresh.
 
-**Intended workflow.** Work through the list **chronologically** with the `red-archaeologist`. For each
-item, decide in the moment whether it's worth a RED: if **yes**, write it and mark the row `✅ done`
-(`RED-N`); if **no**, leave the row in place but mark it `⏭ skip` with a one-line reason (don't delete -
-the record of "considered and declined" is the point). Repeat until the list is all `✅`/`⏭`.
+**Intended workflow.** Work through the list in **strict chronological order** with the
+`red-archaeologist` - top to bottom of the master list, one item at a time, finishing each before
+starting the next. **Do not jump around** - not by tier, not by theme (see [Write order](#write-order)
+below). The chronology *is* the sequence: a decision is backfilled at its place in time, never pulled
+forward because it relates to something earlier. For each item, decide in the moment whether it's worth
+a RED: if **yes**, write it and mark the row `✅ done` (`RED-N`); if **no**, leave the row in place but
+mark it `⏭ skip` with a one-line reason (don't delete - the record of "considered and declined" is the
+point). Repeat until the list is all `✅`/`⏭`.
 
-**Conventions.** **Tier** = priority: **1** = foundational, write first; **2** = notable; **3** = small,
-often a fold-candidate. **Kind** = Language / Architecture / Tooling / Process. **IDs** are provisional
+**Conventions.** **Tier** = priority, *not* write order (chronology is the order - see [Write
+order](#write-order)): **1** = foundational, almost certainly worth a RED and worth the most depth; **2**
+= notable; **3** = small, often a fold-candidate or skip. **Kind** = Language / Architecture / Tooling / Process. **IDs** are provisional
 fractional letters (between `A` and `B` → `AA`, etc.); a single integer renumber happens at the end.
 Bias is to **split** into discrete chronological decisions, with a few thematic exceptions noted inline.
 `RED-2` (genesis) also absorbs small genesis-level facets (see its entry).
@@ -338,9 +343,29 @@ govulncheck-over-Dependabot `5caffe8a` - the latter has nice rationale if ever w
 `d91350b`, underscore→hyphen arg names `e6407aee`, function hoisting `e535795d`, `confirm`/`pass`,
 `in`/`not in`, `del`, per-method `http_*` `a87a3d41`, TLS-bypass `322e9a2`.
 
-## Suggested write order (Tier-1 core)
+## Write order
 
-1. `2` genesis. 2. `AB`→`AT` (tree-sitter → CST→AST). 3. `3A`→`AI` (args → Ra), near `AHA`/`AIA`.
-4. `AA`→`AL` (shell → `catch`), with `AAD` as the precursor it supersedes. 5. `3D`+`3F`+`AAC` (rad-block
-substrate). 6. `AD`, `AS`+`AKA`, `AH`→`BB`, `BBA`, `BC`. 7. `3B`↔`AEA` (null pair).
-Then Tier 2 by chronology; Tier 3 / fold-ins as appetite allows. Renumber to integers at the end.
+**The chronology is the order.** Walk the master list top to bottom and write (or skip) each item
+*where it sits in time*. Do **not** reorder - not by tier, not by theme. Tier decides *whether* an item
+earns a RED and how deep to go, never *when* it's written. The master list is already in (roughly)
+chronological order, so its sequence is the backfill sequence; when in doubt, the `released` version is
+the tiebreaker. Finish one item's archaeology → interview → write/skip → mark-the-row before touching
+the next.
+
+Concretely: after `2` (genesis, v0.1.0), the next unwritten item is **`3A`** (declarative argument
+parsing, v0.1.0) - *not* `AB` (tree-sitter), which is v0.5.0 and many decisions away. Don't let a
+later, "foundational-feeling" architecture decision jump the queue.
+
+**Relationships span the timeline - note them, don't reorder for them.** Several decisions form arcs
+across many releases. You write each member at its own slot; when you reach the later one, its
+`supersedes`/`related` frontmatter links tie it back. That linkage is the mechanism - not writing the
+arc together. The main arcs to be aware of:
+
+- Parsing / architecture: `AB` (tree-sitter, v0.5.0) → `AT` (CST→AST, v0.9.0).
+- Arg parsing: `3A` (args block, v0.1) → `AAE` (constraints, v0.4→v0.5) → `AI` (Ra, v0.5.59).
+- Shell + errors: `AA` (shell, v0.4) → `AAD` (early error model) → `AL` (`catch`, v0.6.12).
+- Null: `3B` (removal, v0.1) → `AEA` (re-addition, v0.5.32).
+- Rad-block substrate: `3D` (JSON engine) + `3F` (data model) + `AAC` (strings).
+- Type system: `AH` (runtime typing, v0.5.43) → `BB` (static checker, ~v0.10).
+
+Renumber the provisional letter IDs to integers once the chronology is fully filled in.
