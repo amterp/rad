@@ -21,5 +21,6 @@ Start with [RED-1](0001-red-process.md), which defines the process itself. New R
 | [RED-1](0001-red-process.md)        | The RED process                     | Process  | Accepted    |
 | [RED-2](0002-why-rad.md)            | Why Rad                             | Language | Implemented |
 | [RED-3](0003-rad-block.md)          | The rad block                       | Language | Implemented |
+| [RED-4](0004-declarative-args.md)   | Declarative argument parsing        | Language | Implemented |
 | [RED-A](A-request-display-split.md) | Separate request and display blocks | Language | Superseded  |
 | [RED-B](B-rad-block-unification.md) | Unify the rad block keywords        | Language | Implemented |

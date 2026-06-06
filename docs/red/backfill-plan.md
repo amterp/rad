@@ -48,12 +48,11 @@ Language); renamed to Rad in 2025-05 (`AG`). Commit messages in this repo explai
 
 - **`3` The rad block** · Language · v0.1.0 · **T1** · ✅ (RED-3)
 
-- **`3A` Declarative argument parsing (args block)** · Language · v0.1.0 · **T1**
+- **`3A` Declarative argument parsing (args block)** · Language · v0.1.0 · **T1** · ✅ (RED-4)
   The `args:` block: auto-generated help, types, constraints. Language-level model only; the constraint
-  *sub-language* is `AAE` and the parsing *engine* arc (Cobra→pflag→Ra) is `AI`. Keyword-only named-args
-  design folds in.
+  *sub-language* is `AAE` and the parsing *engine* arc (Cobra→pflag→Ra) is `AI`.
   *Evidence:* `24313d97` "Begin EBNF: argBlock"; `4f1fe67f` (delete Cobra → pflag, 2024-11-19, explains
-  the misfit: too custom, double-execute, binary size); `881cac6b` (named args); `core/args.go`.
+  the misfit: too custom, double-execute, binary size); `core/args.go`.
 
 - **`3B` Removing null from the language** · Language · v0.1.0 · **T2** · ↦ superseded by `AEA`
   Null deliberately removed early - optional args handled by a "set" flag instead. Reversed in v0.5.32;
