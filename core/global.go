@@ -43,6 +43,7 @@ var (
 	RClock                   Clock
 	RSleep                   func(duration time.Duration)
 	RShell                   ShellExecutor
+	RConfirm                 func(title string, prompt string) (bool, error)
 	RNG                      *rand.Rand
 	HasScript                bool
 	ScriptPath               string
@@ -62,6 +63,7 @@ type RunnerInput struct {
 	RClock     Clock
 	RSleep     *func(duration time.Duration)
 	RShell     *func(invocation ShellInvocation) (string, string, int)
+	RConfirm   *func(title string, prompt string) (bool, error)
 	RadHome    *string
 	RTermWidth *int
 }
@@ -90,6 +92,7 @@ func ResetGlobals() {
 	RClock = nil
 	RSleep = nil
 	RShell = nil
+	RConfirm = nil
 	RNG = nil
 	HasScript = false
 	ScriptPath = ""
@@ -165,6 +168,12 @@ func setGlobals(runnerInput RunnerInput) {
 		RShell = realShellExecutor
 	} else {
 		RShell = *runnerInput.RShell
+	}
+
+	if runnerInput.RConfirm == nil {
+		RConfirm = InputConfirm
+	} else {
+		RConfirm = *runnerInput.RConfirm
 	}
 
 	RTermWidth = runnerInput.RTermWidth

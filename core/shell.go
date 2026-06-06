@@ -29,7 +29,10 @@ type ShellInvocation struct {
 	CaptureStdout bool
 	CaptureStderr bool
 	IsQuiet       bool
-	IsConfirm     bool
+	// IsConfirm is informational: the confirmation prompt is handled in
+	// executeShellCmd before the executor runs, so executors don't act on it.
+	// Kept for callers/observability (e.g. test assertions).
+	IsConfirm bool
 }
 
 // ShellExecutor is the function type for executing shell commands
@@ -125,36 +128,44 @@ func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 		IsConfirm:     shell.IsConfirm,
 	}
 
-	stdout, stderr, exitCode := RShell(invocation)
-
-	result := shellResult{
-		exitCode: exitCode,
+	if FlagConfirmShellCommands.Value || shell.IsConfirm {
+		ok, err := RConfirm(invocation.Command, "Run above command? [Y/n] > ")
+		if err != nil {
+			// User aborted the prompt (Ctrl-C / Esc). Surface a catchable
+			// user-input error, consistent with confirm()/pick()/input(),
+			// rather than crashing as an internal bug.
+			errVal := newRadValue(i, shell, NewErrorStrf("Shell command aborted: %v", err).SetCode(rl.ErrUserInput))
+			i.NewRadPanic(shell, errVal).Panic()
+		}
+		if !ok {
+			// User declined ("n"): don't run the command, but still surface
+			// exit code 1 (a catchable "Command exited with code 1"). Populate
+			// captures with empty output so capture targets stay defined, just
+			// like a command that actually ran and exited non-zero would.
+			return newShellResult(1, "", "", captureStdout, captureStderr)
+		}
 	}
 
+	stdout, stderr, exitCode := RShell(invocation)
+	return newShellResult(exitCode, stdout, stderr, captureStdout, captureStderr)
+}
+
+// newShellResult assembles a shellResult, attaching captured stdout/stderr only
+// when the corresponding capture was requested.
+func newShellResult(exitCode int, stdout, stderr string, captureStdout, captureStderr bool) shellResult {
+	result := shellResult{exitCode: exitCode}
 	if captureStdout {
 		result.stdout = &stdout
 	}
-
 	if captureStderr {
 		result.stderr = &stderr
 	}
-
 	return result
 }
 
 // realShellExecutor is the production implementation of shell command execution
 // warning: as of writing, this is *not* covered in tests
 func realShellExecutor(invocation ShellInvocation) (string, string, int) {
-	if FlagConfirmShellCommands.Value || invocation.IsConfirm {
-		ok, err := InputConfirm(invocation.Command, "Run above command? [Y/n] > ")
-		if err != nil {
-			panic(fmt.Sprintf("Error confirming shell command: %v", err))
-		}
-		if !ok {
-			return "", "", 1
-		}
-	}
-
 	cmd := resolveCmdSimple(invocation.Command)
 	var stdoutBuf, stderrBuf bytes.Buffer
 
