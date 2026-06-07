@@ -82,6 +82,13 @@ type SignalManager struct {
 	// done is closed by Stop to terminate the dispatch goroutine cleanly.
 	done chan struct{}
 
+	// wg tracks the dispatch goroutine so Stop can join it. Joining matters in
+	// tests, where the force-exit seam records and returns rather than killing
+	// the process: without the join the goroutine outlives its test and races
+	// the next test's global reset (and our own assertion read). In production
+	// it just makes shutdown deterministic.
+	wg sync.WaitGroup
+
 	// started gates the background dispatch goroutine so we start it at most once.
 	started bool
 
@@ -209,6 +216,7 @@ func (sm *SignalManager) Start() {
 		// Either way: silently skip unsupported ones at startup.
 	}
 
+	sm.wg.Add(1)
 	go sm.dispatchLoop()
 }
 
@@ -219,6 +227,7 @@ func (sm *SignalManager) Start() {
 // so blocking ops wake up. The actual handler invocation happens later, in
 // the interpreter's checkpoint, on the main script goroutine.
 func (sm *SignalManager) dispatchLoop() {
+	defer sm.wg.Done()
 	for {
 		select {
 		case <-sm.done:
@@ -249,10 +258,12 @@ func (sm *SignalManager) handleSignal(sig os.Signal) {
 	// Defers do not run; this is a force-exit contract.
 	if name == sigNameSigint {
 		if cur := sm.inHandlerOf.Load(); cur != nil && *cur == sigNameSigint {
-			os.Exit(130)
+			RForceExit(130)
+			return
 		}
 		if sm.enqueueSignal(name) {
-			os.Exit(130)
+			RForceExit(130)
+			return
 		}
 	} else {
 		sm.enqueueSignal(name)
@@ -316,6 +327,12 @@ func (sm *SignalManager) Stop() {
 
 	RSignal.Stop(sm.notifyCh)
 	close(sm.done)
+	// Join the dispatch goroutine so it can't touch globals (RForceExit) or
+	// the test's recorded state after Stop returns. Safe from deadlock: the
+	// goroutine never waits on the caller - it only selects on done/notifyCh.
+	// In the production force-exit path the goroutine has already called
+	// os.Exit, so this is moot.
+	sm.wg.Wait()
 }
 
 // NotifyCh returns the channel that subscribed signals are delivered to.
@@ -483,16 +500,15 @@ func errUnsupportedSignal(name string) error {
 	return fmt.Errorf("signal %q is not supported on this platform (supported here: %s)", name, strings.Join(supportedSignalsList(), ", "))
 }
 
-// errUnknownSignal is returned when the script asks for a signal name that is
-// not in the supported set at all. If the name matches a known signal once
-// case-folded, the message includes a "did you mean" hint - this catches the
-// common SIGINT-vs-sigint mistake when the value escapes the signature's
-// static enum check (e.g. computed at runtime).
+// errUnknownSignal is a defensive fallback for a signal name that is not known
+// at all. In practice it is unreachable: signal_trap/signal_ignore type their
+// signal parameter as a string enum, so the type checker rejects a bad name
+// before resolveSignalName runs.
 func errUnknownSignal(name string) error {
-	if lower := strings.ToLower(name); lower != name && isKnownSignalName(lower) {
-		return fmt.Errorf("unknown signal %q - signal names are lowercase in Rad; did you mean %q?", name, lower)
-	}
-	return fmt.Errorf("unknown signal %q (valid: sigint, sigterm, sighup, sigusr1, sigusr2, sigpipe, sigwinch)", name)
+	return fmt.Errorf("unknown signal %q (valid: %s)", name, strings.Join([]string{
+		sigNameSigint, sigNameSigterm, sigNameSighup,
+		sigNameSigusr1, sigNameSigusr2, sigNameSigpipe, sigNameSigwinch,
+	}, ", "))
 }
 
 // supportedSignalsList returns the platform's supported signal names in the

@@ -40,6 +40,7 @@ var (
 	RP                       Printer
 	RIo                      RadIo
 	RExit                    *RadExitHandler
+	RForceExit               func(int) // hard exit that skips defers; for double-Ctrl+C
 	RReq                     *Requester
 	RClock                   Clock
 	RSleep                   func(ctx context.Context, duration time.Duration)
@@ -59,8 +60,12 @@ var (
 )
 
 type RunnerInput struct {
-	RIo        *RadIo
-	RExit      *func(int)
+	RIo   *RadIo
+	RExit *func(int)
+	// RForceExit is the raw hard-exit (no defers/callbacks), distinct from
+	// RExit which wraps into a RadExitHandler. Tests inject a record-only
+	// variant; see global RForceExit.
+	RForceExit *func(int)
 	RReq       *Requester
 	RClock     Clock
 	RSleep     *func(ctx context.Context, duration time.Duration)
@@ -91,6 +96,7 @@ func ResetGlobals() {
 	RP = nil
 	RIo = RadIo{}
 	RExit = nil
+	RForceExit = nil
 	RReq = nil
 	RClock = nil
 	RSleep = nil
@@ -142,6 +148,16 @@ func setGlobals(runnerInput RunnerInput) {
 		RExit = NewExitHandler(os.Exit)
 	} else {
 		RExit = NewExitHandler(*runnerInput.RExit)
+	}
+
+	// RForceExit is the raw, defer-skipping exit used by the double-Ctrl+C
+	// force path. It runs on the signal-dispatch goroutine, so the test seam
+	// records the code and returns rather than panicking to unwind (which only
+	// works on the main goroutine).
+	if runnerInput.RForceExit == nil {
+		RForceExit = os.Exit
+	} else {
+		RForceExit = *runnerInput.RForceExit
 	}
 
 	ra.SetStderrWriter(RIo.StdErr)

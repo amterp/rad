@@ -226,3 +226,72 @@ sleep(30)
 	assertOutput(t, stdOutBuffer, "got sigterm\n")
 	assertExitCode(t, 0)
 }
+
+// Verifies an unhandled error inside a handler aborts the script with exit 1
+// and runs defer + errdefer - the same as any unhandled error elsewhere. The
+// handler does not "always-continue" past an error; only a clean return does.
+func TestSignals_HandlerErrorAbortsAndRunsDefers(t *testing.T) {
+	setupSignalTest(t, syscall.SIGINT)
+
+	script := `
+defer:
+    print("defer ran")
+errdefer:
+    print("errdefer ran")
+
+signal_trap("sigint", fn(ctx):
+    print("handler start")
+    x = 1 / 0
+    print("handler end")
+)
+
+sleep(30)
+`
+	setupAndRunCode(t, script, "--color=never")
+
+	// "handler end" never prints (aborted at the division). Defers run LIFO:
+	// errdefer (registered last) first, then defer. The error itself goes to
+	// stderr. Exit code is the error's (1), not the signal's (130).
+	assertOutput(t, stdOutBuffer, "handler start\nerrdefer ran\ndefer ran\n")
+	assertExitCode(t, 1)
+}
+
+// Verifies the double-Ctrl+C escape hatch: a second SIGINT while one is already
+// in flight routes through the RForceExit seam with code 130. We assert the
+// force-exit was requested. We deliberately do NOT assert the "defers are
+// skipped" half of the contract: in production os.Exit halts before defers run,
+// but the record-only test seam returns rather than halting, so the queued
+// first SIGINT still drives a normal RExit.Exit(130) that does run defers.
+// Asserting defer-skipping here would test the seam, not the contract.
+//
+// Doesn't use setupSignalTest because it needs to fire two signals from one
+// sleep; the manual RSignal/RSleep wiring below is otherwise equivalent.
+func TestSignals_DoubleSigintForceExits(t *testing.T) {
+	fake := core.NewFakeSignalSource()
+	runnerInput.RSignal = fake
+
+	// Fire SIGINT twice from one sleep so both land in the buffer before the
+	// checkpoint drains either: the first enqueues, the second is detected as a
+	// duplicate-in-flight and force-exits.
+	signalingSleep := func(ctx context.Context, dur time.Duration) {
+		fake.Fire(syscall.SIGINT)
+		fake.Fire(syscall.SIGINT)
+		time.Sleep(20 * time.Millisecond)
+	}
+	runnerInput.RSleep = &signalingSleep
+	t.Cleanup(func() {
+		runnerInput.RSignal = nil
+		baseline := newRunnerInput()
+		runnerInput.RSleep = baseline.RSleep
+	})
+
+	script := `
+defer:
+    print("defer ran")
+
+sleep(30)
+`
+	setupAndRunCode(t, script, "--color=never")
+
+	assertForceExitCode(t, 130)
+}
