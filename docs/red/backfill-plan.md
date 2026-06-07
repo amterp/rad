@@ -66,7 +66,7 @@ Language); renamed to Rad in 2025-05 (`AG`). Commit messages in this repo explai
   *Evidence:* `56da0669` (`---` separator), `d9f03fff` (single quotes), `eb88805b` (`--STDIN`/`--SHELL`,
   richest commit in the era), `0608d5f3` (Printer funnel → stderr).
 
-- **`3D` JSON extraction engine (trie + merge algorithm)** · Architecture · v0.2.6→v0.4.7 · **T1**
+- **`3D` JSON extraction engine (trie + merge algorithm)** · Architecture · v0.2.6→v0.4.7 · **T1** · ✅ (RED-7)
   The computational core of the rad block: defined fields → trie → traversal → row/column emission. The
   v3 rewrite is one of the most reasoned commits in the repo (trie-node = one JSON scope; a four-case
   row/column/singleton merge). Distinct from the block *syntax* (`3`).

@@ -24,5 +24,6 @@ Start with [RED-1](0001-red-process.md), which defines the process itself. New R
 | [RED-4](0004-declarative-args.md)   | Declarative argument parsing        | Language | Implemented |
 | [RED-5](0005-removing-null.md)      | Removing null from the language     | Language | Superseded  |
 | [RED-6](0006-bash-embedding.md)     | Embedding Rad in Bash               | Language | Implemented |
+| [RED-7](0007-json-extraction-engine.md) | The JSON extraction engine      | Architecture | Implemented |
 | [RED-A](A-request-display-split.md) | Separate request and display blocks | Language | Superseded  |
 | [RED-B](B-rad-block-unification.md) | Unify the rad block keywords        | Language | Implemented |
