@@ -16,9 +16,10 @@ import (
 // Lives in the production package (not _test.go) so test packages outside
 // core/ can use it. Not part of the Rad public API.
 type FakeSignalSource struct {
-	mu    sync.Mutex
-	subs  map[os.Signal][]chan<- os.Signal
-	fired []os.Signal // history, useful for assertions
+	mu      sync.Mutex
+	subs    map[os.Signal][]chan<- os.Signal
+	fired   []os.Signal // history, useful for assertions
+	ignored []os.Signal // SIG_IGN history, useful for assertions
 }
 
 func NewFakeSignalSource() *FakeSignalSource {
@@ -65,11 +66,26 @@ func (f *FakeSignalSource) Stop(ch chan<- os.Signal) {
 	}
 }
 
-// Ignore is a no-op for the fake. Tests can observe ignore calls by tracking
-// f.fired if they need to, but in practice signal_ignore behavior is verified
-// via integration scripts not unit assertions.
+// Ignore records the SIG_IGN request without touching the real process. Tests
+// assert against WasIgnored to verify signal_ignore plumbs through to the OS
+// seam (we can't deterministically test "process survives SIGPIPE" in-process).
 func (f *FakeSignalSource) Ignore(sigs ...os.Signal) {
-	// no-op for tests
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.ignored = append(f.ignored, sigs...)
+}
+
+// WasIgnored reports whether sig was passed to Ignore since the source was
+// created. Used by tests asserting signal_ignore behavior.
+func (f *FakeSignalSource) WasIgnored(sig os.Signal) bool {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	for _, s := range f.ignored {
+		if s == sig {
+			return true
+		}
+	}
+	return false
 }
 
 // Fire delivers sig to every channel currently subscribed to it.

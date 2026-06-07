@@ -94,6 +94,11 @@ type ErrorOrExit struct {
 	exitCode *int
 	// stderrSnapshot string
 	panicMsg *string
+	// forceExitCode records a double-Ctrl+C hard exit (RForceExit). Unlike
+	// testExitFunc it must NOT panic: RForceExit runs on the signal-dispatch
+	// goroutine, where a panic would crash the test rather than unwind the
+	// script. We record and return; the script continues in-test.
+	forceExitCode *int
 }
 
 func newRunnerInput() core.RunnerInput {
@@ -101,6 +106,9 @@ func newRunnerInput() core.RunnerInput {
 		errorOrExit.exitCode = &code
 		// errorOrExit.stderrSnapshot = stdErrBuffer.String()
 		panic(ignorePanicMsg)
+	}
+	testForceExitFunc := func(code int) {
+		errorOrExit.forceExitCode = &code
 	}
 	sleepFunc := func(ctx context.Context, duration time.Duration) {
 		millisSlept = append(millisSlept, duration.Milliseconds())
@@ -128,11 +136,12 @@ func newRunnerInput() core.RunnerInput {
 			StdOut: stdOutBuffer,
 			StdErr: stdErrBuffer,
 		},
-		RExit:    &testExitFunc,
-		RClock:   core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
-		RSleep:   &sleepFunc,
-		RShell:   &shellExec,
-		RConfirm: &confirmExec,
+		RExit:      &testExitFunc,
+		RForceExit: &testForceExitFunc,
+		RClock:     core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
+		RSleep:     &sleepFunc,
+		RShell:     &shellExec,
+		RConfirm:   &confirmExec,
 		// Default to a fake signal source so tests do not mutate the real
 		// process's signal handlers (signal.Notify / signal.Ignore are
 		// process-global and would leak across tests).
@@ -359,6 +368,17 @@ func assertErrorContains(t *testing.T, expectedCode int, substrings ...string) {
 func assertExitCode(t *testing.T, code int) {
 	t.Helper()
 	assert.Equal(t, code, *errorOrExit.exitCode)
+}
+
+// assertForceExitCode asserts a double-Ctrl+C hard exit was requested with the
+// given code. The force path skips defers, so callers typically also assert
+// that a registered defer did NOT run.
+func assertForceExitCode(t *testing.T, code int) {
+	t.Helper()
+	if errorOrExit.forceExitCode == nil {
+		t.Fatalf("Expected force-exit with code %d, but none occurred", code)
+	}
+	assert.Equal(t, code, *errorOrExit.forceExitCode)
 }
 
 func assertNoErrors(t *testing.T) {
