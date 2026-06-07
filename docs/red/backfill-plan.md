@@ -59,7 +59,7 @@ Language); renamed to Rad in 2025-05 (`AG`). Commit messages in this repo explai
   write as a supersession pair with `AEA`.
   *Evidence:* `9ac0bc74` "Remove nulls from RSL" (rich in-commit rationale).
 
-- **`3C` Bash-embedding ergonomics** · Language · v0.1–v0.2 · **T2**
+- **`3C` Bash-embedding ergonomics** · Language · v0.1–v0.2 · **T2** · ✅ (RED-6)
   Thematic RED (accepted split-exception): several early choices driven by one force - Rad scripts should
   embed cleanly in Bash. The `---` header (vs `"""`, to avoid Bash-var escaping), single-quote strings,
   the `--STDIN`/`--SHELL` "borrow Rad's arg-parsing from Bash via `eval`" mode, and stderr-routed output.
