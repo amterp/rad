@@ -955,6 +955,9 @@ signal_trap("sigusr1", fn(ctx):
 - **After a handler returns, execution continues.** To terminate, the
   handler must explicitly call `exit()`. This matches Bash, Python, Ruby,
   and Node.
+- **An unhandled error in a handler aborts the script** (exit 1), running
+  `defer`/`errdefer` along the way - the same as an unhandled error anywhere
+  else. Only a clean return continues execution.
 - **`defer` runs on signal-triggered exit** (whether by default behavior or
   by the handler calling `exit()`).
 - **A second SIGINT during a SIGINT handler force-exits** with code 130.
