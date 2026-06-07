@@ -54,7 +54,7 @@ Language); renamed to Rad in 2025-05 (`AG`). Commit messages in this repo explai
   *Evidence:* `24313d97` "Begin EBNF: argBlock"; `4f1fe67f` (delete Cobra → pflag, 2024-11-19, explains
   the misfit: too custom, double-execute, binary size); `core/args.go`.
 
-- **`3B` Removing null from the language** · Language · v0.1.0 · **T2** · ↦ superseded by `AEA`
+- **`3B` Removing null from the language** · Language · v0.1.0 · **T2** · ✅ (RED-5) · ↦ superseded by `AEA`
   Null deliberately removed early - optional args handled by a "set" flag instead. Reversed in v0.5.32;
   write as a supersession pair with `AEA`.
   *Evidence:* `9ac0bc74` "Remove nulls from RSL" (rich in-commit rationale).
