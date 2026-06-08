@@ -47,6 +47,7 @@ var (
 	RShell                   ShellExecutor
 	RConfirm                 func(title string, prompt string) (bool, error)
 	RSignal                  SignalSource
+	RInteractive             InteractiveDriver
 	RNG                      *rand.Rand
 	HasScript                bool
 	ScriptPath               string
@@ -74,6 +75,9 @@ type RunnerInput struct {
 	RSignal    SignalSource
 	RadHome    *string
 	RTermWidth *int
+	// RInteractive overrides the interactive-prompt driver. nil uses the real
+	// terminal; tests inject a scripted driver. See InteractiveDriver.
+	RInteractive InteractiveDriver
 }
 
 func SetScriptPath(path string) {
@@ -103,6 +107,7 @@ func ResetGlobals() {
 	RShell = nil
 	RConfirm = nil
 	RSignal = nil
+	RInteractive = nil
 	RNG = nil
 	HasScript = false
 	ScriptPath = ""
@@ -208,6 +213,13 @@ func setGlobals(runnerInput RunnerInput) {
 	} else {
 		RSignal = runnerInput.RSignal
 	}
+
+	if runnerInput.RInteractive == nil {
+		RInteractive = terminalDriver{}
+	} else {
+		RInteractive = runnerInput.RInteractive
+	}
+
 
 	RTermWidth = runnerInput.RTermWidth
 

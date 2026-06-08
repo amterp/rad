@@ -1,11 +1,12 @@
 package core
 
 import (
+	"errors"
 	"strings"
 
 	com "github.com/amterp/rad/core/common"
 
-	"github.com/charmbracelet/huh"
+	"github.com/amterp/radish"
 	"github.com/samber/lo"
 )
 
@@ -133,12 +134,6 @@ func pickKv[T comparable](
 	}
 
 	prompt := f.GetStr("prompt").Plain()
-	if prompt == "" {
-		// huh has a bug where an empty prompt cuts off an option, and it doesn't display user-typed filter
-		// setting this to a space tricks huh into thinking there's a title, avoiding this issue (granted it
-		// looks a bit weird but hey, the user has decided no title, what do they expect?)
-		prompt = " "
-	}
 
 	// matched values by label, plus an ordered list of labels
 	matchedKeyValues := make(map[string][]T)
@@ -210,20 +205,44 @@ func pickKv[T comparable](
 		}
 	}
 
-	// build options in original order
-	var selected string
-	opts := make([]huh.Option[string], len(orderedKeys))
-	for i, lbl := range orderedKeys {
-		opts[i] = huh.NewOption(lbl, lbl)
-	}
+	model := radish.NewSelect().
+		Prompt(prompt).
+		Options(orderedKeys...).
+		Matcher(radishPickMatcher).
+		Width(GetTermWidth())
 
-	if err := huh.NewSelect[string]().
-		Title(prompt).
-		Options(opts...).
-		Value(&selected).
-		Run(); err != nil {
+	_, final, err := RInteractive.Run(model)
+	if err != nil {
+		if errors.Is(err, radish.ErrNotInteractive) {
+			return []T{}, NewErrorStrf("pick requires an interactive terminal")
+		}
 		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}
 
+	sel, ok := final.(*radish.SelectModel)
+	if !ok {
+		return []T{}, NewErrorStrf("Bug: unexpected pick model type %T", final)
+	}
+	if sel.Canceled() {
+		return []T{}, NewErrorStrf("pick canceled")
+	}
+
+	selected, _ := sel.Selected()
 	return matchedKeyValues[selected], nil
+}
+
+// radishPickMatcher governs live, type-to-filter matching inside the picker. It
+// mirrors rad's startup filter semantics (case-insensitive fuzzy match) and ranks
+// an exact match first so it lands under the cursor.
+func radishPickMatcher(filter, label string) (bool, int) {
+	if filter == "" {
+		return true, 1
+	}
+	if !FuzzyMatchFold(filter, label) {
+		return false, 0
+	}
+	if strings.EqualFold(filter, label) {
+		return true, 0
+	}
+	return true, 1
 }
