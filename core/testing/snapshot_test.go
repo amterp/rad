@@ -75,6 +75,7 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 				actual := SnapshotResult{
 					Stdout:   normalizeOutput(stdOutBuffer.String()),
 					Stderr:   normalizeOutput(stdErrBuffer.String()),
+					Frames:   normalizeOutput(captureFrames()),
 					ExitCode: getExitCode(),
 				}
 
@@ -82,6 +83,7 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 					updateMu.Lock()
 					tc.Stdout = actual.Stdout
 					tc.Stderr = actual.Stderr
+					tc.Frames = actual.Frames
 					tc.ExitCode = actual.ExitCode
 					filesToUpdate[snapFile] = cases
 					updateMu.Unlock()
@@ -129,6 +131,9 @@ func runSnapshotTest(t *testing.T, tc *SnapshotCase) {
 		tp.TermWidth(tc.TermWidth)
 		// Force UTF-8 mode for deterministic ellipsis output in truncation tests
 		setTerminalUtf8(t, true)
+	}
+	if len(tc.Keys) > 0 {
+		tp.Keys(tc.Keys...)
 	}
 	setupAndRun(t, tp)
 }
