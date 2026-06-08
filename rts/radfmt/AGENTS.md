@@ -6,6 +6,35 @@ scripts. It is **rule-based**: every formatting decision is a numbered rule in
 rules, the snapshots demonstrate them, and `rules_test.go` keeps all three in
 lockstep.
 
+## Vision
+
+The north star: **any syntactically valid Rad script, however it was originally
+written, formats to a single canonical output.** `rad fmt` is maximally
+opinionated - it does not nudge your whitespace, it discards your layout and
+regenerates it. Two different layouts of the same code converge to the same bytes.
+
+We are not there yet, and the gap is **coverage, not architecture**. A construct
+with no dedicated rule falls through to `verbatim()`, which re-emits its exact
+source span. That is the one thing that breaks convergence today (the block
+constructs - `args:`, `rad`, `fn`, ... - are still verbatim). `verbatim()` is
+load-bearing *scaffolding*: it keeps the formatter safe and lets rules grow
+incrementally, and its footprint should shrink toward zero as rules graduate. The
+prioritized path from here is the **Roadmap** in [`RULES.md`](./RULES.md).
+
+What stays verbatim *forever* is only the deliberate, semantic-preserving
+passthroughs - the "within reason" boundary where canonicalizing would change
+meaning:
+- Literal value text - `3.140` is never rewritten to `3.14` (F33).
+- Map key form - a bareword key and a quoted key are semantically distinct in Rad,
+  so we never convert between them (F28).
+- Shebang and `--- ... ---` header - free text, emitted as-is (F34/F35).
+
+When weighing a new rule, the default is **more opinionated**: if a difference is
+non-semantic, canonicalize it. Reach for passthrough only when the change would
+alter meaning (then it's a `passthrough` rule, locked by a test) or rewrites token
+*content* rather than structure (then it needs its own value-preservation guard -
+see the safety-model note below on why F30 is deferred).
+
 ## The golden rule
 
 **Behavior and `RULES.md` move together.** If you change what the formatter
