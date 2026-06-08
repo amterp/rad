@@ -67,3 +67,97 @@ print(pick(opts, filter))
 ### STDOUT ###
 Hamburger
 
+### TITLE ###
+Interactive navigate and select
+### DESCRIPTION ###
+Multiple options remain, so the interactive picker runs. Arrow down moves the
+cursor to the second option, Enter selects it. Frames capture each render.
+### INPUT ###
+opts = ["Hamburger", "Pizza", "Sushi"]
+print(pick(opts))
+### KEYS ###
+down
+enter
+### STDOUT ###
+Pizza
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Pick an option
+> Hamburger
+  Pizza
+  Sushi
+--- frame 1 (down) ---
+Pick an option
+  Hamburger
+> Pizza
+  Sushi
+--- frame 2 (enter) ---
+Pick an option Pizza
+### TITLE ###
+Interactive filter then select
+### DESCRIPTION ###
+Typing narrows the list live (fuzzy match), then Enter selects the remaining
+match.
+### INPUT ###
+opts = ["Hamburger", "Pizza", "Sushi", "Salad"]
+print(pick(opts))
+### KEYS ###
+"sa"
+enter
+### STDOUT ###
+Salad
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Pick an option
+> Hamburger
+  Pizza
+  Sushi
+  Salad
+--- frame 1 (s) ---
+Pick an option
+/s
+> Sushi
+  Salad
+--- frame 2 (a) ---
+Pick an option
+/sa
+> Salad
+--- frame 3 (enter) ---
+Pick an option Salad
+### TITLE ###
+Interactive cancel
+### DESCRIPTION ###
+Ctrl-C aborts the picker, which surfaces as a rad error and a non-zero exit. No
+summary frame is left behind on cancel.
+### INPUT ###
+opts = ["Hamburger", "Pizza", "Sushi"]
+print(pick(opts))
+### KEYS ###
+down
+ctrl-c
+### STDERR ###
+error[RAD20000]: pick canceled
+  --> <script>:2:7
+  |
+1 | opts = ["Hamburger", "Pizza", "Sushi"]
+2 | print(pick(opts))
+  |       ^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Pick an option
+> Hamburger
+  Pizza
+  Sushi
+--- frame 1 (down) ---
+Pick an option
+  Hamburger
+> Pizza
+  Sushi
+### EXIT ###
+1

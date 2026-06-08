@@ -23,8 +23,10 @@ const (
 	ArgsDelimiter        = "### ARGS ###"
 	RawArgsDelimiter     = "### RAW_ARGS ###"
 	TermWidthDelimiter   = "### TERM_WIDTH ###"
+	KeysDelimiter        = "### KEYS ###"
 	StdoutDelimiter      = "### STDOUT ###"
 	StderrDelimiter      = "### STDERR ###"
+	FramesDelimiter      = "### FRAMES ###"
 	ExitDelimiter        = "### EXIT ###"
 )
 
@@ -46,8 +48,20 @@ type SnapshotCase struct {
 	// 0 means not set (default behavior: no width override).
 	TermWidth int
 
-	Stdout   string
-	Stderr   string
+	// Keys scripts the keystrokes fed to interactive prompts (pick, etc.), one
+	// token per line: a named key ("up", "enter", "ctrl-c", "space", ...) or a
+	// "quoted literal" whose runes are typed in order. Authored by hand; preserved
+	// verbatim on update.
+	Keys []string
+
+	Stdout string
+	Stderr string
+
+	// Frames captures the rendered interactive frames (one block per keystroke,
+	// plus the initial render and final summary). Regenerated on update like
+	// Stdout; empty for non-interactive tests.
+	Frames string
+
 	ExitCode int
 }
 
@@ -88,8 +102,10 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 		stateInput              // Reading input lines
 		stateArgs               // Reading args lines
 		stateTermWidth          // Reading terminal width
+		stateKeys               // Reading scripted keystroke lines
 		stateStdout             // Reading stdout lines
 		stateStderr             // Reading stderr lines
+		stateFrames             // Reading captured interactive frames
 		stateExit               // Reading exit code
 	)
 
@@ -104,8 +120,10 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 		inputBuilder       strings.Builder
 		args               []string
 		rawArgs            bool
+		keysLines          []string
 		stdoutBuilder      strings.Builder
 		stderrBuilder      strings.Builder
+		framesBuilder      strings.Builder
 		termWidth          int
 		termWidthSet       bool
 		exitCode           int
@@ -125,8 +143,10 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 				// If output truly ends with newline(s), they appear as blank lines
 				// before the next section header.
 				TermWidth: termWidth,
+				Keys:      keysLines,
 				Stdout:    strings.TrimSuffix(stdoutBuilder.String(), "\n"),
 				Stderr:    strings.TrimSuffix(stderrBuilder.String(), "\n"),
+				Frames:    strings.TrimSuffix(framesBuilder.String(), "\n"),
 				ExitCode:  exitCode,
 			}
 
@@ -140,8 +160,10 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 		inputBuilder.Reset()
 		args = nil
 		rawArgs = false
+		keysLines = nil
 		stdoutBuilder.Reset()
 		stderrBuilder.Reset()
+		framesBuilder.Reset()
 		termWidth = 0
 		termWidthSet = false
 		exitCode = 0
@@ -213,10 +235,14 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 				state = stateArgs
 			case TermWidthDelimiter:
 				state = stateTermWidth
+			case KeysDelimiter:
+				state = stateKeys
 			case StdoutDelimiter:
 				state = stateStdout
 			case StderrDelimiter:
 				state = stateStderr
+			case FramesDelimiter:
+				state = stateFrames
 			case ExitDelimiter:
 				state = stateExit
 			case TitleDelimiter:
@@ -232,10 +258,14 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 			switch trimmed {
 			case TermWidthDelimiter:
 				state = stateTermWidth
+			case KeysDelimiter:
+				state = stateKeys
 			case StdoutDelimiter:
 				state = stateStdout
 			case StderrDelimiter:
 				state = stateStderr
+			case FramesDelimiter:
+				state = stateFrames
 			case ExitDelimiter:
 				state = stateExit
 			case TitleDelimiter:
@@ -250,10 +280,14 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 
 		case stateTermWidth:
 			switch trimmed {
+			case KeysDelimiter:
+				state = stateKeys
 			case StdoutDelimiter:
 				state = stateStdout
 			case StderrDelimiter:
 				state = stateStderr
+			case FramesDelimiter:
+				state = stateFrames
 			case ExitDelimiter:
 				state = stateExit
 			case TitleDelimiter:
@@ -271,10 +305,32 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 				}
 			}
 
+		case stateKeys:
+			switch trimmed {
+			case StdoutDelimiter:
+				state = stateStdout
+			case StderrDelimiter:
+				state = stateStderr
+			case FramesDelimiter:
+				state = stateFrames
+			case ExitDelimiter:
+				state = stateExit
+			case TitleDelimiter:
+				finishCase()
+				state = stateTitle
+			default:
+				// Each non-empty line is one keystroke token, preserved verbatim.
+				if trimmed != "" {
+					keysLines = append(keysLines, trimmed)
+				}
+			}
+
 		case stateStdout:
 			switch trimmed {
 			case StderrDelimiter:
 				state = stateStderr
+			case FramesDelimiter:
+				state = stateFrames
 			case ExitDelimiter:
 				state = stateExit
 			case TitleDelimiter:
@@ -289,6 +345,8 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 			switch trimmed {
 			case StdoutDelimiter:
 				state = stateStdout
+			case FramesDelimiter:
+				state = stateFrames
 			case ExitDelimiter:
 				state = stateExit
 			case TitleDelimiter:
@@ -297,6 +355,22 @@ func ParseSnapshotFile(path string) ([]SnapshotCase, error) {
 			default:
 				stderrBuilder.WriteString(line)
 				stderrBuilder.WriteString("\n")
+			}
+
+		case stateFrames:
+			switch trimmed {
+			case StdoutDelimiter:
+				state = stateStdout
+			case StderrDelimiter:
+				state = stateStderr
+			case ExitDelimiter:
+				state = stateExit
+			case TitleDelimiter:
+				finishCase()
+				state = stateTitle
+			default:
+				framesBuilder.WriteString(line)
+				framesBuilder.WriteString("\n")
 			}
 
 		case stateExit:
@@ -384,6 +458,14 @@ func WriteSnapshotFile(path string, cases []SnapshotCase) error {
 			builder.WriteString(strconv.Itoa(tc.TermWidth))
 			builder.WriteString("\n")
 		}
+		if len(tc.Keys) > 0 {
+			builder.WriteString(KeysDelimiter)
+			builder.WriteString("\n")
+			for _, key := range tc.Keys {
+				builder.WriteString(key)
+				builder.WriteString("\n")
+			}
+		}
 		if tc.Stdout != "" {
 			builder.WriteString(StdoutDelimiter)
 			builder.WriteString("\n")
@@ -394,6 +476,12 @@ func WriteSnapshotFile(path string, cases []SnapshotCase) error {
 			builder.WriteString(StderrDelimiter)
 			builder.WriteString("\n")
 			builder.WriteString(tc.Stderr)
+			builder.WriteString("\n")
+		}
+		if tc.Frames != "" {
+			builder.WriteString(FramesDelimiter)
+			builder.WriteString("\n")
+			builder.WriteString(tc.Frames)
 			builder.WriteString("\n")
 		}
 		if tc.ExitCode != 0 {
@@ -411,6 +499,7 @@ func WriteSnapshotFile(path string, cases []SnapshotCase) error {
 type SnapshotResult struct {
 	Stdout   string
 	Stderr   string
+	Frames   string
 	ExitCode int
 }
 
@@ -435,6 +524,14 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 		needsUpdate = true
 		if !*UpdateSnapshots {
 			t.Errorf("Stderr mismatch:\n%s", gd.DiffWith(tc.Stderr, actual.Stderr, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
+		}
+	}
+
+	// Compare interactive frames
+	if actual.Frames != tc.Frames {
+		needsUpdate = true
+		if !*UpdateSnapshots {
+			t.Errorf("Frames mismatch:\n%s", gd.DiffWith(tc.Frames, actual.Frames, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
 		}
 	}
 
