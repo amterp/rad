@@ -261,21 +261,54 @@ Code: `printer.go` `verbatim`
 
 ## Roadmap
 
-Decided or planned, not yet built. These are emitted verbatim today (structurally
-safe, just not canonicalized) and will graduate to numbered rules when
-implemented.
+The destination is **full convergence**: any valid script, any layout, formats to
+one canonical output (see the Vision in `AGENTS.md`). Everything below is emitted
+verbatim today - structurally safe, just not canonicalized - and graduates to
+numbered rules as we go. The list is sequenced by dependency and payoff: Tier 0
+unblocks the rest, Tier 1 is the biggest single convergence win. It's a best-effort
+map, not a contract - reorder as reality demands.
 
-- **Block constructs** - `args:`, `command:`, `rad`/`request`/`display`, `fn` /
-  lambda, `switch`, `defer`/`errdefer`. Each shares the `:`-header skeleton but
-  has a bespoke body grammar; the rad block additionally carries a fields-first
-  ordering rule (fields, then options, then field modifiers, then `rad_if`).
-- **String interpolation reflow** - reformatting expressions inside `{...}`.
-- **Long-expression wrapping** - breaking long boolean/arithmetic chains at
-  operators with continuation indent.
-- **Arg-block column alignment** - optional gofmt-style alignment of arg types
-  and comments.
-- **Slice spacing for complex operands** - spacing slice colons when operands
-  are non-trivial (`x[a + 1 : b]`).
+### Tier 0 - Engine maturity (prerequisites)
+- **Comment-attachment side-table** (`DESIGN.md` Part 2). Only partially adopted
+  today, which is why `F36` punts comment-bearing expressions to verbatim. Maturing
+  it retires F36 and is a prerequisite for cleanly reflowing comment-heavy block
+  bodies. Highest-leverage engine work.
+- **`Fill` builder** (`doc.go`, currently a stub). Needed for text-flow reflow
+  (long comments / strings). Lower priority - only specific rules need it.
+
+### Tier 1 - Block constructs (the biggest coverage gap)
+Each shares the `:`-header skeleton but has a bespoke body grammar; all are
+verbatim today. Rough priority by how common they are in real scripts:
+- **`args:`** - arg declarations, types, defaults, constraints, trailing comments.
+  (Natural home for the future optional column alignment in Tier 4.)
+- **`rad` / `request` / `display`** - additionally carries a **fields-first
+  ordering** rule: `fields` first, then options (`transpose`/`noprint`/`quiet`/
+  `sort`), then field modifiers, then `rad_if`.
+- **`fn` / lambda** bodies.
+- **`switch`** - case arms.
+- **`command:`**.
+- **`defer` / `errdefer`**.
+
+### Tier 2 - Expression-level canonicalization
+- **Long-expression wrapping** - break long boolean/arithmetic chains at operators
+  with continuation indent.
+- **String interpolation reflow** - reformat expressions inside `{...}`.
+
+### Tier 3 - Content-rewriting rules (need their own value-preservation guard)
+These rewrite token *content*, not just structure, so the structural guard (which
+compares node kinds, not text) can't protect them - each needs a bespoke
+value-preservation check plus tests. That is exactly why **F30 (string quote
+normalization)** is deferred. Also here: **type-union `|` spacing** (the F31
+follow-up), if/when it normalizes the declared type text.
+
+### Tier 4 - Optional polish
+- **Arg-block column alignment** - optional gofmt-style alignment of arg types and
+  comments.
+- **Slice spacing for complex operands** - spacing slice colons when operands are
+  non-trivial, `x[a + 1 : b]` (F26 follow-up).
+- **Redundant-paren removal (decision, not a given)** - today `F23` preserves
+  author parens. Maximal opinionation *could* strip redundant ones, but that risks
+  changing perceived intent. A call to make deliberately, not assume.
 
 ---
 
