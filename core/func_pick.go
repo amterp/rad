@@ -206,28 +206,25 @@ func pickKv[T comparable](
 	}
 
 	model := radish.NewSelect().
-		Prompt(prompt).
+		Title(prompt).
 		Options(orderedKeys...).
 		Matcher(radishPickMatcher).
 		Width(GetTermWidth())
 
-	_, final, err := RInteractive.Run(model)
+	res, _, err := RInteractive.Run(model)
 	if err != nil {
 		if errors.Is(err, radish.ErrNotInteractive) {
 			return []T{}, NewErrorStrf("pick requires an interactive terminal")
 		}
 		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}
-
-	sel, ok := final.(*radish.SelectModel)
-	if !ok {
-		return []T{}, NewErrorStrf("Bug: unexpected pick model type %T", final)
-	}
-	if sel.Canceled() {
+	if res.Canceled {
 		return []T{}, NewErrorStrf("pick canceled")
 	}
 
-	selected, _ := sel.Selected()
+	// model is the same *SelectModel we built and Run mutated in place, so we read
+	// the result directly - no type assertion on the returned Model needed.
+	selected, _ := model.Selected()
 	return matchedKeyValues[selected], nil
 }
 
