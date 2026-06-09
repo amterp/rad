@@ -691,7 +691,7 @@ func init() {
 
 				response, err := RConfirm("", prompt)
 				if err != nil {
-					// Includes the user aborting the prompt (Ctrl-C / Esc).
+					// Cancel (Esc/Ctrl-C) and not-a-TTY both surface here as errors.
 					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 

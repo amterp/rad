@@ -1,0 +1,78 @@
+### TITLE ###
+Confirm yes via enter
+### DESCRIPTION ###
+confirm() is a text field interpreted as yes/no: an empty answer (just Enter)
+defaults to yes.
+### INPUT ###
+print(confirm())
+### KEYS ###
+enter
+### STDOUT ###
+true
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Confirm? [Y/n] > █
+--- frame 1 (enter) ---
+Confirm? [Y/n] > 
+### TITLE ###
+Confirm yes via y
+### DESCRIPTION ###
+Any answer starting with 'y' (case-insensitive) counts as yes.
+### INPUT ###
+print(confirm())
+### KEYS ###
+"y"
+enter
+### STDOUT ###
+true
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Confirm? [Y/n] > █
+--- frame 1 (y) ---
+Confirm? [Y/n] > y█
+--- frame 2 (enter) ---
+Confirm? [Y/n] > y
+### TITLE ###
+Confirm no via n
+### DESCRIPTION ###
+An answer that does not start with 'y' counts as no.
+### INPUT ###
+print(confirm())
+### KEYS ###
+"n"
+enter
+### STDOUT ###
+false
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Confirm? [Y/n] > █
+--- frame 1 (n) ---
+Confirm? [Y/n] > n█
+--- frame 2 (enter) ---
+Confirm? [Y/n] > n
+### TITLE ###
+Confirm cancel
+### DESCRIPTION ###
+Ctrl-C aborts the prompt, surfacing as a rad error and a non-zero exit.
+### INPUT ###
+print(confirm())
+### KEYS ###
+ctrl-c
+### STDERR ###
+error[RAD20010]: Error reading input: input canceled
+  --> <script>:1:7
+  |
+1 | print(confirm())
+  |       ^^^^^^^^^
+  |
+   = info: rad explain RAD20010
+
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Confirm? [Y/n] > █
+### EXIT ###
+1
