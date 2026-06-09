@@ -106,3 +106,267 @@ error[RAD20000]: min is 3 but only 2 options available
 
 ### EXIT ###
 1
+### TITLE ###
+Interactive multipick toggle via space
+### DESCRIPTION ###
+Space toggles the checkbox under the cursor. Select Apple, move down, select
+Banana, then submit. The collapsed line lists the chosen values in option order.
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+print(multipick(opts))
+### KEYS ###
+space
+down
+space
+enter
+### STDOUT ###
+[ "Apple", "Banana" ]
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Select options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 1 (space) ---
+Select options
+> [x] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 2 (down) ---
+Select options
+  [x] Apple
+> [ ] Banana
+  [ ] Cherry
+--- frame 3 (space) ---
+Select options
+  [x] Apple
+> [x] Banana
+  [ ] Cherry
+--- frame 4 (enter) ---
+Select options Apple, Banana
+### TITLE ###
+Interactive multipick toggle via tab
+### DESCRIPTION ###
+Tab toggles selection just like Space.
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+print(multipick(opts))
+### KEYS ###
+tab
+down
+down
+tab
+enter
+### STDOUT ###
+[ "Apple", "Cherry" ]
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Select options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 1 (tab) ---
+Select options
+> [x] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 2 (down) ---
+Select options
+  [x] Apple
+> [ ] Banana
+  [ ] Cherry
+--- frame 3 (down) ---
+Select options
+  [x] Apple
+  [ ] Banana
+> [ ] Cherry
+--- frame 4 (tab) ---
+Select options
+  [x] Apple
+  [ ] Banana
+> [x] Cherry
+--- frame 5 (enter) ---
+Select options Apple, Cherry
+### TITLE ###
+Interactive multipick filter then toggle
+### DESCRIPTION ###
+Typing narrows the list live, then Space selects the remaining match. Selection
+is keyed by the option's original index, so it survives clearing the filter.
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry", "Avocado"]
+print(multipick(opts))
+### KEYS ###
+"av"
+space
+ctrl-u
+enter
+### STDOUT ###
+[ "Avocado" ]
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Select options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+  [ ] Avocado
+--- frame 1 (a) ---
+Select options
+/a
+> [ ] Apple
+  [ ] Avocado
+  [ ] Banana
+--- frame 2 (v) ---
+Select options
+/av
+> [ ] Avocado
+--- frame 3 (space) ---
+Select options
+/av
+> [x] Avocado
+--- frame 4 (ctrl-u) ---
+Select options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+  [x] Avocado
+--- frame 5 (enter) ---
+Select options Avocado
+### TITLE ###
+Interactive multipick min blocks submit
+### DESCRIPTION ###
+With min=2, a single selection cannot be submitted: the first Enter is a no-op
+and a hint is shown until a second option is selected.
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+print(multipick(opts, min=2))
+### KEYS ###
+space
+enter
+down
+space
+enter
+### STDOUT ###
+[ "Apple", "Banana" ]
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Select at least 2 options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+  (select 2 more)
+--- frame 1 (space) ---
+Select at least 2 options
+> [x] Apple
+  [ ] Banana
+  [ ] Cherry
+  (select 1 more)
+--- frame 2 (enter) ---
+Select at least 2 options
+> [x] Apple
+  [ ] Banana
+  [ ] Cherry
+  (select 1 more)
+--- frame 3 (down) ---
+Select at least 2 options
+  [x] Apple
+> [ ] Banana
+  [ ] Cherry
+  (select 1 more)
+--- frame 4 (space) ---
+Select at least 2 options
+  [x] Apple
+> [x] Banana
+  [ ] Cherry
+--- frame 5 (enter) ---
+Select at least 2 options Apple, Banana
+### TITLE ###
+Interactive multipick max blocks extra toggle
+### DESCRIPTION ###
+With max=2, toggling a third option on is blocked; only the first two stick.
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+print(multipick(opts, max=2))
+### KEYS ###
+space
+down
+space
+down
+space
+enter
+### STDOUT ###
+[ "Apple", "Banana" ]
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Select up to 2 options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 1 (space) ---
+Select up to 2 options
+> [x] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 2 (down) ---
+Select up to 2 options
+  [x] Apple
+> [ ] Banana
+  [ ] Cherry
+--- frame 3 (space) ---
+Select up to 2 options
+  [x] Apple
+> [x] Banana
+  [ ] Cherry
+  (max 2 selected)
+--- frame 4 (down) ---
+Select up to 2 options
+  [x] Apple
+  [x] Banana
+> [ ] Cherry
+  (max 2 selected)
+--- frame 5 (space) ---
+Select up to 2 options
+  [x] Apple
+  [x] Banana
+> [ ] Cherry
+  (max 2 selected)
+--- frame 6 (enter) ---
+Select up to 2 options Apple, Banana
+### TITLE ###
+Interactive multipick cancel
+### DESCRIPTION ###
+Ctrl-C aborts the prompt, surfacing as a rad error and a non-zero exit.
+### INPUT ###
+opts = ["Apple", "Banana", "Cherry"]
+print(multipick(opts))
+### KEYS ###
+space
+ctrl-c
+### STDERR ###
+error[RAD20000]: multipick canceled
+  --> <script>:2:7
+  |
+1 | opts = ["Apple", "Banana", "Cherry"]
+2 | print(multipick(opts))
+  |       ^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20000
+
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Select options
+> [ ] Apple
+  [ ] Banana
+  [ ] Cherry
+--- frame 1 (space) ---
+Select options
+> [x] Apple
+  [ ] Banana
+  [ ] Cherry
+### EXIT ###
+1

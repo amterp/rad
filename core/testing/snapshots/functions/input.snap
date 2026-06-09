@@ -1,0 +1,130 @@
+### TITLE ###
+Interactive input basic
+### DESCRIPTION ###
+Typing fills the field and Enter submits. Frames capture the cursor moving as
+each rune is appended, then the collapsed line echoes the answer.
+### INPUT ###
+print(input("Name > "))
+### KEYS ###
+"Alice"
+enter
+### STDOUT ###
+Alice
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Name > █
+--- frame 1 (A) ---
+Name > A█
+--- frame 2 (l) ---
+Name > Al█
+--- frame 3 (i) ---
+Name > Ali█
+--- frame 4 (c) ---
+Name > Alic█
+--- frame 5 (e) ---
+Name > Alice█
+--- frame 6 (enter) ---
+Name > Alice
+### TITLE ###
+Interactive input backspace edit
+### DESCRIPTION ###
+Backspace deletes the rune before the cursor, so a typo can be corrected before
+submitting.
+### INPUT ###
+print(input("> "))
+### KEYS ###
+"Bobb"
+backspace
+enter
+### STDOUT ###
+Bob
+
+### FRAMES ###
+--- frame 0 (initial) ---
+> █
+--- frame 1 (B) ---
+> B█
+--- frame 2 (o) ---
+> Bo█
+--- frame 3 (b) ---
+> Bob█
+--- frame 4 (b) ---
+> Bobb█
+--- frame 5 (backspace) ---
+> Bob█
+--- frame 6 (enter) ---
+> Bob
+### TITLE ###
+Interactive input default when empty
+### DESCRIPTION ###
+With a default set and nothing typed, the field shows the default as a
+placeholder and submitting empty returns the default.
+### INPUT ###
+print(input("> ", default="guest"))
+### KEYS ###
+enter
+### STDOUT ###
+guest
+
+### FRAMES ###
+--- frame 0 (initial) ---
+> █Default: guest
+--- frame 1 (enter) ---
+> 
+### TITLE ###
+Interactive secret input
+### DESCRIPTION ###
+A secret input echoes nothing as the user types: every frame is identical and
+the typed runes never appear in any frame, yet the real value still flows to the
+script. No collapsed summary is left behind.
+### INPUT ###
+print(input("Password > ", secret=true))
+### KEYS ###
+"s3cret"
+enter
+### STDOUT ###
+s3cret
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Password > █
+--- frame 1 (s) ---
+Password > █
+--- frame 2 (3) ---
+Password > █
+--- frame 3 (c) ---
+Password > █
+--- frame 4 (r) ---
+Password > █
+--- frame 5 (e) ---
+Password > █
+--- frame 6 (t) ---
+Password > █
+### TITLE ###
+Interactive input cancel
+### DESCRIPTION ###
+Ctrl-C aborts the input, surfacing as a rad error and a non-zero exit. No summary
+frame is left behind on cancel.
+### INPUT ###
+print(input("> "))
+### KEYS ###
+"x"
+ctrl-c
+### STDERR ###
+error[RAD20010]: Error reading input: input canceled
+  --> <script>:1:7
+  |
+1 | print(input("> "))
+  |       ^^^^^^^^^^^
+  |
+   = info: rad explain RAD20010
+
+
+### FRAMES ###
+--- frame 0 (initial) ---
+> █
+--- frame 1 (x) ---
+> x█
+### EXIT ###
+1

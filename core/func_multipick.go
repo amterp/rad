@@ -1,9 +1,10 @@
 package core
 
 import (
+	"errors"
 	"fmt"
 
-	"github.com/charmbracelet/huh"
+	"github.com/amterp/radish"
 )
 
 var FuncMultipick = BuiltInFunc{
@@ -65,74 +66,34 @@ var FuncMultipick = BuiltInFunc{
 			prompt = generateMultipickPrompt(min, max)
 		} else {
 			prompt = f.GetStr("prompt").Plain()
-			if prompt == "" {
-				// huh has a bug where an empty prompt cuts off an option
-				prompt = " "
-			}
 		}
 
-		// Build options for huh
-		opts := make([]huh.Option[string], len(options))
-		for i, opt := range options {
-			opts[i] = huh.NewOption(opt, opt)
-		}
-
-		// Create multi-select with validation
-		multiSelect := huh.NewMultiSelect[string]().
+		// radish enforces the bounds directly: Max blocks toggling past the limit,
+		// Min gates submit until satisfied. No post-submit validation is needed - the
+		// returned selection is always within [min, max].
+		model := radish.NewMultiSelect().
 			Title(prompt).
-			Options(opts...).
-			Validate(func(selected []string) error {
-				count := int64(len(selected))
-
-				// Special case: exact count required (min == max)
-				if max != nil && min == *max {
-					if count != min {
-						if min == 1 {
-							return fmt.Errorf("Must select exactly 1 option, but selected %d", count)
-						} else {
-							return fmt.Errorf("Must select exactly %d options, but selected %d", min, count)
-						}
-					}
-					return nil
-				}
-
-				// Check minimum constraint
-				if count < min {
-					if min == 1 {
-						return fmt.Errorf("Must select at least 1 option, but only selected %d", count)
-					} else {
-						return fmt.Errorf("Must select at least %d options, but only selected %d", min, count)
-					}
-				}
-
-				// Check maximum constraint (huh's Limit handles UI, but validate for consistency)
-				if max != nil && count > *max {
-					if *max == 1 {
-						return fmt.Errorf("Must select at most 1 option, but selected %d", count)
-					} else {
-						return fmt.Errorf("Must select at most %d options, but selected %d", *max, count)
-					}
-				}
-
-				return nil
-			})
-
-		// Apply limit if max is set
+			Options(options...).
+			Min(int(min)).
+			Width(GetTermWidth())
 		if max != nil {
-			multiSelect = multiSelect.Limit(int(*max))
+			model.Max(int(*max))
 		}
 
-		// Execute the selection
-		var selected []string
-		multiSelect = multiSelect.Value(&selected)
-
-		if err := multiSelect.Run(); err != nil {
+		res, _, err := RInteractive.Run(model)
+		if err != nil {
+			if errors.Is(err, radish.ErrNotInteractive) {
+				return f.Return(NewErrorStrf("multipick requires an interactive terminal"))
+			}
 			return f.Return(NewErrorStrf("Error running multipick: %v", err))
+		}
+		if res.Canceled {
+			return f.Return(NewErrorStrf("multipick canceled"))
 		}
 
 		// Convert to RadList
 		result := NewRadList()
-		for _, item := range selected {
+		for _, item := range model.Selected() {
 			result.Append(newRadValueStr(item))
 		}
 

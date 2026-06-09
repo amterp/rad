@@ -124,6 +124,12 @@ func newRunnerInput() core.RunnerInput {
 		if confirmResponder != nil {
 			return confirmResponder(title, prompt)
 		}
+		if lastInteractiveDriver != nil {
+			// Keys are scripted: run the real radish-backed prompt through the
+			// scripted driver so interactive snapshot tests exercise actual
+			// rendering instead of being auto-confirmed.
+			return core.InputConfirm(title, prompt)
+		}
 		return true, nil
 	}
 	requester := core.NewRequester()
