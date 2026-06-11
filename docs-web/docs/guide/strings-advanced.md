@@ -41,8 +41,22 @@ Conditions: short name!
 String interpolation expressions can be as simple as just an identifier, or can involve function calls, math, list comprehensions, etc (though you should consider extracting complex expressions into named variables beforehand for the sake of clarity).
 
 Note the use of single quote `'` strings inside the last line of the above example.
-Using double quotes would've closed the "outer" string prematurely,
-but using another delimiter allows us to avoid that without also needing to escape anything.
+You don't have to switch delimiters like that, though it can help readability:
+everything inside `{ }` is parsed as code, not text, so nested strings using the
+*same* delimiter as the outer string are guaranteed to work, no escaping needed.
+
+```rad
+tokens = ["Hello", "World"]
+print("{tokens.join(" ")}")
+print("Count: {tokens.len() > 1 ? "several" : "just one"}")
+```
+
+<div class="result">
+```
+Hello World
+Count: several
+```
+</div>
 
 ## Formatting
 
