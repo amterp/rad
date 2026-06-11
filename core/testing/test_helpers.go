@@ -21,6 +21,7 @@ import (
 const scriptGlobalFlagHelp = `Global options:
   -h, --help            Print usage string.
   -r, --repl            Start interactive REPL mode.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet           Suppresses some output.
@@ -32,6 +33,7 @@ const scriptGlobalFlagHelp = `Global options:
 const allGlobalFlagHelp = `Global options:
   -h, --help                Print usage string.
   -r, --repl                Start interactive REPL mode.
+  -i, --interactive         Interactively prompt for script args not already provided, then run.
   -d, --debug               Enables debug output. Intended for Rad script developers.
       --rad-debug           Enables Rad debug output. Intended for Rad developers.
       --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -199,19 +201,22 @@ func scriptKeysToEvents(tokens []string) ([]radish.Event, error) {
 }
 
 // captureFrames formats the frames recorded by the last scripted interactive run -
-// one block per keystroke (plus the initial render and the final summary), each
-// labelled by the key that produced it. Returns "" when the run scripted no keys.
+// one block per keystroke (plus each prompt's initial render and final summary),
+// labelled by the key that produced it. A run may span several sequential prompts
+// (e.g. --interactive walks); FrameEventIdx keeps the labels aligned regardless.
+// Returns "" when the run scripted no keys.
 func captureFrames() string {
 	if lastInteractiveDriver == nil {
 		return ""
 	}
 	frames := lastInteractiveDriver.Frames()
 	events := lastInteractiveDriver.Events()
+	eventIdx := lastInteractiveDriver.FrameEventIdx()
 	var b strings.Builder
 	for i, frame := range frames {
 		label := "initial"
-		if i >= 1 && i-1 < len(events) {
-			label = events[i-1].String()
+		if idx := eventIdx[i]; idx >= 0 && idx < len(events) {
+			label = events[idx].String()
 		}
 		fmt.Fprintf(&b, "--- frame %d (%s) ---\n", i, label)
 		b.WriteString(frame)

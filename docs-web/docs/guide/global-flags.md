@@ -13,6 +13,7 @@ The most basic global flag is `--help` or `-h`. *All* Rad scripts automatically 
 ```
 Global flags:
   -h, --help                   Print usage string.
+  -i, --interactive            Interactively prompt for script args not already provided, then run.
   -d, --debug                  Enables debug output. Intended for Rad script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.
       --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
@@ -31,6 +32,31 @@ Global flags:
 [//]: # (todo script something to keep the above blob in check)
 
 Note that, outside of `help`, all the global flags are ALL CAPS.
+
+## `interactive`
+
+Use `--interactive` or `-i` to be walked through a script's args interactively instead of typing them all out. Rad prompts for each arg you haven't already provided on the command line, using a prompt suited to the arg's type:
+
+- enum-constrained strings offer a picker of the valid values
+- bools ask y/n (Enter keeps the default)
+- ints, floats, and regex-constrained strings validate as you submit, re-prompting inline on invalid values
+- list and variadic args collect one value per line until an empty line
+
+Optional args can be skipped (Enter on an empty field, or a dedicated "skip" row in pickers), in which case their defaults apply. If the script defines [commands](./script-commands.md) and you didn't specify one, you first pick the command, then get prompted for its args.
+
+`-i` composes with partially-supplied args - anything already on the command line isn't re-prompted:
+
+```
+rad deploy.rad -i prod
+```
+
+Before running, Rad prints the equivalent non-interactive invocation to stderr, so you can copy it to rerun or script the same call directly:
+
+```
+Equivalent: rad deploy.rad --env prod --replicas 3 --force
+```
+
+This makes `-i` double as an invocation builder for unfamiliar scripts: answer the prompts once, keep the one-liner.
 
 ## `debug`
 
