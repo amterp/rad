@@ -1,7 +1,11 @@
 ### TITLE ###
 Ignore single signal by name
+### DESCRIPTION ###
+Snapshots run on all platforms, so these cases stick to sigint/sigterm - the
+only signals Windows supports (others error there by design). Unix-only
+signals like sigpipe are covered by the unix-gated Go test.
 ### INPUT ###
-signal_ignore("sigpipe")
+signal_ignore("sigint")
 print("ok")
 ### STDOUT ###
 ok
@@ -9,7 +13,7 @@ ok
 ### TITLE ###
 Ignore multiple signals via list
 ### INPUT ###
-signal_ignore(["sigpipe", "sigusr2"])
+signal_ignore(["sigint", "sigterm"])
 print("ok")
 ### STDOUT ###
 ok
