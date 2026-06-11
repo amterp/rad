@@ -2230,6 +2230,19 @@ if info.exists:
 - `modified_millis?: int` - Modification time as epoch milliseconds
 - `accessed_millis?: int` - Access time as epoch milliseconds (Unix/macOS only)
 
+### get_pid
+
+Returns the process ID (PID) of the running Rad process.
+
+```rad
+get_pid() -> int
+```
+
+```rad
+pid = get_pid()    // -> e.g. 12345
+print("My PID: {pid}")
+```
+
 ### has_stdin
 
 Checks if stdin is piped to the script.

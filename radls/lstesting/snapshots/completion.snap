@@ -207,6 +207,12 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
+      "sortText": "2"
+    },
+    {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
       "label": "get_rad_home",
@@ -954,6 +960,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
+      "sortText": "2"
+    },
+    {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
       "label": "get_rad_home",
@@ -1695,6 +1707,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
       "label": "get_path",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
       "sortText": "2"
     },
     {
@@ -2441,6 +2459,12 @@ y = 2
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
       "label": "get_path",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
       "sortText": "2"
     },
     {
@@ -3199,6 +3223,12 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
+      "sortText": "2"
+    },
+    {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
       "label": "get_rad_home",
@@ -3951,6 +3981,12 @@ x = 1
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
       "label": "get_path",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
       "sortText": "2"
     },
     {
@@ -4707,6 +4743,12 @@ args:
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
       "label": "get_path",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
       "sortText": "2"
     },
     {
@@ -5471,6 +5513,12 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
+      "sortText": "2"
+    },
+    {
       "detail": "get_rad_home() -\u003e str",
       "kind": 3,
       "label": "get_rad_home",
@@ -6218,6 +6266,12 @@ later = 2
       "detail": "get_path(_path: str) -\u003e { \"exists\": bool, \"full_path\": str, \"base_name\"?: str, \"permissions\"?: str, \"type\"?: str, \"size_bytes\"?: int, \"modified_millis\"?: int, \"accessed_millis\"?: int }",
       "kind": 3,
       "label": "get_path",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_pid() -\u003e int",
+      "kind": 3,
+      "label": "get_pid",
       "sortText": "2"
     },
     {
