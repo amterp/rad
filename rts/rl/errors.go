@@ -16,8 +16,10 @@ type Error string
 //	3xxxx  Type errors               (shared static + runtime)
 //	4xxxx  Validation / lint errors  (static only)
 //
-// When adding here, also touch core/error_docs/<code>.md and the
-// reference at docs-web/docs/reference/errors.md.
+// When adding here, also add core/error_docs/<code>.md. The public
+// reference at docs-web/docs/reference/errors.md is generated from
+// those files - run `make generate` (or `go generate ./rts`) to
+// refresh it.
 const (
 	// 1xxxx Syntax Errors
 	//

@@ -15,6 +15,9 @@ import (
 // otherwise the public docs page silently drifts whenever someone
 // edits a per-function .md and skips Make.
 //go:generate go run ../tools/gen-funcs-page -source ../docs/funcs -out ../docs-web/docs/reference/functions.md
+// gen-errors-page does the same for the errors reference, derived
+// from core/error_docs/ (the `rad explain` sources).
+//go:generate go run ../tools/gen-errors-page -source ../core/error_docs -out ../docs-web/docs/reference/errors.md
 
 type FnSignature struct {
 	Name      string
