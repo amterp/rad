@@ -42,7 +42,8 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 			for i, inv := range r.cmdInvocations {
 				names[i] = inv.cmd.ExternalName
 			}
-			choice, err := prompter.Select("Choose a command", names)
+			choice, err := prompter.Select("Choose a command", names,
+				func(choice string) string { return "Command: " + choice })
 			if err != nil {
 				r.interactiveErrorExit(err)
 			}
@@ -137,18 +138,25 @@ func printEquivalentInvocation(args []string) {
 	fmt.Fprintf(RIo.StdErr, "Equivalent: %s\n", strings.Join(quoted, " "))
 }
 
-// ArgPrompter abstracts the two prompt shapes the --interactive walk needs, so
-// the walk logic is unit-testable with a fake. The production implementation
-// builds radish models and runs them through the RInteractive driver seam.
+// ArgPrompter abstracts the prompt shapes the --interactive walk needs, so the
+// walk logic is unit-testable with a fake. The production implementation builds
+// radish models and runs them through the RInteractive driver seam. Each prompt
+// takes a summarize renderer producing the collapsed line left in the transcript
+// after the prompt ends (compact flag-form, previewing the equivalent
+// invocation); an empty result collapses to nothing.
 type ArgPrompter interface {
-	Select(title string, options []string) (string, error)
-	Input(title, placeholder string, validate func(string) error) (string, error)
+	Select(title string, options []string, summarize func(choice string) string) (string, error)
+	MultiSelect(title string, options, preselected []string, summarize func(chosen []string) string) ([]string, error)
+	Input(title, placeholder string, validate func(string) error, summarize func(value string) string) (string, error)
 }
 
 type radishArgPrompter struct{}
 
-func (radishArgPrompter) Select(title string, options []string) (string, error) {
+func (radishArgPrompter) Select(title string, options []string, summarize func(string) string) (string, error) {
 	model := radish.NewSelect().Title(title).Options(options...).Width(GetTermWidth())
+	if summarize != nil {
+		model.SummaryFunc(summarize)
+	}
 	res, _, err := RInteractive.Run(model)
 	if err != nil {
 		return "", err
@@ -160,13 +168,31 @@ func (radishArgPrompter) Select(title string, options []string) (string, error) 
 	return selected, nil
 }
 
-func (radishArgPrompter) Input(title, placeholder string, validate func(string) error) (string, error) {
+func (radishArgPrompter) MultiSelect(title string, options, preselected []string, summarize func([]string) string) ([]string, error) {
+	model := radish.NewMultiSelect().Title(title).Options(options...).Preselect(preselected...).Width(GetTermWidth())
+	if summarize != nil {
+		model.SummaryFunc(summarize)
+	}
+	res, _, err := RInteractive.Run(model)
+	if err != nil {
+		return nil, err
+	}
+	if res.Canceled {
+		return nil, errPromptCanceled
+	}
+	return model.Selected(), nil
+}
+
+func (radishArgPrompter) Input(title, placeholder string, validate func(string) error, summarize func(string) string) (string, error) {
 	model := radish.NewInput().Title(title).Prompt("> ").Width(GetTermWidth())
 	if placeholder != "" {
 		model.Placeholder(placeholder)
 	}
 	if validate != nil {
 		model.Validate(validate)
+	}
+	if summarize != nil {
+		model.SummaryFunc(summarize)
 	}
 	res, _, err := RInteractive.Run(model)
 	if err != nil {
@@ -185,6 +211,10 @@ func (radishArgPrompter) Input(title, placeholder string, validate func(string) 
 // answered arg is skipped (with a note), and an arg required by one is forced
 // (no skipping). The final parse remains the backstop for anything the walk
 // cannot see, e.g. an answer that requires an arg the walk already passed.
+//
+// Bool args are special-cased: when two or more are unsupplied, they collapse
+// into one MultiSelect at the position of the first one (toggled = true), so a
+// flag-heavy script is one prompt instead of a y/n per flag.
 func walkInteractiveArgs(
 	args []*ScriptArg,
 	isConfigured func(externalName string) bool,
@@ -199,9 +229,32 @@ func walkInteractiveArgs(
 		}
 	}
 
+	var groupBools []*ScriptArg
+	for _, arg := range args {
+		if !active[arg.ExternalName] && isGroupableBool(arg) {
+			groupBools = append(groupBools, arg)
+		}
+	}
+	if len(groupBools) < 2 {
+		groupBools = nil // a lone bool keeps its y/n prompt
+	}
+	boolsHandled := false
+
 	var tokens []string
 	for _, arg := range args {
 		if active[arg.ExternalName] {
+			continue
+		}
+		if groupBools != nil && isGroupableBool(arg) {
+			if boolsHandled {
+				continue
+			}
+			boolsHandled = true
+			groupTokens, err := promptBoolGroup(groupBools, args, active, prompter, notef)
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, groupTokens...)
 			continue
 		}
 		if excluder := excludedBy(arg, args, active); excluder != "" {
@@ -221,6 +274,91 @@ func walkInteractiveArgs(
 			active[arg.ExternalName] = true
 			tokens = append(tokens, argTokens...)
 		}
+	}
+	return tokens, nil
+}
+
+func isGroupableBool(arg *ScriptArg) bool {
+	return arg.Type == ArgBoolT && !isListScriptArg(arg)
+}
+
+// promptBoolGroup runs one MultiSelect over the unsupplied bool args: each
+// opens checked iff its default is true, and the toggled state is its final
+// value. Tokens are emitted only where that differs from the default, same as
+// the individual y/n path. Bools excluded by already-active args are dropped
+// (with a note); if only one bool survives, it falls back to a y/n prompt.
+// Exclusions BETWEEN grouped bools can't react within a single prompt - the
+// final parse backstops those.
+func promptBoolGroup(
+	bools []*ScriptArg,
+	all []*ScriptArg,
+	active map[string]bool,
+	prompter ArgPrompter,
+	notef func(format string, a ...any),
+) ([]string, error) {
+	var eligible []*ScriptArg
+	for _, b := range bools {
+		if excluder := excludedBy(b, all, active); excluder != "" {
+			notef("Skipping --%s (excluded by --%s)\n", b.ExternalName, excluder)
+			continue
+		}
+		eligible = append(eligible, b)
+	}
+	if len(eligible) == 0 {
+		return nil, nil
+	}
+	if len(eligible) == 1 {
+		tokens, err := promptForArg(eligible[0], false, prompter)
+		if err == nil && len(tokens) > 0 {
+			active[eligible[0].ExternalName] = true
+		}
+		return tokens, err
+	}
+
+	labels := make([]string, len(eligible))
+	byLabel := make(map[string]*ScriptArg, len(eligible))
+	var preselected []string
+	for i, b := range eligible {
+		labels[i] = promptTitle(b)
+		byLabel[labels[i]] = b
+		if b.DefaultBool != nil && *b.DefaultBool {
+			preselected = append(preselected, labels[i])
+		}
+	}
+
+	summarize := func(chosen []string) string {
+		if len(chosen) == 0 {
+			return "Flags: (none)"
+		}
+		names := make([]string, len(chosen))
+		for i, label := range chosen {
+			names[i] = "--" + byLabel[label].ExternalName
+		}
+		return "Flags: " + strings.Join(names, ", ")
+	}
+
+	chosen, err := prompter.MultiSelect("Flags", labels, preselected, summarize)
+	if err != nil {
+		return nil, err
+	}
+	chosenSet := make(map[string]bool, len(chosen))
+	for _, label := range chosen {
+		chosenSet[label] = true
+	}
+
+	var tokens []string
+	for i, b := range eligible {
+		final := chosenSet[labels[i]]
+		def := b.DefaultBool != nil && *b.DefaultBool
+		if final == def {
+			continue
+		}
+		if final {
+			tokens = append(tokens, "--"+b.ExternalName)
+		} else {
+			tokens = append(tokens, "--"+b.ExternalName+"=false")
+		}
+		active[b.ExternalName] = true
 	}
 	return tokens, nil
 }
@@ -272,7 +410,13 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 			skip = enumSkipLabel(arg)
 			options = append([]string{skip}, options...)
 		}
-		choice, err := prompter.Select(title, options)
+		summarize := func(choice string) string {
+			if skip != "" && choice == skip {
+				return flagToken + " " + skipSummary(arg)
+			}
+			return flagToken + " " + choice
+		}
+		choice, err := prompter.Select(title, options, summarize)
 		if err != nil {
 			return nil, err
 		}
@@ -286,7 +430,13 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 		return promptBool(arg, title, flagToken, prompter)
 	}
 
-	answer, err := prompter.Input(title, defaultPlaceholder(arg), validatorFor(arg, required))
+	summarize := func(value string) string {
+		if value == "" {
+			return flagToken + " " + skipSummary(arg)
+		}
+		return flagToken + " " + value
+	}
+	answer, err := prompter.Input(title, defaultPlaceholder(arg), validatorFor(arg, required), summarize)
 	if err != nil {
 		return nil, err
 	}
@@ -302,19 +452,14 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 func promptBool(arg *ScriptArg, title, flagToken string, prompter ArgPrompter) ([]string, error) {
 	def := arg.DefaultBool != nil && *arg.DefaultBool
 	hint := lo.Ternary(def, "[Y/n]", "[y/N]")
-	answer, err := prompter.Input(title+" "+hint, "", boolValidator)
+	summarize := func(answer string) string {
+		return flagToken + " " + lo.Ternary(parseBoolAnswer(answer, def), "yes", "no")
+	}
+	answer, err := prompter.Input(title+" "+hint, "", boolValidator, summarize)
 	if err != nil {
 		return nil, err
 	}
-	val := def
-	switch strings.ToLower(answer) {
-	case "":
-		// keep default
-	case "y", "yes", "true":
-		val = true
-	case "n", "no", "false":
-		val = false
-	}
+	val := parseBoolAnswer(answer, def)
 	if val == def {
 		return nil, nil
 	}
@@ -322,6 +467,18 @@ func promptBool(arg *ScriptArg, title, flagToken string, prompter ArgPrompter) (
 		return []string{flagToken}, nil
 	}
 	return []string{flagToken + "=false"}, nil
+}
+
+// parseBoolAnswer maps a y/n prompt answer to its final value; empty (just
+// Enter) keeps the default. boolValidator has already constrained the answer.
+func parseBoolAnswer(answer string, def bool) bool {
+	switch strings.ToLower(answer) {
+	case "y", "yes", "true":
+		return true
+	case "n", "no", "false":
+		return false
+	}
+	return def
 }
 
 // boolValidator gates the y/n prompt; Enter (empty) means the default.
@@ -356,11 +513,22 @@ func promptList(arg *ScriptArg, required bool, title, flagToken string, prompter
 			}
 			return nil
 		}
+		// One transcript line per value; the empty terminator collapses silently,
+		// except when it's the first entry (the whole arg was skipped).
+		summarize := func(value string) string {
+			if value != "" {
+				return flagToken + " " + value
+			}
+			if first {
+				return flagToken + " " + skipSummary(arg)
+			}
+			return ""
+		}
 		placeholder := ""
 		if first {
 			placeholder = defaultPlaceholder(arg)
 		}
-		answer, err := prompter.Input(title, placeholder, validate)
+		answer, err := prompter.Input(title, placeholder, validate, summarize)
 		if err != nil {
 			return nil, err
 		}
@@ -523,6 +691,14 @@ func defaultPlaceholder(arg *ScriptArg) string {
 func enumSkipLabel(arg *ScriptArg) string {
 	if d := argDefaultDisplay(arg); d != "" {
 		return fmt.Sprintf("(skip - use default: %s)", d)
+	}
+	return "(skip)"
+}
+
+// skipSummary is the transcript annotation for a skipped arg.
+func skipSummary(arg *ScriptArg) string {
+	if d := argDefaultDisplay(arg); d != "" {
+		return fmt.Sprintf("(skip - default: %s)", d)
 	}
 	return "(skip)"
 }

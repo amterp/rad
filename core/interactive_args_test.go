@@ -7,15 +7,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// fakePrompter scripts answers for walkInteractiveArgs tests. Select answers
-// and Input answers are consumed in prompt order; running out fails the test
-// via the returned error. Validators are exercised against the answer so the
-// tests prove the walk wires them up, not just that answers flow through.
+// fakePrompter scripts answers for walkInteractiveArgs tests. Select and Input
+// answers are consumed in prompt order from answers; MultiSelect answers from
+// multiAnswers. Running out fails the test. Validators are exercised against
+// the answer, and each prompt's summarize renderer is applied and recorded, so
+// the tests prove the walk wires both up - not just that answers flow through.
 type fakePrompter struct {
-	t       *testing.T
-	answers []string
-	prompts []string // titles seen, in order
-	err     error    // if set, returned by every prompt
+	t            *testing.T
+	answers      []string
+	multiAnswers [][]string
+	prompts      []string // titles seen, in order
+	summaries    []string // rendered collapse lines, in order
+	err          error    // if set, returned by every prompt
 }
 
 func (f *fakePrompter) next(title string) (string, error) {
@@ -31,22 +34,53 @@ func (f *fakePrompter) next(title string) (string, error) {
 	return answer, nil
 }
 
-func (f *fakePrompter) Select(title string, options []string) (string, error) {
+func (f *fakePrompter) recordSummary(line string) {
+	if line != "" {
+		f.summaries = append(f.summaries, line)
+	}
+}
+
+func (f *fakePrompter) Select(title string, options []string, summarize func(string) string) (string, error) {
 	answer, err := f.next(title)
 	if err != nil {
 		return "", err
 	}
 	assert.Contains(f.t, options, answer, "scripted Select answer must be an offered option")
+	if summarize != nil {
+		f.recordSummary(summarize(answer))
+	}
 	return answer, nil
 }
 
-func (f *fakePrompter) Input(title, placeholder string, validate func(string) error) (string, error) {
+func (f *fakePrompter) MultiSelect(title string, options, preselected []string, summarize func([]string) string) ([]string, error) {
+	if f.err != nil {
+		return nil, f.err
+	}
+	f.prompts = append(f.prompts, title)
+	if len(f.multiAnswers) == 0 {
+		f.t.Fatalf("multiselect %q: no scripted answer left", title)
+	}
+	chosen := f.multiAnswers[0]
+	f.multiAnswers = f.multiAnswers[1:]
+	for _, c := range chosen {
+		assert.Contains(f.t, options, c, "scripted MultiSelect answer must be an offered option")
+	}
+	if summarize != nil {
+		f.recordSummary(summarize(chosen))
+	}
+	return chosen, nil
+}
+
+func (f *fakePrompter) Input(title, placeholder string, validate func(string) error, summarize func(string) string) (string, error) {
 	answer, err := f.next(title)
 	if err != nil {
 		return "", err
 	}
 	if validate != nil {
 		assert.NoError(f.t, validate(answer), "scripted Input answer must pass the arg's validator")
+	}
+	if summarize != nil {
+		f.recordSummary(summarize(answer))
 	}
 	return answer, nil
 }
@@ -91,20 +125,76 @@ func TestWalkEnumUsesSelectAndOptionalGetsSkipRow(t *testing.T) {
 	assert.Equal(t, []string{"--env", "prod"}, tokens, "skipped optional enum emits no tokens")
 }
 
-func TestWalkBoolEmitsTokenOnlyWhenDifferingFromDefault(t *testing.T) {
-	defTrue := true
+func TestWalkSingleBoolUsesYesNoInput(t *testing.T) {
 	args := []*ScriptArg{
 		{Name: "force", ExternalName: "force", Type: ArgBoolT, HasDefaultValue: true},
-		{Name: "cache", ExternalName: "cache", Type: ArgBoolT, HasDefaultValue: true, DefaultBool: &defTrue},
-		{Name: "loud", ExternalName: "loud", Type: ArgBoolT, HasDefaultValue: true},
 	}
-	// force: "y" flips default false -> --force; cache: "n" flips default true ->
-	// --cache=false; loud: Enter keeps the default -> no token.
-	p := &fakePrompter{t: t, answers: []string{"y", "n", ""}}
+	p := &fakePrompter{t: t, answers: []string{"y"}}
 	tokens, err := walkInteractiveArgs(args, notConfigured, p, noNotes)
 
 	assert.NoError(t, err)
-	assert.Equal(t, []string{"--force", "--cache=false"}, tokens)
+	assert.Equal(t, []string{"--force"}, tokens)
+	assert.Equal(t, []string{"--force [y/N]"}, p.prompts)
+	assert.Equal(t, []string{"--force yes"}, p.summaries)
+}
+
+func TestWalkSingleBoolEnterKeepsDefault(t *testing.T) {
+	defTrue := true
+	args := []*ScriptArg{
+		{Name: "cache", ExternalName: "cache", Type: ArgBoolT, HasDefaultValue: true, DefaultBool: &defTrue},
+	}
+	p := &fakePrompter{t: t, answers: []string{""}}
+	tokens, err := walkInteractiveArgs(args, notConfigured, p, noNotes)
+
+	assert.NoError(t, err)
+	assert.Empty(t, tokens)
+	assert.Equal(t, []string{"--cache yes"}, p.summaries, "summary shows the kept default")
+}
+
+func TestWalkGroupsMultipleBoolsIntoMultiSelect(t *testing.T) {
+	defTrue := true
+	desc := "Build the project."
+	args := []*ScriptArg{
+		strArg("name"), // non-bool: stays an individual prompt
+		{Name: "build", ExternalName: "build", Type: ArgBoolT, HasDefaultValue: true, Description: &desc},
+		{Name: "cache", ExternalName: "cache", Type: ArgBoolT, HasDefaultValue: true, DefaultBool: &defTrue},
+		{Name: "loud", ExternalName: "loud", Type: ArgBoolT, HasDefaultValue: true},
+	}
+	// MultiSelect result: build toggled on (default false -> --build), cache
+	// toggled off (default true -> --cache=false), loud untouched (no token).
+	p := &fakePrompter{
+		t:            t,
+		answers:      []string{"alice"},
+		multiAnswers: [][]string{{"--build: Build the project."}},
+	}
+	tokens, err := walkInteractiveArgs(args, notConfigured, p, noNotes)
+
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"--name", "alice", "--build", "--cache=false"}, tokens)
+	assert.Equal(t, []string{"--name", "Flags"}, p.prompts, "one multiselect, at the first bool's position")
+	assert.Equal(t, []string{"--name alice", "Flags: --build"}, p.summaries)
+}
+
+func TestWalkGroupExcludesConfiguredAndExcludedBools(t *testing.T) {
+	args := []*ScriptArg{
+		strArg("json", func(a *ScriptArg) { a.ExcludesConstraint = []string{"pretty"} }),
+		{Name: "pretty", ExternalName: "pretty", Type: ArgBoolT, HasDefaultValue: true},
+		{Name: "quiet2", ExternalName: "quiet2", Type: ArgBoolT, HasDefaultValue: true},
+		{Name: "loud", ExternalName: "loud", Type: ArgBoolT, HasDefaultValue: true},
+	}
+	var notes []string
+	notef := func(format string, a ...any) { notes = append(notes, format) }
+
+	// json supplied on CLI excludes pretty -> pretty is dropped from the group
+	// with a note; quiet2 and loud remain and still group (2 left).
+	p := &fakePrompter{t: t, multiAnswers: [][]string{{"--loud"}}}
+	tokens, err := walkInteractiveArgs(args,
+		func(ext string) bool { return ext == "json" }, p, notef)
+
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"--loud"}, tokens)
+	assert.Len(t, notes, 1)
+	assert.Equal(t, []string{"Flags"}, p.prompts)
 }
 
 func TestWalkOptionalInputSkippedOnEmpty(t *testing.T) {
