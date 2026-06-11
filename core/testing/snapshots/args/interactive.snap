@@ -31,7 +31,7 @@ Equivalent: rad TestCase --color=never --env staging
 > staging
   prod
 --- frame 2 (enter) ---
---env: Environment to deploy to. staging
+--env staging
 ### TITLE ###
 BoolAnswerYesDefaultFalse
 ### DESCRIPTION ###
@@ -60,7 +60,7 @@ Equivalent: rad TestCase --color=never --force
 --force: Skip confirmation. [y/N]
 > y█
 --- frame 2 (enter) ---
-> y
+--force yes
 ### TITLE ###
 BoolAnswerNoDefaultTrue
 ### DESCRIPTION ###
@@ -89,7 +89,7 @@ Equivalent: rad TestCase --color=never --cache=false
 --cache: Use the cache. [Y/n]
 > n█
 --- frame 2 (enter) ---
-> n
+--cache no
 ### TITLE ###
 BoolEnterKeepsDefault
 ### DESCRIPTION ###
@@ -114,7 +114,7 @@ Equivalent: rad TestCase --color=never
 --force: Skip confirmation. [y/N]
 > █
 --- frame 1 (enter) ---
-> 
+--force no
 ### TITLE ###
 IntRangeRevalidation
 ### DESCRIPTION ###
@@ -156,7 +156,7 @@ must be in range [1, 10]
 --replicas: Number of replicas.
 > 9█
 --- frame 5 (enter) ---
-> 9
+--replicas 9
 ### TITLE ###
 RegexRevalidation
 ### DESCRIPTION ###
@@ -204,7 +204,7 @@ must match regex: [a-z]+
 --name
 > bob█
 --- frame 7 (enter) ---
-> bob
+--name bob
 ### TITLE ###
 OptionalInputSkippedOnEnter
 ### DESCRIPTION ###
@@ -229,7 +229,7 @@ Equivalent: rad TestCase --color=never
 --replicas: Number of replicas.
 > █Default: 3
 --- frame 1 (enter) ---
-> 
+--replicas (skip - default: 3)
 ### TITLE ###
 OptionalEnumSkipRow
 ### DESCRIPTION ###
@@ -258,7 +258,7 @@ Equivalent: rad TestCase --color=never
   staging
   prod
 --- frame 1 (enter) ---
---env: Environment to deploy to. (skip - use default: dev)
+--env (skip - default: dev)
 ### TITLE ###
 CommandPickCascade
 ### DESCRIPTION ###
@@ -297,7 +297,7 @@ Choose a command
   greet
 > status
 --- frame 2 (enter) ---
-Choose a command status
+Command: status
 --- frame 3 (initial) ---
 --code
 > █
@@ -305,7 +305,7 @@ Choose a command status
 --code
 > 7█
 --- frame 5 (enter) ---
-> 7
+--code 7
 ### TITLE ###
 PartialCliArgsOnlyMissingPrompted
 ### DESCRIPTION ###
@@ -345,7 +345,7 @@ Equivalent: rad TestCase alpha --color=never --second beta
 --second
 > beta█
 --- frame 5 (enter) ---
-> beta
+--second beta
 ### TITLE ###
 VariadicOnePerLine
 ### DESCRIPTION ###
@@ -389,7 +389,7 @@ Equivalent: rad TestCase --color=never --files a.txt 'b 2.txt'
 --files: Files to process. (one per line, empty line to finish)
 > a.txt█
 --- frame 6 (enter) ---
-> a.txt
+--files a.txt
 --- frame 7 (initial) ---
 --files: Files to process. (one per line, empty line to finish)
 > █
@@ -415,12 +415,10 @@ Equivalent: rad TestCase --color=never --files a.txt 'b 2.txt'
 --files: Files to process. (one per line, empty line to finish)
 > b 2.txt█
 --- frame 15 (enter) ---
-> b 2.txt
+--files b 2.txt
 --- frame 16 (initial) ---
 --files: Files to process. (one per line, empty line to finish)
 > █
---- frame 17 (enter) ---
-> 
 ### TITLE ###
 RequiredListRejectsEmptyFirstEntry
 ### DESCRIPTION ###
@@ -455,12 +453,10 @@ at least one value required
 --tags (one per line, empty line to finish)
 > a█
 --- frame 3 (enter) ---
-> a
+--tags a
 --- frame 4 (initial) ---
 --tags (one per line, empty line to finish)
 > █
---- frame 5 (enter) ---
-> 
 ### TITLE ###
 ExcludesSkipsPrompt
 ### DESCRIPTION ###
@@ -525,7 +521,7 @@ value required
 --password: Password.
 > pw█
 --- frame 4 (enter) ---
-> pw
+--password pw
 ### TITLE ###
 CancelExitsCleanly
 ### DESCRIPTION ###
@@ -620,4 +616,76 @@ Equivalent: rad TestCase --color=never --msg 'hello world'
 --msg
 > hello world█
 --- frame 12 (enter) ---
-> hello world
+--msg hello world
+### TITLE ###
+BoolsGroupIntoMultipick
+### DESCRIPTION ###
+Two or more unsupplied bools collapse into one multiselect at the first bool's
+position: toggled = true, untoggled = false, defaults preselected. Tokens are
+emitted only where the result differs from the default. Here build is toggled
+on, cache (default true, preselected) is toggled off, lint is left alone.
+### INPUT ###
+args:
+    name str # Your name.
+    build bool # Build the project.
+    lint bool # Run linter.
+    cache bool = true # Use the cache.
+print("name={name} build={build} lint={lint} cache={cache}")
+### ARGS ###
+-i
+### KEYS ###
+"bob"
+enter
+space
+down
+down
+space
+enter
+### STDOUT ###
+name=bob build=true lint=false cache=false
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --name bob --build --cache=false
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--name: Your name.
+> █
+--- frame 1 (b) ---
+--name: Your name.
+> b█
+--- frame 2 (o) ---
+--name: Your name.
+> bo█
+--- frame 3 (b) ---
+--name: Your name.
+> bob█
+--- frame 4 (enter) ---
+--name bob
+--- frame 5 (initial) ---
+Flags
+> [ ] --build: Build the project.
+  [ ] --lint: Run linter.
+  [x] --cache: Use the cache.
+--- frame 6 (space) ---
+Flags
+> [x] --build: Build the project.
+  [ ] --lint: Run linter.
+  [x] --cache: Use the cache.
+--- frame 7 (down) ---
+Flags
+  [x] --build: Build the project.
+> [ ] --lint: Run linter.
+  [x] --cache: Use the cache.
+--- frame 8 (down) ---
+Flags
+  [x] --build: Build the project.
+  [ ] --lint: Run linter.
+> [x] --cache: Use the cache.
+--- frame 9 (space) ---
+Flags
+  [x] --build: Build the project.
+  [ ] --lint: Run linter.
+> [ ] --cache: Use the cache.
+--- frame 10 (enter) ---
+Flags: --build

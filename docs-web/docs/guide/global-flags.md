@@ -38,11 +38,11 @@ Note that, outside of `help`, all the global flags are ALL CAPS.
 Use `--interactive` or `-i` to be walked through a script's args interactively instead of typing them all out. Rad prompts for each arg you haven't already provided on the command line, using a prompt suited to the arg's type:
 
 - enum-constrained strings offer a picker of the valid values
-- bools ask y/n (Enter keeps the default)
+- bools are gathered into a single toggleable multi-pick (defaults pre-checked); a lone bool just asks y/n
 - ints, floats, and regex-constrained strings validate as you submit, re-prompting inline on invalid values
 - list and variadic args collect one value per line until an empty line
 
-Optional args can be skipped (Enter on an empty field, or a dedicated "skip" row in pickers), in which case their defaults apply. If the script defines [commands](./script-commands.md) and you didn't specify one, you first pick the command, then get prompted for its args.
+Each answered prompt collapses to a compact transcript line (`--env staging`, `--replicas (skip - default: 3)`), so you can see at a glance what was chosen. Optional args can be skipped (Enter on an empty field, or a dedicated "skip" row in pickers), in which case their defaults apply. If the script defines [commands](./script-commands.md) and you didn't specify one, you first pick the command, then get prompted for its args.
 
 `-i` composes with partially-supplied args - anything already on the command line isn't re-prompted:
 
