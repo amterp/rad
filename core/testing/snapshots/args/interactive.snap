@@ -114,7 +114,7 @@ Equivalent: rad TestCase --color=never
 --force: Skip confirmation. [y/N]
 > █
 --- frame 1 (enter) ---
---force no
+--force (default: no)
 ### TITLE ###
 IntRangeRevalidation
 ### DESCRIPTION ###
@@ -415,7 +415,7 @@ Equivalent: rad TestCase --color=never --files a.txt 'b 2.txt'
 --files: Files to process. (one per line, empty line to finish)
 > b 2.txt█
 --- frame 15 (enter) ---
---files b 2.txt
+--files 'b 2.txt'
 --- frame 16 (initial) ---
 --files: Files to process. (one per line, empty line to finish)
 > █
@@ -484,11 +484,13 @@ Equivalent: rad TestCase --file in.txt --color=never
 RequiresForcesPrompt
 ### DESCRIPTION ###
 A CLI-supplied arg that mutually requires another forces the latter's prompt:
-it loses its skip affordance (empty Enter is blocked).
+it loses its skip affordance (empty Enter is blocked, naming the arg that
+forced it). The forced arg is nullable - one with a default would satisfy the
+requires constraint by itself (see RequiresSatisfiedByDefault).
 ### INPUT ###
 args:
     username str = "" # Username.
-    password str = "" # Password.
+    password str? # Password.
 
     username mutually requires password
 print("user={username} pass={password}")
@@ -513,7 +515,7 @@ Equivalent: rad TestCase --username alice --color=never --password pw
 --- frame 1 (enter) ---
 --password: Password.
 > █
-value required
+required by --username
 --- frame 2 (p) ---
 --password: Password.
 > p█
@@ -522,6 +524,131 @@ value required
 > pw█
 --- frame 4 (enter) ---
 --password pw
+### TITLE ###
+RequiresSatisfiedByDefault
+### DESCRIPTION ###
+A requires constraint pointing at a defaulted arg stays satisfied by that
+default (ra's has-value semantics), so the prompt keeps its skip affordance.
+### INPUT ###
+args:
+    username str = "" # Username.
+    token str = "anon" # Token.
+
+    username mutually requires token
+print("user={username} token={token}")
+### ARGS ###
+-i
+--username
+alice
+### KEYS ###
+enter
+### STDOUT ###
+user=alice token=anon
+
+### STDERR ###
+Equivalent: rad TestCase --username alice --color=never
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--token: Token.
+> █Default: anon
+--- frame 1 (enter) ---
+--token (skip - default: anon)
+### TITLE ###
+FloatRangeRevalidation
+### DESCRIPTION ###
+Float args validate inline like ints: out-of-range blocks Enter, editing
+clears the error, and a valid value submits.
+### INPUT ###
+args:
+    ratio float # Mix ratio.
+    ratio range [0, 1]
+print("ratio={ratio}")
+### ARGS ###
+-i
+### KEYS ###
+"5"
+enter
+backspace
+"0.5"
+enter
+### STDOUT ###
+ratio=0.5
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --ratio 0.5
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--ratio: Mix ratio.
+> █
+--- frame 1 (5) ---
+--ratio: Mix ratio.
+> 5█
+--- frame 2 (enter) ---
+--ratio: Mix ratio.
+> 5█
+must be in range [0, 1]
+--- frame 3 (backspace) ---
+--ratio: Mix ratio.
+> █
+--- frame 4 (0) ---
+--ratio: Mix ratio.
+> 0█
+--- frame 5 (.) ---
+--ratio: Mix ratio.
+> 0.█
+--- frame 6 (5) ---
+--ratio: Mix ratio.
+> 0.5█
+--- frame 7 (enter) ---
+--ratio 0.5
+### TITLE ###
+NegativeNumbersInIntList
+### DESCRIPTION ###
+Negative numbers entered for a number list ride the =-form (--nums=-5) in the
+synthesized argv, so the final parse cannot mistake them for flags.
+### INPUT ###
+args:
+    nums int[]
+print(nums)
+### ARGS ###
+-i
+### KEYS ###
+"-5"
+enter
+"3"
+enter
+enter
+### STDOUT ###
+[ -5, 3 ]
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --nums=-5 --nums 3
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--nums (one per line, empty line to finish)
+> █
+--- frame 1 (-) ---
+--nums (one per line, empty line to finish)
+> -█
+--- frame 2 (5) ---
+--nums (one per line, empty line to finish)
+> -5█
+--- frame 3 (enter) ---
+--nums=-5
+--- frame 4 (initial) ---
+--nums (one per line, empty line to finish)
+> █
+--- frame 5 (3) ---
+--nums (one per line, empty line to finish)
+> 3█
+--- frame 6 (enter) ---
+--nums 3
+--- frame 7 (initial) ---
+--nums (one per line, empty line to finish)
+> █
 ### TITLE ###
 CancelExitsCleanly
 ### DESCRIPTION ###
@@ -535,7 +662,7 @@ print("name={name}")
 ### KEYS ###
 ctrl-c
 ### STDERR ###
-Interactive mode canceled.
+Interactive mode canceled
 
 ### FRAMES ###
 --- frame 0 (initial) ---
@@ -616,7 +743,7 @@ Equivalent: rad TestCase --color=never --msg 'hello world'
 --msg
 > hello world█
 --- frame 12 (enter) ---
---msg hello world
+--msg 'hello world'
 ### TITLE ###
 BoolsGroupIntoMultipick
 ### DESCRIPTION ###
@@ -667,25 +794,30 @@ Flags
 > [ ] --build: Build the project.
   [ ] --lint: Run linter.
   [x] --cache: Use the cache.
+  space to toggle, enter to confirm
 --- frame 6 (space) ---
 Flags
 > [x] --build: Build the project.
   [ ] --lint: Run linter.
   [x] --cache: Use the cache.
+  space to toggle, enter to confirm
 --- frame 7 (down) ---
 Flags
   [x] --build: Build the project.
 > [ ] --lint: Run linter.
   [x] --cache: Use the cache.
+  space to toggle, enter to confirm
 --- frame 8 (down) ---
 Flags
   [x] --build: Build the project.
   [ ] --lint: Run linter.
 > [x] --cache: Use the cache.
+  space to toggle, enter to confirm
 --- frame 9 (space) ---
 Flags
   [x] --build: Build the project.
   [ ] --lint: Run linter.
 > [ ] --cache: Use the cache.
+  space to toggle, enter to confirm
 --- frame 10 (enter) ---
-Flags: --build
+Flags: --build, --cache=false

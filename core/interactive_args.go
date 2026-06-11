@@ -31,7 +31,7 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 	// The synthesized argv must not carry -i: its BypassValidation would neuter
 	// the second parse's required/relational checks, and the printed invocation
 	// must reproduce the run *without* prompting.
-	stripped := stripInteractiveFlags(argsToRead)
+	stripped := stripInteractiveFlags(argsToRead, r.flagTokenInfo())
 
 	cmdToken := ""
 	walkArgs := r.scriptData.Args
@@ -69,7 +69,7 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 	notef := func(format string, a ...any) {
 		fmt.Fprint(RIo.StdErr, com.YellowS(format, a...))
 	}
-	tokens, err := walkInteractiveArgs(walkArgs, RRootCmd.Configured, prompter, notef)
+	tokens, err := walkInteractiveArgs(walkArgs, RRootCmd.Configured, r.cliBoolLookup(), prompter, notef)
 	if err != nil {
 		r.interactiveErrorExit(err)
 	}
@@ -95,32 +95,159 @@ func (r *RadRunner) invokedCmd() *cmdInvocation {
 	return nil
 }
 
+// cliBoolLookup returns the parsed value of a bool flag the CLI supplied, so
+// the walk knows whether --no-cache=false style input counts for exclusion.
+// Covers shared script args and, when a command was invoked, its args too.
+func (r *RadRunner) cliBoolLookup() func(externalName string) bool {
+	radArgs := r.scriptArgs
+	if invoked := r.invokedCmd(); invoked != nil {
+		radArgs = append(append([]RadArg{}, invoked.args...), r.scriptArgs...)
+	}
+	return func(externalName string) bool {
+		for _, a := range radArgs {
+			if a.GetExternalName() == externalName {
+				if b, ok := a.(*BoolRadArg); ok {
+					return b.Value
+				}
+				return false
+			}
+		}
+		return false
+	}
+}
+
 func (r *RadRunner) interactiveErrorExit(err error) {
 	if errors.Is(err, radish.ErrNotInteractive) {
 		RP.ErrorExit("--interactive requires an interactive terminal\n")
 	}
 	if errors.Is(err, errPromptCanceled) {
-		RP.ErrorExit("Interactive mode canceled.\n")
+		RP.ErrorExit("Interactive mode canceled\n")
 	}
 	RP.ErrorExit(fmt.Sprintf("Error during interactive prompting: %v\n", err))
 }
 
-// stripInteractiveFlags drops -i/--interactive tokens, leaving everything after
-// a literal "--" separator untouched (those are positional values, not flags).
-func stripInteractiveFlags(args []string) []string {
+// flagTokenInfo is what stripInteractiveFlags needs to walk an argv the way ra
+// does: which flag tokens blindly consume the next token as their value (so a
+// "-i" in that position is data, not the interactive flag), and which short
+// runes are registered (so "-di" can be recognized as a flag cluster).
+type flagTokenInfo struct {
+	valueTaking map[string]bool
+	shorts      map[rune]bool
+}
+
+// flagTokenInfo aggregates flag shapes across global flags, script args, and
+// every command's args (at strip time we don't yet know which command, if any,
+// applies). A flag consumes the next token unless it's a scalar bool (set by
+// presence) or variadic (ra's greedy collection stops at registered flags
+// rather than consuming one blindly).
+func (r *RadRunner) flagTokenInfo() flagTokenInfo {
+	info := flagTokenInfo{
+		valueTaking: make(map[string]bool),
+		shorts:      make(map[rune]bool),
+	}
+	add := func(externalName, short string, takesValue bool) {
+		if short != "" {
+			info.shorts[rune(short[0])] = true
+		}
+		if takesValue {
+			info.valueTaking["--"+externalName] = true
+			if short != "" {
+				info.valueTaking["-"+short] = true
+			}
+		}
+	}
+	for _, g := range r.globalFlags {
+		add(g.GetExternalName(), g.GetShort(), g.GetType() != ArgBoolT)
+	}
+	collect := func(args []*ScriptArg) {
+		for _, a := range args {
+			short := ""
+			if a.Short != nil {
+				short = *a.Short
+			}
+			takesValue := !a.IsVariadic && (a.Type != ArgBoolT || isListScriptArg(a))
+			add(a.ExternalName, short, takesValue)
+		}
+	}
+	if r.scriptData != nil {
+		collect(r.scriptData.Args)
+	}
+	for _, inv := range r.cmdInvocations {
+		collect(inv.cmd.Args)
+	}
+	return info
+}
+
+// stripInteractiveFlags drops the tokens that switched interactive mode on:
+// -i, --interactive, and their =value and short-cluster (-di) forms. Tokens in
+// a value position (right after a value-consuming flag) are data and survive,
+// as does everything after a literal "--" separator.
+//
+// Known gap: a cluster whose trailing short consumes a value (-dc never)
+// doesn't mark the next token as a value position; only exact -c/--color
+// tokens do.
+func stripInteractiveFlags(args []string, info flagTokenInfo) []string {
 	out := make([]string, 0, len(args))
+	inValue := false
 	for i := 0; i < len(args); i++ {
 		a := args[i]
 		if a == "--" {
 			out = append(out, args[i:]...)
 			break
 		}
-		if a == "-i" || a == "--interactive" || strings.HasPrefix(a, "--interactive=") {
+		if inValue {
+			out = append(out, a)
+			inValue = false
+			continue
+		}
+		if a == "-i" || strings.HasPrefix(a, "-i=") ||
+			a == "--interactive" || strings.HasPrefix(a, "--interactive=") {
+			continue
+		}
+		if rebuilt, ok := stripShortCluster(a, info.shorts); ok {
+			if rebuilt != "" {
+				out = append(out, rebuilt)
+			}
 			continue
 		}
 		out = append(out, a)
+		inValue = info.valueTaking[a]
 	}
 	return out
+}
+
+// stripShortCluster removes the 'i' rune from a short-flag cluster like -di,
+// returning the rebuilt token and whether the input was such a cluster. It
+// only treats a token as a cluster when every rune is a registered short, so
+// values that merely look dashed pass through untouched. An =value belongs to
+// the cluster's last short; if that short is the 'i' being removed, the value
+// goes with it.
+func stripShortCluster(a string, shorts map[rune]bool) (string, bool) {
+	if !strings.HasPrefix(a, "-") || strings.HasPrefix(a, "--") {
+		return "", false
+	}
+	body := a[1:]
+	eqVal := ""
+	if idx := strings.Index(body, "="); idx != -1 {
+		eqVal = body[idx:]
+		body = body[:idx]
+	}
+	if len(body) < 2 || !strings.ContainsRune(body, 'i') {
+		return "", false
+	}
+	for _, r := range body {
+		if !shorts[r] {
+			return "", false
+		}
+	}
+	if eqVal != "" && strings.HasSuffix(body, "i") {
+		eqVal = ""
+	}
+	rebuilt := strings.ReplaceAll(body, "i", "")
+	if rebuilt == "" {
+		return "", true
+	}
+	return "-" + rebuilt + eqVal, true
 }
 
 // printEquivalentInvocation tells the user how to rerun this exact invocation
@@ -169,7 +296,8 @@ func (radishArgPrompter) Select(title string, options []string, summarize func(s
 }
 
 func (radishArgPrompter) MultiSelect(title string, options, preselected []string, summarize func([]string) string) ([]string, error) {
-	model := radish.NewMultiSelect().Title(title).Options(options...).Preselect(preselected...).Width(GetTermWidth())
+	model := radish.NewMultiSelect().Title(title).Options(options...).Preselect(preselected...).
+		Hint("space to toggle, enter to confirm").Width(GetTermWidth())
 	if summarize != nil {
 		model.SummaryFunc(summarize)
 	}
@@ -205,12 +333,78 @@ func (radishArgPrompter) Input(title, placeholder string, validate func(string) 
 	return value, nil
 }
 
+// walkState tracks, during the --interactive walk, what the final parse will
+// see for each arg - mirroring ra's two distinct relational-constraint
+// semantics. Excludes only count explicitly-set args (bools: set AND true);
+// requires has has-value semantics, so defaults participate (bools: counts iff
+// the value is true, supplied or not).
+type walkState struct {
+	// explicit marks args supplied on the CLI or answered with emitted tokens.
+	explicit map[string]bool
+	// boolVal is each scalar bool's best-known final value: the CLI-parsed
+	// value if supplied, the walk answer once given, else the default.
+	boolVal map[string]bool
+}
+
+func newWalkState(args []*ScriptArg, isConfigured func(string) bool, cliBoolVal func(string) bool) *walkState {
+	st := &walkState{
+		explicit: make(map[string]bool),
+		boolVal:  make(map[string]bool),
+	}
+	for _, arg := range args {
+		configured := isConfigured(arg.ExternalName)
+		if configured {
+			st.explicit[arg.ExternalName] = true
+		}
+		if isGroupableBool(arg) {
+			if configured {
+				st.boolVal[arg.ExternalName] = cliBoolVal(arg.ExternalName)
+			} else {
+				st.boolVal[arg.ExternalName] = arg.DefaultBool != nil && *arg.DefaultBool
+			}
+		}
+	}
+	return st
+}
+
+// noteAnswered records a walk answer that emitted tokens. Scalar bools emit
+// exactly one token: the bare flag (true) or the =false form.
+func (st *walkState) noteAnswered(arg *ScriptArg, tokens []string) {
+	if len(tokens) == 0 {
+		return
+	}
+	st.explicit[arg.ExternalName] = true
+	if isGroupableBool(arg) {
+		st.boolVal[arg.ExternalName] = tokens[0] == "--"+arg.ExternalName
+	}
+}
+
+// countsForExcludes mirrors ra's flagExplicitlySetForExclusion: a default is
+// the author's fallback, not user intent, so only explicitly-set args (bools:
+// set AND true) can exclude others.
+func (st *walkState) countsForExcludes(arg *ScriptArg) bool {
+	if !st.explicit[arg.ExternalName] {
+		return false
+	}
+	return !isGroupableBool(arg) || st.boolVal[arg.ExternalName]
+}
+
+// countsForRequires mirrors ra's flagConfiguredForRelationalConstraints:
+// requires triggers off any value, including defaults (bools: iff true).
+func (st *walkState) countsForRequires(arg *ScriptArg) bool {
+	if isGroupableBool(arg) {
+		return st.boolVal[arg.ExternalName]
+	}
+	return st.explicit[arg.ExternalName] || arg.HasDefaultValue
+}
+
 // walkInteractiveArgs prompts, in order, for each arg not already supplied on
 // the CLI, and returns the argv tokens to append. Relational constraints are
-// applied reactively as the walk progresses: an arg excluded by a supplied or
-// answered arg is skipped (with a note), and an arg required by one is forced
-// (no skipping). The final parse remains the backstop for anything the walk
-// cannot see, e.g. an answer that requires an arg the walk already passed.
+// applied reactively as the walk progresses: an arg excluded by an explicitly
+// set arg is skipped (with a note), and an arg required by a valued arg is
+// forced - unless its own default already satisfies the requirement. The final
+// parse remains the backstop for anything the walk cannot see, e.g. an answer
+// that requires an arg the walk already passed.
 //
 // Bool args are special-cased: when two or more are unsupplied, they collapse
 // into one MultiSelect at the position of the first one (toggled = true), so a
@@ -218,20 +412,15 @@ func (radishArgPrompter) Input(title, placeholder string, validate func(string) 
 func walkInteractiveArgs(
 	args []*ScriptArg,
 	isConfigured func(externalName string) bool,
+	cliBoolVal func(externalName string) bool,
 	prompter ArgPrompter,
 	notef func(format string, a ...any),
 ) ([]string, error) {
-	// External names supplied on the CLI or answered during the walk.
-	active := make(map[string]bool)
-	for _, arg := range args {
-		if isConfigured(arg.ExternalName) {
-			active[arg.ExternalName] = true
-		}
-	}
+	st := newWalkState(args, isConfigured, cliBoolVal)
 
 	var groupBools []*ScriptArg
 	for _, arg := range args {
-		if !active[arg.ExternalName] && isGroupableBool(arg) {
+		if !st.explicit[arg.ExternalName] && isGroupableBool(arg) {
 			groupBools = append(groupBools, arg)
 		}
 	}
@@ -242,7 +431,7 @@ func walkInteractiveArgs(
 
 	var tokens []string
 	for _, arg := range args {
-		if active[arg.ExternalName] {
+		if st.explicit[arg.ExternalName] {
 			continue
 		}
 		if groupBools != nil && isGroupableBool(arg) {
@@ -250,30 +439,32 @@ func walkInteractiveArgs(
 				continue
 			}
 			boolsHandled = true
-			groupTokens, err := promptBoolGroup(groupBools, args, active, prompter, notef)
+			groupTokens, err := promptBoolGroup(groupBools, args, st, prompter, notef)
 			if err != nil {
 				return nil, err
 			}
 			tokens = append(tokens, groupTokens...)
 			continue
 		}
-		if excluder := excludedBy(arg, args, active); excluder != "" {
+		if excluder := excludedBy(arg, args, st); excluder != "" {
 			notef("Skipping --%s (excluded by --%s)\n", arg.ExternalName, excluder)
 			continue
 		}
 		required := !arg.IsNullable && !arg.HasDefaultValue
-		if requiredBy(arg, args, active) != "" {
+		requiredReason := ""
+		// An arg with a default satisfies a requires constraint by itself, so
+		// only force ones that would otherwise stay valueless.
+		if by := requiredBy(arg, args, st); by != "" && !arg.HasDefaultValue {
 			required = true
+			requiredReason = fmt.Sprintf("required by --%s", by)
 		}
 
-		argTokens, err := promptForArg(arg, required, prompter)
+		argTokens, err := promptForArg(arg, required, requiredReason, prompter)
 		if err != nil {
 			return nil, err
 		}
-		if len(argTokens) > 0 {
-			active[arg.ExternalName] = true
-			tokens = append(tokens, argTokens...)
-		}
+		st.noteAnswered(arg, argTokens)
+		tokens = append(tokens, argTokens...)
 	}
 	return tokens, nil
 }
@@ -285,20 +476,20 @@ func isGroupableBool(arg *ScriptArg) bool {
 // promptBoolGroup runs one MultiSelect over the unsupplied bool args: each
 // opens checked iff its default is true, and the toggled state is its final
 // value. Tokens are emitted only where that differs from the default, same as
-// the individual y/n path. Bools excluded by already-active args are dropped
+// the individual y/n path. Bools excluded by explicitly-set args are dropped
 // (with a note); if only one bool survives, it falls back to a y/n prompt.
-// Exclusions BETWEEN grouped bools can't react within a single prompt - the
-// final parse backstops those.
+// Exclusions and requirements BETWEEN grouped bools can't react within a
+// single prompt - the final parse backstops those.
 func promptBoolGroup(
 	bools []*ScriptArg,
 	all []*ScriptArg,
-	active map[string]bool,
+	st *walkState,
 	prompter ArgPrompter,
 	notef func(format string, a ...any),
 ) ([]string, error) {
 	var eligible []*ScriptArg
 	for _, b := range bools {
-		if excluder := excludedBy(b, all, active); excluder != "" {
+		if excluder := excludedBy(b, all, st); excluder != "" {
 			notef("Skipping --%s (excluded by --%s)\n", b.ExternalName, excluder)
 			continue
 		}
@@ -308,33 +499,48 @@ func promptBoolGroup(
 		return nil, nil
 	}
 	if len(eligible) == 1 {
-		tokens, err := promptForArg(eligible[0], false, prompter)
-		if err == nil && len(tokens) > 0 {
-			active[eligible[0].ExternalName] = true
+		tokens, err := promptForArg(eligible[0], false, "", prompter)
+		if err == nil {
+			st.noteAnswered(eligible[0], tokens)
 		}
 		return tokens, err
 	}
 
 	labels := make([]string, len(eligible))
-	byLabel := make(map[string]*ScriptArg, len(eligible))
 	var preselected []string
 	for i, b := range eligible {
 		labels[i] = promptTitle(b)
-		byLabel[labels[i]] = b
 		if b.DefaultBool != nil && *b.DefaultBool {
 			preselected = append(preselected, labels[i])
 		}
 	}
 
+	// The collapsed line previews exactly what lands in the equivalent
+	// invocation: the flags whose final state differs from their default.
+	// "(all defaults)" - not "(none)" - because unchecking a default-true flag
+	// is a change, and leaving everything alone isn't "nothing picked".
 	summarize := func(chosen []string) string {
-		if len(chosen) == 0 {
-			return com.BoldS("Flags:") + " " + com.FaintS("(none)")
+		chosenSet := make(map[string]bool, len(chosen))
+		for _, label := range chosen {
+			chosenSet[label] = true
 		}
-		names := make([]string, len(chosen))
-		for i, label := range chosen {
-			names[i] = com.CyanS("--" + byLabel[label].ExternalName)
+		var diffs []string
+		for i, b := range eligible {
+			final := chosenSet[labels[i]]
+			def := b.DefaultBool != nil && *b.DefaultBool
+			if final == def {
+				continue
+			}
+			if final {
+				diffs = append(diffs, com.CyanS("--"+b.ExternalName))
+			} else {
+				diffs = append(diffs, com.CyanS("--"+b.ExternalName+"=false"))
+			}
 		}
-		return com.BoldS("Flags:") + " " + strings.Join(names, ", ")
+		if len(diffs) == 0 {
+			return com.BoldS("Flags:") + " " + com.FaintS("(all defaults)")
+		}
+		return com.BoldS("Flags:") + " " + strings.Join(diffs, ", ")
 	}
 
 	chosen, err := prompter.MultiSelect("Flags", labels, preselected, summarize)
@@ -350,6 +556,11 @@ func promptBoolGroup(
 	for i, b := range eligible {
 		final := chosenSet[labels[i]]
 		def := b.DefaultBool != nil && *b.DefaultBool
+		// The user decided every member's final value, so record it for later
+		// requires checks even where no token is emitted; explicit (and thus
+		// excludes participation) still tracks emitted tokens only, since a
+		// kept default is not explicitly set in the final parse's eyes.
+		st.boolVal[b.ExternalName] = final
 		if final == def {
 			continue
 		}
@@ -358,16 +569,16 @@ func promptBoolGroup(
 		} else {
 			tokens = append(tokens, "--"+b.ExternalName+"=false")
 		}
-		active[b.ExternalName] = true
+		st.explicit[b.ExternalName] = true
 	}
 	return tokens, nil
 }
 
-// excludedBy returns the external name of an active arg that excludes (in
-// either direction) the given arg, or "" if none does.
-func excludedBy(arg *ScriptArg, all []*ScriptArg, active map[string]bool) string {
+// excludedBy returns the external name of an arg that excludes (in either
+// direction) the given arg and counts for exclusion, or "" if none does.
+func excludedBy(arg *ScriptArg, all []*ScriptArg, st *walkState) string {
 	for _, other := range all {
-		if other == arg || !active[other.ExternalName] {
+		if other == arg || !st.countsForExcludes(other) {
 			continue
 		}
 		if lo.Contains(other.ExcludesConstraint, arg.ExternalName) ||
@@ -378,11 +589,11 @@ func excludedBy(arg *ScriptArg, all []*ScriptArg, active map[string]bool) string
 	return ""
 }
 
-// requiredBy returns the external name of an active arg that requires the
-// given arg, or "" if none does.
-func requiredBy(arg *ScriptArg, all []*ScriptArg, active map[string]bool) string {
+// requiredBy returns the external name of an arg that requires the given arg
+// and counts for requires (has a value, defaults included), or "" if none.
+func requiredBy(arg *ScriptArg, all []*ScriptArg, st *walkState) string {
 	for _, other := range all {
-		if other == arg || !active[other.ExternalName] {
+		if other == arg || !st.countsForRequires(other) {
 			continue
 		}
 		if lo.Contains(other.RequiresConstraint, arg.ExternalName) {
@@ -394,13 +605,15 @@ func requiredBy(arg *ScriptArg, all []*ScriptArg, active map[string]bool) string
 
 // promptForArg runs the prompt matching the arg's type and returns the argv
 // tokens encoding the answer. An empty slice means the arg was skipped, so the
-// final parse applies its default (or null).
-func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string, error) {
+// final parse applies its default (or null). requiredReason, when non-empty,
+// replaces the generic "value required" message - e.g. when another arg's
+// requires constraint forced this prompt.
+func promptForArg(arg *ScriptArg, required bool, requiredReason string, prompter ArgPrompter) ([]string, error) {
 	flagToken := "--" + arg.ExternalName
 	title := promptTitle(arg)
 
 	if isListScriptArg(arg) {
-		return promptList(arg, required, title, flagToken, prompter)
+		return promptList(arg, required, requiredReason, title, flagToken, prompter)
 	}
 
 	if arg.EnumConstraint != nil && arg.Type == ArgStringT {
@@ -414,7 +627,7 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 			if skip != "" && choice == skip {
 				return com.CyanS(flagToken) + " " + skipSummary(arg)
 			}
-			return com.CyanS(flagToken) + " " + com.GreenS(choice)
+			return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(choice))
 		}
 		choice, err := prompter.Select(title, options, summarize)
 		if err != nil {
@@ -434,9 +647,9 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 		if value == "" {
 			return com.CyanS(flagToken) + " " + skipSummary(arg)
 		}
-		return com.CyanS(flagToken) + " " + com.GreenS(value)
+		return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(value))
 	}
-	answer, err := prompter.Input(title, defaultPlaceholder(arg), validatorFor(arg, required), summarize)
+	answer, err := prompter.Input(title, defaultPlaceholder(arg), validatorFor(arg, required, requiredReason), summarize)
 	if err != nil {
 		return nil, err
 	}
@@ -452,8 +665,15 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 func promptBool(arg *ScriptArg, title, flagToken string, prompter ArgPrompter) ([]string, error) {
 	def := arg.DefaultBool != nil && *arg.DefaultBool
 	hint := lo.Ternary(def, "[Y/n]", "[y/N]")
+	// An answer matching the default emits no tokens, so the transcript must
+	// not claim it was set - faint "(default: X)" keeps it honest with the
+	// equivalent invocation.
 	summarize := func(answer string) string {
-		return com.CyanS(flagToken) + " " + com.GreenS(lo.Ternary(parseBoolAnswer(answer, def), "yes", "no"))
+		val := parseBoolAnswer(answer, def)
+		if val == def {
+			return com.CyanS(flagToken) + " " + com.FaintS("(default: %s)", lo.Ternary(def, "yes", "no"))
+		}
+		return com.CyanS(flagToken) + " " + com.GreenS(lo.Ternary(val, "yes", "no"))
 	}
 	answer, err := prompter.Input(title+" "+hint, "", boolValidator, summarize)
 	if err != nil {
@@ -494,7 +714,9 @@ func boolValidator(s string) error {
 // are encoded greedily (--name a b c), the form Ra parses for them; plain list
 // args take one value per flag occurrence (--name a --name b). Either way each
 // value stays its own argv token, unambiguous regardless of commas or spaces.
-func promptList(arg *ScriptArg, required bool, title, flagToken string, prompter ArgPrompter) ([]string, error) {
+// A value starting with "-" rides the =-form (--name=-5) instead: as a bare
+// token it could end a variadic collection or read as a flag.
+func promptList(arg *ScriptArg, required bool, requiredReason, title, flagToken string, prompter ArgPrompter) ([]string, error) {
 	title += " (one per line, empty line to finish)"
 	elemValidate := elementValidatorFor(arg)
 
@@ -504,6 +726,9 @@ func promptList(arg *ScriptArg, required bool, title, flagToken string, prompter
 		validate := func(s string) error {
 			if s == "" {
 				if required && first {
+					if requiredReason != "" {
+						return errors.New(requiredReason)
+					}
 					return errors.New("at least one value required")
 				}
 				return nil
@@ -514,10 +739,14 @@ func promptList(arg *ScriptArg, required bool, title, flagToken string, prompter
 			return nil
 		}
 		// One transcript line per value; the empty terminator collapses silently,
-		// except when it's the first entry (the whole arg was skipped).
+		// except when it's the first entry (the whole arg was skipped). Dash
+		// values show the =-form they ride in the equivalent invocation.
 		summarize := func(value string) string {
 			if value != "" {
-				return com.CyanS(flagToken) + " " + com.GreenS(value)
+				if strings.HasPrefix(value, "-") {
+					return com.CyanS(flagToken+"=") + com.GreenS(shellQuoteIfNeeded(value))
+				}
+				return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(value))
 			}
 			if first {
 				return com.CyanS(flagToken) + " " + skipSummary(arg)
@@ -542,23 +771,45 @@ func promptList(arg *ScriptArg, required bool, title, flagToken string, prompter
 		return nil, nil
 	}
 	if arg.IsVariadic {
-		return append([]string{flagToken}, values...), nil
+		tokens := make([]string, 0, len(values)+1)
+		inGreedyRun := false
+		for _, v := range values {
+			if strings.HasPrefix(v, "-") {
+				tokens = append(tokens, flagToken+"="+v)
+				inGreedyRun = false
+				continue
+			}
+			if !inGreedyRun {
+				tokens = append(tokens, flagToken)
+				inGreedyRun = true
+			}
+			tokens = append(tokens, v)
+		}
+		return tokens, nil
 	}
 	tokens := make([]string, 0, len(values)*2)
 	for _, v := range values {
-		tokens = append(tokens, flagToken, v)
+		if strings.HasPrefix(v, "-") {
+			tokens = append(tokens, flagToken+"="+v)
+		} else {
+			tokens = append(tokens, flagToken, v)
+		}
 	}
 	return tokens, nil
 }
 
 // validatorFor wraps the arg's element validation with required/skip handling
 // for scalar inputs: an empty answer means "skip" and is only rejected when
-// the arg is required.
-func validatorFor(arg *ScriptArg, required bool) func(string) error {
+// the arg is required. requiredReason, when non-empty, names what forced the
+// requirement (e.g. "required by --username").
+func validatorFor(arg *ScriptArg, required bool, requiredReason string) func(string) error {
 	elemValidate := elementValidatorFor(arg)
 	return func(s string) error {
 		if s == "" {
 			if required {
+				if requiredReason != "" {
+					return errors.New(requiredReason)
+				}
 				return errors.New("value required")
 			}
 			return nil
