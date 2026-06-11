@@ -3295,15 +3295,7 @@ func (tc *typeChecker) synthOpBinary(n *rl.OpBinary) rl.TypingT {
 		return tc.record(n, rl.NewNeverType())
 	}
 	if anyIsDynamicLike(left, right) {
-		// Equality and the boolean ops still have a known result type
-		// even when one operand is dynamic; everything else falls back
-		// to dynamic so we don't speculate.
-		switch n.Op {
-		case rl.OpEq, rl.OpNeq, rl.OpAnd, rl.OpLt, rl.OpLte, rl.OpGt, rl.OpGte,
-			rl.OpIn, rl.OpNotIn:
-			return tc.record(n, rl.NewBoolType())
-		}
-		return tc.record(n, rl.NewDynamicType())
+		return tc.record(n, dynamicOpResult(n.Op))
 	}
 
 	result, ok := binaryOpResultOverUnions(n.Op, left, right)
@@ -3323,6 +3315,19 @@ func unionArms(t rl.TypingT) []rl.TypingT {
 	return []rl.TypingT{t}
 }
 
+// dynamicOpResult is the static result type of a binary op when an
+// operand is dynamic-like (any/dynamic). Equality, comparison, and
+// membership still have a known bool result even when an operand is
+// unknown; everything else falls back to dynamic so we don't speculate.
+func dynamicOpResult(op rl.Operator) rl.TypingT {
+	switch op {
+	case rl.OpEq, rl.OpNeq, rl.OpAnd, rl.OpLt, rl.OpLte, rl.OpGt, rl.OpGte,
+		rl.OpIn, rl.OpNotIn:
+		return rl.NewBoolType()
+	}
+	return rl.NewDynamicType()
+}
+
 // binaryOpResultOverUnions distributes a binary op across union operands. An
 // `int|float - int` should be valid (both arms are numeric) and yield
 // `int|float`; a `str[]|list += str[]` should reduce to a clean list op. We try
@@ -3331,6 +3336,14 @@ func unionArms(t rl.TypingT) []rl.TypingT {
 // A single invalid combination returns ok=false so the caller falls through to
 // its normal mismatch handling - which already treats a union operand as a
 // non-gating Hint (one arm might fit), exactly the right severity here.
+//
+// A dynamic-like arm gets the same leniency a bare dynamic operand gets in
+// synthOpBinary: it's "we couldn't pin a type", not a concrete mismatch, so
+// `int|dynamic <= int` is as acceptable as `dynamic <= int`. Gradually-typed
+// fn results commonly produce such unions (e.g. a fn whose return joins an
+// int branch with a dynamic one), and flagging them nags users about types
+// they never wrote. Concrete arms are still checked: `int|str - int` flags
+// because the str arm genuinely can't.
 //
 // Non-union operands have a single arm, so this is a transparent passthrough to
 // binaryOpResult for the common scalar case.
@@ -3343,7 +3356,13 @@ func binaryOpResultOverUnions(op rl.Operator, l, r rl.TypingT) (rl.TypingT, bool
 	var result rl.TypingT
 	for _, la := range lArms {
 		for _, ra := range rArms {
-			res, ok := binaryOpResult(op, la, ra)
+			var res rl.TypingT
+			var ok bool
+			if isDynamicLike(la) || isDynamicLike(ra) {
+				res, ok = dynamicOpResult(op), true
+			} else {
+				res, ok = binaryOpResult(op, la, ra)
+			}
 			if !ok {
 				return nil, false
 			}
