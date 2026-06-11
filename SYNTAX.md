@@ -156,6 +156,21 @@ Always on next line
 - Comments can follow the opening `"""` on the same line
 - Cannot have content on the same line as the opening `"""`
 
+### Raw Strings
+
+```rad
+// Raw strings: no interpolation, no escape processing
+regex = r"\d{2}:\d{2}"            // stays literally \d{2}:\d{2}
+win_path = r"C:\Users\notes.txt"
+single = r'single quotes work'
+ticks = r`backticks too`
+```
+
+**Raw String Rules:**
+- Prefix any string delimiter with `r`: `r"..."`, `r'...'`, `` r`...` ``, or multi-line `r"""..."""`
+- Contents are taken literally: no `{interpolation}` and no escape sequences
+- Handy for regexes, Windows paths, and text full of braces
+
 ## Variables and Assignment
 
 ### Basic Assignment
