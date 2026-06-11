@@ -96,10 +96,41 @@ type LoadFileResult struct {
 	Error     error
 }
 
+// writeFileWithDir writes data to path atomically: the bytes land in a temp
+// file in the same directory (same filesystem, so the rename can't cross
+// devices) which is then renamed over the target. A crash or concurrent
+// writer can no longer leave a partially-written file behind. We skip
+// fsync - these are state/stash files, not a database; the rename gives us
+// all-or-nothing content, which is the guarantee callers need.
 func writeFileWithDir(path string, data []byte) error {
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return err
 	}
-	return os.WriteFile(path, data, 0644)
+	// Leading dot keeps in-flight temp files out of glob/listing-based
+	// consumers of the directory (e.g. stash file readers).
+	tmp, err := os.CreateTemp(dir, "."+filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	tmpPath := tmp.Name()
+	cleanup := func(err error) error {
+		_ = os.Remove(tmpPath)
+		return err
+	}
+	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
+		return cleanup(err)
+	}
+	if err := tmp.Close(); err != nil {
+		return cleanup(err)
+	}
+	// CreateTemp creates 0600; restore the 0644 these files have always had.
+	if err := os.Chmod(tmpPath, 0644); err != nil {
+		return cleanup(err)
+	}
+	if err := os.Rename(tmpPath, path); err != nil {
+		return cleanup(err)
+	}
+	return nil
 }
