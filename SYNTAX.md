@@ -1135,6 +1135,14 @@ item in collection      // Check if item exists in collection
 item not in collection  // Check if item doesn't exist
 ```
 
+For maps, `in`/`not in` test **key** membership, not values:
+
+```rad
+scores = {"alice": 1}
+has_alice = "alice" in scores   // true - "alice" is a key
+has_one = 1 in scores           // false - values aren't checked
+```
+
 
 ### Coalescing Operator (`??`)
 
