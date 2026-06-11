@@ -596,3 +596,24 @@ item99
 ### STDOUT ###
 count: 100
 
+### TITLE ###
+RepeatedFlagOccurrencesAccumulate
+### DESCRIPTION ###
+Each --files occurrence appends its value. Regression: the parser once
+re-parsed later occurrences while collecting the first one's values, giving
+duplicates like [a, b, c, b, c, c].
+### INPUT ###
+args:
+	*files str
+
+print("files: {files}")
+### ARGS ###
+--files
+a
+--files
+b
+--files
+c
+### STDOUT ###
+files: [ "a", "b", "c" ]
+

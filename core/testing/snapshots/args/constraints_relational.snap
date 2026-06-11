@@ -372,3 +372,22 @@ print(aa, bb_cc)
 ### STDOUT ###
 foo bar
 
+### TITLE ###
+Excludes_DefaultedArgDoesNotConflict
+### DESCRIPTION ###
+A default is the author's fallback, not user intent: with file/url mutually
+exclusive and both defaulted, setting only --file must not trip the exclusion.
+Regression: the defaulted url once counted as "set" and errored.
+### INPUT ###
+args:
+    file str = ""
+    url str = ""
+
+    file mutually excludes url
+print("file={file} url={url}")
+### ARGS ###
+--file
+in.txt
+### STDOUT ###
+file=in.txt url=
+

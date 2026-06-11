@@ -39,3 +39,5 @@ require (
 )
 
 replace github.com/amterp/radish => /Users/amterp/src/radish
+
+replace github.com/amterp/ra => /Users/amterp/src/ra
