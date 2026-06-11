@@ -9,6 +9,7 @@ var (
 	yellow    = color.New(color.FgYellow)
 	cyan      = color.New(color.FgCyan)
 	bold      = color.New(color.Bold)
+	faint     = color.New(color.Faint)
 
 	PlainF     = plain.FprintfFunc()
 	GreenF     = green.FprintfFunc()
@@ -16,6 +17,7 @@ var (
 	YellowF    = yellow.FprintfFunc()
 	CyanF      = cyan.FprintfFunc()
 	BoldF      = bold.FprintfFunc()
+	FaintF     = faint.FprintfFunc()
 
 	PlainS     = plain.SprintfFunc()
 	GreenS     = green.SprintfFunc()
@@ -23,4 +25,5 @@ var (
 	YellowS    = yellow.SprintfFunc()
 	CyanS      = cyan.SprintfFunc()
 	BoldS      = bold.SprintfFunc()
+	FaintS     = faint.SprintfFunc()
 )
