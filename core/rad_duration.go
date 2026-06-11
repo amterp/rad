@@ -12,8 +12,29 @@ import (
 // Matches day components like "1d", "0.5d", ".5d", "3.14d"
 var dayPattern = regexp.MustCompile(`(\d*\.?\d+)d`)
 
+// Matches week components like "1w", "0.5w", ".5w" (1w = 7d)
+var weekPattern = regexp.MustCompile(`(\d*\.?\d+)w`)
+
+// stripUnit removes all matches of pattern from s, accumulating the summed
+// nanosecond value of the matched components (each multiplied by unitNanos).
+// Unparseable matches are left in place for time.ParseDuration to error on.
+func stripUnit(s string, pattern *regexp.Regexp, unitNanos float64) (remainder string, nanos float64, matches int) {
+	remainder = pattern.ReplaceAllStringFunc(s, func(match string) string {
+		m := pattern.FindStringSubmatch(match)
+		val, err := strconv.ParseFloat(m[1], 64)
+		if err != nil {
+			return match
+		}
+		nanos += val * unitNanos
+		matches++
+		return ""
+	})
+	return remainder, nanos, matches
+}
+
 // ParseDurationString parses a human-readable duration string into nanoseconds.
-// Extends Go's time.ParseDuration with support for "d" (days, where 1d = 24h).
+// Extends Go's time.ParseDuration with support for "d" (days, where 1d = 24h)
+// and "w" (weeks, where 1w = 7d).
 // Spaces are stripped, and a leading "-" negates the whole duration.
 func ParseDurationString(s string) (int64, error) {
 	s = strings.ReplaceAll(s, " ", "")
@@ -31,30 +52,23 @@ func ParseDurationString(s string) (int64, error) {
 		return 0, fmt.Errorf("empty duration string")
 	}
 
-	var dayNanos float64
-	dayMatches := 0
-	remainder := dayPattern.ReplaceAllStringFunc(s, func(match string) string {
-		m := dayPattern.FindStringSubmatch(match)
-		days, err := strconv.ParseFloat(m[1], 64)
-		if err != nil {
-			return match // leave it for time.ParseDuration to error on
-		}
-		dayNanos += days * 24 * float64(time.Hour)
-		dayMatches++
-		return ""
-	})
+	remainder, weekNanos, weekMatches := stripUnit(s, weekPattern, 7*24*float64(time.Hour))
+	if weekMatches > 1 {
+		return 0, fmt.Errorf("multiple week components in duration string")
+	}
 
+	remainder, dayNanos, dayMatches := stripUnit(remainder, dayPattern, 24*float64(time.Hour))
 	if dayMatches > 1 {
 		return 0, fmt.Errorf("multiple day components in duration string")
 	}
 
-	dayInt := int64(dayNanos)
-
-	if dayNanos != 0 {
-		if math.Abs(dayNanos) > float64(math.MaxInt64) {
-			return 0, fmt.Errorf("duration overflow: days component too large")
+	bigNanos := weekNanos + dayNanos
+	if bigNanos != 0 {
+		if math.Abs(bigNanos) > float64(math.MaxInt64) {
+			return 0, fmt.Errorf("duration overflow: week/day components too large")
 		}
 	}
+	dayInt := int64(bigNanos)
 
 	var remainderNanos int64
 	if remainder != "" {

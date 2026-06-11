@@ -1,7 +1,8 @@
 # parse_duration
 
 Parses a human-readable duration string into a map of time units. Supports all standard suffixes (`ns`, `us`/`µs`, `ms`,
-`s`, `m`, `h`) plus `d` for days (1d = 24h). Spaces are stripped, and a leading `-` negates the whole duration.
+`s`, `m`, `h`) plus `d` for days (1d = 24h) and `w` for weeks (1w = 7d). Spaces are stripped, and a leading `-` negates
+the whole duration.
 
 ## Signature
 
@@ -12,6 +13,7 @@ Parses a human-readable duration string into a map of time units. Supports all s
 ```rad
 parse_duration("5m23s")         // -> { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
 parse_duration("1d12h").hours   // -> 36.0
+parse_duration("1w2d3h").hours  // -> 219.0
 parse_duration("300ms").millis  // -> 300.0
 parse_duration("-5m").minutes   // -> -5.0
 parse_duration("5m 30s")        // -> same as "5m30s"
