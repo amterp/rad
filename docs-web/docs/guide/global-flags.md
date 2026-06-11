@@ -44,6 +44,8 @@ Use `--interactive` or `-i` to be walked through a script's args interactively i
 
 Each answered prompt collapses to a compact transcript line (`--env staging`, `--replicas (skip - default: 3)`), so you can see at a glance what was chosen. Optional args can be skipped (Enter on an empty field, or a dedicated "skip" row in pickers), in which case their defaults apply. If the script defines [commands](./script-commands.md) and you didn't specify one, you first pick the command, then get prompted for its args.
 
+Relational constraints react as you go: an arg excluded by something you've already set is skipped with a note (`Skipping --url (excluded by --file)`), and an arg required by one becomes mandatory - its prompt blocks an empty Enter with `required by --<arg>`. Press Ctrl+C at any prompt to abort without running the script.
+
 `-i` composes with partially-supplied args - anything already on the command line isn't re-prompted:
 
 ```
