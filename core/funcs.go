@@ -67,6 +67,7 @@ const (
 	FUNC_CONFIRM            = "confirm"
 	FUNC_INPUT              = "input"
 	FUNC_PARSE_JSON         = "parse_json"
+	FUNC_TO_JSON            = "to_json"
 	FUNC_PARSE_INT          = "parse_int"
 	FUNC_PARSE_FLOAT        = "parse_float"
 	FUNC_HTTP_GET           = "http_get"
@@ -309,6 +310,7 @@ func init() {
 		FuncSignalIgnore,
 		FuncSignalTrap,
 		FuncParseDuration,
+		FuncToJson,
 		FuncConvertDuration,
 		FuncParseDate,
 		FuncSeedRandom,

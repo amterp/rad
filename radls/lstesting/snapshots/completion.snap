@@ -639,6 +639,12 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
+      "sortText": "2"
+    },
+    {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
       "label": "trim",
@@ -1392,6 +1398,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
+      "sortText": "2"
+    },
+    {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
       "label": "trim",
@@ -2139,6 +2151,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
       "label": "sum",
+      "sortText": "2"
+    },
+    {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
       "sortText": "2"
     },
     {
@@ -2891,6 +2909,12 @@ y = 2
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
       "label": "sum",
+      "sortText": "2"
+    },
+    {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
       "sortText": "2"
     },
     {
@@ -3655,6 +3679,12 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
+      "sortText": "2"
+    },
+    {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
       "label": "trim",
@@ -4413,6 +4443,12 @@ x = 1
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
       "label": "sum",
+      "sortText": "2"
+    },
+    {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
       "sortText": "2"
     },
     {
@@ -5175,6 +5211,12 @@ args:
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
       "label": "sum",
+      "sortText": "2"
+    },
+    {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
       "sortText": "2"
     },
     {
@@ -5945,6 +5987,12 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
+      "sortText": "2"
+    },
+    {
       "detail": "trim(_subject: str, _chars: str = \" \\t\\n\") -\u003e str",
       "kind": 3,
       "label": "trim",
@@ -6698,6 +6746,12 @@ later = 2
       "detail": "sum(_nums: float[]) -\u003e error|int|float",
       "kind": 3,
       "label": "sum",
+      "sortText": "2"
+    },
+    {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
       "sortText": "2"
     },
     {

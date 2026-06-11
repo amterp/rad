@@ -101,6 +101,7 @@ starts_with
 str
 strikethrough
 sum
+to_json
 trim
 trim_left
 trim_prefix

@@ -259,6 +259,12 @@ print(gp.exists)
       "sortText": "1z"
     },
     {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
+      "sortText": "1z"
+    },
+    {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
       "label": "type_of",
@@ -1074,6 +1080,12 @@ fn f():
       "sortText": "1z"
     },
     {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
+      "sortText": "1z"
+    },
+    {
       "detail": "type_of(_var: any) -\u003e [\"int\", \"str\", \"list\", \"map\", \"float\", \"bool\", \"null\", \"error\", \"function\"]",
       "kind": 3,
       "label": "type_of",
@@ -1881,6 +1893,12 @@ fn f():
       "detail": "strikethrough(_item: any) -\u003e str",
       "kind": 3,
       "label": "strikethrough",
+      "sortText": "1z"
+    },
+    {
+      "detail": "to_json(_val: any, *, indent: int = 0) -\u003e str",
+      "kind": 3,
+      "label": "to_json",
       "sortText": "1z"
     },
     {
