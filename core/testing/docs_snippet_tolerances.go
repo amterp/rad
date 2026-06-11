@@ -517,14 +517,11 @@ var docSnippetTolerances = map[string]Tolerance{
 	},
 
 	// ---- docs-web/docs/guide/stashes.md -----------------------------
-	// Most load_state() snippets no longer need entries: load_state()
-	// strips its error arm at the call (Gap 2), so `state` is `map` and
-	// the old error|map RAD30001 hints are gone; they now carry only the
-	// globally-tolerated unhandled-fallible hint.
-	"docs-web/docs/guide/stashes.md#ed4e81de": {
-		ExpectedCodes: []string{"RAD30002"},
-		Reason:        "checker hint: `count = state[\"count\"] ?? 0` is `dynamic|int` (untyped map index), so `count++` flags `dynamic|int + int`. The script is correct at runtime. Was RAD30001 pre-Gap-2 (load_state's error|map); the error arm now strips, surfacing the underlying dynamic-map-index hint instead.",
-	},
+	// load_state() snippets no longer need entries: load_state() strips
+	// its error arm at the call (Gap 2) so `state` is `map`, and
+	// dynamic-armed unions from untyped map indexing (`dynamic|int + 1`)
+	// now get bare-dynamic leniency in operator checks; they carry only
+	// the globally-tolerated unhandled-fallible hint.
 
 	// ---- docs-web/docs/guide/type-annotations.md --------------------
 	// Type-annotation examples demonstrate function signatures against

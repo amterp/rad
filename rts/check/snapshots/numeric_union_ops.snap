@@ -64,3 +64,73 @@ fn f(x: int|str):
 
 # Diagnostics
   [hint] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int|str - int'
+### TITLE ###
+DynamicArmUnionIsLenient
+### DESCRIPTION ###
+A union with a dynamic-like arm gets the same leniency as a bare
+dynamic operand: `int|dynamic <= int` and `int|dynamic - int` are
+acceptable - the dynamic arm means "we couldn't pin a type", not a
+concrete mismatch. Such unions arise naturally from gradually-typed
+code (e.g. a var assigned int in one branch and an untyped fn's
+result in another). Regression lock from field notes (#139), where
+legitimate error-handling code drew `int|dynamic <= int` hints.
+### INPUT ###
+fn f(d):
+    x = 1
+    if d.cond:
+        x = d.field
+    b = x <= 5
+    y = x - 1
+### STDOUT ###
+# Identifier types
+  x @ 2:5 -> <no-type>
+  d @ 3:8 -> dynamic
+  x @ 4:9 -> <no-type>
+  d @ 4:13 -> dynamic
+  b @ 5:5 -> <no-type>
+  x @ 5:9 -> dynamic|int
+  y @ 6:5 -> <no-type>
+  x @ 6:9 -> dynamic|int
+
+# Symbol types
+  b (local): bool
+  d (param): <no-type>
+  f (fn): fn(any) -> void
+  x (local): dynamic
+  y (local): dynamic|int
+
+# Diagnostics
+  (none)
+### TITLE ###
+DynamicArmUnionConcreteMismatchStillFlags
+### DESCRIPTION ###
+Leniency only covers the dynamic arm. A concrete non-numeric arm in
+the same union still can't do arithmetic, so `int|dynamic|str - int`
+flags (as a Hint - some arms might fit at runtime).
+### INPUT ###
+fn f(d):
+    x = 1
+    if d.cond:
+        x = d.field
+    if d.other:
+        x = "s"
+    y = x - 1
+### STDOUT ###
+# Identifier types
+  x @ 2:5 -> <no-type>
+  d @ 3:8 -> dynamic
+  x @ 4:9 -> <no-type>
+  d @ 4:13 -> dynamic
+  d @ 5:8 -> dynamic
+  x @ 6:9 -> <no-type>
+  y @ 7:5 -> <no-type>
+  x @ 7:9 -> str|dynamic|int
+
+# Symbol types
+  d (param): <no-type>
+  f (fn): fn(any) -> void
+  x (local): str
+  y (local): <error>
+
+# Diagnostics
+  [hint] RAD30002 @ 7:9 - Invalid operand types: cannot do 'str|dynamic|int - int'
