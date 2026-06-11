@@ -264,7 +264,6 @@ func (tp *TestParams) Keys(keys ...string) *TestParams {
 	return tp
 }
 
-
 func setupAndRunCode(t *testing.T, script string, args ...string) {
 	setupAndRun(t, NewTestParams(script, args...))
 }

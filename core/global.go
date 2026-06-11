@@ -220,7 +220,6 @@ func setGlobals(runnerInput RunnerInput) {
 		RInteractive = runnerInput.RInteractive
 	}
 
-
 	RTermWidth = runnerInput.RTermWidth
 
 	// Initialize RNG with clock-based seed (respects RClock abstraction)
