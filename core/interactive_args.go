@@ -43,7 +43,7 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 				names[i] = inv.cmd.ExternalName
 			}
 			choice, err := prompter.Select("Choose a command", names,
-				func(choice string) string { return "Command: " + choice })
+				func(choice string) string { return com.BoldS("Command:") + " " + com.GreenS(choice) })
 			if err != nil {
 				r.interactiveErrorExit(err)
 			}
@@ -67,7 +67,7 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 	}
 
 	notef := func(format string, a ...any) {
-		fmt.Fprintf(RIo.StdErr, format, a...)
+		fmt.Fprint(RIo.StdErr, com.YellowS(format, a...))
 	}
 	tokens, err := walkInteractiveArgs(walkArgs, RRootCmd.Configured, prompter, notef)
 	if err != nil {
@@ -135,7 +135,7 @@ func printEquivalentInvocation(args []string) {
 	}
 	parts := append([]string{"rad", scriptRef}, args...)
 	quoted := lo.Map(parts, func(s string, _ int) string { return shellQuoteIfNeeded(s) })
-	fmt.Fprintf(RIo.StdErr, "Equivalent: %s\n", strings.Join(quoted, " "))
+	fmt.Fprintf(RIo.StdErr, "%s %s\n", com.BoldS("Equivalent:"), com.GreenS(strings.Join(quoted, " ")))
 }
 
 // ArgPrompter abstracts the prompt shapes the --interactive walk needs, so the
@@ -328,13 +328,13 @@ func promptBoolGroup(
 
 	summarize := func(chosen []string) string {
 		if len(chosen) == 0 {
-			return "Flags: (none)"
+			return com.BoldS("Flags:") + " " + com.FaintS("(none)")
 		}
 		names := make([]string, len(chosen))
 		for i, label := range chosen {
-			names[i] = "--" + byLabel[label].ExternalName
+			names[i] = com.CyanS("--" + byLabel[label].ExternalName)
 		}
-		return "Flags: " + strings.Join(names, ", ")
+		return com.BoldS("Flags:") + " " + strings.Join(names, ", ")
 	}
 
 	chosen, err := prompter.MultiSelect("Flags", labels, preselected, summarize)
@@ -412,9 +412,9 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 		}
 		summarize := func(choice string) string {
 			if skip != "" && choice == skip {
-				return flagToken + " " + skipSummary(arg)
+				return com.CyanS(flagToken) + " " + skipSummary(arg)
 			}
-			return flagToken + " " + choice
+			return com.CyanS(flagToken) + " " + com.GreenS(choice)
 		}
 		choice, err := prompter.Select(title, options, summarize)
 		if err != nil {
@@ -432,9 +432,9 @@ func promptForArg(arg *ScriptArg, required bool, prompter ArgPrompter) ([]string
 
 	summarize := func(value string) string {
 		if value == "" {
-			return flagToken + " " + skipSummary(arg)
+			return com.CyanS(flagToken) + " " + skipSummary(arg)
 		}
-		return flagToken + " " + value
+		return com.CyanS(flagToken) + " " + com.GreenS(value)
 	}
 	answer, err := prompter.Input(title, defaultPlaceholder(arg), validatorFor(arg, required), summarize)
 	if err != nil {
@@ -453,7 +453,7 @@ func promptBool(arg *ScriptArg, title, flagToken string, prompter ArgPrompter) (
 	def := arg.DefaultBool != nil && *arg.DefaultBool
 	hint := lo.Ternary(def, "[Y/n]", "[y/N]")
 	summarize := func(answer string) string {
-		return flagToken + " " + lo.Ternary(parseBoolAnswer(answer, def), "yes", "no")
+		return com.CyanS(flagToken) + " " + com.GreenS(lo.Ternary(parseBoolAnswer(answer, def), "yes", "no"))
 	}
 	answer, err := prompter.Input(title+" "+hint, "", boolValidator, summarize)
 	if err != nil {
@@ -517,10 +517,10 @@ func promptList(arg *ScriptArg, required bool, title, flagToken string, prompter
 		// except when it's the first entry (the whole arg was skipped).
 		summarize := func(value string) string {
 			if value != "" {
-				return flagToken + " " + value
+				return com.CyanS(flagToken) + " " + com.GreenS(value)
 			}
 			if first {
-				return flagToken + " " + skipSummary(arg)
+				return com.CyanS(flagToken) + " " + skipSummary(arg)
 			}
 			return ""
 		}
@@ -698,9 +698,9 @@ func enumSkipLabel(arg *ScriptArg) string {
 // skipSummary is the transcript annotation for a skipped arg.
 func skipSummary(arg *ScriptArg) string {
 	if d := argDefaultDisplay(arg); d != "" {
-		return fmt.Sprintf("(skip - default: %s)", d)
+		return com.FaintS("(skip - default: %s)", d)
 	}
-	return "(skip)"
+	return com.FaintS("(skip)")
 }
 
 func argDefaultDisplay(arg *ScriptArg) string {
