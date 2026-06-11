@@ -25,6 +25,8 @@ const (
 	FLAG_REPL          = "repl"
 	FLAG_R             = "r"
 	FLAG_TLS_INSECURE  = "tls-insecure"
+	FLAG_INTERACTIVE   = "interactive"
+	FLAG_I             = "i"
 )
 
 var (
@@ -46,6 +48,7 @@ var (
 	FlagMockResponse         StringRadArg
 	FlagRepl                 BoolRadArg
 	FlagTlsInsecure          BoolRadArg
+	FlagInteractive          BoolRadArg
 	// ^ when adding more, update ResetGlobals function
 )
 
@@ -74,6 +77,21 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	flags = append(flags, &FlagRepl)
+
+	FlagInteractive = NewBoolRadArg(
+		FLAG_INTERACTIVE,
+		FLAG_I,
+		"Interactively prompt for script args not already provided, then run.",
+		false,
+		false,
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+	// Bypass so the first parse doesn't die on missing required args before we
+	// get the chance to prompt for them. The pre-pass strips -i from the argv it
+	// synthesizes, so the final parse still enforces everything.
+	FlagInteractive.SetBypassValidation(true)
+	flags = append(flags, &FlagInteractive)
 
 	FlagDebug = NewBoolRadArg(
 		FLAG_DEBUG,

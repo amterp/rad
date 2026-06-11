@@ -348,6 +348,12 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		RExit.Exit(0)
 	}
 
+	// Interactive pre-pass: prompt for args missing from the CLI and fold the
+	// answers into the argv the second parse (below) will validate.
+	if FlagInteractive.Value && r.scriptData != nil {
+		argsToRead = r.runInteractivePrepass(argsToRead)
+	}
+
 	// Cache dump flag value before reset (needed for second parse options)
 	dumpFlag := FlagRadArgsDump.Value
 

@@ -1,0 +1,623 @@
+### TITLE ###
+RequiredEnumSelect
+### DESCRIPTION ###
+-i prompts a required enum arg via a Select. The chosen value lands in the
+equivalent invocation printed to stderr, and the script runs with it.
+### INPUT ###
+args:
+    env str # Environment to deploy to.
+    env enum ["dev", "staging", "prod"]
+print("env={env}")
+### ARGS ###
+-i
+### KEYS ###
+down
+enter
+### STDOUT ###
+env=staging
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --env staging
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--env: Environment to deploy to.
+> dev
+  staging
+  prod
+--- frame 1 (down) ---
+--env: Environment to deploy to.
+  dev
+> staging
+  prod
+--- frame 2 (enter) ---
+--env: Environment to deploy to. staging
+### TITLE ###
+BoolAnswerYesDefaultFalse
+### DESCRIPTION ###
+A bool arg prompts y/n with the default capitalized. Answering "y" against a
+false default emits --force; the equivalent invocation shows it.
+### INPUT ###
+args:
+    force bool # Skip confirmation.
+print("force={force}")
+### ARGS ###
+-i
+### KEYS ###
+"y"
+enter
+### STDOUT ###
+force=true
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --force
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--force: Skip confirmation. [y/N]
+> █
+--- frame 1 (y) ---
+--force: Skip confirmation. [y/N]
+> y█
+--- frame 2 (enter) ---
+> y
+### TITLE ###
+BoolAnswerNoDefaultTrue
+### DESCRIPTION ###
+Answering "n" against a true default emits --cache=false, the only form that
+can flip a defaulted-true bool off.
+### INPUT ###
+args:
+    cache bool = true # Use the cache.
+print("cache={cache}")
+### ARGS ###
+-i
+### KEYS ###
+"n"
+enter
+### STDOUT ###
+cache=false
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --cache=false
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--cache: Use the cache. [Y/n]
+> █
+--- frame 1 (n) ---
+--cache: Use the cache. [Y/n]
+> n█
+--- frame 2 (enter) ---
+> n
+### TITLE ###
+BoolEnterKeepsDefault
+### DESCRIPTION ###
+Enter on a bool prompt keeps the default and emits no token, keeping the
+equivalent invocation minimal.
+### INPUT ###
+args:
+    force bool # Skip confirmation.
+print("force={force}")
+### ARGS ###
+-i
+### KEYS ###
+enter
+### STDOUT ###
+force=false
+
+### STDERR ###
+Equivalent: rad TestCase --color=never
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--force: Skip confirmation. [y/N]
+> █
+--- frame 1 (enter) ---
+> 
+### TITLE ###
+IntRangeRevalidation
+### DESCRIPTION ###
+An int arg validates inline: a value outside the range blocks Enter and renders
+the error under the field; editing clears it and a valid value submits.
+### INPUT ###
+args:
+    replicas int # Number of replicas.
+    replicas range [1, 10]
+print("replicas={replicas}")
+### ARGS ###
+-i
+### KEYS ###
+"99"
+enter
+backspace
+enter
+### STDOUT ###
+replicas=9
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --replicas 9
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--replicas: Number of replicas.
+> █
+--- frame 1 (9) ---
+--replicas: Number of replicas.
+> 9█
+--- frame 2 (9) ---
+--replicas: Number of replicas.
+> 99█
+--- frame 3 (enter) ---
+--replicas: Number of replicas.
+> 99█
+must be in range [1, 10]
+--- frame 4 (backspace) ---
+--replicas: Number of replicas.
+> 9█
+--- frame 5 (enter) ---
+> 9
+### TITLE ###
+RegexRevalidation
+### DESCRIPTION ###
+A regex-constrained str validates inline on submit.
+### INPUT ###
+args:
+    name str
+    name regex "[a-z]+"
+print("name={name}")
+### ARGS ###
+-i
+### KEYS ###
+"7"
+enter
+backspace
+"bob"
+enter
+### STDOUT ###
+name=bob
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --name bob
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--name
+> █
+--- frame 1 (7) ---
+--name
+> 7█
+--- frame 2 (enter) ---
+--name
+> 7█
+must match regex: [a-z]+
+--- frame 3 (backspace) ---
+--name
+> █
+--- frame 4 (b) ---
+--name
+> b█
+--- frame 5 (o) ---
+--name
+> bo█
+--- frame 6 (b) ---
+--name
+> bob█
+--- frame 7 (enter) ---
+> bob
+### TITLE ###
+OptionalInputSkippedOnEnter
+### DESCRIPTION ###
+Enter on an empty optional input means "use the default": no token is emitted
+and the final parse applies the default.
+### INPUT ###
+args:
+    replicas int = 3 # Number of replicas.
+print("replicas={replicas}")
+### ARGS ###
+-i
+### KEYS ###
+enter
+### STDOUT ###
+replicas=3
+
+### STDERR ###
+Equivalent: rad TestCase --color=never
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--replicas: Number of replicas.
+> █Default: 3
+--- frame 1 (enter) ---
+> 
+### TITLE ###
+OptionalEnumSkipRow
+### DESCRIPTION ###
+An optional enum gets a synthetic skip row prepended; selecting it emits no
+token, so the default applies.
+### INPUT ###
+args:
+    env str = "dev" # Environment to deploy to.
+    env enum ["dev", "staging", "prod"]
+print("env={env}")
+### ARGS ###
+-i
+### KEYS ###
+enter
+### STDOUT ###
+env=dev
+
+### STDERR ###
+Equivalent: rad TestCase --color=never
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--env: Environment to deploy to.
+> (skip - use default: dev)
+  dev
+  staging
+  prod
+--- frame 1 (enter) ---
+--env: Environment to deploy to. (skip - use default: dev)
+### TITLE ###
+CommandPickCascade
+### DESCRIPTION ###
+With command blocks and no command on the CLI, -i first Selects the command,
+then prompts its args. The command token leads the equivalent invocation.
+### INPUT ###
+command greet:
+    name str # Who to greet.
+    calls fn():
+        print("Hello {name}")
+
+command status:
+    code int
+    calls fn():
+        print("Status {code}")
+### ARGS ###
+-i
+### KEYS ###
+down
+enter
+"7"
+enter
+### STDOUT ###
+Status 7
+
+### STDERR ###
+Equivalent: rad TestCase status --color=never --code 7
+
+### FRAMES ###
+--- frame 0 (initial) ---
+Choose a command
+> greet
+  status
+--- frame 1 (down) ---
+Choose a command
+  greet
+> status
+--- frame 2 (enter) ---
+Choose a command status
+--- frame 3 (initial) ---
+--code
+> █
+--- frame 4 (7) ---
+--code
+> 7█
+--- frame 5 (enter) ---
+> 7
+### TITLE ###
+PartialCliArgsOnlyMissingPrompted
+### DESCRIPTION ###
+Args already supplied on the CLI (here positionally) are not re-prompted; -i
+composes with partial invocations.
+### INPUT ###
+args:
+    first str
+    second str
+print("{first} {second}")
+### ARGS ###
+-i
+alpha
+### KEYS ###
+"beta"
+enter
+### STDOUT ###
+alpha beta
+
+### STDERR ###
+Equivalent: rad TestCase alpha --color=never --second beta
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--second
+> █
+--- frame 1 (b) ---
+--second
+> b█
+--- frame 2 (e) ---
+--second
+> be█
+--- frame 3 (t) ---
+--second
+> bet█
+--- frame 4 (a) ---
+--second
+> beta█
+--- frame 5 (enter) ---
+> beta
+### TITLE ###
+VariadicOnePerLine
+### DESCRIPTION ###
+Variadic args prompt one value per line until an empty line, encoded greedily
+(--files a b) in the equivalent invocation - the form Ra parses for variadics.
+### INPUT ###
+args:
+    *files str # Files to process.
+print(files)
+### ARGS ###
+-i
+### KEYS ###
+"a.txt"
+enter
+"b 2.txt"
+enter
+enter
+### STDOUT ###
+[ "a.txt", "b 2.txt" ]
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --files a.txt 'b 2.txt'
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--files: Files to process. (one per line, empty line to finish)
+> █
+--- frame 1 (a) ---
+--files: Files to process. (one per line, empty line to finish)
+> a█
+--- frame 2 (.) ---
+--files: Files to process. (one per line, empty line to finish)
+> a.█
+--- frame 3 (t) ---
+--files: Files to process. (one per line, empty line to finish)
+> a.t█
+--- frame 4 (x) ---
+--files: Files to process. (one per line, empty line to finish)
+> a.tx█
+--- frame 5 (t) ---
+--files: Files to process. (one per line, empty line to finish)
+> a.txt█
+--- frame 6 (enter) ---
+> a.txt
+--- frame 7 (initial) ---
+--files: Files to process. (one per line, empty line to finish)
+> █
+--- frame 8 (b) ---
+--files: Files to process. (one per line, empty line to finish)
+> b█
+--- frame 9 (space) ---
+--files: Files to process. (one per line, empty line to finish)
+> b █
+--- frame 10 (2) ---
+--files: Files to process. (one per line, empty line to finish)
+> b 2█
+--- frame 11 (.) ---
+--files: Files to process. (one per line, empty line to finish)
+> b 2.█
+--- frame 12 (t) ---
+--files: Files to process. (one per line, empty line to finish)
+> b 2.t█
+--- frame 13 (x) ---
+--files: Files to process. (one per line, empty line to finish)
+> b 2.tx█
+--- frame 14 (t) ---
+--files: Files to process. (one per line, empty line to finish)
+> b 2.txt█
+--- frame 15 (enter) ---
+> b 2.txt
+--- frame 16 (initial) ---
+--files: Files to process. (one per line, empty line to finish)
+> █
+--- frame 17 (enter) ---
+> 
+### TITLE ###
+RequiredListRejectsEmptyFirstEntry
+### DESCRIPTION ###
+A required list blocks an immediate empty line ("at least one value required");
+after one value, an empty line finishes.
+### INPUT ###
+args:
+    tags str[]
+print(tags)
+### ARGS ###
+-i
+### KEYS ###
+enter
+"a"
+enter
+enter
+### STDOUT ###
+[ "a" ]
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --tags a
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--tags (one per line, empty line to finish)
+> █
+--- frame 1 (enter) ---
+--tags (one per line, empty line to finish)
+> █
+at least one value required
+--- frame 2 (a) ---
+--tags (one per line, empty line to finish)
+> a█
+--- frame 3 (enter) ---
+> a
+--- frame 4 (initial) ---
+--tags (one per line, empty line to finish)
+> █
+--- frame 5 (enter) ---
+> 
+### TITLE ###
+ExcludesSkipsPrompt
+### DESCRIPTION ###
+A CLI-supplied arg that mutually excludes another suppresses the latter's
+prompt entirely, with a stderr note.
+### INPUT ###
+args:
+    file str? # File input.
+    url str? # URL input.
+
+    file mutually excludes url
+print("file={file} url={url}")
+### ARGS ###
+-i
+--file
+in.txt
+### STDOUT ###
+file=in.txt url=null
+
+### STDERR ###
+Skipping --url (excluded by --file)
+Equivalent: rad TestCase --file in.txt --color=never
+
+### TITLE ###
+RequiresForcesPrompt
+### DESCRIPTION ###
+A CLI-supplied arg that mutually requires another forces the latter's prompt:
+it loses its skip affordance (empty Enter is blocked).
+### INPUT ###
+args:
+    username str = "" # Username.
+    password str = "" # Password.
+
+    username mutually requires password
+print("user={username} pass={password}")
+### ARGS ###
+-i
+--username
+alice
+### KEYS ###
+enter
+"pw"
+enter
+### STDOUT ###
+user=alice pass=pw
+
+### STDERR ###
+Equivalent: rad TestCase --username alice --color=never --password pw
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--password: Password.
+> █
+--- frame 1 (enter) ---
+--password: Password.
+> █
+value required
+--- frame 2 (p) ---
+--password: Password.
+> p█
+--- frame 3 (w) ---
+--password: Password.
+> pw█
+--- frame 4 (enter) ---
+> pw
+### TITLE ###
+CancelExitsCleanly
+### DESCRIPTION ###
+Ctrl-C during the walk aborts the run with a clear message and exit code 1.
+### INPUT ###
+args:
+    name str
+print("name={name}")
+### ARGS ###
+-i
+### KEYS ###
+ctrl-c
+### STDERR ###
+Interactive mode canceled.
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--name
+> █
+### EXIT ###
+1
+### TITLE ###
+NoArgsDeclaredJustRuns
+### DESCRIPTION ###
+-i on a script with no args prompts nothing, prints the equivalent invocation,
+and runs.
+### INPUT ###
+print("ran")
+### ARGS ###
+-i
+### STDOUT ###
+ran
+
+### STDERR ###
+Equivalent: rad TestCase --color=never
+
+### TITLE ###
+EquivalentInvocationQuoting
+### DESCRIPTION ###
+Values needing shell quoting are single-quoted in the equivalent invocation, so
+it is paste-safe.
+### INPUT ###
+args:
+    msg str
+print("msg={msg}")
+### ARGS ###
+-i
+### KEYS ###
+"hello world"
+enter
+### STDOUT ###
+msg=hello world
+
+### STDERR ###
+Equivalent: rad TestCase --color=never --msg 'hello world'
+
+### FRAMES ###
+--- frame 0 (initial) ---
+--msg
+> █
+--- frame 1 (h) ---
+--msg
+> h█
+--- frame 2 (e) ---
+--msg
+> he█
+--- frame 3 (l) ---
+--msg
+> hel█
+--- frame 4 (l) ---
+--msg
+> hell█
+--- frame 5 (o) ---
+--msg
+> hello█
+--- frame 6 (space) ---
+--msg
+> hello █
+--- frame 7 (w) ---
+--msg
+> hello w█
+--- frame 8 (o) ---
+--msg
+> hello wo█
+--- frame 9 (r) ---
+--msg
+> hello wor█
+--- frame 10 (l) ---
+--msg
+> hello worl█
+--- frame 11 (d) ---
+--msg
+> hello world█
+--- frame 12 (enter) ---
+> hello world
