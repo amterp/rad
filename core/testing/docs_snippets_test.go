@@ -54,6 +54,12 @@ var excludedDocPaths = map[string]bool{
 	// `print(*_items: any, *, sep: str = " ") -> void`), not runnable
 	// Rad. Pending restructuring of that file - revisit afterwards.
 	"docs-web/docs/reference/functions.md": true,
+	// reference/errors.md is generated from core/error_docs/, whose
+	// snippets are already validated individually (with per-snippet
+	// tolerances - many error docs intentionally show diagnosing code).
+	// Validating the aggregate would re-run them under a path with no
+	// tolerance entries.
+	"docs-web/docs/reference/errors.md": true,
 }
 
 // Path from core/testing/ up to the repo root.
