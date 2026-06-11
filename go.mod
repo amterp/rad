@@ -10,7 +10,7 @@ require (
 	github.com/amterp/go-tbl v0.13.0
 	github.com/amterp/jsoncolor v0.4.0
 	github.com/amterp/ra v0.6.0
-	github.com/amterp/radish v0.0.0-00010101000000-000000000000
+	github.com/amterp/radish v0.1.0
 	github.com/amterp/tree-sitter-rad v0.6.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0
@@ -37,5 +37,3 @@ require (
 	golang.org/x/text v0.34.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/amterp/radish => ../radish
