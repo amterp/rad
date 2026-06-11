@@ -1582,6 +1582,36 @@ str([1, 2])    // -> "[1, 2]"
 str(true)      // -> "true"
 ```
 
+### to_json
+
+Serializes a Rad value into a JSON string. The inverse of `parse_json`.
+
+```rad
+to_json(_val: any, *, indent: int = 0) -> str
+```
+
+```rad
+to_json({"name": "Alice", "age": 30})  // -> '{"age":30,"name":"Alice"}'
+to_json([1, 2, "x"])                   // -> '[1,2,"x"]'
+to_json("hi")                          // -> '"hi"'
+to_json({"a": 1}, indent=2)            // -> multi-line, 2-space indented
+```
+
+**Parameters:**
+
+| Parameter | Type        | Description                                            |
+|-----------|-------------|--------------------------------------------------------|
+| `_val`    | `any`       | Value to serialize                                     |
+| `indent`  | `int = 0`   | If > 0, pretty-print with that many spaces of indent   |
+
+Unlike string interpolation or `str()`, the output is guaranteed to be valid
+JSON: strings are escaped and quoted, including top-level ones. HTML characters
+(`<`, `>`, `&`) are not escaped. `null` serializes to `"null"`.
+
+Map keys are currently emitted in alphabetical order, not insertion order.
+
+See also: `parse_json`, `pprint`
+
 ## Random
 
 ### rand

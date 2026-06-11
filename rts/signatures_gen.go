@@ -113,6 +113,7 @@ var publicSignatures = []string{
 	`str(_var: any) -> str`,
 	`strikethrough(_item: any) -> str`,
 	`sum(_nums: float[]) -> error|int|float`,
+	`to_json(_val: any, *, indent: int = 0) -> str`,
 	`trim(_subject: str, _chars: str = " \t\n") -> str`,
 	`trim_left(_subject: str, _chars: str = " \t\n") -> str`,
 	`trim_prefix(_subject: str, _prefix: str) -> str`,

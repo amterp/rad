@@ -1,0 +1,85 @@
+### TITLE ###
+Compact map
+### INPUT ###
+print(to_json({"age": 30, "name": "Alice"}))
+### STDOUT ###
+{"age":30,"name":"Alice"}
+
+### TITLE ###
+List and nesting
+### INPUT ###
+print(to_json([1, 2.5, "x", true, null, {"a": [1, 2]}]))
+### STDOUT ###
+[1,2.5,"x",true,null,{"a":[1,2]}]
+
+### TITLE ###
+Top-level string is quoted
+### INPUT ###
+print(to_json("hi"))
+### STDOUT ###
+"hi"
+
+### TITLE ###
+Strings are escaped
+### INPUT ###
+print(to_json({"quote": "say \"hi\"", "newline": "a\nb"}))
+### STDOUT ###
+{"newline":"a\nb","quote":"say \"hi\""}
+
+### TITLE ###
+HTML chars not escaped
+### INPUT ###
+print(to_json("<a&b>"))
+### STDOUT ###
+"<a&b>"
+
+### TITLE ###
+Pretty print with indent
+### INPUT ###
+print(to_json({"a": 1, "b": [1, 2]}, indent=2))
+### STDOUT ###
+{
+  "a": 1,
+  "b": [
+    1,
+    2
+  ]
+}
+
+### TITLE ###
+Scalars
+### INPUT ###
+print(to_json(1))
+print(to_json(2.5))
+print(to_json(true))
+print(to_json(null))
+### STDOUT ###
+1
+2.5
+true
+null
+
+### TITLE ###
+Roundtrips through parse_json
+### INPUT ###
+m = {"items": ["a b", "c\"d"], "n": 5}
+print(parse_json(to_json(m)) == m)
+### STDOUT ###
+true
+
+### TITLE ###
+Negative indent errors
+### INPUT ###
+to_json({"a": 1}, indent=-1)
+### STDERR ###
+error[RAD20017]: Indent must be non-negative, got -1
+  --> <script>:1:1
+  |
+1 | to_json({"a": 1}, indent=-1)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20017
+
+
+### EXIT ###
+1
