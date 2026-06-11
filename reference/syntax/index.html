@@ -1793,6 +1793,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#signal-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#rad-block-options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3286,6 +3297,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#signal-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#rad-block-options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4341,6 +4363,11 @@ command greet:
 <h3 id="invocation-critical-by-default">Invocation (<code>$</code>) — critical by default<a class="headerlink" href="#invocation-critical-by-default" title="Permanent link">&para;</a></h3>
 <p>Shell commands can be invoked with <code>$</code> and are <em>critical by default</em>: if the exit <code>code != 0</code>, an error will propagate unless you handle it.
 If an error propagates up to the root level of the script and doesn't get handled, it exits.</p>
+<blockquote>
+<p><strong>Note on signals:</strong> Rad shares its process group with subprocesses, so
+Ctrl+C reaches them too. The subprocess typically dies before Rad's signal
+handler runs. See <a href="#signal-handling">Signal Handling</a> for details.</p>
+</blockquote>
 <div class="highlight"><pre><span></span><code>// Fails script if code != 0
 $`make build`
 code = $`cmd`
@@ -4540,6 +4567,57 @@ process_data()
 // More code can run here
 exit(0)  // defer blocks run just before this
 </code></pre></div>
+<p><strong>Defer and signals:</strong> SIGINT (Ctrl+C) and SIGTERM are intercepted by Rad
+and routed through the normal exit path with code <code>128 + signal_number</code>.
+This means <code>defer</code> blocks run on Ctrl+C, and <code>errdefer</code> blocks run because
+the exit code is non-zero. Scripts that allocate temp files or write
+half-output get a chance to clean up. See <a href="#signal-handling">Signal Handling</a>
+below for custom handlers beyond auto-defer.</p>
+<h3 id="signal-handling">Signal Handling<a class="headerlink" href="#signal-handling" title="Permanent link">&para;</a></h3>
+<p>Scripts can register handlers for OS signals using <code>signal_trap</code>, and ignore
+signals at the OS level using <code>signal_ignore</code>. See the function reference
+for full details.</p>
+<div class="highlight"><pre><span></span><code>fn cleanup():
+    print_err(&quot;removing temp files&quot;)
+
+// Clean up on Ctrl+C
+signal_trap(&quot;sigint&quot;, fn(ctx):
+    print_err(&quot;Cancelled&quot;)
+    cleanup()
+    exit(ctx.exit_code)
+)
+
+// Don&#39;t crash when a downstream pipe consumer closes
+signal_ignore(&quot;sigpipe&quot;)
+
+// Long-running loop that responds to SIGUSR1 for status dumps
+n = 0
+total = 100
+signal_trap(&quot;sigusr1&quot;, fn(ctx):
+    print(&quot;progress: {n}/{total}&quot;)  // no exit() - script continues
+)
+</code></pre></div>
+<p><strong>Semantics worth knowing:</strong></p>
+<ul>
+<li><strong>Handlers run between statements</strong>, not mid-statement. A signal arriving
+  while a long computation is running waits for the current statement to
+  finish before the handler fires.</li>
+<li><strong>After a handler returns, execution continues.</strong> To terminate, the
+  handler must explicitly call <code>exit()</code>. This matches Bash, Python, Ruby,
+  and Node.</li>
+<li><strong>An unhandled error in a handler aborts the script</strong> (exit 1), running
+  <code>defer</code>/<code>errdefer</code> along the way - the same as an unhandled error anywhere
+  else. Only a clean return continues execution.</li>
+<li><strong><code>defer</code> runs on signal-triggered exit</strong> (whether by default behavior or
+  by the handler calling <code>exit()</code>).</li>
+<li><strong>A second SIGINT during a SIGINT handler force-exits</strong> with code 130.
+  Defer blocks do not run on this force-exit path - it's the escape hatch
+  when a handler hangs.</li>
+<li><strong>Subprocesses started with <code>$\</code>cmd`` share Rad's process group</strong>, so
+  Ctrl+C reaches both Rad and the subprocess. The Rad handler runs after
+  the subprocess has already terminated. This is the same behavior as Bash.</li>
+<li>On <strong>Windows</strong>, only <code>sigint</code> and <code>sigterm</code> are supported.</li>
+</ul>
 <h3 id="rad-block-options">Rad Block Options<a class="headerlink" href="#rad-block-options" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// noprint: run JSON extraction but don&#39;t print table
 url = &quot;https://api.example.com/users&quot;

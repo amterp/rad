@@ -2564,6 +2564,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#signal_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        signal_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal_trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        signal_trap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#sleep" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4358,6 +4380,28 @@
     <span class="md-ellipsis">
       
         is_defined
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal_ignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        signal_ignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal_trap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        signal_trap
       
     </span>
   </a>
@@ -6227,6 +6271,138 @@ if has_stdin():
 is_defined(&quot;name&quot;)     // -&gt; true
 is_defined(&quot;age&quot;)      // -&gt; false
 </code></pre></div>
+<h3 id="signal_ignore">signal_ignore<a class="headerlink" href="#signal_ignore" title="Permanent link">&para;</a></h3>
+<p>Installs OS-level <code>SIG_IGN</code> for one or more signals, so the process is not woken
+when they fire. The disposition is inherited by subprocesses. Distinct from a
+no-op <code>signal_trap</code> handler, which still wakes the process on every delivery.</p>
+<div class="highlight"><pre><span></span><code>signal_ignore(_signal: [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;] | [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;][]) -&gt; void
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>// Don&#39;t crash when a downstream pipe consumer (e.g. `head`) closes early
+signal_ignore(&quot;sigpipe&quot;)
+
+for i in range(0, 1000000):
+    print(i)  // safe to pipe into `head` now
+</code></pre></div>
+<p>The primary use case is <code>sigpipe</code>: a script that pipes its output (e.g.
+<code>rad script.rad | head</code>) would otherwise terminate when the consumer closes the
+pipe. Ignoring it at the OS level keeps the script alive.</p>
+<p>On Windows, only <code>sigint</code> and <code>sigterm</code> are supported.</p>
+<h3 id="signal_trap">signal_trap<a class="headerlink" href="#signal_trap" title="Permanent link">&para;</a></h3>
+<p>Registers a function to run when one of the named signals is delivered to the
+script. The handler receives a single map argument with the signal name and the
+conventional <code>128 + sig</code> exit code. Re-registering replaces the previous handler.</p>
+<div class="highlight"><pre><span></span><code>signal_trap(_signal: [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;] | [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;][], _handler: fn(any) -&gt; any) -&gt; void
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>// Cleanup on Ctrl+C
+signal_trap(&quot;sigint&quot;, fn(ctx):
+    print_err(&quot;Cancelled, cleaning up&quot;)
+    exit(ctx.exit_code)  // 130
+)
+
+// One handler for several signals, dispatching on the name
+signal_trap([&quot;sigterm&quot;, &quot;sighup&quot;], fn(ctx):
+    if ctx.signal == &quot;sighup&quot;:
+        reload_config()  // no exit() - control continues
+    else:
+        exit(ctx.exit_code)
+)
+
+// Status dump - script keeps running after the handler returns
+signal_trap(&quot;sigusr1&quot;, fn(ctx):
+    print(&quot;progress: {progress}/{total}&quot;)
+)
+</code></pre></div>
+<p>The handler is invoked with one <strong>map</strong> argument (the parameter name <code>ctx</code> is
+conventional; call it whatever you like):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>signal</code></td>
+<td>str</td>
+<td>The signal that fired (e.g. <code>"sigint"</code>).</td>
+</tr>
+<tr>
+<td><code>exit_code</code></td>
+<td>int</td>
+<td>The conventional <code>128 + sig</code> exit code (130 for SIGINT).</td>
+</tr>
+</tbody>
+</table>
+<p>After the handler returns, <strong>execution always continues</strong>. To terminate, the
+handler must explicitly call <code>exit()</code>. This matches Bash <code>trap</code>, Python's
+<code>signal.signal</code>, Ruby's <code>Signal.trap</code>, and Node's <code>process.on</code>. The
+always-continue rule applies only to a clean return: an <strong>unhandled error in the
+handler aborts the script</strong> (exit 1) and runs <code>defer</code>/<code>errdefer</code>, just like an
+unhandled error anywhere else.</p>
+<p>There is currently no built-in way to restore the platform default; once a
+signal is trapped, it stays trapped for the lifetime of the script.</p>
+<p><strong>Supported signals:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Trigger</th>
+<th>Default action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sigint</code></td>
+<td>Ctrl+C from terminal</td>
+<td>terminate (130)</td>
+</tr>
+<tr>
+<td><code>sigterm</code></td>
+<td><code>kill &lt;pid&gt;</code>, systemd/Docker shutdown</td>
+<td>terminate (143)</td>
+</tr>
+<tr>
+<td><code>sighup</code></td>
+<td>Terminal hangup; convention: "reload"</td>
+<td>terminate (129)</td>
+</tr>
+<tr>
+<td><code>sigusr1</code></td>
+<td>User-defined; convention: "status"</td>
+<td>terminate (138)</td>
+</tr>
+<tr>
+<td><code>sigusr2</code></td>
+<td>User-defined; convention: "toggle"</td>
+<td>terminate (140)</td>
+</tr>
+<tr>
+<td><code>sigpipe</code></td>
+<td>Write to closed pipe</td>
+<td>terminate (141)</td>
+</tr>
+<tr>
+<td><code>sigwinch</code></td>
+<td>Terminal resized</td>
+<td>ignore</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Caveats:</strong></p>
+<ul>
+<li>Handlers run at the next statement boundary - they do not preempt
+  mid-statement. A signal arriving during a long computation only fires when
+  control returns between statements.</li>
+<li>A second SIGINT while a SIGINT handler is in progress force-exits with code
+  130, skipping defers - the escape hatch when a handler hangs.</li>
+<li>Subprocesses started with <code>$</code> share Rad's process group, so Ctrl+C reaches the
+  subprocess directly and it terminates before the Rad handler runs. The handler
+  still runs (so temp-file cleanup works), but it cannot influence the already-
+  killed subprocess.</li>
+<li>On Windows, only <code>sigint</code> and <code>sigterm</code> are supported.</li>
+</ul>
 <h3 id="sleep">sleep<a class="headerlink" href="#sleep" title="Permanent link">&para;</a></h3>
 <p>Pauses execution for the specified duration.</p>
 <div class="highlight"><pre><span></span><code>sleep(_duration: int|float|str, *, title: str?) -&gt; void

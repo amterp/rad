@@ -726,6 +726,10 @@ command greet:
 Shell commands can be invoked with `$` and are *critical by default*: if the exit `code != 0`, an error will propagate unless you handle it.
 If an error propagates up to the root level of the script and doesn't get handled, it exits.
 
+> **Note on signals:** Rad shares its process group with subprocesses, so
+> Ctrl+C reaches them too. The subprocess typically dies before Rad's signal
+> handler runs. See [Signal Handling](#signal-handling) for details.
+
 ```rad
 // Fails script if code != 0
 $`make build`
@@ -956,6 +960,62 @@ process_data()
 // More code can run here
 exit(0)  // defer blocks run just before this
 ```
+
+**Defer and signals:** SIGINT (Ctrl+C) and SIGTERM are intercepted by Rad
+and routed through the normal exit path with code `128 + signal_number`.
+This means `defer` blocks run on Ctrl+C, and `errdefer` blocks run because
+the exit code is non-zero. Scripts that allocate temp files or write
+half-output get a chance to clean up. See [Signal Handling](#signal-handling)
+below for custom handlers beyond auto-defer.
+
+### Signal Handling
+
+Scripts can register handlers for OS signals using `signal_trap`, and ignore
+signals at the OS level using `signal_ignore`. See the function reference
+for full details.
+
+```rad
+fn cleanup():
+    print_err("removing temp files")
+
+// Clean up on Ctrl+C
+signal_trap("sigint", fn(ctx):
+    print_err("Cancelled")
+    cleanup()
+    exit(ctx.exit_code)
+)
+
+// Don't crash when a downstream pipe consumer closes
+signal_ignore("sigpipe")
+
+// Long-running loop that responds to SIGUSR1 for status dumps
+n = 0
+total = 100
+signal_trap("sigusr1", fn(ctx):
+    print("progress: {n}/{total}")  // no exit() - script continues
+)
+```
+
+**Semantics worth knowing:**
+
+- **Handlers run between statements**, not mid-statement. A signal arriving
+  while a long computation is running waits for the current statement to
+  finish before the handler fires.
+- **After a handler returns, execution continues.** To terminate, the
+  handler must explicitly call `exit()`. This matches Bash, Python, Ruby,
+  and Node.
+- **An unhandled error in a handler aborts the script** (exit 1), running
+  `defer`/`errdefer` along the way - the same as an unhandled error anywhere
+  else. Only a clean return continues execution.
+- **`defer` runs on signal-triggered exit** (whether by default behavior or
+  by the handler calling `exit()`).
+- **A second SIGINT during a SIGINT handler force-exits** with code 130.
+  Defer blocks do not run on this force-exit path - it's the escape hatch
+  when a handler hangs.
+- **Subprocesses started with `$\`cmd\`` share Rad's process group**, so
+  Ctrl+C reaches both Rad and the subprocess. The Rad handler runs after
+  the subprocess has already terminated. This is the same behavior as Bash.
+- On **Windows**, only `sigint` and `sigterm` are supported.
 
 ### Rad Block Options
 
@@ -3750,6 +3810,104 @@ name = "Alice"
 is_defined("name")     // -> true
 is_defined("age")      // -> false
 ```
+
+### signal_ignore
+
+Installs OS-level `SIG_IGN` for one or more signals, so the process is not woken
+when they fire. The disposition is inherited by subprocesses. Distinct from a
+no-op `signal_trap` handler, which still wakes the process on every delivery.
+
+```rad
+signal_ignore(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][]) -> void
+```
+
+```rad
+// Don't crash when a downstream pipe consumer (e.g. `head`) closes early
+signal_ignore("sigpipe")
+
+for i in range(0, 1000000):
+    print(i)  // safe to pipe into `head` now
+```
+
+The primary use case is `sigpipe`: a script that pipes its output (e.g.
+`rad script.rad | head`) would otherwise terminate when the consumer closes the
+pipe. Ignoring it at the OS level keeps the script alive.
+
+On Windows, only `sigint` and `sigterm` are supported.
+
+### signal_trap
+
+Registers a function to run when one of the named signals is delivered to the
+script. The handler receives a single map argument with the signal name and the
+conventional `128 + sig` exit code. Re-registering replaces the previous handler.
+
+```rad
+signal_trap(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][], _handler: fn(any) -> any) -> void
+```
+
+```rad
+// Cleanup on Ctrl+C
+signal_trap("sigint", fn(ctx):
+    print_err("Cancelled, cleaning up")
+    exit(ctx.exit_code)  // 130
+)
+
+// One handler for several signals, dispatching on the name
+signal_trap(["sigterm", "sighup"], fn(ctx):
+    if ctx.signal == "sighup":
+        reload_config()  // no exit() - control continues
+    else:
+        exit(ctx.exit_code)
+)
+
+// Status dump - script keeps running after the handler returns
+signal_trap("sigusr1", fn(ctx):
+    print("progress: {progress}/{total}")
+)
+```
+
+The handler is invoked with one **map** argument (the parameter name `ctx` is
+conventional; call it whatever you like):
+
+| Field       | Type | Description                                              |
+|-------------|------|----------------------------------------------------------|
+| `signal`    | str  | The signal that fired (e.g. `"sigint"`).                 |
+| `exit_code` | int  | The conventional `128 + sig` exit code (130 for SIGINT). |
+
+After the handler returns, **execution always continues**. To terminate, the
+handler must explicitly call `exit()`. This matches Bash `trap`, Python's
+`signal.signal`, Ruby's `Signal.trap`, and Node's `process.on`. The
+always-continue rule applies only to a clean return: an **unhandled error in the
+handler aborts the script** (exit 1) and runs `defer`/`errdefer`, just like an
+unhandled error anywhere else.
+
+There is currently no built-in way to restore the platform default; once a
+signal is trapped, it stays trapped for the lifetime of the script.
+
+**Supported signals:**
+
+| Signal     | Trigger                                | Default action  |
+|------------|----------------------------------------|-----------------|
+| `sigint`   | Ctrl+C from terminal                   | terminate (130) |
+| `sigterm`  | `kill <pid>`, systemd/Docker shutdown  | terminate (143) |
+| `sighup`   | Terminal hangup; convention: "reload"  | terminate (129) |
+| `sigusr1`  | User-defined; convention: "status"     | terminate (138) |
+| `sigusr2`  | User-defined; convention: "toggle"     | terminate (140) |
+| `sigpipe`  | Write to closed pipe                   | terminate (141) |
+| `sigwinch` | Terminal resized                       | ignore          |
+
+**Caveats:**
+
+- Handlers run at the next statement boundary - they do not preempt
+  mid-statement. A signal arriving during a long computation only fires when
+  control returns between statements.
+- A second SIGINT while a SIGINT handler is in progress force-exits with code
+  130, skipping defers - the escape hatch when a handler hangs.
+- Subprocesses started with `$` share Rad's process group, so Ctrl+C reaches the
+  subprocess directly and it terminates before the Rad handler runs. The handler
+  still runs (so temp-file cleanup works), but it cannot influence the already-
+  killed subprocess.
+- On Windows, only `sigint` and `sigterm` are supported.
 
 ### sleep
 
