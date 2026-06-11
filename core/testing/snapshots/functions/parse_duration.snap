@@ -156,3 +156,61 @@ print(parse_duration(".5d").hours)
 ### STDOUT ###
 12
 
+### TITLE ###
+One week only
+### INPUT ###
+print(parse_duration("1w").days)
+### STDOUT ###
+7
+
+### TITLE ###
+Week day hour combined
+### INPUT ###
+print(parse_duration("1w2d3h").hours)
+### STDOUT ###
+219
+
+### TITLE ###
+Week and day sum
+### INPUT ###
+print(parse_duration("1w1d").days)
+### STDOUT ###
+8
+
+### TITLE ###
+Fractional weeks
+### INPUT ###
+print(parse_duration("0.5w").hours)
+### STDOUT ###
+84
+
+### TITLE ###
+Dot-five weeks
+### INPUT ###
+print(parse_duration(".5w").hours)
+### STDOUT ###
+84
+
+### TITLE ###
+Negative weeks
+### INPUT ###
+print(parse_duration("-1w").days)
+### STDOUT ###
+-7
+
+### TITLE ###
+Error on duplicate weeks
+### INPUT ###
+parse_duration("1w2w")
+### STDERR ###
+error[RAD20043]: Failed to parse duration "1w2w": multiple week components in duration string
+  --> <script>:1:1
+  |
+1 | parse_duration("1w2w")
+  | ^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad explain RAD20043
+
+
+### EXIT ###
+1
