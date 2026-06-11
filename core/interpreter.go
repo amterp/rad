@@ -1224,8 +1224,10 @@ func (i *Interpreter) runWithChildEnv(parent *Env, runnable func()) {
 	originalEnv := i.env
 	env := parent.NewChildEnv()
 	i.env = &env
+	// Deferred so error panics unwinding through this frame still restore the
+	// env - otherwise a catch handler upstream evaluates in this child env.
+	defer func() { i.env = originalEnv }()
 	runnable()
-	i.env = originalEnv
 }
 
 // evaluatePathSegment evaluates a single path segment (field, index, or slice) on a value.

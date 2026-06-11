@@ -390,3 +390,76 @@ error[RAD20000]: error 1
 
 ### EXIT ###
 1
+### TITLE ###
+Catch through intermediate fn evaluates in catch-site scope
+### INPUT ###
+
+fn deep():
+	return error("kaboom")
+
+fn mid(x):
+	v = deep()
+	return v
+
+fn outer(t0):
+	secs = mid(t0) catch:
+		return "outer sees t0: '{t0}', err: {secs}"
+	return secs
+
+print(outer("AAA"))
+### STDOUT ###
+outer sees t0: 'AAA', err: kaboom
+
+### TITLE ###
+Catch through intermediate fn cannot see intermediate locals
+### INPUT ###
+
+fn deep():
+	return error("kaboom")
+
+fn mid(x):
+	v = deep()
+	return v
+
+fn outer(t0):
+	secs = mid(t0) catch:
+		print(x)
+	return secs
+
+print(outer("AAA"))
+### STDERR ###
+error[RAD20028]: Undefined identifier 'x'
+  --> <script>:11:9
+   |
+10 | 	secs = mid(t0) catch:
+11 | 		print(x)
+   |         ^
+12 | 	return secs
+13 |
+   |
+   = help: did you mean 'max' or 't0'?
+   = info: rad explain RAD20028
+
+
+### EXIT ###
+1
+### TITLE ###
+Scope intact after catching propagated error
+### INPUT ###
+
+fn deep():
+	return error("kaboom")
+
+fn mid(x):
+	v = deep()
+	return v
+
+fn outer(t0):
+	secs = mid(t0) catch:
+		pass
+	return "after catch, t0: {t0}, secs: {secs}"
+
+print(outer("CCC"))
+### STDOUT ###
+after catch, t0: CCC, secs: kaboom
+
