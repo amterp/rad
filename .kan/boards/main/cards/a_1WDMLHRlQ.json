@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "make-save-state",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147197377,
+  "creator": "Alexander Terp",
+  "description": "save_state currently writes via os.WriteFile directly to the target path (core/home_stash.go -\u003e com.CreateFilePathAndWriteJson) - a crash or concurrent writer can corrupt state. Write to a temp file in the same dir and rename over the target. Cheap, no API change. From #139 (remind has three concurrent writer paths). The opt-in advisory-lock half of that note is tracked separately pending discussion.",
+  "id": "a_1WDMLHRlQ",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUU",
+  "title": "Make save_state atomic (write tmp + rename)",
+  "type": "enhancement",
+  "updated_at_millis": 1781181369869,
+  "history": [
+    {"field":"column","value":"next","at":1781147197377},
+    {"field":"column","value":"done","at":1781181369869}
+  ]
+}

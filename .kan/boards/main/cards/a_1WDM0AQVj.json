@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "time-maps-add-day-of",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147184267,
+  "creator": "Alexander Terp",
+  "description": "now()/parse_epoch()/parse_date() time maps give year through second but no day-of-week, forcing scripts to hand-roll mod-7 arithmetic from a reference Monday. Add a weekday field (confirmed absent in core/rad_time.go). From field notes in #139 - author ranked the time/date gaps as the top ask.",
+  "id": "a_1WDM0AQVj",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUUUUU",
+  "title": "Time maps: add day-of-week field",
+  "type": "feature",
+  "updated_at_millis": 1781181838532,
+  "history": [
+    {"field":"column","value":"high","at":1781147184267},
+    {"field":"column","value":"done","at":1781181838532}
+  ]
+}

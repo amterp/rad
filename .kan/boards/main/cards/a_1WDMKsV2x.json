@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "parse-duration",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147197116,
+  "creator": "Alexander Terp",
+  "description": "parse_duration accepts d (days, via regex in core/rad_duration.go) but not w (weeks) - a surprising asymmetry that costs users an error roundtrip. Add a week component the same way days are handled. From #139.",
+  "id": "a_1WDMKsV2x",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUU",
+  "title": "parse_duration: accept w (weeks)",
+  "type": "enhancement",
+  "updated_at_millis": 1781181484983,
+  "history": [
+    {"field":"column","value":"next","at":1781147197116},
+    {"field":"column","value":"done","at":1781181484983}
+  ]
+}

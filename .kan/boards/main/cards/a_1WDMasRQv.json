@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "docs-specify-that-in",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147207036,
+  "creator": "Alexander Terp",
+  "description": "reference/syntax.md describes \"item in collection\" membership without saying that for maps it checks keys (implementation: ContainsKey, core/expr_ops.go). The #139 author called .keys() defensively. One-line doc clarification.",
+  "id": "a_1WDMasRQv",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUUUUUUUUU",
+  "title": "Docs: specify that 'in' on maps checks keys",
+  "type": "chore",
+  "updated_at_millis": 1781182770636,
+  "history": [
+    {"field":"column","value":"next","at":1781147207036},
+    {"field":"column","value":"done","at":1781182770636}
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "docs-guarantee",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147206818,
+  "creator": "Alexander Terp",
+  "description": "Nested double quotes inside interpolation (\"{tokens.join(sep=\" \")}\") works, but is undocumented - the #139 author nearly rewrote working code fearing it was accidental. Document it as guaranteed behavior in the strings docs (and ideally pin with a test if one does not exist).",
+  "id": "a_1WDMaX6bD",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUUUUUUU",
+  "title": "Docs: guarantee nested quotes inside interpolation",
+  "type": "chore",
+  "updated_at_millis": 1781182679683,
+  "history": [
+    {"field":"column","value":"next","at":1781147206818},
+    {"field":"column","value":"done","at":1781182679683}
+  ]
+}

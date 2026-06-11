@@ -1,0 +1,26 @@
+{
+  "_v": 3,
+  "alias": "rad-check-narrow",
+  "alias_explicit": false,
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Investigated and fixed, but the fix differs from the card's diagnosis. Catch-divergence narrowing would have been a no-op (error arms of fallible calls are already stripped at call sites by maybeStripFallible) and unsound for error values (statement-catch fires on panics only, not error values - verified at runtime). The actual cause of the int|dynamic \u003c= int hints from #139: union operands with a dynamic arm went through the operator overload table per-arm, where dynamic has no entries, while bare dynamic operands were deliberately lenient. Fixed by giving dynamic-like arms the same leniency. Verified against the original remind script: the L225 'int|dynamic \u003c= int' hint is gone. The one remaining hint there (L509 'int|dynamic|str - int') has a different cause - map literals widen to { str: V-join } so parsed.due picks up a str arm; filed separately.",
+      "created_at_millis": 1781182576157,
+      "id": "c_1WSChr0U3"
+    }
+  ],
+  "created_at_millis": 1781147184607,
+  "creator": "Alexander Terp",
+  "description": "The checker has flow-sensitive narrowing (rts/check/narrow.go) but does not narrow after a catch: block ending in return/exit, so legitimate error-handling code gets int|dynamic \u003c= int hints. Narrowing after terminating catch blocks would remove most of this noise. From #139.",
+  "id": "a_1WDM0hetk",
+  "position": "yAUUUUUUUUUUU",
+  "title": "rad check: narrow types after catch blocks that return/exit",
+  "type": "enhancement",
+  "updated_at_millis": 1781182576245,
+  "history": [
+    {"field":"column","value":"high","at":1781147184607},
+    {"field":"column","value":"done","at":1781182576245}
+  ]
+}

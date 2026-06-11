@@ -1,0 +1,25 @@
+{
+  "_v": 3,
+  "alias": "rethink-shell",
+  "alias_explicit": false,
+  "column": "low",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Review surfaced two more facets to settle here:\n\n1. Abort with assignment targets is inconsistent with decline. For\n   `code, out = confirm $`...`` :\n   - Decline (\"n\") -\u003e code=1, out=\"\" (exit-code semantics).\n   - Abort (Ctrl-C) -\u003e code=\u003cerror object\u003e, out=null (expression-failure\n     semantics, since the abort RadPanic carries no ShellResult).\n   So `code` is an int on decline but an error object on abort. Decide whether\n   abort should present exit-code-style results (code as int) or keep the error\n   object so a catch block can introspect why it bailed.\n\n2. pick()/multipick() raise their abort errors via NewErrorStrf without a code,\n   so they surface as RAD20000 (generic runtime), not RAD20010 like\n   confirm()/input()/shell-confirm. Align interactive-prompt abort codes as part\n   of the holistic decision.",
+      "created_at_millis": 1780712056932,
+      "id": "c_1TGmLtYQn"
+    }
+  ],
+  "created_at_millis": 1780710376199,
+  "creator": "Alexander Terp",
+  "description": "Aborting the confirmation prompt for a shell command (`confirm $`...`` or\n`--confirm-shell`) with Ctrl-C/Esc currently raises a *catchable* RAD20010\nuser-input error, chosen for consistency with confirm()/pick()/input().\n\nSharp edge: a `catch:` block on the command swallows the Ctrl-C and lets the\nscript continue - arguably surprising for what is fundamentally a safety gate.\nCtrl-C usually means \"get me out\", not \"handle this and keep going\".\n\nOpen questions to decide as a language concept:\n- Should Ctrl-C/Esc at a confirm gate be a hard, non-catchable stop instead?\n- Should declining (\"n\") stay catchable (exit 1 -\u003e \"Command exited with code 1\"),\n  or get a cleaner non-error \"skipped\" outcome instead of surfacing as an error?\n- What should interactive-prompt aborts do *consistently* across the language\n  (confirm/pick/input/multipick and shell confirm)? Is a dedicated \"user aborted\"\n  error code, or a SIGINT-style exit code (130), warranted?\n- Rad installs no SIGINT handler today; huh intercepts Ctrl-C and returns an\n  error. Worth deciding the holistic story.\n\nContext: prompted by a RAD20042 \"internal bug\" crash when aborting, now fixed -\nabort routes through a catchable RAD20010 rather than panicking. Relevant code:\nconfirmation handling in core/shell.go (executeShellCmd).",
+  "id": "a_1TG4d1ZL6",
+  "position": "xRUUU",
+  "title": "Rethink shell-confirmation abort (Ctrl-C/Esc) behavior",
+  "type": "enhancement",
+  "updated_at_millis": 1780712056932,
+  "history": [
+    {"field":"column","value":"low","at":1780710376199}
+  ]
+}

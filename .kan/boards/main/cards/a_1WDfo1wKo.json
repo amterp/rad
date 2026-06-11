@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "opt-in-advisory-lock",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1781147945548,
+  "creator": "Alexander Terp",
+  "description": "From #139: remind has three concurrent state writers (a 60s launchd checker, dialog dismissals hours later, interactive adds). Atomic save_state (tmp+rename) is carded separately in next; this is the second half - an opt-in advisory lock for scripts that genuinely have concurrent invocations. Open design questions: lock scope, timeout, behavior on contention. Parked low until a second script needs it.",
+  "id": "a_1WDfo1wKo",
+  "position": "xRUUUU",
+  "title": "Opt-in advisory lock for concurrent script invocations",
+  "type": "feature",
+  "updated_at_millis": 1781147945548,
+  "history": [
+    {"field":"column","value":"low","at":1781147945548}
+  ]
+}

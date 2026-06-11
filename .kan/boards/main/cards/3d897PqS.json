@@ -2,16 +2,17 @@
   "_v": 3,
   "alias": "rad-394-cmds-support-nested",
   "alias_explicit": false,
-  "column": "low",
+  "column": "in-progress",
   "created_at_millis": 1767762151182,
   "creator": "Alexander Terp",
   "description": "```\ncommand add:\n  verbose bool\n  command file:  // \u003c\u003c This\n    on_call on_add_file\n```",
   "id": "3d897PqS",
-  "position": "uK",
+  "position": "UU",
   "title": "RAD-394: cmds: support nested command definitions",
   "type": "feature",
-  "updated_at_millis": 1767762151182,
+  "updated_at_millis": 1781147619453,
   "history": [
-    {"field":"column","value":"low","at":1767762151182}
+    {"field":"column","value":"low","at":1767762151182},
+    {"field":"column","value":"in-progress","at":1781147619453}
   ]
 }

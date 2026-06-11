@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "get-pid-builtin",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147945442,
+  "creator": "Alexander Terp",
+  "description": "Getting a script's own PID currently requires quiet $...echo $PPID... plus knowing that rad shells out through a zsh child - an implementation detail that silently breaks the workaround if it changes. Add a get_pid() builtin returning the rad process PID. Split from the process-primitives item in #139; the bg/detached-spawn half is folded into RAD-329/RAD-353.",
+  "id": "a_1WDfnrgK4",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUUU",
+  "title": "get_pid() builtin",
+  "type": "feature",
+  "updated_at_millis": 1781181586528,
+  "history": [
+    {"field":"column","value":"next","at":1781147945442},
+    {"field":"column","value":"done","at":1781181586528}
+  ]
+}

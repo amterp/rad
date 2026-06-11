@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "docs-single-line-raw",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147206919,
+  "creator": "Alexander Terp",
+  "description": "The guide (guide/strings-advanced.md) covers single-line raw strings (r\"...\", r'...') but reference/syntax.md only shows the r\"\"\" multi-line form. Single-line raw strings are essential for regexes; add them to the reference. From #139.",
+  "id": "a_1WDMahF8g",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUUUUUUUU",
+  "title": "Docs: single-line raw strings missing from reference",
+  "type": "chore",
+  "updated_at_millis": 1781182722334,
+  "history": [
+    {"field":"column","value":"next","at":1781147206919},
+    {"field":"column","value":"done","at":1781182722334}
+  ]
+}

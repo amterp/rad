@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "rad-check-map",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1781182587197,
+  "creator": "Alexander Terp",
+  "description": "fn return like 'return { \"due\": due, \"message\": \"hi\" }' types as { str: int|str } instead of struct map { \"due\": int, \"message\": str }, so parsed.due picks up a spurious str arm and draws hints like 'int|dynamic|str - int' (remind L509, last remaining #139 type hint). Builtins already produce struct-map types (e.g. parse_epoch), so the machinery exists; the gap is map literals / user fn returns. Needs design thought on when to keep literal keys vs widen (e.g. dynamic-keyed writes).",
+  "id": "a_1WSCzejpV",
+  "position": "xRUUUUUU",
+  "title": "rad check: map literals widen to value-join, losing per-key types",
+  "type": "enhancement",
+  "updated_at_millis": 1781182587197,
+  "history": [
+    {"field":"column","value":"low","at":1781182587197}
+  ]
+}

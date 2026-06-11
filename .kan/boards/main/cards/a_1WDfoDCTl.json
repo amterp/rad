@@ -1,0 +1,20 @@
+{
+  "_v": 3,
+  "alias": "docs-error",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1781147945664,
+  "creator": "Alexander Terp",
+  "description": "From #139: multi-hop error propagation semantics, what is in scope inside a handler, and the multi-return-vs-list duality (return h, m vs ?? [0, 0]) are all currently learned by experiment. Write a docs section covering them. Depends on the #137 fix (catch/?? scope bug) - fixed in another worktree as of 2026-06-10; promote this card once that lands so the docs describe the corrected semantics.",
+  "id": "a_1WDfoDCTl",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "xRUUUUU",
+  "title": "Docs: error propagation semantics section",
+  "type": "chore",
+  "updated_at_millis": 1781147945664,
+  "history": [
+    {"field":"column","value":"low","at":1781147945664}
+  ]
+}

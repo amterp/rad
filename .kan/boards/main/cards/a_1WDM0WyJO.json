@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "to-json-serialize",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1781147184495,
+  "creator": "Alexander Terp",
+  "description": "parse_json() exists and pprint() prints JSON to stdout, but there is no map/list-to-JSON-string function to pair with write_file. Any script writing a JSON artifact hits this immediately. Confirmed absent from the builtin registry (core/funcs.go). From #139.",
+  "id": "a_1WDM0WyJO",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "yAUUUUUUUUU",
+  "title": "to_json: serialize maps/lists to JSON strings",
+  "type": "feature",
+  "updated_at_millis": 1781181701699,
+  "history": [
+    {"field":"column","value":"high","at":1781147184495},
+    {"field":"column","value":"done","at":1781181701699}
+  ]
+}

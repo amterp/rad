@@ -2,7 +2,7 @@
   "_v": 3,
   "alias": "resolve-docs-web",
   "alias_explicit": false,
-  "column": "next",
+  "column": "done",
   "created_at_millis": 1780023536674,
   "creator": "Alexander Terp",
   "description": "The header comment in rts/rl/errors.go instructs: \"When adding here, also touch core/error_docs/\u003ccode\u003e.md and the reference at docs-web/docs/reference/errors.md.\" But docs-web/docs/reference/errors.md does not exist - recent error-code additions (e.g. RAD40013, RAD40014) only added the embedded core/error_docs/\u003ccode\u003e.md and skipped the reference.\n\nDecide and do one of:\n  1. Create docs-web/docs/reference/errors.md as the user-facing error reference - ideally generated/aggregated from the embedded core/error_docs/*.md files (single source of truth) rather than hand-maintained, and wire it into the docs-web site nav. A generator would mirror how funcs docs work.\n  2. If a separate web reference isn't wanted, update the errors.go header comment to stop pointing at a nonexistent file so it stops misleading contributors.\n\nContext: surfaced while implementing RAD40014 (unknown-map-key diagnostic). I added core/error_docs/40014.md but intentionally skipped the nonexistent reference, matching the 40013 precedent.",
@@ -10,11 +10,12 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "t!UUUUU",
+  "position": "yAUUUUUUUUUUUUUUU",
   "title": "Resolve docs-web errors.md reference (missing file)",
   "type": "chore",
-  "updated_at_millis": 1780023536674,
+  "updated_at_millis": 1781182974392,
   "history": [
-    {"field":"column","value":"next","at":1780023536674}
+    {"field":"column","value":"next","at":1780023536674},
+    {"field":"column","value":"done","at":1781182974392}
   ]
 }

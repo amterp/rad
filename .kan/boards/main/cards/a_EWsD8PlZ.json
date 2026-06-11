@@ -2,18 +2,19 @@
   "_v": 3,
   "alias": "docs-add-complete-reference",
   "alias_explicit": false,
-  "column": "next",
+  "column": "low",
   "created_at_millis": 1769372635926,
   "creator": "Alexander Terp",
   "id": "a_EWsD8PlZ",
   "labels": [
     "ai-hi"
   ],
-  "position": "K!",
+  "position": "!!2",
   "title": "docs: add complete reference/explainer on json paths",
   "type": "excellence",
-  "updated_at_millis": 1770438112733,
+  "updated_at_millis": 1781146724982,
   "history": [
-    {"field":"column","value":"next","at":1769372635926}
+    {"field":"column","value":"next","at":1769372635926},
+    {"field":"column","value":"low","at":1781146724982}
   ]
 }

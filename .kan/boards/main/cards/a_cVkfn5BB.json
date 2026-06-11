@@ -2,15 +2,16 @@
   "_v": 3,
   "alias": "regex-text-match",
   "alias_explicit": false,
-  "column": "next",
+  "column": "high",
   "created_at_millis": 1772916283540,
   "creator": "Alexander Terp",
   "id": "a_cVkfn5BB",
-  "position": "f!",
+  "position": "t!UU",
   "title": "regex text match function",
   "type": "feature",
-  "updated_at_millis": 1772916377865,
+  "updated_at_millis": 1781146716041,
   "history": [
-    {"field":"column","value":"next","at":1772916283540}
+    {"field":"column","value":"next","at":1772916283540},
+    {"field":"column","value":"high","at":1781146716041}
   ]
 }

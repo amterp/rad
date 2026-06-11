@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "bare-positional",
+  "alias_explicit": false,
+  "column": "next",
+  "created_at_millis": 1781147197238,
+  "creator": "Alexander Terp",
+  "description": "With a variadic positional (*tokens str), a lone - among the args fails parsing and the error names a later token: rad t.rad 5s TEST dialog - click Snooze 10m gives \"Too many positional arguments. Unused: [click]\". Reproduced 2026-06-10. Conventionally a lone - is a plain positional (or stdin). Two parts: treat bare - as a positional, and make the error point at the actual offender. Likely lives in the ra arg-parsing library. Adjacent: RAD-71 (negative-number positionals). From #139.",
+  "id": "a_1WDML40x3",
+  "position": "t!UUUUUUU",
+  "title": "Bare - positional derails variadic parsing, error blames wrong token",
+  "type": "bug",
+  "updated_at_millis": 1781147197238,
+  "history": [
+    {"field":"column","value":"next","at":1781147197238}
+  ]
+}

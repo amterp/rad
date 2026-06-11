@@ -2,18 +2,19 @@
   "_v": 3,
   "alias": "website-light-theme-sucks",
   "alias_explicit": false,
-  "column": "high",
+  "column": "low",
   "created_at_millis": 1769890992556,
   "creator": "Alexander Terp",
   "id": "a_I2N2D92r",
   "labels": [
     "ai-lo"
   ],
-  "position": "Y!",
+  "position": "!0",
   "title": "website light theme sucks",
   "type": "feature",
-  "updated_at_millis": 1770438184466,
+  "updated_at_millis": 1781146650378,
   "history": [
-    {"field":"column","value":"high","at":1769890992556}
+    {"field":"column","value":"high","at":1769890992556},
+    {"field":"column","value":"low","at":1781146650378}
   ]
 }
