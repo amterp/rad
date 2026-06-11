@@ -225,3 +225,22 @@ print("hello" ?? "default")
 ### STDOUT ###
 hello
 
+### TITLE ###
+Fallback through intermediate fn evaluates in catch-site scope
+### INPUT ###
+
+fn deep():
+	return error("kaboom")
+
+fn mid(x):
+	v = deep()
+	return v
+
+fn outer(t0):
+	secs = mid(t0) ?? "fallback {t0}"
+	return secs
+
+print(outer("AAA"))
+### STDOUT ###
+fallback AAA
+
