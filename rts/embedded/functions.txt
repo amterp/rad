@@ -29,6 +29,7 @@ gen_fid
 get_args
 get_env
 get_path
+get_pid
 get_rad_home
 get_stash_path
 green

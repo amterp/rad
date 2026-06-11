@@ -41,6 +41,7 @@ var publicSignatures = []string{
 	`get_args() -> str[]`,
 	`get_env(_var: str) -> str`,
 	`get_path(_path: str) -> { "exists": bool, "full_path": str, "base_name"?: str, "permissions"?: str, "type"?: str, "size_bytes"?: int, "modified_millis"?: int, "accessed_millis"?: int }`,
+	`get_pid() -> int`,
 	`get_rad_home() -> str`,
 	`get_stash_path(_sub_path: str = "") -> error|str`,
 	`green(_item: any) -> str`,

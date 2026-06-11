@@ -1,0 +1,17 @@
+### TITLE ###
+Returns positive int
+### INPUT ###
+pid = get_pid()
+print(type_of(pid))
+print(pid > 0)
+### STDOUT ###
+int
+true
+
+### TITLE ###
+Stable within a process
+### INPUT ###
+print(get_pid() == get_pid())
+### STDOUT ###
+true
+

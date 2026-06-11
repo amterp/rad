@@ -119,6 +119,7 @@ const (
 	FUNC_LOAD_STASH_FILE    = "load_stash_file"
 	FUNC_WRITE_STASH_FILE   = "write_stash_file"
 	FUNC_GET_ENV            = "get_env"
+	FUNC_GET_PID            = "get_pid"
 	FUNC_HASH               = "hash"
 	FUNC_ENCODE_BASE64      = "encode_base64"
 	FUNC_DECODE_BASE64      = "decode_base64"
@@ -820,6 +821,12 @@ func init() {
 				envVar := f.GetStr("_var").Plain()
 				envValue := os.Getenv(envVar)
 				return f.Return(envValue)
+			},
+		},
+		{
+			Name: FUNC_GET_PID,
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(int64(os.Getpid()))
 			},
 		},
 		{
