@@ -411,7 +411,7 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -423,7 +423,7 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -435,7 +435,7 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -1170,7 +1170,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -1182,7 +1182,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -1194,7 +1194,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -1926,7 +1926,7 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -1938,7 +1938,7 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -1950,7 +1950,7 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -2684,7 +2684,7 @@ y = 2
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -2696,7 +2696,7 @@ y = 2
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -2708,7 +2708,7 @@ y = 2
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -3451,7 +3451,7 @@ z = 3
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -3463,7 +3463,7 @@ z = 3
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -3475,7 +3475,7 @@ z = 3
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -4218,7 +4218,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -4230,7 +4230,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -4242,7 +4242,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -4986,7 +4986,7 @@ args:
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -4998,7 +4998,7 @@ args:
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -5010,7 +5010,7 @@ args:
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -5759,7 +5759,7 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -5771,7 +5771,7 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -5783,7 +5783,7 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"
@@ -6521,7 +6521,7 @@ later = 2
       "sortText": "2"
     },
     {
-      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "now(*, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "now",
       "sortText": "2"
@@ -6533,7 +6533,7 @@ later = 2
       "sortText": "2"
     },
     {
-      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_date(_date: str, *, format: str?, tz: str = \"local\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_date",
       "sortText": "2"
@@ -6545,7 +6545,7 @@ later = 2
       "sortText": "2"
     },
     {
-      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
+      "detail": "parse_epoch(_epoch: int|float, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\", \"milliseconds\", \"microseconds\", \"nanoseconds\"] = \"auto\") -\u003e error|{ \"date\": str, \"year\": int, \"month\": int, \"day\": int, \"weekday\": int, \"hour\": int, \"minute\": int, \"second\": int, \"time\": str, \"epoch\": { \"seconds\": int, \"millis\": int, \"nanos\": int } }",
       "kind": 3,
       "label": "parse_epoch",
       "sortText": "2"

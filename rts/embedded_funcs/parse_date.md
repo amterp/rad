@@ -4,7 +4,7 @@ Parses a date string into the same time map format as [`now()`](#now) and [`pars
 
 ## Signature
 
-`parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`
+`parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`
 
 ## Examples
 

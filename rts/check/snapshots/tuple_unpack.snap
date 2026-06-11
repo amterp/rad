@@ -47,7 +47,7 @@ ep = parse_epoch(x)
   x @ 7:18 -> float|int
 
 # Symbol types
-  ep (local): { "date": str, "day": int, "epoch": { "millis": int, "nanos": int, "seconds": int }, "hour": int, "minute": int, "month": int, "second": int, "time": str, "year": int }
+  ep (local): { "date": str, "day": int, "epoch": { "millis": int, "nanos": int, "seconds": int }, "hour": int, "minute": int, "month": int, "second": int, "time": str, "weekday": int, "year": int }
   flag (param): <no-type>
   make_pair (fn): fn(any) -> [float, int]|[int, int]
   x (local): float|int

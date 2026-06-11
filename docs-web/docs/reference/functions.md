@@ -2460,7 +2460,7 @@ type_of(fn() 1)          // -> "function"
 Returns the current time with various accessible formats.
 
 ```rad
-now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
+now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 ```
 
 ```rad
@@ -2492,6 +2492,7 @@ Map values:
 | `.year`          | Current calendar year                 | int    | 2019                |
 | `.month`         | Current calendar month                | int    | 12                  |
 | `.day`           | Current calendar day                  | int    | 13                  |
+| `.weekday`       | ISO day of week (Monday=1..Sunday=7)  | int    | 5                   |
 | `.hour`          | Current clock hour (24h)              | int    | 14                  |
 | `.minute`        | Current minute of the hour            | int    | 15                  |
 | `.second`        | Current second of the minute          | int    | 16                  |
@@ -2505,7 +2506,7 @@ Map values:
 Parses a date string into the same time map format as [`now()`](#now) and [`parse_epoch()`](#parse_epoch).
 
 ```rad
-parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
+parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 ```
 
 ```rad
@@ -2576,7 +2577,7 @@ and then converted to the output `tz`.
 Parses a Unix epoch timestamp into various time formats.
 
 ```rad
-parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
+parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 ```
 
 ```rad

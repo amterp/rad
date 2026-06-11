@@ -16,7 +16,7 @@ print(a.epoch.seconds, type_of(a.epoch.seconds))
 print(a.epoch.millis, type_of(a.epoch.millis))
 print(a.epoch.nanos, type_of(a.epoch.nanos))
 ### STDOUT ###
-{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "weekday": 5, "hour": 14, "minute": 15, "second": 16, "time": "14:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
 2019-12-13 str
 2019 int
 12 int
@@ -46,7 +46,7 @@ print(a.epoch.seconds, type_of(a.epoch.seconds))
 print(a.epoch.millis, type_of(a.epoch.millis))
 print(a.epoch.nanos, type_of(a.epoch.nanos))
 ### STDOUT ###
-{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "hour": 8, "minute": 15, "second": 16, "time": "08:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
+{ "date": "2019-12-13", "year": 2019, "month": 12, "day": 13, "weekday": 5, "hour": 8, "minute": 15, "second": 16, "time": "08:15:16", "epoch": { "seconds": 1576246516, "millis": 1576246516123, "nanos": 1576246516123123123 } }
 2019-12-13 str
 2019 int
 12 int
@@ -86,7 +86,7 @@ Func ParseEpochSeconds
 a = parse_epoch(1712345678)
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678000, "nanos": 1712345678000000000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678000, "nanos": 1712345678000000000 } }
 
 ### TITLE ###
 Func ParseEpochMillis
@@ -94,7 +94,7 @@ Func ParseEpochMillis
 a = parse_epoch(1712345678123)
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
 
 ### TITLE ###
 Func ParseEpochMicros
@@ -102,7 +102,7 @@ Func ParseEpochMicros
 a = parse_epoch(1712345678123123)
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123000 } }
 
 ### TITLE ###
 Func ParseEpochNanos
@@ -110,7 +110,7 @@ Func ParseEpochNanos
 a = parse_epoch(1712345678123123123)
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123123 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123123123 } }
 
 ### TITLE ###
 Func ParseEpochErrorsIfAmbiguous
@@ -140,7 +140,7 @@ Func ParseEpochTimeZoneNegativeAmbiguousButWithUnits
 a = parse_epoch(-17123456781, unit = "millis")
 print(a)
 ### STDOUT ###
-{ "date": "1969-06-16", "year": 1969, "month": 6, "day": 16, "hour": 19, "minute": 29, "second": 3, "time": "19:29:03", "epoch": { "seconds": -17123457, "millis": -17123456781, "nanos": -17123456781000000 } }
+{ "date": "1969-06-16", "year": 1969, "month": 6, "day": 16, "weekday": 1, "hour": 19, "minute": 29, "second": 3, "time": "19:29:03", "epoch": { "seconds": -17123457, "millis": -17123456781, "nanos": -17123456781000000 } }
 
 ### TITLE ###
 Func ParseEpochTimeZone
@@ -148,7 +148,7 @@ Func ParseEpochTimeZone
 a = parse_epoch(1712345678123, tz = "America/Chicago")
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 14, "minute": 34, "second": 38, "time": "14:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 14, "minute": 34, "second": 38, "time": "14:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123000000 } }
 
 ### TITLE ###
 Func ParseEpochFloatSeconds
@@ -156,7 +156,7 @@ Func ParseEpochFloatSeconds
 a = parse_epoch(1712345678.5, tz = "UTC")
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678500, "nanos": 1712345678500000000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678500, "nanos": 1712345678500000000 } }
 
 ### TITLE ###
 Func ParseEpochFloatWithExplicitUnit
@@ -164,7 +164,7 @@ Func ParseEpochFloatWithExplicitUnit
 a = parse_epoch(1712345678123.25, unit = "millis", tz = "UTC")
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123250000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123250000 } }
 
 ### TITLE ###
 Func ParseEpochFloatNegative
@@ -172,7 +172,7 @@ Func ParseEpochFloatNegative
 a = parse_epoch(-1712345678.5, unit = "seconds", tz = "UTC")
 print(a)
 ### STDOUT ###
-{ "date": "1915-09-28", "year": 1915, "month": 9, "day": 28, "hour": 4, "minute": 25, "second": 21, "time": "04:25:21", "epoch": { "seconds": -1712345679, "millis": -1712345678500, "nanos": -1712345678500000000 } }
+{ "date": "1915-09-28", "year": 1915, "month": 9, "day": 28, "weekday": 2, "hour": 4, "minute": 25, "second": 21, "time": "04:25:21", "epoch": { "seconds": -1712345679, "millis": -1712345678500, "nanos": -1712345678500000000 } }
 
 ### TITLE ###
 Func ParseEpochFloatAutoDetectMillis
@@ -180,7 +180,7 @@ Func ParseEpochFloatAutoDetectMillis
 a = parse_epoch(1712345678123.5, tz = "UTC")
 print(a)
 ### STDOUT ###
-{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123500000 } }
+{ "date": "2024-04-05", "year": 2024, "month": 4, "day": 5, "weekday": 5, "hour": 19, "minute": 34, "second": 38, "time": "19:34:38", "epoch": { "seconds": 1712345678, "millis": 1712345678123, "nanos": 1712345678123500000 } }
 
 ### TITLE ###
 Func ParseEpochOldUnitNameMigrationError
@@ -205,7 +205,7 @@ Func ParseDateIsoDate
 a = parse_date("2026-03-22")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 0, "minute": 0, "second": 0, "time": "00:00:00", "epoch": { "seconds": 1774137600, "millis": 1774137600000, "nanos": 1774137600000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 0, "minute": 0, "second": 0, "time": "00:00:00", "epoch": { "seconds": 1774137600, "millis": 1774137600000, "nanos": 1774137600000000000 } }
 
 ### TITLE ###
 Func ParseDateIsoDatetime
@@ -213,7 +213,7 @@ Func ParseDateIsoDatetime
 a = parse_date("2026-03-22T14:30:00")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
 
 ### TITLE ###
 Func ParseDateIsoDatetimeZ
@@ -221,7 +221,7 @@ Func ParseDateIsoDatetimeZ
 a = parse_date("2026-03-22T14:30:00Z")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
 
 ### TITLE ###
 Func ParseDateIsoDatetimeOffset
@@ -229,7 +229,7 @@ Func ParseDateIsoDatetimeOffset
 a = parse_date("2026-03-22T14:30:00+05:00")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774171800, "millis": 1774171800000, "nanos": 1774171800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774171800, "millis": 1774171800000, "nanos": 1774171800000000000 } }
 
 ### TITLE ###
 Func ParseDateSpaceDatetime
@@ -237,7 +237,7 @@ Func ParseDateSpaceDatetime
 a = parse_date("2026-03-22 14:30:00")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
 
 ### TITLE ###
 Func ParseDateFractionalSeconds
@@ -245,7 +245,7 @@ Func ParseDateFractionalSeconds
 a = parse_date("2026-03-22T14:30:00.123Z")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800123, "nanos": 1774189800123000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800123, "nanos": 1774189800123000000 } }
 
 ### TITLE ###
 Func ParseDateWithFormat
@@ -253,7 +253,7 @@ Func ParseDateWithFormat
 a = parse_date("22/03/2026", format="DD/MM/YYYY")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 0, "minute": 0, "second": 0, "time": "00:00:00", "epoch": { "seconds": 1774137600, "millis": 1774137600000, "nanos": 1774137600000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 0, "minute": 0, "second": 0, "time": "00:00:00", "epoch": { "seconds": 1774137600, "millis": 1774137600000, "nanos": 1774137600000000000 } }
 
 ### TITLE ###
 Func ParseDateWithFormatDatetime
@@ -261,7 +261,7 @@ Func ParseDateWithFormatDatetime
 a = parse_date("22.03.2026 14:30", format="DD.MM.YYYY HH:mm")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
 
 ### TITLE ###
 Func ParseDateWithTimezone
@@ -269,7 +269,7 @@ Func ParseDateWithTimezone
 a = parse_date("2026-03-22T14:30:00Z", tz="America/Chicago")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800000, "nanos": 1774189800000000000 } }
 
 ### TITLE ###
 Func ParseDateErrorInvalidString
@@ -299,7 +299,7 @@ Func ParseDateSpaceDatetimeWithTzOffset
 a = parse_date("2026-03-22 14:30:00+05:00")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774171800, "millis": 1774171800000, "nanos": 1774171800000000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 9, "minute": 30, "second": 0, "time": "09:30:00", "epoch": { "seconds": 1774171800, "millis": 1774171800000, "nanos": 1774171800000000000 } }
 
 ### TITLE ###
 Func ParseDateSpaceDatetimeFractionalSeconds
@@ -307,7 +307,7 @@ Func ParseDateSpaceDatetimeFractionalSeconds
 a = parse_date("2026-03-22 14:30:00.456")
 print(a)
 ### STDOUT ###
-{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800456, "nanos": 1774189800456000000 } }
+{ "date": "2026-03-22", "year": 2026, "month": 3, "day": 22, "weekday": 7, "hour": 14, "minute": 30, "second": 0, "time": "14:30:00", "epoch": { "seconds": 1774189800, "millis": 1774189800456, "nanos": 1774189800456000000 } }
 
 ### TITLE ###
 Func ParseDateNoTzStringWithExplicitTz
@@ -379,3 +379,31 @@ error[RAD20009]: Invalid time zone 'another bad one'
 
 ### EXIT ###
 1
+### TITLE ###
+Func_NowWeekdayIsoFriday
+### INPUT ###
+print(now().weekday)
+### STDOUT ###
+5
+
+### TITLE ###
+Func_ParseDateWeekdaySunday
+### INPUT ###
+print(parse_date("2026-03-22").weekday)
+### STDOUT ###
+7
+
+### TITLE ###
+Func_ParseDateWeekdayMonday
+### INPUT ###
+print(parse_date("2026-03-23").weekday)
+### STDOUT ###
+1
+
+### TITLE ###
+Func_ParseEpochWeekday
+### INPUT ###
+print(parse_epoch(1712345678, tz="UTC").weekday)
+### STDOUT ###
+5
+
