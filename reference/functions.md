@@ -1503,7 +1503,8 @@ int("42")     // -> Error: cannot convert string
 ### parse_duration
 
 Parses a human-readable duration string into a map of time units. Supports all standard suffixes (`ns`, `us`/`µs`, `ms`,
-`s`, `m`, `h`) plus `d` for days (1d = 24h). Spaces are stripped, and a leading `-` negates the whole duration.
+`s`, `m`, `h`) plus `d` for days (1d = 24h) and `w` for weeks (1w = 7d). Spaces are stripped, and a leading `-` negates
+the whole duration.
 
 ```rad
 parse_duration(_duration: str) -> error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
@@ -1512,6 +1513,7 @@ parse_duration(_duration: str) -> error|{ "nanos": int, "micros": float, "millis
 ```rad
 parse_duration("5m23s")         // -> { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
 parse_duration("1d12h").hours   // -> 36.0
+parse_duration("1w2d3h").hours  // -> 219.0
 parse_duration("300ms").millis  // -> 300.0
 parse_duration("-5m").minutes   // -> -5.0
 parse_duration("5m 30s")        // -> same as "5m30s"
@@ -1579,6 +1581,36 @@ str(3.14)      // -> "3.14"
 str([1, 2])    // -> "[1, 2]"
 str(true)      // -> "true"
 ```
+
+### to_json
+
+Serializes a Rad value into a JSON string. The inverse of `parse_json`.
+
+```rad
+to_json(_val: any, *, indent: int = 0) -> str
+```
+
+```rad
+to_json({"name": "Alice", "age": 30})  // -> '{"age":30,"name":"Alice"}'
+to_json([1, 2, "x"])                   // -> '[1,2,"x"]'
+to_json("hi")                          // -> '"hi"'
+to_json({"a": 1}, indent=2)            // -> multi-line, 2-space indented
+```
+
+**Parameters:**
+
+| Parameter | Type        | Description                                            |
+|-----------|-------------|--------------------------------------------------------|
+| `_val`    | `any`       | Value to serialize                                     |
+| `indent`  | `int = 0`   | If > 0, pretty-print with that many spaces of indent   |
+
+Unlike string interpolation or `str()`, the output is guaranteed to be valid
+JSON: strings are escaped and quoted, including top-level ones. HTML characters
+(`<`, `>`, `&`) are not escaped. `null` serializes to `"null"`.
+
+Map keys are currently emitted in alphabetical order, not insertion order.
+
+See also: `parse_json`, `pprint`
 
 ## Random
 
@@ -2228,6 +2260,19 @@ if info.exists:
 - `modified_millis?: int` - Modification time as epoch milliseconds
 - `accessed_millis?: int` - Access time as epoch milliseconds (Unix/macOS only)
 
+### get_pid
+
+Returns the process ID (PID) of the running Rad process.
+
+```rad
+get_pid() -> int
+```
+
+```rad
+pid = get_pid()    // -> e.g. 12345
+print("My PID: {pid}")
+```
+
 ### has_stdin
 
 Checks if stdin is piped to the script.
@@ -2415,7 +2460,7 @@ type_of(fn() 1)          // -> "function"
 Returns the current time with various accessible formats.
 
 ```rad
-now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
+now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 ```
 
 ```rad
@@ -2447,6 +2492,7 @@ Map values:
 | `.year`          | Current calendar year                 | int    | 2019                |
 | `.month`         | Current calendar month                | int    | 12                  |
 | `.day`           | Current calendar day                  | int    | 13                  |
+| `.weekday`       | ISO day of week (Monday=1..Sunday=7)  | int    | 5                   |
 | `.hour`          | Current clock hour (24h)              | int    | 14                  |
 | `.minute`        | Current minute of the hour            | int    | 15                  |
 | `.second`        | Current second of the minute          | int    | 16                  |
@@ -2460,7 +2506,7 @@ Map values:
 Parses a date string into the same time map format as [`now()`](#now) and [`parse_epoch()`](#parse_epoch).
 
 ```rad
-parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
+parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 ```
 
 ```rad
@@ -2531,7 +2577,7 @@ and then converted to the output `tz`.
 Parses a Unix epoch timestamp into various time formats.
 
 ```rad
-parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
+parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 ```
 
 ```rad

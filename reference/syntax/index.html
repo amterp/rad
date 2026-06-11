@@ -1198,6 +1198,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#raw-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2326,6 +2337,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2696,6 +2735,17 @@
     <span class="md-ellipsis">
       
         Multi-line Strings (Triple Quotes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raw-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw Strings
       
     </span>
   </a>
@@ -3943,6 +3993,17 @@ Always on next line
 - Support escape sequences (like <code>\n</code>, <code>\t</code>) unless raw
 - Comments can follow the opening <code>"""</code> on the same line
 - Cannot have content on the same line as the opening <code>"""</code></p>
+<h3 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>// Raw strings: no interpolation, no escape processing
+regex = r&quot;\d{2}:\d{2}&quot;            // stays literally \d{2}:\d{2}
+win_path = r&quot;C:\Users\notes.txt&quot;
+single = r&#39;single quotes work&#39;
+ticks = r`backticks too`
+</code></pre></div>
+<p><strong>Raw String Rules:</strong>
+- Prefix any string delimiter with <code>r</code>: <code>r"..."</code>, <code>r'...'</code>, <code>r`...`</code>, or multi-line <code>r"""..."""</code>
+- Contents are taken literally: no <code>{interpolation}</code> and no escape sequences
+- Handy for regexes, Windows paths, and text full of braces</p>
 <h2 id="variables-and-assignment">Variables and Assignment<a class="headerlink" href="#variables-and-assignment" title="Permanent link">&para;</a></h2>
 <h3 id="basic-assignment">Basic Assignment<a class="headerlink" href="#basic-assignment" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
@@ -4735,6 +4796,11 @@ not a       // Logical NOT
 <h3 id="membership">Membership<a class="headerlink" href="#membership" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>item in collection      // Check if item exists in collection
 item not in collection  // Check if item doesn&#39;t exist
+</code></pre></div>
+<p>For maps, <code>in</code>/<code>not in</code> test <strong>key</strong> membership, not values:</p>
+<div class="highlight"><pre><span></span><code>scores = {&quot;alice&quot;: 1}
+has_alice = &quot;alice&quot; in scores   // true - &quot;alice&quot; is a key
+has_one = 1 in scores           // false - values aren&#39;t checked
 </code></pre></div>
 <h3 id="coalescing-operator">Coalescing Operator (<code>??</code>)<a class="headerlink" href="#coalescing-operator" title="Permanent link">&para;</a></h3>
 <p>The <code>??</code> operator yields the left value if it is <strong>not null or an error</strong>; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions or handling nullable values.</p>

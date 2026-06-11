@@ -14,7 +14,7 @@
         <link rel="prev" href="../syntax/">
       
       
-        <link rel="next" href="../../migrations/">
+        <link rel="next" href="../errors/">
       
       
         
@@ -2088,6 +2088,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#to_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_json
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2542,6 +2553,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get_pid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_pid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#has_stdin" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2666,6 +2688,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -3911,6 +3961,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#to_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_json
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4358,6 +4419,17 @@
     <span class="md-ellipsis">
       
         get_path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_pid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_pid
       
     </span>
   </a>
@@ -5707,11 +5779,13 @@ int(&quot;42&quot;)     // -&gt; Error: cannot convert string
 </code></pre></div>
 <h3 id="parse_duration">parse_duration<a class="headerlink" href="#parse_duration" title="Permanent link">&para;</a></h3>
 <p>Parses a human-readable duration string into a map of time units. Supports all standard suffixes (<code>ns</code>, <code>us</code>/<code>µs</code>, <code>ms</code>,
-<code>s</code>, <code>m</code>, <code>h</code>) plus <code>d</code> for days (1d = 24h). Spaces are stripped, and a leading <code>-</code> negates the whole duration.</p>
+<code>s</code>, <code>m</code>, <code>h</code>) plus <code>d</code> for days (1d = 24h) and <code>w</code> for weeks (1w = 7d). Spaces are stripped, and a leading <code>-</code> negates
+the whole duration.</p>
 <div class="highlight"><pre><span></span><code>parse_duration(_duration: str) -&gt; error|{ &quot;nanos&quot;: int, &quot;micros&quot;: float, &quot;millis&quot;: float, &quot;seconds&quot;: float, &quot;minutes&quot;: float, &quot;hours&quot;: float, &quot;days&quot;: float }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>parse_duration(&quot;5m23s&quot;)         // -&gt; { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
 parse_duration(&quot;1d12h&quot;).hours   // -&gt; 36.0
+parse_duration(&quot;1w2d3h&quot;).hours  // -&gt; 219.0
 parse_duration(&quot;300ms&quot;).millis  // -&gt; 300.0
 parse_duration(&quot;-5m&quot;).minutes   // -&gt; -5.0
 parse_duration(&quot;5m 30s&quot;)        // -&gt; same as &quot;5m30s&quot;
@@ -5754,6 +5828,42 @@ str(3.14)      // -&gt; &quot;3.14&quot;
 str([1, 2])    // -&gt; &quot;[1, 2]&quot;
 str(true)      // -&gt; &quot;true&quot;
 </code></pre></div>
+<h3 id="to_json">to_json<a class="headerlink" href="#to_json" title="Permanent link">&para;</a></h3>
+<p>Serializes a Rad value into a JSON string. The inverse of <code>parse_json</code>.</p>
+<div class="highlight"><pre><span></span><code>to_json(_val: any, *, indent: int = 0) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>to_json({&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30})  // -&gt; &#39;{&quot;age&quot;:30,&quot;name&quot;:&quot;Alice&quot;}&#39;
+to_json([1, 2, &quot;x&quot;])                   // -&gt; &#39;[1,2,&quot;x&quot;]&#39;
+to_json(&quot;hi&quot;)                          // -&gt; &#39;&quot;hi&quot;&#39;
+to_json({&quot;a&quot;: 1}, indent=2)            // -&gt; multi-line, 2-space indented
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_val</code></td>
+<td><code>any</code></td>
+<td>Value to serialize</td>
+</tr>
+<tr>
+<td><code>indent</code></td>
+<td><code>int = 0</code></td>
+<td>If &gt; 0, pretty-print with that many spaces of indent</td>
+</tr>
+</tbody>
+</table>
+<p>Unlike string interpolation or <code>str()</code>, the output is guaranteed to be valid
+JSON: strings are escaped and quoted, including top-level ones. HTML characters
+(<code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>) are not escaped. <code>null</code> serializes to <code>"null"</code>.</p>
+<p>Map keys are currently emitted in alphabetical order, not insertion order.</p>
+<p>See also: <code>parse_json</code>, <code>pprint</code></p>
 <h2 id="random">Random<a class="headerlink" href="#random" title="Permanent link">&para;</a></h2>
 <h3 id="rand">rand<a class="headerlink" href="#rand" title="Permanent link">&para;</a></h3>
 <p>Returns a random float between 0.0 (inclusive) and 1.0 (exclusive).</p>
@@ -6254,6 +6364,13 @@ if info.exists:
 <li><code>modified_millis?: int</code> - Modification time as epoch milliseconds</li>
 <li><code>accessed_millis?: int</code> - Access time as epoch milliseconds (Unix/macOS only)</li>
 </ul>
+<h3 id="get_pid">get_pid<a class="headerlink" href="#get_pid" title="Permanent link">&para;</a></h3>
+<p>Returns the process ID (PID) of the running Rad process.</p>
+<div class="highlight"><pre><span></span><code>get_pid() -&gt; int
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>pid = get_pid()    // -&gt; e.g. 12345
+print(&quot;My PID: {pid}&quot;)
+</code></pre></div>
 <h3 id="has_stdin">has_stdin<a class="headerlink" href="#has_stdin" title="Permanent link">&para;</a></h3>
 <p>Checks if stdin is piped to the script.</p>
 <div class="highlight"><pre><span></span><code>has_stdin() -&gt; bool
@@ -6473,7 +6590,7 @@ type_of(fn() 1)          // -&gt; &quot;function&quot;
 <h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
 <h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
 <p>Returns the current time with various accessible formats.</p>
-<div class="highlight"><pre><span></span><code>now(*, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
+<div class="highlight"><pre><span></span><code>now(*, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>time = now()
 print(&quot;Current date:&quot;, time.date)          // -&gt; &quot;2024-04-05&quot;
@@ -6541,6 +6658,12 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 <td>13</td>
 </tr>
 <tr>
+<td><code>.weekday</code></td>
+<td>ISO day of week (Monday=1..Sunday=7)</td>
+<td>int</td>
+<td>5</td>
+</tr>
+<tr>
 <td><code>.hour</code></td>
 <td>Current clock hour (24h)</td>
 <td>int</td>
@@ -6586,7 +6709,7 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 </table>
 <h3 id="parse_date">parse_date<a class="headerlink" href="#parse_date" title="Permanent link">&para;</a></h3>
 <p>Parses a date string into the same time map format as <a href="#now"><code>now()</code></a> and <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
-<div class="highlight"><pre><span></span><code>parse_date(_date: str, *, format: str?, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
+<div class="highlight"><pre><span></span><code>parse_date(_date: str, *, format: str?, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Auto-detect common formats
 time = parse_date(&quot;2026-03-22&quot;)
@@ -6698,7 +6821,7 @@ default). For strings with timezone info (e.g., <code>Z</code>, <code>+05:00</co
 and then converted to the output <code>tz</code>.</p>
 <h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
 <p>Parses a Unix epoch timestamp into various time formats.</p>
-<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
+<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Parse seconds epoch (auto-detected)
 time = parse_epoch(1712345678)
@@ -6803,13 +6926,13 @@ explicitly. When using a float, the fractional part provides sub-unit precision 
         
         
           
-          <a href="../../migrations/" class="md-footer__link md-footer__link--next" aria-label="Next: How to Migrate">
+          <a href="../errors/" class="md-footer__link md-footer__link--next" aria-label="Next: Errors">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                How to Migrate
+                Errors
               </div>
             </div>
             <div class="md-footer__button md-icon">

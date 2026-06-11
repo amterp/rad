@@ -1246,6 +1246,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1687,8 +1715,19 @@ Conditions: short name!
 
 <p>String interpolation expressions can be as simple as just an identifier, or can involve function calls, math, list comprehensions, etc (though you should consider extracting complex expressions into named variables beforehand for the sake of clarity).</p>
 <p>Note the use of single quote <code>'</code> strings inside the last line of the above example.
-Using double quotes would've closed the "outer" string prematurely,
-but using another delimiter allows us to avoid that without also needing to escape anything.</p>
+You don't have to switch delimiters like that, though it can help readability:
+everything inside <code>{ }</code> is parsed as code, not text, so nested strings using the
+<em>same</em> delimiter as the outer string are guaranteed to work, no escaping needed.</p>
+<div class="highlight"><pre><span></span><code>tokens = [&quot;Hello&quot;, &quot;World&quot;]
+print(&quot;{tokens.join(&quot; &quot;)}&quot;)
+print(&quot;Count: {tokens.len() &gt; 1 ? &quot;several&quot; : &quot;just one&quot;}&quot;)
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Hello World
+Count: several
+</code></pre></div>
+</div>
+
 <h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
 <p>You can format expression results while doing string interpolation.
 To do so, follow your expression with a colon <code>:</code> and then the relevant syntax for the formatting you want to do.

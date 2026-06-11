@@ -723,6 +723,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#interactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        interactive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#debug" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1229,6 +1240,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1492,6 +1531,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#interactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        interactive
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#debug" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1629,6 +1679,7 @@
 <p><code>--help</code> also prints available <em>global</em> flags:</p>
 <div class="highlight"><pre><span></span><code>Global flags:
   -h, --help                   Print usage string.
+  -i, --interactive            Interactively prompt for script args not already provided, then run.
   -d, --debug                  Enables debug output. Intended for Rad script developers.
       --rad-debug              Enables Rad debug output. Intended for Rad developers.
       --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
@@ -1644,6 +1695,23 @@
       --mock-response string   Add mock response for json requests (pattern:filePath)
 </code></pre></div>
 <p>Note that, outside of <code>help</code>, all the global flags are ALL CAPS.</p>
+<h2 id="interactive"><code>interactive</code><a class="headerlink" href="#interactive" title="Permanent link">&para;</a></h2>
+<p>Use <code>--interactive</code> or <code>-i</code> to be walked through a script's args interactively instead of typing them all out. Rad prompts for each arg you haven't already provided on the command line, using a prompt suited to the arg's type:</p>
+<ul>
+<li>enum-constrained strings offer a picker of the valid values</li>
+<li>bools are gathered into a single toggleable multi-pick (defaults pre-checked); a lone bool just asks y/n</li>
+<li>ints, floats, and regex-constrained strings validate as you submit, re-prompting inline on invalid values</li>
+<li>list and variadic args collect one value per line until an empty line</li>
+</ul>
+<p>Each answered prompt collapses to a compact transcript line (<code>--env staging</code>, <code>--replicas (skip - default: 3)</code>), so you can see at a glance what was chosen. Optional args can be skipped (Enter on an empty field, or a dedicated "skip" row in pickers), in which case their defaults apply. If the script defines <a href="../script-commands/">commands</a> and you didn't specify one, you first pick the command, then get prompted for its args.</p>
+<p>Relational constraints react as you go: an arg excluded by something you've already set is skipped with a note (<code>Skipping --url (excluded by --file)</code>), and an arg required by one becomes mandatory - its prompt blocks an empty Enter with <code>required by --&lt;arg&gt;</code>. Press Ctrl+C at any prompt to abort without running the script.</p>
+<p><code>-i</code> composes with partially-supplied args - anything already on the command line isn't re-prompted:</p>
+<div class="highlight"><pre><span></span><code>rad deploy.rad -i prod
+</code></pre></div>
+<p>Before running, Rad prints the equivalent non-interactive invocation to stderr, so you can copy it to rerun or script the same call directly:</p>
+<div class="highlight"><pre><span></span><code>Equivalent: rad deploy.rad --env prod --replicas 3 --force
+</code></pre></div>
+<p>This makes <code>-i</code> double as an invocation builder for unfamiliar scripts: answer the prompts once, keep the one-liner.</p>
 <h2 id="debug"><code>debug</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/functions/#debug"><code>debug</code></a> is an built-in function which behaves exactly like <code>print</code>, except that it only prints if the global flag <code>--debug</code> is enabled. You can use them in your script for debugging as desired.</p>
 <p>For example, given this example:</p>

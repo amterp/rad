@@ -15,7 +15,7 @@
 - [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Which Shell Runs My Command?, Capturing Output, Error Handling, String Interpolation, Modifiers, Practical Examples
 - [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Command Callbacks, Shared Logic, Getting Help, Practical Example
 - [Resources](https://amterp.dev/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`
-- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`
+- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `interactive`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`
 - [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks
 - [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes
 - [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging
@@ -32,6 +32,7 @@
 
 - [Language Reference](https://amterp.dev/rad/reference/syntax.md): Script Structure, Comments, Data Types, Variables and Assignment, String Interpolation, Ternary Operator, Collection Access and Slicing, Control Flow, Additional Control Flow, Functions, List Comprehensions, Argument Parsing, Script Commands, Shell Commands, JSON Processing and Display Blocks, Advanced Features, Operators, Scoping and Variables, Built-in Types and Methods, Type System, Rad Code Style
 - [Functions](https://amterp.dev/rad/reference/functions.md): How to Read This Document, Crypto, Formatting, HTTP, IO, Lists, Math, Parsing, Random, Stash, Strings, System, Time
+- [Errors](https://amterp.dev/rad/reference/errors.md): Syntax Errors (RAD1xxxx), Runtime Errors (RAD2xxxx), Type Errors (RAD3xxxx), Validation & Lint Errors (RAD4xxxx)
 
 ## Migrations
 
