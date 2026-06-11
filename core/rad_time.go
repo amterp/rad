@@ -11,10 +11,17 @@ func NewTimeMap(time time.Time) *RadMap {
 	minute := time.Minute()
 	second := time.Second()
 
+	// ISO 8601 weekday: Monday=1 .. Sunday=7 (Go's Weekday has Sunday=0)
+	weekday := int(time.Weekday())
+	if weekday == 0 {
+		weekday = 7
+	}
+
 	timeMap.SetPrimitiveStr("date", time.Format("2006-01-02"))
 	timeMap.SetPrimitiveInt("year", time.Year())
 	timeMap.SetPrimitiveInt("month", int(time.Month()))
 	timeMap.SetPrimitiveInt("day", time.Day())
+	timeMap.SetPrimitiveInt("weekday", weekday)
 	timeMap.SetPrimitiveInt("hour", hour)
 	timeMap.SetPrimitiveInt("minute", minute)
 	timeMap.SetPrimitiveInt("second", second)

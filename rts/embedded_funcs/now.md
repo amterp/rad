@@ -4,7 +4,7 @@ Returns the current time with various accessible formats.
 
 ## Signature
 
-`now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`
+`now(*, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }`
 
 ## Examples
 
@@ -43,6 +43,7 @@ Map values:
 | `.year`          | Current calendar year                 | int    | 2019                |
 | `.month`         | Current calendar month                | int    | 12                  |
 | `.day`           | Current calendar day                  | int    | 13                  |
+| `.weekday`       | ISO day of week (Monday=1..Sunday=7)  | int    | 5                   |
 | `.hour`          | Current clock hour (24h)              | int    | 14                  |
 | `.minute`        | Current minute of the hour            | int    | 15                  |
 | `.second`        | Current second of the minute          | int    | 16                  |
