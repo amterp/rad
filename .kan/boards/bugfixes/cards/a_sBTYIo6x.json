@@ -5,12 +5,16 @@
   "column": "todo-lo",
   "created_at_millis": 1775232173549,
   "creator": "Alexander Terp",
-  "description": "When calling zip() with fill=null, the result is truncated to the shortest list - same as calling zip() with no fill. But fill=0, fill=false, fill=\"\" all correctly pad to the longest.\n\n**Repro:**\n```\na = [1, 2, 3]\nb = [4, 5]\nprint(zip(a, b, fill=null))\n// Truncated: [[1, 4], [2, 5]] (same as no fill)\n// Expected: [[1, 4], [2, 5], [3, null]]\n```\n\n**Root cause:** `core/funcs.go` line 950: fill param default is null, and code checks IsNull() to decide truncate vs pad. Explicit fill=null is indistinguishable from \"not provided.\"\n\n**Test files:** `bugs/control_flow/92_zip_fill_null_detailed.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nCalling zip() with fill=null truncates to the shortest list - same as no fill. But fill=0, fill=false, fill=\"\" all correctly pad to the longest.\n\n**Repro:**\na = [1, 2, 3]\nb = [4, 5]\nprint(zip(a, b, fill=null))\n// Actual:   [[1, 4], [2, 5]]            (truncated, same as no fill)\n// Expected: [[1, 4], [2, 5], [3, null]]\n\n**Root cause:** `core/funcs.go:~966` (was cited as :950) - the fill default is null and the code checks IsNull() to decide truncate-vs-pad, so explicit fill=null is indistinguishable from \"not provided.\"\n\n**Design/impl:** track whether the fill arg was explicitly passed rather than using null as the sentinel.",
+  "grammar": false,
   "id": "a_sBTYIo6x",
   "position": "gI",
-  "severity": "low",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
   "title": "zip(fill=null) behaves same as no fill argument",
-  "updated_at_millis": 1775232173549,
+  "updated_at_millis": 1781449671844,
   "history": [
     {"field":"column","value":"todo-lo","at":1775232173549}
   ]

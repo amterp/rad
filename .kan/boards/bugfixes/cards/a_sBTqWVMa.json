@@ -5,7 +5,8 @@
   "column": "todo-lo",
   "created_at_millis": 1775232184848,
   "creator": "Alexander Terp",
-  "description": "When the left and right sides of a multiple assignment have different counts, no error is raised. Extra values are silently dropped, missing values become null.\n\n**Repro:**\n```\na, b = 1, 2, 3\nprint(a, b)    // 1, 2 (3 silently dropped)\n\nc, d, e = 1, 2\nprint(c, d, e) // 1, 2, null (e silently set to null)\n```\n\nBoth should produce errors to catch typos and logic mistakes.\n\n**Test files:** `bugs/operators/31_multiple_assignment.rad`, `32_multi_assign_too_many.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nWhen the left and right sides of a multiple assignment have different counts, no error is raised: extra values are silently dropped, missing values become null.\n\n**Repro:**\na, b = 1, 2, 3\nprint(a, b)     // 1 2      (3 silently dropped)\n\nc, d, e = 1, 2\nprint(c, d, e)  // 1 2 null (e silently set to null)\n\n**Design question:** both should arguably error to catch typos and logic mistakes (vs the current asymmetric drop/null-fill).",
+  "grammar": false,
   "id": "a_sBTqWVMa",
   "position": "oA",
   "severity": "medium",
@@ -13,7 +14,7 @@
     "design"
   ],
   "title": "Multiple assignment silently handles count mismatches",
-  "updated_at_millis": 1775233427742,
+  "updated_at_millis": 1781449672010,
   "history": [
     {"field":"column","value":"todo-lo","at":1775232184848}
   ]

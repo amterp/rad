@@ -5,13 +5,13 @@
   "column": "todo-hi",
   "created_at_millis": 1775232042140,
   "creator": "Alexander Terp",
-  "description": "Function calls, map lookups, and list indexing cannot be immediately called. The parser does not support chained call syntax.\n\n**Repro:**\n```\nfn make_adder(n):\n    return fn(x) x + n\n\nmake_adder(5)(3)          // Parse error - cannot call return value\n\nactions = {\"greet\": fn(name) \"Hello {name}\"}\nactions[\"greet\"](\"Alice\") // Parse error - cannot call map lookup result\n\nops = [fn(a, b) a + b]\nops[0](1, 2)              // Parse error - cannot call list index result\n```\n\n**Workaround:** Assign to a temporary variable first.\n\nThis blocks natural functional programming patterns and is especially painful combined with the broken escaping closures.\n\n**Test files:** `bugs/functions/t17b_immediate_call.rad`, `t29_fn_in_map.rad`, `t41_fn_list_call.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces - all three forms are parse errors.\n\nFunction-call results, map lookups, and list indexing cannot be immediately called; the parser does not support chained call syntax.\n\n**Repro:**\nfn make_adder(n):\n    return fn(x) x + n\nmake_adder(5)(3)           // parse error - cannot call the returned function\n\nactions = {\"greet\": fn(name) \"Hello {name}\"}\nactions[\"greet\"](\"Alice\")  // parse error - cannot call a map-lookup result\n\nops = [fn(a, b) a + b]\nops[0](1, 2)               // parse error - cannot call a list-index result\n\n**Workaround:** assign to a temporary variable first.\n\nThis blocks natural functional-programming patterns (currying, dispatch tables). Requires a parser change to allow call/index expressions as the target of a further call/index (a refactor, not a one-liner - hence not a slam dunk despite being a clear grammar gap).",
   "grammar": true,
   "id": "a_sBQ8LS6p",
   "position": "t!",
   "severity": "high",
   "title": "Cannot immediately call result of an expression",
-  "updated_at_millis": 1775355523809,
+  "updated_at_millis": 1781449744346,
   "history": [
     {"field":"column","value":"todo-hi","at":1775232042140}
   ]

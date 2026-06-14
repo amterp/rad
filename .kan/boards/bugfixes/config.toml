@@ -67,3 +67,8 @@ name = "bugfixes"
       color = "#8b5cf6"
       description = "Requires language design thinking"
       value = "design"
+
+    [[custom_fields.tags.options]]
+      color = "#22c55e"
+      description = "Clear, low-risk, contained fix with an obvious-correct answer"
+      value = "quick-win"

@@ -5,12 +5,16 @@
   "column": "todo-lo",
   "created_at_millis": 1775232149323,
   "creator": "Alexander Terp",
-  "description": "Comparing large integers to their float representation gives incorrect results because the int is converted to float, losing precision.\n\n**Repro:**\n```\nx = 9223372036854775807\nprint(x == 9223372036854775807.0)  // true (WRONG)\n// The float is actually 9223372036854776000 (rounded up)\n```\n\nEdge case only relevant at int64 bounds.\n\n**Test files:** `bugs/operators/86_max_int_comparison_bug.rad`, `70_int_float_mixed_compare.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. Comparing a large int to its float representation gives a wrong result because the int is converted to float, losing precision.\n\n**Repro:**\nx = 9223372036854775807\nprint(x == 9223372036854775807.0)  // true (WRONG)\n// the float is actually 9223372036854776000 (rounded up)\n\nEdge case, only relevant at int64 bounds.\n\n**Design question:** stricter cross-type equality, arbitrary precision, or accept/document this IEEE-754 behavior.",
+  "grammar": false,
   "id": "a_sBSvE2vJ",
   "position": "QY",
-  "severity": "low",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
   "title": "Large int vs float comparison gives wrong result due to precision loss",
-  "updated_at_millis": 1775232149323,
+  "updated_at_millis": 1781449639121,
   "history": [
     {"field":"column","value":"todo-lo","at":1775232149323}
   ]
