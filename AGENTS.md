@@ -264,6 +264,7 @@ make test         # Run tests in core/testing
 - Test resources in `core/testing/resources/`
 - Syntax tree snapshot tests in `rts/test/` - each case captures both CST and AST dumps side-by-side
 - Converter unit tests in `rts/converter_test.go`
+- Regenerate snapshots with a **targeted** `-update`, e.g. `go test ./core/testing/ -run TestSnapshots -update=types/str_lexing` (path-substring match; comma-separate multiple). A mismatch in a non-targeted file still fails, so regressions aren't silently absorbed. `-update-all` rewrites everything (avoid). Write the value with `=`; a bare `-update` errors.
 
 ### Key Dependencies
 

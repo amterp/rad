@@ -51,6 +51,8 @@ func TestCheckSnapshots(t *testing.T) {
 		return
 	}
 
+	radtesting.CheckSnapshotUpdateFlags(t)
+
 	var updateMu sync.Mutex
 	filesToUpdate := make(map[string][]radtesting.SnapshotCase)
 
@@ -110,7 +112,7 @@ func TestCheckSnapshots(t *testing.T) {
 				actual := check.DumpForSnapshot(file, result.Types, result.Resolved, result.Diagnostics)
 
 				if actual != tc.Stdout {
-					if *radtesting.UpdateSnapshots {
+					if radtesting.ShouldUpdateSnapshotFile(snapFile) {
 						updateMu.Lock()
 						tc.Stdout = actual
 						filesToUpdate[snapFile] = cases
@@ -129,14 +131,12 @@ func TestCheckSnapshots(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		if *radtesting.UpdateSnapshots {
-			for path, cases := range filesToUpdate {
-				err := radtesting.WriteSnapshotFile(path, cases)
-				if err != nil {
-					t.Errorf("Failed to update snapshot file %s: %v", path, err)
-				} else {
-					t.Logf("Updated snapshot file: %s", path)
-				}
+		// filesToUpdate only holds files selected by -update / -update-all.
+		for path, cases := range filesToUpdate {
+			if err := radtesting.WriteSnapshotFile(path, cases); err != nil {
+				t.Errorf("Failed to update snapshot file %s: %v", path, err)
+			} else {
+				t.Logf("Updated snapshot file: %s", path)
 			}
 		}
 	})

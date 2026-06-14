@@ -65,6 +65,33 @@ Or use the dev script for a more comprehensive validation (includes formatting, 
 ./dev --validate
 ```
 
+#### Updating Snapshots
+
+A lot of our tests are snapshot tests - they define some input and assert against
+captured output (`core/testing/snapshots/`, `rts/test/st_snapshots/`,
+`rts/check/snapshots/`, `rts/radfmt/snapshots/`, `radls/lstesting/snapshots/`).
+
+When you intentionally change behavior, regenerate the affected expected outputs
+with `-update` - but **scope it to the files you actually changed**:
+
+```shell
+# Rewrite only snapshot files whose path contains the substring(s):
+go test ./core/testing/ -run TestSnapshots -update=types/str_lexing
+go test ./core/testing/ -run TestSnapshots -update=errors/validation,control_flow
+
+# Rewrite every snapshot (use sparingly):
+go test ./core/testing/ -update-all
+```
+
+`-update` is deliberately targeted: a mismatch in a file you did **not** target
+still fails the test, so an unrelated regression can't be silently baked into a
+snapshot. Prefer it over `-update-all`, and always review `git diff` on the
+`.snap` files afterward.
+
+Write the value with `=` (`-update=foo`). A bare `-update` errors, and
+`-update -run X` would swallow `-run` as the update value (the test guards against
+this and tells you).
+
 #### Quick Platform Testing
 
 Rad supports Linux, macOS, and Windows. PR checks automatically run Go tests on all three platforms.

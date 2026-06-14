@@ -7,11 +7,63 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"testing"
 
 	"github.com/amterp/rad/radls/lsp"
 )
 
-var UpdateSnapshots = flag.Bool("update", false, "update snapshot expected outputs")
+// Snapshot updating is opt-in and targeted by default so a stray `-update`
+// can't silently rewrite every snapshot (masking unrelated regressions). Pass
+// `-update=<substr>[,<substr>...]` to rewrite only matching files; mismatches
+// elsewhere still fail. Use `-update-all` for the rare blanket rewrite. This
+// mirrors core/testing's snapshot flags for a consistent contributor workflow.
+var (
+	updateTargets = flag.String("update", "",
+		"comma-separated snapshot path substrings to rewrite; "+
+			"non-matching mismatches still fail. Use -update-all to rewrite everything.")
+	updateAll = flag.Bool("update-all", false,
+		"rewrite ALL snapshot expected outputs - prefer -update=<substr> to scope and avoid masking regressions")
+)
+
+func updateTargetList() []string {
+	if strings.TrimSpace(*updateTargets) == "" {
+		return nil
+	}
+	var out []string
+	for _, t := range strings.Split(*updateTargets, ",") {
+		if t = strings.TrimSpace(t); t != "" {
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+// shouldUpdateSnapshotFile reports whether the snapshot file at path should be
+// rewritten this run: true under -update-all, or when the path contains any
+// -update substring.
+func shouldUpdateSnapshotFile(path string) bool {
+	if *updateAll {
+		return true
+	}
+	for _, target := range updateTargetList() {
+		if strings.Contains(path, target) {
+			return true
+		}
+	}
+	return false
+}
+
+// checkSnapshotUpdateFlags fails fast on the `-update -run X` trap, where the
+// flag parser swallows `-run` as -update's value. Call once per snapshot test.
+func checkSnapshotUpdateFlags(t *testing.T) {
+	t.Helper()
+	for _, target := range updateTargetList() {
+		if strings.HasPrefix(target, "-") {
+			t.Fatalf("-update value %q looks like a flag - write `-update=<path-substr>`, "+
+				"or -update-all to rewrite everything", target)
+		}
+	}
+}
 
 // Action delimiters. Each request-shaped action has its own header
 // because the LSP wire methods take different parameter shapes -

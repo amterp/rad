@@ -44,6 +44,8 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 		return
 	}
 
+	CheckSnapshotUpdateFlags(t)
+
 	// Track which files need updating (thread-safe for consistency,
 	// even though tests don't run in parallel due to shared global state)
 	var updateMu sync.Mutex
@@ -79,7 +81,8 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 					ExitCode: getExitCode(),
 				}
 
-				if CompareSnapshotResult(t, tc, actual) {
+				updating := ShouldUpdateSnapshotFile(snapFile)
+				if CompareSnapshotResult(t, tc, actual, updating) && updating {
 					updateMu.Lock()
 					tc.Stdout = actual.Stdout
 					tc.Stderr = actual.Stderr
@@ -92,15 +95,14 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 		}
 	}
 
-	// Write updates if in update mode
-	if *UpdateSnapshots {
-		for path, cases := range filesToUpdate {
-			err := WriteSnapshotFile(path, cases)
-			if err != nil {
-				t.Errorf("Failed to update snapshot file %s: %v", path, err)
-			} else {
-				t.Logf("Updated snapshot file: %s", path)
-			}
+	// Rewrite the snapshot files we targeted. filesToUpdate only holds files
+	// selected by -update / -update-all (it's empty otherwise), so there's no
+	// separate "are we updating?" guard here.
+	for path, cases := range filesToUpdate {
+		if err := WriteSnapshotFile(path, cases); err != nil {
+			t.Errorf("Failed to update snapshot file %s: %v", path, err)
+		} else {
+			t.Logf("Updated snapshot file: %s", path)
 		}
 	}
 }

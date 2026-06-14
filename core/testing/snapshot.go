@@ -12,8 +12,68 @@ import (
 	gd "github.com/amterp/go-delta"
 )
 
-// UpdateSnapshots is set by the -update flag to regenerate expected outputs
-var UpdateSnapshots = flag.Bool("update", false, "update snapshot expected outputs")
+// Snapshot updating is opt-in and targeted by default, to stop a stray
+// `-update` from silently rewriting every snapshot to match current behavior
+// (which masks unrelated regressions). Pass `-update=<substr>[,<substr>...]` to
+// rewrite only the snapshot files whose path contains one of the substrings;
+// any mismatch in a non-targeted file still fails the test, so regressions
+// elsewhere surface loudly. Use `-update-all` for the rare blanket rewrite.
+//
+//	go test ./core/testing/ -run TestSnapshots -update=types/str_lexing
+//	go test ./core/testing/ -run TestSnapshots -update=errors/validation,types
+//	go test ./core/testing/ -run TestSnapshots -update-all
+var (
+	updateTargets = flag.String("update", "",
+		"comma-separated snapshot path substrings to rewrite (e.g. types/str_lexing); "+
+			"non-matching mismatches still fail. Use -update-all to rewrite everything.")
+	updateAll = flag.Bool("update-all", false,
+		"rewrite ALL snapshot expected outputs - prefer -update=<substr> to scope and avoid masking regressions")
+)
+
+// updateTargetList returns the trimmed, non-empty -update substrings.
+func updateTargetList() []string {
+	if strings.TrimSpace(*updateTargets) == "" {
+		return nil
+	}
+	var out []string
+	for _, t := range strings.Split(*updateTargets, ",") {
+		if t = strings.TrimSpace(t); t != "" {
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+// ShouldUpdateSnapshotFile reports whether the snapshot file at the given path
+// should be rewritten this run: true under -update-all, or when the path
+// contains any -update substring. Matching on the path means a target like
+// "types/str_lexing" or just "str_lexing" both work, and it's agnostic to each
+// caller's snapshot-directory layout.
+func ShouldUpdateSnapshotFile(path string) bool {
+	if *updateAll {
+		return true
+	}
+	for _, target := range updateTargetList() {
+		if strings.Contains(path, target) {
+			return true
+		}
+	}
+	return false
+}
+
+// CheckSnapshotUpdateFlags fails fast on common -update misuse. Call once at the
+// top of a snapshot test. The main trap is `-update -run X`: because -update now
+// takes a value, the flag parser swallows `-run` as that value. Catch the
+// flag-shaped target and point the user at the `=` form.
+func CheckSnapshotUpdateFlags(t *testing.T) {
+	t.Helper()
+	for _, target := range updateTargetList() {
+		if strings.HasPrefix(target, "-") {
+			t.Fatalf("-update value %q looks like a flag - write `-update=<path-substr>` "+
+				"(e.g. -update=types/str_lexing), or -update-all to rewrite everything", target)
+		}
+	}
+}
 
 const (
 	TitleDelimiter       = "### TITLE ###"
@@ -506,7 +566,12 @@ type SnapshotResult struct {
 // CompareSnapshotResult compares actual output against expected.
 // Returns true if the snapshot needs updating.
 // In update mode, it does not fail the test on mismatch.
-func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult) bool {
+// CompareSnapshotResult compares actual output against the expected case and
+// returns whether they differ (i.e. the snapshot needs rewriting). When
+// `updating` is true the diff is suppressed (the caller will rewrite this file);
+// otherwise a mismatch fails the test - so a scoped `-update` still catches
+// regressions in files it isn't rewriting.
+func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult, updating bool) bool {
 	t.Helper()
 
 	needsUpdate := false
@@ -514,7 +579,7 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 	// Compare stdout
 	if actual.Stdout != tc.Stdout {
 		needsUpdate = true
-		if !*UpdateSnapshots {
+		if !updating {
 			t.Errorf("Stdout mismatch:\n%s", gd.DiffWith(tc.Stdout, actual.Stdout, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
 		}
 	}
@@ -522,7 +587,7 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 	// Compare stderr
 	if actual.Stderr != tc.Stderr {
 		needsUpdate = true
-		if !*UpdateSnapshots {
+		if !updating {
 			t.Errorf("Stderr mismatch:\n%s", gd.DiffWith(tc.Stderr, actual.Stderr, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
 		}
 	}
@@ -530,7 +595,7 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 	// Compare interactive frames
 	if actual.Frames != tc.Frames {
 		needsUpdate = true
-		if !*UpdateSnapshots {
+		if !updating {
 			t.Errorf("Frames mismatch:\n%s", gd.DiffWith(tc.Frames, actual.Frames, gd.WithColor(true), gd.WithLayout(gd.LayoutPreferSideBySide), gd.WithWidth(120)))
 		}
 	}
@@ -538,7 +603,7 @@ func CompareSnapshotResult(t *testing.T, tc *SnapshotCase, actual SnapshotResult
 	// Compare exit code
 	if actual.ExitCode != tc.ExitCode {
 		needsUpdate = true
-		if !*UpdateSnapshots {
+		if !updating {
 			t.Errorf("Exit code mismatch\nExpected: %d\nActual: %d", tc.ExitCode, actual.ExitCode)
 		}
 	}

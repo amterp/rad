@@ -48,6 +48,8 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 		return
 	}
 
+	checkSnapshotUpdateFlags(t)
+
 	var updateMu sync.Mutex
 	filesToUpdate := make(map[string][]SnapshotCase)
 
@@ -72,7 +74,7 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 				require.NoError(t, err, "Harness should run without error")
 
 				if actual != tc.Stdout {
-					if *UpdateSnapshots {
+					if shouldUpdateSnapshotFile(snapFile) {
 						updateMu.Lock()
 						tc.Stdout = actual
 						filesToUpdate[snapFile] = cases
@@ -89,17 +91,15 @@ func runSnapshotDirectory(t *testing.T, snapshotDir string) {
 		}
 	}
 
-	// Write updates after all subtests complete
-	if *UpdateSnapshots {
-		t.Cleanup(func() {
-			for path, cases := range filesToUpdate {
-				err := WriteSnapshotFile(path, cases)
-				if err != nil {
-					t.Errorf("Failed to update snapshot file %s: %v", path, err)
-				} else {
-					t.Logf("Updated snapshot file: %s", path)
-				}
+	// Write updates after all subtests complete. filesToUpdate only holds files
+	// selected by -update / -update-all.
+	t.Cleanup(func() {
+		for path, cases := range filesToUpdate {
+			if err := WriteSnapshotFile(path, cases); err != nil {
+				t.Errorf("Failed to update snapshot file %s: %v", path, err)
+			} else {
+				t.Logf("Updated snapshot file: %s", path)
 			}
-		})
-	}
+		}
+	})
 }
