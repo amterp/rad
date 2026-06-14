@@ -5,12 +5,16 @@
   "column": "todo-lo",
   "created_at_millis": 1775232145760,
   "creator": "Alexander Terp",
-  "description": "Sorting a list containing NaN values produces nonsensical results because NaN violates comparison transitivity.\n\n**Repro:**\n```\nitems = [5, 4, 0.0/0, 3, 0.0/0, 2, 1]\nprint(items.sort())\n// [4, 5, NaN, 3, NaN, 1, 2] (broken)\n```\n\nShould either error on NaN in sort or handle it explicitly (e.g. sort NaN to end).\n\n**Test files:** `bugs/operators/68_comparison_with_nan.rad`, `87_nan_sort_deeper.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. Sorting a list containing NaN produces a nonsensical order because NaN violates comparison transitivity.\n\n**Repro:**\nnan = pow(-1, 0.5)   // NaN  (note: 0.0/0 now raises RAD20036 divide-by-zero, so use pow)\nitems = [5, 4, nan, 3, nan, 2, 1]\nprint(items.sort())  // broken order - NaN not sorted to end, comparisons inconsistent\n\n**Design options:** error on NaN in sort, or define a NaN ordering (e.g. sort NaN to the end).",
+  "grammar": false,
   "id": "a_sBSpTja4",
   "position": "Mc",
-  "severity": "low",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
   "title": "NaN poisons list sorting - produces completely broken order",
-  "updated_at_millis": 1775232145760,
+  "updated_at_millis": 1781449639038,
   "history": [
     {"field":"column","value":"todo-lo","at":1775232145760}
   ]

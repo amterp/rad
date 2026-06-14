@@ -5,12 +5,16 @@
   "column": "todo-lo",
   "created_at_millis": 1775232164365,
   "creator": "Alexander Terp",
-  "description": "`\\{` correctly produces a literal `{` to prevent interpolation, but `\\}` does NOT produce a literal `}` - it produces the literal two characters `\\}`.\n\n**Repro:**\n```\nprint(\"\\{ and \\}\")\n// Expected: { and }\n// Actual:   { and \\}\n```\n\nMinor inconsistency but surprising when users discover it.\n\n**Test files:** `bugs/strings/str_escape_brace_closing.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\n`\\{` correctly produces a literal `{` to prevent interpolation, but `\\}` does NOT produce a literal `}` - it produces the literal two characters `\\}`.\n\n**Repro:**\nprint(\"\\{ and \\}\")\n// Expected: { and }\n// Actual:   { and \\}   (the \\} stays as backslash-brace)\n\nMinor inconsistency but surprising when users discover it.\n\n**Fix (slam dunk):** add a `\\}` escape handler mirroring `\\{` (around rts/converter.go:1338). Pure symmetry, low risk.",
+  "grammar": true,
   "id": "a_sBTJUILR",
   "position": "cM",
   "severity": "low",
+  "tags": [
+    "quick-win"
+  ],
   "title": "Closing brace escape \\} does not work (asymmetry with \\{)",
-  "updated_at_millis": 1775232164365,
+  "updated_at_millis": 1781449558789,
   "history": [
     {"field":"column","value":"todo-lo","at":1775232164365}
   ]

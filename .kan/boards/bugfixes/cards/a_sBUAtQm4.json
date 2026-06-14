@@ -5,12 +5,16 @@
   "column": "todo-lo",
   "created_at_millis": 1775232197480,
   "creator": "Alexander Terp",
-  "description": "The `in` operator inconsistently coerces types when checking string containment. int is silently coerced to string, but float and bool are not.\n\n**Repro:**\n```\nprint(1 in \"hello123\")     // true (int coerced to \"1\")\nprint(3.14 in \"3.14159\")   // Error (float not coerced)\nprint(true in \"truefalse\")  // Error (bool not coerced)\n```\n\nEither all should coerce or none should.\n\n**Test files:** `bugs/operators/49_int_in_string.rad`, `51_in_coercion.rad`, `51b_in_coercion2.rad`",
+  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nThe `in` operator inconsistently coerces types in string-containment checks: int is silently coerced to string, but float and bool are not.\n\n**Repro:**\nprint(1 in \"hello123\")      // true               (int coerced to \"1\")\nprint(3.14 in \"3.14159\")    // error[RAD30002]    (float not coerced)\nprint(true in \"truefalse\")  // error              (bool not coerced)\n\n**Source:** `core/expr_ops.go:~152` - the int+string case uses fmt.Sprintf coercion; there is no float+string or bool+string case.\n\n**Design question:** coerce all numeric/bool types consistently, or forbid coercion entirely (the latter is a breaking change for int).",
+  "grammar": false,
   "id": "a_sBUAtQm4",
   "position": "w2",
-  "severity": "low",
+  "severity": "medium",
+  "tags": [
+    "design"
+  ],
   "title": "int in str coerces but float in str and bool in str do not",
-  "updated_at_millis": 1775232197480,
+  "updated_at_millis": 1781449711601,
   "history": [
     {"field":"column","value":"todo-lo","at":1775232197480}
   ]
