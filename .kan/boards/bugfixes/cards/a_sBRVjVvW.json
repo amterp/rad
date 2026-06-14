@@ -2,20 +2,30 @@
   "_v": 3,
   "alias": "loop-context",
   "alias_explicit": false,
-  "column": "todo-hi",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Closed as works-as-intended (decided 2026-06-14). This is documented, deliberate behavior, not an implementation bug:\n\n- docs/type_system.md:129-133 — 'For-loops, while-loops, and list comprehensions do NOT open scopes ... loop vars (and the optional with context) bind in the current scope.'\n- core/testing/snapshots/misc/scoping.snap — the 'Scoping ... in for block is remembered' cases explicitly assert that iteration vars, unpacked k/v vars, AND the with-loop context var all persist after the loop (authored 2026-02-02).\n- Both the interpreter (SetVar into enclosing env) and the static binder mirror this.\n\nThe context var 'leak' is the same mechanism/code path as the iteration var persisting; scoping only the context var would make the language inconsistent. Considered (A) scope context var only, (B) scope all loop vars, (C) warn on shadowing — all rejected in favor of keeping the coherent documented model. If the shadowing footgun resurfaces, a check-time shadow warning is the least-invasive future option.",
+      "created_at_millis": 1781452429272,
+      "id": "c_1YHQopYdX"
+    }
+  ],
   "created_at_millis": 1775232095072,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nThe loop context variable specified with `with \u003cname\u003e` persists after the loop ends, retaining its final context object value. If a variable with the same name existed before the loop, it is permanently overwritten.\n\n**Repro:**\nctx = \"important\"\nfor i in range(3) with ctx:\n    pass\nprint(ctx)  // { \"idx\": 2, \"src\": [0, 1, 2] }  (NOT \"important\")\n\n**Root cause:** `setLoopContext` at `core/interpreter.go:1057-1064` (was cited as :1029) calls `i.env.SetVar()` unconditionally with no save/restore of the previous value and no cleanup after the loop.\n\n**Fix (slam dunk):** in `executeForLoop` (~:1069-1186) save the prior value of the context var before the loop and restore it afterwards (unset if it did not exist). Mechanical, contained, low risk.",
   "grammar": false,
   "id": "a_sBRVjVvW",
-  "position": "f!",
+  "position": "u8U",
   "severity": "critical",
   "tags": [
     "quick-win"
   ],
   "title": "Loop context variable (with) leaks after loop and overwrites existing vars",
-  "updated_at_millis": 1781449591834,
+  "updated_at_millis": 1781452429356,
   "history": [
-    {"field":"column","value":"todo-hi","at":1775232095072}
+    {"field":"column","value":"todo-hi","at":1775232095072},
+    {"field":"column","value":"in-progress","at":1781451971487},
+    {"field":"column","value":"done","at":1781452429356}
   ]
 }
