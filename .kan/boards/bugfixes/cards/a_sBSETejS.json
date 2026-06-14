@@ -2,20 +2,29 @@
   "_v": 3,
   "alias": "int-literal-overflow",
   "alias_explicit": false,
-  "column": "todo-lo",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Fixed (2026-06-14). Root cause: an out-of-range int literal reached rts.convertInt, which panics - and on the interpret path that conversion runs outside any recovery, so it surfaced as a raw Go panic.\n\nFix: added RAD40015 (ErrIntLiteralOutOfRange) + a CST-level checker pass (addIntLiteralOutOfRangeErrors in rts/check/check.go) that flags int literals failing ParseInt with strconv.ErrRange. validateSyntax surfaces it as a clean error before the panicking conversion. Left the convertInt panic in place as the converter's documented 'valid CST' invariant (now unreachable on the CLI path).\n\nNotes:\n- MinInt64 (-9223372036854775808) still can't be written as a literal (the magnitude overflows on its own before the unary minus); now a clean RAD40015 with a suggestion pointing at the '-...807 - 1' workaround, instead of a panic.\n- Collateral: core/error_docs/20017.md's example was itself relying on this bug (its literal would have panicked, and int() doesn't even raise RAD20017) - re-based it on round(x, -2), which genuinely demonstrates RAD20017.\n- Tests: snapshot core/testing/snapshots/errors/validation/int_literal_out_of_range.snap; error-doc 40015.md + tolerance.",
+      "created_at_millis": 1781453008586,
+      "id": "c_1YHftC4zq"
+    }
+  ],
   "created_at_millis": 1775232122822,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still a raw Go panic.\n\nWriting an integer literal that exceeds int64 range causes an unrecoverable Go panic instead of a user-friendly error.\n\n**Repro:**\nx = 9223372036854775808   // max int64 + 1\n// panic: converter: failed to parse int \"9223372036854775808\": strconv.ParseInt: ... value out of range\n\nAlso cannot express the minimum int64 value as a literal: -9223372036854775808 panics.\n\n**Source:** `rts/converter.go:1212` (was cited as :1151) - `convertInt()` calls `panic()` on parse failure.\n\n**Fix (slam dunk):** replace the `panic()` with a clean rad compile error; the converter already emits errors elsewhere, so callers handle it. Kills a raw Go panic.",
   "grammar": false,
   "id": "a_sBSETejS",
-  "position": "Ao",
+  "position": "u8UU",
   "severity": "high",
   "tags": [
     "quick-win"
   ],
   "title": "Int literal overflow causes Go panic",
-  "updated_at_millis": 1781449591916,
+  "updated_at_millis": 1781453009532,
   "history": [
-    {"field":"column","value":"todo-lo","at":1775232122822}
+    {"field":"column","value":"todo-lo","at":1775232122822},
+    {"field":"column","value":"done","at":1781453009532}
   ]
 }
