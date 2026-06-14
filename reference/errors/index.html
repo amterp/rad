@@ -4150,6 +4150,45 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#rad40015-integer-literal-out-of-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAD40015: Integer Literal Out of Range
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RAD40015: Integer Literal Out of Range">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-means_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Means
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -7436,6 +7475,45 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#rad40015-integer-literal-out-of-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RAD40015: Integer Literal Out of Range
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RAD40015: Integer Literal Out of Range">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_60" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-means_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Means
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -8007,14 +8085,16 @@ n = parse_int(raw) catch:
     exit(1)
 </code></pre></div>
 <h3 id="rad20017-number-out-of-range">RAD20017: Number Out of Range<a class="headerlink" href="#rad20017-number-out-of-range" title="Permanent link">&para;</a></h3>
-<p>A numeric value is outside the valid range for the operation.</p>
+<p>A numeric value is outside the valid range accepted by an operation.</p>
 <h4 id="example_19">Example<a class="headerlink" href="#example_19" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>// Integer overflow
-big = 99999999999999999999999
-x = int(big)  // Exceeds int64 range
+<div class="highlight"><pre><span></span><code>x = round(3.14159, -2)  // Error: precision must be non-negative
 </code></pre></div>
 <h4 id="how-to-fix_14">How to Fix<a class="headerlink" href="#how-to-fix_14" title="Permanent link">&para;</a></h4>
-<p>Check that values are within acceptable bounds before the operation. For integers, the valid range is roughly -9 quintillion to +9 quintillion (int64 limits).</p>
+<p>Check that values are within the bounds the operation accepts. For example,
+<code>round</code> requires a non-negative precision, <code>to_json</code> a non-negative indent, and
+<code>range</code> a non-zero step.</p>
+<p>(An integer <em>literal</em> that doesn't fit in an int64 is a separate, compile-time
+error - see RAD40015.)</p>
 <h3 id="rad20018-empty-list">RAD20018: Empty List<a class="headerlink" href="#rad20018-empty-list" title="Permanent link">&para;</a></h3>
 <p>An operation that requires at least one element was called on an empty list.</p>
 <h4 id="example_20">Example<a class="headerlink" href="#example_20" title="Permanent link">&para;</a></h4>
@@ -9258,6 +9338,25 @@ left alone.</p>
 <p>Optional keys (declared with <code>?</code>, e.g. <code>get_path</code>'s <code>size_bytes?</code>)
 are considered valid keys: accessing one resolves its type and does
 not fire here, even though the key may be absent at runtime.</p>
+<h3 id="rad40015-integer-literal-out-of-range">RAD40015: Integer Literal Out of Range<a class="headerlink" href="#rad40015-integer-literal-out-of-range" title="Permanent link">&para;</a></h3>
+<p>An integer literal was written whose value does not fit in a signed 64-bit
+integer. Rad integers are 64-bit, so a literal must be in the range
+-9223372036854775808 to 9223372036854775807.</p>
+<h4 id="example_60">Example<a class="headerlink" href="#example_60" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>x = 9223372036854775808   // Error: one past the maximum int64
+</code></pre></div>
+<p>These are fine:</p>
+<div class="highlight"><pre><span></span><code>biggest = 9223372036854775807   // the maximum int64
+million = 1_000_000             // underscores are allowed as digit separators
+print(biggest, million)
+</code></pre></div>
+<h4 id="what-this-means_2">What This Means<a class="headerlink" href="#what-this-means_2" title="Permanent link">&para;</a></h4>
+<p>The literal's magnitude exceeds what an <code>int</code> can hold. Note that the most
+negative value cannot be written directly as <code>-9223372036854775808</code>, because the
+literal <code>9223372036854775808</code> is parsed (and range-checked) on its own before the
+unary minus applies.</p>
+<p>Write the minimum value as <code>-9223372036854775807 - 1</code>, or use a <code>float</code> if you
+need to represent larger magnitudes (with reduced precision).</p>
 
 
 
