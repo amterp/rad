@@ -1,6 +1,9 @@
 package check
 
 import (
+	"errors"
+	"strconv"
+
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
 	ts "github.com/tree-sitter/go-tree-sitter"
@@ -75,6 +78,7 @@ func (c *RadCheckerImpl) SetStrict(strict bool) {
 func (c *RadCheckerImpl) Check() (Result, error) {
 	diagnostics := make([]Diagnostic, 0)
 	c.addInvalidNodes(&diagnostics)
+	c.addIntLiteralOutOfRangeErrors(&diagnostics)
 	c.addIntScientificNotationErrors(&diagnostics)
 	c.addFnParamScientificNotationErrors(&diagnostics)
 
@@ -257,6 +261,25 @@ func nodeSrc(n *ts.Node, src string) string {
 		return ""
 	}
 	return src[start:end]
+}
+
+// addIntLiteralOutOfRangeErrors flags integer literals whose value doesn't fit in
+// a signed 64-bit int. Left unchecked, these reach rts.convertInt, which panics -
+// and on the interpret path that conversion runs outside any recovery. We catch
+// them here at the CST level (so it works even when the failed conversion left
+// c.ast nil) and surface a clean diagnostic, which validateSyntax turns into a
+// normal error exit before the panicking conversion is ever reached.
+func (c *RadCheckerImpl) addIntLiteralOutOfRangeErrors(d *[]Diagnostic) {
+	for _, node := range c.tree.FindNodes(rl.K_INT) {
+		_, err := rts.ParseInt(nodeSrc(node, c.src))
+		if err == nil || !errors.Is(err, strconv.ErrRange) {
+			continue
+		}
+		suggestion := "int values must fit in a signed 64-bit integer (max 9223372036854775807). " +
+			"Write the minimum as `-9223372036854775807 - 1`, or use a float for larger magnitudes."
+		*d = append(*d, NewDiagnosticErrorWithSuggestion(
+			node, c.src, "Integer literal is out of range", rl.ErrIntLiteralOutOfRange, &suggestion))
+	}
 }
 
 func (c *RadCheckerImpl) addIntScientificNotationErrors(d *[]Diagnostic) {
