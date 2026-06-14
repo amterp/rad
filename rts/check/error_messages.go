@@ -228,6 +228,13 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 		return msg, code, suggestion
 	}
 
+	// Heuristic: a multi-line string content line indented less than its
+	// closing `"""`. The indentation rule is intentional, but the bare
+	// "Unexpected ..." gives no hint; surface a targeted message instead.
+	if msg, code, suggestion := checkMultilineStringIndent(node, src); msg != "" {
+		return msg, code, suggestion
+	}
+
 	// Heuristic: `null` in a type union. Other-language users often
 	// reach for `int|null` (TypeScript / Pyright spelling); Rad has a
 	// single canonical form `int?`. Point them at it before they
@@ -708,6 +715,41 @@ func checkUnterminatedQuoteToken(node *ts.Node, src, trimmed string) (string, rl
 	msg := fmt.Sprintf("Unterminated string literal (missing closing %s quote)", quoteName)
 	suggestion := fmt.Sprintf("add closing %c before end of line", quote)
 	return msg, rl.ErrUnterminatedString, &suggestion
+}
+
+// checkMultilineStringIndent recognises a multi-line (triple-quoted) string whose
+// content is indented less than its closing `"""`. Rad strips the closing
+// delimiter's indentation from every content line, so a less-indented line can't
+// be dedented and tree-sitter bails with an ERROR node parented directly by the
+// `string`, wedged between `string_start` and `string_end`. The generic
+// "Unexpected ..." gives no hint about the actual (indentation) rule, so we surface
+// a targeted message. Only the common single-content-line shape is detected; the
+// multi-content-line variant produces a messier CST (the ERROR isn't parented by
+// `string`) and falls through to the generic message.
+func checkMultilineStringIndent(node *ts.Node, src string) (string, rl.Error, *string) {
+	parent := node.Parent()
+	if parent == nil || parent.Kind() != rl.K_STRING {
+		return "", "", nil
+	}
+	endNode := rl.GetChild(parent, rl.F_END)
+	if endNode == nil || endNode.EndByte() > uint(len(src)) {
+		return "", "", nil
+	}
+	// The closing delimiter of a multi-line string sits on its own line, so its
+	// source carries the newline + indentation that precede the `"""`.
+	endText := src[endNode.StartByte():endNode.EndByte()]
+	nl := strings.LastIndexByte(endText, '\n')
+	if nl < 0 {
+		return "", "", nil
+	}
+	closingLine := endText[nl+1:]
+	closingIndent := len(closingLine) - len(strings.TrimLeft(closingLine, " \t"))
+	if int(node.StartPosition().Column) >= closingIndent {
+		return "", "", nil
+	}
+	msg := `Multi-line string content is indented less than its closing """`
+	suggestion := `indent every content line at least as much as the closing """ (or move the closing """ to column 0)`
+	return msg, rl.ErrUnexpectedToken, &suggestion
 }
 
 func checkUnterminatedString(raw, trimmed string) (string, rl.Error, *string) {

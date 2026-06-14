@@ -481,3 +481,29 @@ error[RAD20028]: Undefined identifier 'text'
 
 ### EXIT ###
 1
+### TITLE ###
+StrLexing Multiline ContentLessIndentedThanClosing
+### DESCRIPTION ###
+A content line indented less than the closing triple-quote gets a targeted
+indentation message rather than the generic "Unexpected ...".
+### INPUT ###
+text = """
+hi
+    """
+print(text)
+### STDERR ###
+error[RAD10009]: Multi-line string content is indented less than its closing """
+  --> <script>:2:1
+  |
+1 | text = """
+2 | hi
+  | ^^
+3 |     """
+4 | print(text)
+  |
+   = help: indent every content line at least as much as the closing """ (or move the closing """ to column 0)
+   = info: rad explain RAD10009
+
+
+### EXIT ###
+1
