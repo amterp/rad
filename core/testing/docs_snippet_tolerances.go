@@ -167,6 +167,11 @@ var docSnippetTolerances = map[string]Tolerance{
 		Reason:        "demo: typo'd map key 'fjull_path' not in get_path's typed-map return shape.",
 	},
 
+	"core/error_docs/40015.md#94f07ed8": {
+		ExpectedCodes: []string{"RAD40015"},
+		Reason:        "demo: int literal one past the int64 max.",
+	},
+
 	"core/error_docs/20028.md#a34c5fb8": {
 		ExpectedCodes: []string{"RAD20028"},
 		Reason:        "demo: typo'd identifier ('usernme' vs 'username').",

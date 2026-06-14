@@ -1,0 +1,39 @@
+### TITLE ###
+Int literal above max int64
+### DESCRIPTION ###
+An int literal past the int64 max is a clean RAD40015, not a raw Go panic.
+### INPUT ###
+x = 9223372036854775808
+### STDERR ###
+error[RAD40015]: Integer literal is out of range
+  --> <script>:1:5
+  |
+1 | x = 9223372036854775808
+  |     ^^^^^^^^^^^^^^^^^^^
+  |
+   = help: int values must fit in a signed 64-bit integer (max 9223372036854775807). Write the minimum as `-9223372036854775807 - 1`, or use a float for larger magnitudes.
+   = info: rad explain RAD40015
+
+
+### EXIT ###
+1
+### TITLE ###
+Min int64 literal cannot be written directly
+### DESCRIPTION ###
+-9223372036854775808 parses as unary minus over a literal that overflows on its
+own, so it is flagged; the suggestion points at the -...807 - 1 workaround.
+### INPUT ###
+x = -9223372036854775808
+### STDERR ###
+error[RAD40015]: Integer literal is out of range
+  --> <script>:1:6
+  |
+1 | x = -9223372036854775808
+  |      ^^^^^^^^^^^^^^^^^^^
+  |
+   = help: int values must fit in a signed 64-bit integer (max 9223372036854775807). Write the minimum as `-9223372036854775807 - 1`, or use a float for larger magnitudes.
+   = info: rad explain RAD40015
+
+
+### EXIT ###
+1

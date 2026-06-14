@@ -129,6 +129,7 @@ const (
 	ErrUnreachableCase                  Error = "40012"
 	ErrCaseKeyNotInDiscriminantType     Error = "40013"
 	ErrUnknownMapKey                    Error = "40014"
+	ErrIntLiteralOutOfRange             Error = "40015"
 )
 
 func (e Error) String() string {
