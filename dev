@@ -10,7 +10,7 @@ args:
     build b bool      # Enable to build.
     validate v bool   # Enable to build & test.
     test t bool       # Enable to run tests once.
-    update u bool     # Enable to update snapshot tests with current output.
+    update u bool     # Enable to update ALL snapshot tests with current output. For a scoped update, run `go test <pkg> -update=<path-substr>` directly.
     bump bool         # Enable to bump all dependency versions in go.mod.
 
     release range [1, 3]
@@ -30,7 +30,9 @@ if build:
     $`make build`
 
 if update:
-    $`go test ./core/testing/... ./rts/... ./radls/lstesting/... -args -update`
+    // Scoped to packages that own snapshot suites (and thus register the flag);
+    // ./rts/... would also pull in rts/rl & rts/test, which don't define it.
+    $`go test ./core/testing/... ./rts ./rts/check/... ./rts/radfmt/... ./radls/lstesting/... -args -update-all`
 else if test:
     $`make test`
 

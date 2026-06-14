@@ -40,6 +40,8 @@ func TestSTSnapshots(t *testing.T) {
 		return
 	}
 
+	radtesting.CheckSnapshotUpdateFlags(t)
+
 	// Track which files need updating (thread-safe since tests run in parallel)
 	var updateMu sync.Mutex
 	filesToUpdate := make(map[string][]radtesting.SnapshotCase)
@@ -89,7 +91,8 @@ func TestSTSnapshots(t *testing.T) {
 					Stderr: astDump,
 				}
 
-				if radtesting.CompareSnapshotResult(t, tc, actual) {
+				updating := radtesting.ShouldUpdateSnapshotFile(snapFile)
+				if radtesting.CompareSnapshotResult(t, tc, actual, updating) && updating {
 					updateMu.Lock()
 					tc.Stdout = actual.Stdout
 					tc.Stderr = actual.Stderr
@@ -102,14 +105,12 @@ func TestSTSnapshots(t *testing.T) {
 
 	// Write updates after all subtests complete
 	t.Cleanup(func() {
-		if *radtesting.UpdateSnapshots {
-			for path, cases := range filesToUpdate {
-				err := radtesting.WriteSnapshotFile(path, cases)
-				if err != nil {
-					t.Errorf("Failed to update snapshot file %s: %v", path, err)
-				} else {
-					t.Logf("Updated snapshot file: %s", path)
-				}
+		// filesToUpdate only holds files selected by -update / -update-all.
+		for path, cases := range filesToUpdate {
+			if err := radtesting.WriteSnapshotFile(path, cases); err != nil {
+				t.Errorf("Failed to update snapshot file %s: %v", path, err)
+			} else {
+				t.Logf("Updated snapshot file: %s", path)
 			}
 		}
 	})
