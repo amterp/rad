@@ -22,4 +22,4 @@ rad "mock-response!":
     Runs:
         map fn(t) len(t)
 print("Times in milliseconds")
-quiet $!`./macos-hardware.rad`
+quiet $`./macos-hardware.rad`

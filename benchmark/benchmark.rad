@@ -12,7 +12,7 @@ args:
     runs range [0,]
     warmup range [0,]
 
-$!`cd .. && make all`
+$`cd .. && make all`
 
 scripts = find_paths("./scripts", relative="cwd")
 scripts = ["../bin/radd {s}" for s in scripts]
@@ -29,24 +29,24 @@ if runs > 0:
 else if min_runs > 0:
     cmd += " --min-runs {min_runs}"
 
-$!cmd
+$cmd
 
 // todo rad: could avoid by being able to parse own json to rad blocks
 
 cmd = `./report.rad --mock-response ".*:{report_name}"`
 if skip_readme:
-    $!cmd
+    $cmd
     exit()
 
-_, output = $!cmd
+_, output = $cmd
 output = output[:-1]
 
 readme = read_file("README.md").content
 
-_, version = $!`../bin/radd -v`
+_, version = $`../bin/radd -v`
 version = replace(version, "\n", "")
 
-_, hash = $!`git rev-parse --short HEAD`
+_, hash = $`git rev-parse --short HEAD`
 hash = replace(hash, "\n", "")
 
 new_section = """
@@ -60,4 +60,4 @@ new_section = """
 """
 
 readme = replace(readme, "## Benchmark History\n\n(.*)", "## Benchmark History\n\n{new_section}\n\n$1")
-quiet $!`echo -n '{readme}' > README.md`
+quiet $`echo -n '{readme}' > README.md`
