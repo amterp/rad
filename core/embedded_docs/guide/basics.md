@@ -6,24 +6,20 @@ so if you're familiar with programming, this will be a breeze.
 
 To create a variable, you can do it through assignment. Let's use a string example:
 
-```rad linenums="1" hl_lines="0"
+```rad
 name = "Alice"
 ```
 
 You can re-assign variables. Types don't need to stay the same:
 
-```rad linenums="1" hl_lines="2"
+```rad
 name = "Alice"
 name = 2
 ```
 
 ## Data Types
 
-[//]: # (todo for number types, should we advertise precision/bits?)
-
 Rad has 6 basic types: strings, ints, floats, bools, lists, and maps.
-
-[//]: # (TODO what about function types?!)
 
 ### str
 
@@ -35,21 +31,19 @@ Strings can be delimited in three ways:
 
 All three behave the same way. To demonstrate:
 
-```rad linenums="1" hl_lines="0"
+```rad
 print("Hello!")
 print('Hello!')
 print(`Hello!`)
 ```
 
-<div class="result">
 ```
 Hello!
 Hello!
 Hello!
 ```
-</div>
 
-!!! info "Why 3 different delimiters?"
+**Info: Why 3 different delimiters?**
 
     Having 3 different delimiters is particularly useful when you want your string to contain one (or more) of those delimiter characters.
 
@@ -65,9 +59,9 @@ Hello!
     'She said "Goodbye"'
     `She said "Goodbye"`
     ```
-    
+
     We'll cover this again later, but as a note, backticks can be particularly useful in
-    [shell commands](../guide/shell-commands.md), as shell/bash commands may include single or double quotes, and backticks
+    shell commands (rad docs guide/shell-commands), as shell/bash commands may include single or double quotes, and backticks
     save us from having to escape them.
 
 Strings can include special characters such as `\n` for new lines and `\t` for tabs.
@@ -76,12 +70,10 @@ Strings can include special characters such as `\n` for new lines and `\t` for t
 print("Hello\tdear\nreader!")
 ```
 
-<div class="result">
 ```
 Hello	dear
 reader!
 ```
-</div>
 
 Strings also support **interpolation**. String interpolation allows you to write expressions *inside your string* that will be evaluated and replaced for the final string. We'll cover this in more depth in a future section, but to give a very simple example:
 
@@ -90,15 +82,13 @@ name = "Alice"
 print("Hi, {name}!")
 ```
 
-<div class="result">
 ```
 Hi, Alice!
 ```
-</div>
 
 Anything encapsulated in a `{}` gets treated as an expression. Here, the expression is just the identifier `name`, which gets evaluated and substituted, giving us the final `Hi, Alice!` string.
 
-Those are the basics for strings - we'll cover additional string concepts in a future section, [Strings (Advanced)](./strings-advanced.md).
+Those are the basics for strings - we'll cover additional string concepts in a future section, Strings (Advanced) (rad docs guide/strings-advanced).
 
 ### int
 
@@ -116,7 +106,7 @@ population = 1_234_567
 distance = 93_000_000
 ```
 
-Note that if you divide two ints, you will get back a [float](#float).
+Note that if you divide two ints, you will get back a float.
 
 ```rad
 liters = 10
@@ -124,11 +114,9 @@ people = 4
 print("This is a float:", liters / people)
 ```
 
-<div class="result">
 ```
 This is a float: 2.5
 ```
-</div>
 
 ### float
 
@@ -188,13 +176,11 @@ print(mixed[-1])  // grab last element in the list
 print(nested[1][1][0])
 ```
 
-<div class="result">
 ```
 alice
 -2.4
 very nested
 ```
-</div>
 
 You can also slice:
 
@@ -205,18 +191,13 @@ print(numbers[2:])
 print(numbers[:-1])
 ```
 
-<div class="result">
 ```
 [20, 30]
 [30, 40, 50]
 [10, 20, 30, 40]
 ```
-</div>
 
-[//]: # (todo cover modifying indices!)
-[//]: # (todo maybe this is assuming too much knowledge)
-
-!!! tip "String Indexing and Slicing"
+**Tip: String Indexing and Slicing**
 
     All the same indexing and slicing rules that apply to lists also work with strings:
 
@@ -259,12 +240,10 @@ print(mixed_map["alice"])
 print(nested_map["error"]["msg"])
 ```
 
-<div class="result">
 ```
 accountant
 Request failed!
 ```
-</div>
 
 Alternatively, you can use a dot syntax. Note this second way only works for keys with no spaces in the name.
 
@@ -273,12 +252,10 @@ print(mixed_map.alice)
 print(nested_map.error.msg)
 ```
 
-<div class="result">
 ```
 accountant
 Request failed!
 ```
-</div>
 
 You can modify maps using either syntax:
 
@@ -292,12 +269,10 @@ mymap.alice = 50
 print(mymap)
 ```
 
-<div class="result">
 ```
 { alice: 40 }
 { alice: 50 }
 ```
-</div>
 
 You can also add keys this way:
 
@@ -308,11 +283,9 @@ mymap.charlie = 32
 print(mymap)
 ```
 
-<div class="result">
 ```
 { alice: 30, bob: 31, charlie: 32 }
 ```
-</div>
 
 Accessing a key that doesn't exist will cause an error. You can check if a key exists using `in`:
 
@@ -342,7 +315,7 @@ print(items[10] ?? "missing")  // missing
 
 ### Other Types
 
-Rad has other types that we won't cover here. For example `null` and [function references](functions.md).
+Rad has other types that we won't cover here. For example `null` and function references (rad docs guide/functions).
 
 ## Destructuring
 
@@ -376,7 +349,7 @@ x, y = get_coordinates()
 width, height = get_dimensions()
 ```
 
-You can also destructure in for loops, which we'll see later in the [Control Flow](#for-loops) section.
+You can also destructure in for loops, which we'll see later in the Control Flow section.
 
 ## Operators
 
@@ -412,7 +385,7 @@ print(name * 3)  // alicealicealice
 
 ### Comparison
 
-Comparisons return bools that can be used in e.g. [if statements](#if-statements).
+Comparisons return bools that can be used in e.g. if statements.
 
 String comparison is done based on contents.
 
@@ -446,17 +419,13 @@ print(2 == "alice")  // false
 print(2 == 2.0)      // true
 ```
 
-[//]: # (todo when we add collection equality, document here)
-
-!!! info "Difference From Python on `True == 1` and `False == 0`"
+**Info: Difference From Python on `True == 1` and `False == 0`**
 
     In Python, `False == 0` and `True == 1` are true, because under the hood, False is really int 0 and True is really int 1,
     hence they're equal. That's not the case in Rad. In Rad, **any two values of different types are not equal** (except ints/floats).
 
-    The reasoning stems from [truthy/falsy-ness](#truthy-falsy). In Python, both `1` and `2` are truthy. But only `1` equals `True`.
+    The reasoning stems from truthy/falsy-ness. In Python, both `1` and `2` are truthy. But only `1` equals `True`.
     Rad avoids this oddity of making `1` special by instead making any two different types not equal (except ints/floats).
-
-[//]: # (todo move this ^ note to the reference section? is it really necessary in this basics section?)
 
 ### Logical
 
@@ -525,11 +494,9 @@ pi = 3.14
 print("count: {count}, pi: {pi}")
 ```
 
-<div class="result">
 ```
 count: 5, pi: 3.14
 ```
-</div>
 
 For joining strings together, you can also use the `+` operator:
 
@@ -539,13 +506,11 @@ last = "Bobson"
 print(first + " " + last)
 ```
 
-<div class="result">
 ```
 Alice Bobson
 ```
-</div>
 
-The `+` operator requires both sides to be strings (errors also work, since they behave like strings for concatenation). To concatenate non-string values with `+`, convert them explicitly using [`str`](../reference/functions.md#str):
+The `+` operator requires both sides to be strings (errors also work, since they behave like strings for concatenation). To concatenate non-string values with `+`, convert them explicitly using `str` (rad docs str):
 
 ```rad
 a = 1
@@ -553,11 +518,9 @@ text = ". Bullet point one"
 print(str(a) + text)
 ```
 
-<div class="result">
 ```
 1. Bullet point one
 ```
-</div>
 
 ### Compound Operators
 
@@ -586,12 +549,10 @@ b--
 print(b)
 ```
 
-<div class="result">
 ```
 3
 1.5
 ```
-</div>
 
 The increment and decrement operators produce *statements*, not *expressions*.
 This means that `a++` does not *return* anything, and so cannot be used inside e.g. a conditional.
@@ -620,11 +581,9 @@ b = a > 0 ? "larger than 0" : "less than 0"
 print(b)
 ```
 
-<div class="result">
 ```
 larger than 0
 ```
-</div>
 
 ## Functions
 
@@ -639,17 +598,15 @@ sorted_names = sort(names)
 print(sorted_names)
 ```
 
-<div class="result">
 ```
 There are 3 people.
 [ "Alice", "Bob", "Charlie" ]
 ```
-</div>
 
 In this example, we use `len()` to get the list length, `sort()` to sort it, and `print()` to display output.
 
-You can also define your own custom functions - we'll cover that (and more) in detail in the [Functions](./functions.md) section.
-For a complete list of all built-in functions, see the [Functions Reference](../reference/functions.md).
+You can also define your own custom functions - we'll cover that (and more) in detail in the Functions (rad docs guide/functions) section.
+For a complete list of all built-in functions, see the Functions Reference (rad docs reference/functions).
 
 ## Control Flow
 
@@ -669,7 +626,8 @@ else:
     print("I don't know that measurement system!")
 ```
 
-!!! info "Blocks use whitespace & indentation"
+**Info: Blocks use whitespace & indentation**
+
     Note that Rad uses whitespace & indentation to denote blocks, instead of braces.
 
     As a convention, you can use 4 spaces for indentation. Mixing tabs and spaces is not allowed.
@@ -684,22 +642,19 @@ for name in names:
     print("Hi {name}!")
 ```
 
-<div class="result">
 ```
 Hi Alice!
 Hi Bob!
 Hi Charlie!
 ```
-</div>
 
-You can also iterate through a range of numbers using the [`range`](../reference/functions.md#range) function, which returns a list of numbers within some specified range.
+You can also iterate through a range of numbers using the `range` (rad docs range) function, which returns a list of numbers within some specified range.
 
 ```rad
 for i in range(5):
     print(i)
 ```
 
-<div class="result">
 ```
 0
 1
@@ -707,7 +662,6 @@ for i in range(5):
 3
 4
 ```
-</div>
 
 You can also invoke `range` with a starting value i.e. `range(start, end)` and with a step value i.e. `range(start, end, step)`.
 
@@ -719,13 +673,11 @@ for name in names with loop:
     print("{name} is at index {loop.idx}")
 ```
 
-<div class="result">
 ```
 Alice is at index 0
 Bob is at index 1
 Charlie is at index 2
 ```
-</div>
 
 The context object provides two fields:
 
@@ -740,17 +692,15 @@ for name in names with loop:
     print("Processing {loop.idx + 1} of {loop.src.len()}: {name}")
 ```
 
-<div class="result">
 ```
 Processing 1 of 3: Alice
 Processing 2 of 3: Bob
 Processing 3 of 3: Charlie
 ```
-</div>
 
-!!! tip "Naming Convention"
+**Tip: Naming Convention**
 
-    By convention, use `loop` for context in for-loops and list comprehensions, and `ctx` for context in [rad block](./rad-blocks.md#lambda-context-parameter) lambdas.
+    By convention, use `loop` for context in for-loops and list comprehensions, and `ctx` for context in rad block (rad docs guide/rad-blocks) lambdas.
 
 When iterating through a map, if you have one variable in the loop, then that variable will be the key:
 
@@ -760,12 +710,10 @@ for k in colors:
     print(k)
 ```
 
-<div class="result">
 ```
 alice
 bob
 ```
-</div>
 
 If you have two, then the first will be the key, and the second will be the value.
 
@@ -775,12 +723,10 @@ for k, v in colors:
     print(k, v)
 ```
 
-<div class="result">
 ```
 alice blue
 bob green
 ```
-</div>
 
 You can also combine map iteration with the context object:
 
@@ -790,17 +736,15 @@ for k, v in colors with loop:
     print("{loop.idx}: {k} = {v}")
 ```
 
-<div class="result">
 ```
 0: alice = blue
 1: bob = green
 ```
-</div>
 
-A useful function to know when iterating is [`zip`](../reference/functions.md#zip).
+A useful function to know when iterating is `zip` (rad docs zip).
 It lets you combine parallel lists into a list of lists. To demonstrate:
 
-```rad linenums="1" hl_lines="0"
+```rad
 names = ["alice", "bob", "charlie"]
 ages = [30, 40, 25]
 zipped = zip(names, ages)
@@ -809,20 +753,18 @@ print(zipped)  // [ [ "alice", 30 ], [ "bob", 40 ], [ "charlie", 25 ] ]
 
 These inner lists can then be unpacked by specifying the appropriate number of identifiers in a for loop:
 
-```rad linenums="1" hl_lines="3-4"
+```rad
 names = ["alice", "bob", "charlie"]
 ages = [30, 40, 25]
 for name, age in zip(names, ages):
     print(name, age)
 ```
 
-<div class="result">
 ```
 alice 30
 bob 40
 charlie 25
 ```
-</div>
 
 You can also access the index when unpacking with `zip`:
 
@@ -831,13 +773,11 @@ for name, age in zip(names, ages) with loop:
     print("{loop.idx + 1}. {name} is {age}")
 ```
 
-<div class="result">
 ```
 1. alice is 30
 2. bob is 40
 3. charlie is 25
 ```
-</div>
 
 #### Breaking Out of Loops
 
@@ -851,12 +791,10 @@ for n in numbers:
     print(n)
 ```
 
-<div class="result">
 ```
 1
 2
 ```
-</div>
 
 The loop stops completely when it reaches `3`, so numbers after that are never processed.
 
@@ -872,14 +810,12 @@ for n in numbers:
     print(n)
 ```
 
-<div class="result">
 ```
 1
 2
 4
 5
 ```
-</div>
 
 The number `3` is skipped, but the loop continues with the remaining numbers.
 
@@ -894,13 +830,11 @@ while count < 3:
     count++
 ```
 
-<div class="result">
 ```
 Count: 0
 Count: 1
 Count: 2
 ```
-</div>
 
 You can create an infinite loop by omitting the condition:
 
@@ -918,7 +852,7 @@ Rad has switch statements and switch expressions.
 
 You can `switch` on a value and write cases to match against, including a `default`.
 
-```rad linenums="1" hl_lines="0"
+```rad
 args:
     a float
     op str
@@ -938,7 +872,7 @@ switch op:
 Cases can be written as blocks or single-line expressions.
 For example, the above `default` could be made into a single line:
 
-```rad linenums="1" hl_lines="13"
+```rad
 args:
     a float
     op str
@@ -957,7 +891,7 @@ switch op:
 The above examples are switch **statements**, because they do not return anything.
 Switch **expressions** can be used in assignments.
 
-```rad linenums="1" hl_lines="0"
+```rad
 args:
     object str
 
@@ -974,7 +908,7 @@ If you want to write a case as a block in a switch expression, you can use the `
 
 Note also that you can assign and return more than 1 value at a time. To demonstrate:
 
-```rad linenums="1" hl_lines="4-11"
+```rad
 args:
     object str
 
@@ -1000,11 +934,9 @@ squares = [x * x for x in numbers]
 print(squares)
 ```
 
-<div class="result">
 ```
 [ 1, 4, 9, 16, 25 ]
 ```
-</div>
 
 The general pattern is `[expression for variable in collection]`, which creates a new list by evaluating the expression for each item in the collection.
 
@@ -1018,11 +950,9 @@ uppercase = [upper(word) for word in words]
 print(uppercase)
 ```
 
-<div class="result">
 ```
 [ "HELLO", "WORLD" ]
 ```
-</div>
 
 ### Context in List Comprehensions
 
@@ -1034,11 +964,9 @@ indexed = ["{loop.idx}: {item}" for item in items with loop]
 print(indexed)
 ```
 
-<div class="result">
 ```
 [ "0: a", "1: b", "2: c" ]
 ```
-</div>
 
 ### Filtering with `if`
 
@@ -1050,11 +978,9 @@ small_numbers = [x for x in numbers if x < 10]
 print(small_numbers)
 ```
 
-<div class="result">
 ```
 [ 1, 5, 8 ]
 ```
-</div>
 
 The filter condition can use any expression, including function calls:
 
@@ -1064,11 +990,9 @@ short_words = [w for w in words if len(w) < 3]
 print(short_words)
 ```
 
-<div class="result">
 ```
 [ "a", "ab" ]
 ```
-</div>
 
 You can combine filtering with transformation:
 
@@ -1078,13 +1002,11 @@ even_squares = [x * x for x in numbers if x % 2 == 0]
 print(even_squares)
 ```
 
-<div class="result">
 ```
 [ 4, 16, 36 ]
 ```
-</div>
 
-!!! note "Side Effects in Comprehensions"
+**Note: Side Effects in Comprehensions**
 
     If the expression in a comprehension produces side effects (like calling `print()`), the comprehension will still execute those side effects but returns an empty list:
 
@@ -1115,14 +1037,14 @@ Essentially, you can use any type as a condition, and it will resolve to true or
 The following table shows which values return false for each type. **All other values resolve to true.**
 
 | Type   | Falsy | Description   |
-|--------|-------|---------------|
+| ------ | ----- | ------------- |
 | string | `""`  | Empty strings |
 | int    | `0`   | Zero          |
 | float  | `0.0` | Zero          |
 | list   | `[]`  | Empty lists   |
 | map    | `{}`  | Empty maps    |
 
-!!! note "Blank strings and `null`"
+**Note: Blank strings and `null`**
 
     - A string which is all whitespace e.g. `" "` is still truthy.
     - `null` is falsy.
@@ -1132,7 +1054,7 @@ The following table shows which values return false for each type. **All other v
 Converting types may involve simple casts, or parsing.
 
 When casting, you can use the following functions:
-[`str`](../reference/functions.md#str),  [`int`](../reference/functions.md#int),  [`float`](../reference/functions.md#float)
+`str` (rad docs str),  `int` (rad docs int),  `float` (rad docs float)
 
 ```rad
 print(int(2.1))  // 2
@@ -1141,7 +1063,7 @@ print(str(2.2))  // "2.2"
 ```
 
 Note that `int` and `float` will error on strings. To parse a string, use the following functions:
-[`parse_int`](../reference/functions.md#parse_int),  [`parse_float`](../reference/functions.md#parse_float)
+`parse_int` (rad docs parse_int),  `parse_float` (rad docs parse_float)
 
 ```rad
 print(parse_int("2"))      // 2
@@ -1197,4 +1119,4 @@ This displays detailed documentation about the error, including common causes an
 
 Good job on getting through the basics of the language! 
 
-Next, let's dive into one of the areas of Rad that make it shine: [Args](./args.md).
+Next, let's dive into one of the areas of Rad that make it shine: Args (rad docs guide/args).

@@ -1,7 +1,7 @@
 As your scripts grow beyond quick one-offs, type annotations become increasingly valuable.
 They help catch errors early, make your code self-documenting, and keep scripts maintainable as they evolve or get shared with others.
 
-In the [Functions](./functions.md#type-annotations) section, we briefly introduced type annotations for function parameters and return values.
+In the Functions (rad docs guide/functions) section, we briefly introduced type annotations for function parameters and return values.
 Now let's explore Rad's complete type system - from basic primitives to advanced types like unions, structs, and function signatures.
 
 ## The Basics
@@ -29,7 +29,7 @@ Type annotations provide three key benefits:
 
 Let's see runtime validation in action:
 
-```rad linenums="1"
+```rad
 fn greet(name: str) -> str:
     return "Hello, {name}!"
 
@@ -37,14 +37,12 @@ message = greet(42)  // Error!
 print(message)
 ```
 
-<div class="result">
 ```
 Error at L4:17
 
 message = greet(42)  // Error!
                 ^^ Value '42' (int) is not compatible with expected type 'str'
 ```
-</div>
 
 The error message clearly identifies the problem - we passed an integer when the function expects a string.
 
@@ -66,13 +64,9 @@ result = process_data("Alice", 30, 75000.50, true)
 print(result)
 ```
 
-[//]: # (TODO ^^ should support trailing comma after is_active: bool)
-
-<div class="result">
 ```
 Alice (30) earns $75000.50 - active
 ```
-</div>
 
 ### Special Types: void and null
 
@@ -135,11 +129,9 @@ sentence = join_words(["Hello", "from", "Rad"])
 print(sentence)
 ```
 
-<div class="result">
 ```
 Hello from Rad
 ```
-</div>
 
 ### Typed Maps
 
@@ -160,11 +152,9 @@ result = count_words("hello world hello")
 print(result)
 ```
 
-<div class="result">
 ```
 { "hello": 2, "world": 1 }
 ```
-</div>
 
 The `{ str: int }` annotation means "a map with string keys and integer values".
 
@@ -206,11 +196,9 @@ result = organize_by_category(items)
 print(result)
 ```
 
-<div class="result">
 ```
 { "A": [ "apple", "apricot" ], "B": [ "banana", "blueberry" ] }
 ```
-</div>
 
 The return type `{ str: str[] }` describes a map where each key is a string and each value is a list of strings.
 
@@ -230,13 +218,11 @@ print(greet("Bob", null))        // Explicitly pass null
 print(greet("Charlie"))          // Omit the parameter entirely
 ```
 
-<div class="result">
 ```
 Hello, Dr. Alice!
 Hello, Bob!
 Hello, Charlie!
 ```
-</div>
 
 The `str?` annotation means "an optional string parameter". When omitted or explicitly set to `null`, the parameter will be `null` inside the function. This makes it clear that the `title` parameter is optional and the function knows how to handle its absence.
 
@@ -271,12 +257,10 @@ print(greet("Alice"))                // Uses default "Hello"
 print(greet("Bob", "Hi"))            // Uses provided "Hi"
 ```
 
-<div class="result">
 ```
 Hello, Alice!
 Hi, Bob!
 ```
-</div>
 
 The `greeting` parameter has a default value of `"Hello"`. When you omit it, the default is used. Note that `greeting` is not marked with `?` - it always has a string value, never `null`.
 
@@ -295,13 +279,11 @@ print(format_price(19.99, "EUR"))    // Uses provided "EUR"
 print(format_price(19.99, null))     // Explicitly passes null
 ```
 
-<div class="result">
 ```
 19.99 USD
 19.99 EUR
 $19.99
 ```
-</div>
 
 With `str?` alone, omitting the parameter means it defaults to `null`. With `str? = "USD"`, you can provide a non-null default value, but callers can still explicitly pass `null` if they want.
 
@@ -318,13 +300,11 @@ print(to_string(3.14))
 print(to_string("hello"))
 ```
 
-<div class="result">
 ```
 42
 3.14
 hello
 ```
-</div>
 
 The `int|float|str` annotation means "accepts an int, float, or string" - any of these three types is valid.
 
@@ -344,9 +324,9 @@ print(result)  // 5
 
 The `float|error` return type signals that this function returns either a float (on success) or an error value (on failure).
 
-!!! note "Error Handling in Rad"
+**Note: Error Handling in Rad**
 
-    Rad has a comprehensive error handling model. We'll cover error handling in detail in a later section: [Error Handling](./error-handling.md).
+    Rad has a comprehensive error handling model. We'll cover error handling in detail in a later section: Error Handling (rad docs guide/error-handling).
 
 ## Advanced Types
 
@@ -364,11 +344,9 @@ print(set_log_level("info"))
 // set_log_level("trace")  // Error: "trace" not in enum
 ```
 
-<div class="result">
 ```
 Log level set to: info
 ```
-</div>
 
 The `["debug", "info", "warn", "error"]` annotation restricts the parameter to exactly these four string values. Any other string will cause a runtime type error.
 
@@ -385,11 +363,9 @@ url = create_connection("api.example.com")
 print(url)
 ```
 
-<div class="result">
 ```
 https://api.example.com
 ```
-</div>
 
 ### Structured Maps
 
@@ -409,11 +385,9 @@ user = create_user("Alice", 30, "alice@example.com")
 print(user)
 ```
 
-<div class="result">
 ```
 { "name": "Alice", "age": 30, "email": "alice@example.com", "id": 7234 }
 ```
-</div>
 
 The `{ "name": str, "age": int, "email": str, "id": int }` annotation describes a map with exactly these four fields, each with a specific type. Notice the quoted keys - this distinguishes named fields from the typed map syntax we saw earlier.
 
@@ -436,11 +410,9 @@ profile = get_user_profile(123)
 print(profile)
 ```
 
-<div class="result">
 ```
 { "name": "Bob", "age": 25, "bio": "Software engineer" }
 ```
-</div>
 
 The `"bio"?: str` and `"avatar"?: str` fields are optional - the map might or might not contain them.
 
@@ -465,12 +437,10 @@ print("Article: {article.title} by {article.author.name}")
 print("Stats: {article.metadata.views} views, {article.metadata.likes} likes")
 ```
 
-<div class="result">
 ```
 Article: Getting Started with Rad by Alice
 Stats: 1234 views, 56 likes
 ```
-</div>
 
 ### Function Types
 
@@ -488,11 +458,9 @@ upper_words = apply_to_list(words, upper)
 print(upper_words)
 ```
 
-<div class="result">
 ```
 [ "HELLO", "WORLD" ]
 ```
-</div>
 
 The `fn(str) -> str` annotation describes a function that takes a string parameter and returns a string.
 
@@ -506,7 +474,7 @@ fn(str[]) -> void
 
 ## Variadic and Named Parameters
 
-Type annotations work seamlessly with Rad's parameter patterns, as seen earlier in [Functions](./functions.md#function-arguments).
+Type annotations work seamlessly with Rad's parameter patterns, as seen earlier in Functions (rad docs guide/functions).
 
 ### Variadic Parameters
 
@@ -523,11 +491,9 @@ result = sum_all(1, 2, 3, 4, 5)
 print(result)
 ```
 
-<div class="result">
 ```
 15
 ```
-</div>
 
 The `*numbers: int` annotation means "zero or more integer arguments". All arguments passed to this variadic parameter must be integers.
 
@@ -550,11 +516,9 @@ output = format_text("hello", uppercase=true, prefix=">>> ")
 print(output)
 ```
 
-<div class="result">
 ```
 >>> HELLO
 ```
-</div>
 
 ### Combining Everything
 
@@ -588,13 +552,11 @@ output = create_report(
 print(output)
 ```
 
-<div class="result">
 ```
 === Q4 Sales ===
 Data: 100, 150, 200, 175
 Total: 625, Average: 156.25
 ```
-</div>
 
 This example demonstrates:
 
@@ -634,4 +596,4 @@ Type annotations make your code clearer to both humans and tools, catching error
 
 We've briefly seen `error|T` union types in this section - functions that return either a value or an error.
 
-In the next section, we'll explore Rad's comprehensive error handling model in depth: [Error Handling](./error-handling.md).
+In the next section, we'll explore Rad's comprehensive error handling model in depth: Error Handling (rad docs guide/error-handling).

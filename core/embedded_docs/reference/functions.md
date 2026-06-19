@@ -101,7 +101,7 @@ if result.error:
 **Parameters:**
 
 | Parameter  | Type           | Description                                     |
-|------------|----------------|-------------------------------------------------|
+| ---------- | -------------- | ----------------------------------------------- |
 | `_content` | `str`          | Base64 text to decode                           |
 | `url_safe` | `bool = false` | Expect URL-safe encoding (`-_` instead of `+/`) |
 | `padding`  | `bool = true`  | Expect padding characters (`=`)                 |
@@ -138,7 +138,7 @@ encode_base64("Hello World", padding=false)       // -> "SGVsbG8gV29ybGQ"
 **Parameters:**
 
 | Parameter  | Type           | Description                                  |
-|------------|----------------|----------------------------------------------|
+| ---------- | -------------- | -------------------------------------------- |
 | `_content` | `str`          | Text to encode                               |
 | `url_safe` | `bool = false` | Replace `+/` with `-_` for URL-safe encoding |
 | `padding`  | `bool = true`  | Include `=` padding characters               |
@@ -147,7 +147,7 @@ Use `url_safe=true` to replace `+/` with `-_` for URL-safe encoding. Use `paddin
 
 ### gen_fid
 
-Generates a random [flex ID](https://github.com/amterp/flexid) (fid) - a time-ordered, URL-safe identifier.
+Generates a random flex ID (https://github.com/amterp/flexid) (fid) - a time-ordered, URL-safe identifier.
 
 ```rad
 gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -> error|str
@@ -162,7 +162,7 @@ gen_fid(num_random_chars=3)                  // -> "1a2b3c"
 **Parameters:**
 
 | Parameter          | Type                       | Description                            |
-|--------------------|----------------------------|----------------------------------------|
+| ------------------ | -------------------------- | -------------------------------------- |
 | `alphabet`         | `str? = "[0-9][A-Z][a-z]"` | Characters to use (base-62 by default) |
 | `tick_size_ms`     | `int? = 1`                 | Time precision in milliseconds         |
 | `num_random_chars` | `int? = 6`                 | Number of random characters to append  |
@@ -186,7 +186,7 @@ hash("sensitive data", algo="sha512")  // -> Long SHA-512 hash
 **Parameters:**
 
 | Parameter | Type                                           | Description              |
-|-----------|------------------------------------------------|--------------------------|
+| --------- | ---------------------------------------------- | ------------------------ |
 | `_val`    | `str`                                          | Text to hash             |
 | `algo`    | `["sha1", "sha256", "sha512", "md5"] = "sha1"` | Hashing algorithm to use |
 
@@ -724,7 +724,7 @@ if confirm("Delete file? [Y/n] "):   // -> Custom prompt
 
 ### debug
 
-Behaves like [`print`](#print) but only outputs when debug mode is enabled via `--debug` flag.
+Behaves like `print` but only outputs when debug mode is enabled via `--debug` flag.
 
 ```rad
 debug(*_items: any, *, sep: str = " ", end: str = "\n") -> void
@@ -777,7 +777,7 @@ paths = find_paths("src/", relative="absolute")
 **Parameters:**
 
 | Parameter  | Type                                       | Description                            |
-|------------|--------------------------------------------|----------------------------------------|
+| ---------- | ------------------------------------------ | -------------------------------------- |
 | `_path`    | `str`                                      | Directory to search                    |
 | `depth`    | `int = -1`                                 | Max depth to search (-1 for unlimited) |
 | `relative` | `["target", "cwd", "absolute"] = "target"` | How to format returned paths           |
@@ -813,7 +813,7 @@ password = input("Password: ", secret=true)           // -> Hides typed characte
 **Parameters:**
 
 | Parameter | Type           | Description                                  |
-|-----------|----------------|----------------------------------------------|
+| --------- | -------------- | -------------------------------------------- |
 | `prompt`  | `str = "> "`   | The text prompt to display to the user       |
 | `hint`    | `str = ""`     | Placeholder text shown in input field        |
 | `default` | `str = ""`     | Default value if user doesn't enter anything |
@@ -842,7 +842,7 @@ Unlike `pick`, which returns a single selection, `multipick` returns a list of a
 **Parameters:**
 
 | Parameter  | Type      | Description                                                                   |
-|------------|-----------|-------------------------------------------------------------------------------|
+| ---------- | --------- | ----------------------------------------------------------------------------- |
 | `_options` | `str[]`   | List of options to display in the menu                                        |
 | `prompt`   | `str?`    | Custom prompt text. If not provided, automatically generated based on min/max |
 | `min`      | `int = 0` | Minimum number of selections required (default 0 allows empty selection)      |
@@ -950,7 +950,7 @@ See also: `print_err`, `pprint`, `debug`
 
 ### print_err
 
-Behaves like [`print`](#print) but outputs to stderr instead of stdout.
+Behaves like `print` but outputs to stderr instead of stdout.
 
 ```rad
 print_err(*_items: any, *, sep: str = " ", end: str = "\n") -> void
@@ -989,7 +989,7 @@ if not result.success:
 **Parameters:**
 
 | Parameter | Type                         | Description                     |
-|-----------|------------------------------|---------------------------------|
+| --------- | ---------------------------- | ------------------------------- |
 | `_path`   | `str`                        | Path to the file to read        |
 | `mode`    | `["text", "bytes"] = "text"` | Read as UTF-8 text or raw bytes |
 
@@ -1043,7 +1043,7 @@ if err:
 **Parameters:**
 
 | Parameter  | Type           | Description                                       |
-|------------|----------------|---------------------------------------------------|
+| ---------- | -------------- | ------------------------------------------------- |
 | `_path`    | `str`          | Path where to write the file                      |
 | `_content` | `str`          | Content to write                                  |
 | `append`   | `bool = false` | Append to existing content instead of overwriting |
@@ -1244,7 +1244,7 @@ zip([1, 2, 3], ["a", "b"], strict=true)   // -> Error: Lists must have the same 
 **Parameters:**
 
 | Parameter | Type           | Description                              |
-|-----------|----------------|------------------------------------------|
+| --------- | -------------- | ---------------------------------------- |
 | `*lists`  | `list`         | Variable number of lists to zip together |
 | `strict`  | `bool = false` | If true, error on different list lengths |
 | `fill`    | `any?`         | Value to fill shorter lists (optional)   |
@@ -1305,11 +1305,11 @@ clamp(15, 30, 20)    // -> Error: min must be <= max
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `val`     | `int | float`      | Value to constrain |
-| `min`     | `int | float`      | Minimum bound      |
-| `max`     | `int | float`      | Maximum bound      |
+| Parameter | Type          | Description        |
+| --------- | ------------- | ------------------ |
+| `val`     | `int | float` | Value to constrain |
+| `min`     | `int | float` | Minimum bound      |
+| `max`     | `int | float` | Maximum bound      |
 
 Returns `val` if between min and max, otherwise returns the nearest bound. Min must be ≤ max.
 The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.
@@ -1424,7 +1424,7 @@ round(3.14, -1)          // -> Error: precision must be non-negative
 **Parameters:**
 
 | Parameter   | Type      | Description                                     |
-|-------------|-----------|-------------------------------------------------|
+| ----------- | --------- | ----------------------------------------------- |
 | `_num`      | `float`   | Number to round                                 |
 | `_decimals` | `int = 0` | Number of decimal places (must be non-negative) |
 
@@ -1468,7 +1468,7 @@ convert_duration(1500, "millis").seconds  // -> 1.5
 
 ### float
 
-Converts a value to a float. Does not work on strings - use [`parse_float`](#parse_float) for string parsing.
+Converts a value to a float. Does not work on strings - use `parse_float` for string parsing.
 
 ```rad
 float(_var: any) -> float|error
@@ -1483,7 +1483,7 @@ float("3.14")  // -> Error: cannot convert string
 
 ### int
 
-Converts a value to an integer. Does not work on strings - use [`parse_int`](#parse_int) for string parsing.
+Converts a value to an integer. Does not work on strings - use `parse_int` for string parsing.
 
 ```rad
 int(_var: any) -> int|error
@@ -1595,10 +1595,10 @@ to_json({"a": 1}, indent=2)            // -> multi-line, 2-space indented
 
 **Parameters:**
 
-| Parameter | Type        | Description                                            |
-|-----------|-------------|--------------------------------------------------------|
-| `_val`    | `any`       | Value to serialize                                     |
-| `indent`  | `int = 0`   | If > 0, pretty-print with that many spaces of indent   |
+| Parameter | Type      | Description                                          |
+| --------- | --------- | ---------------------------------------------------- |
+| `_val`    | `any`     | Value to serialize                                   |
+| `indent`  | `int = 0` | If > 0, pretty-print with that many spaces of indent |
 
 Unlike string interpolation or `str()`, the output is guaranteed to be valid
 JSON: strings are escaped and quoted, including top-level ones. HTML characters
@@ -1642,7 +1642,7 @@ to `_arg2` (exclusive). Min must be less than max.
 
 ### seed_random
 
-Seeds the random number generator used by [`rand`](#rand) and [`rand_int`](#rand_int).
+Seeds the random number generator used by `rand` and `rand_int`.
 
 ```rad
 seed_random(_seed: int) -> void
@@ -1659,7 +1659,6 @@ rand_int(10)        // -> Same sequence every time with seed 42
 ### get_rad_home
 
 Returns the path to rad's home folder on the user's machine.
-
 
 **Return Values**
 
@@ -1678,9 +1677,6 @@ home = get_rad_home()              // -> "/Users/me/.rad" (or $RAD_HOME)
 Returns the full path to the script's stash directory, with the given subpath if specified.
 
 Requires a stash ID to have been defined.
-
-[//]: # (TODO link to stash id docs, and for below)
-
 
 **Return Values**
 
@@ -1719,7 +1715,7 @@ load(cache, "data", fn() ignored(), override="forced")
 **Parameters:**
 
 | Parameter  | Type           | Description                              |
-|------------|----------------|------------------------------------------|
+| ---------- | -------------- | ---------------------------------------- |
 | `_map`     | `map`          | Map to store/retrieve cached values      |
 | `_key`     | `any`          | Key to lookup in the map                 |
 | `_loader`  | `fn() -> any`  | Function to call if key doesn't exist    |
@@ -1756,7 +1752,6 @@ if result.success:
 Loads the script's stashed state. Creates it if it doesn't already exist.
 
 Requires a stash ID to have been defined.
-
 
 **Return Values**
 
@@ -1820,7 +1815,7 @@ color_rgb("test", red=300, green=0, blue=0)      // -> Error: RGB values must be
 **Parameters:**
 
 | Parameter | Type  | Description             |
-|-----------|-------|-------------------------|
+| --------- | ----- | ----------------------- |
 | `_val`    | `any` | Value to apply color to |
 | `red`     | `int` | Red component (0-255)   |
 | `green`   | `int` | Green component (0-255) |
@@ -1853,7 +1848,7 @@ rad:
 **Parameters:**
 
 | Parameter        | Type           | Description                                    |
-|------------------|----------------|------------------------------------------------|
+| ---------------- | -------------- | ---------------------------------------------- |
 | `_val`           | `any`          | Value to colorize                              |
 | `_enum`          | `any[]`        | Set of possible values for consistent coloring |
 | `skip_if_single` | `bool = false` | Don't colorize if only one value in set        |
@@ -1928,12 +1923,12 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 
 **Parameters:**
 
-| Parameter  | Type        | Description                                           |
-|------------|-------------|-------------------------------------------------------|
-| `_subject` | `str\|list` | The string or list to search within                   |
-| `_target`  | `any`       | The value to search for                               |
-| `n`        | `int = 0`   | Which occurrence to find (0=first, 1=second, -1=last) |
-| `start`    | `int = 0`   | Position to start searching from                      |
+| Parameter  | Type       | Description                                           |
+| ---------- | ---------- | ----------------------------------------------------- |
+| `_subject` | `str|list` | The string or list to search within                   |
+| `_target`  | `any`      | The value to search for                               |
+| `n`        | `int = 0`  | Which occurrence to find (0=first, 1=second, -1=last) |
+| `start`    | `int = 0`  | Position to start searching from                      |
 
 ### lower
 
@@ -2032,7 +2027,6 @@ for line in content.split_lines():
 ```
 
 Use this instead of `split("\n")` when processing text that may come from different platforms.
-
 
 Trailing line endings are stripped - `"a\nb\n".split_lines()` returns `["a", "b"]`, not `["a", "b", ""]`.
 
@@ -2199,7 +2193,6 @@ raw_args = get_args()  // -> ["./myscript.rad", "arg1", "arg2", "--flag"]
 
 Returns all arguments after the script name. Unlike parsed args, this gives you raw access to all arguments.
 
-
 The name `args` is reserved (it's the args-block keyword), so the
 local has to be called something else.
 
@@ -2357,7 +2350,7 @@ The handler is invoked with one **map** argument (the parameter name `ctx` is
 conventional; call it whatever you like):
 
 | Field       | Type | Description                                              |
-|-------------|------|----------------------------------------------------------|
+| ----------- | ---- | -------------------------------------------------------- |
 | `signal`    | str  | The signal that fired (e.g. `"sigint"`).                 |
 | `exit_code` | int  | The conventional `128 + sig` exit code (130 for SIGINT). |
 
@@ -2373,15 +2366,15 @@ signal is trapped, it stays trapped for the lifetime of the script.
 
 **Supported signals:**
 
-| Signal     | Trigger                                | Default action  |
-|------------|----------------------------------------|-----------------|
-| `sigint`   | Ctrl+C from terminal                   | terminate (130) |
-| `sigterm`  | `kill <pid>`, systemd/Docker shutdown  | terminate (143) |
-| `sighup`   | Terminal hangup; convention: "reload"  | terminate (129) |
-| `sigusr1`  | User-defined; convention: "status"     | terminate (138) |
-| `sigusr2`  | User-defined; convention: "toggle"     | terminate (140) |
-| `sigpipe`  | Write to closed pipe                   | terminate (141) |
-| `sigwinch` | Terminal resized                       | ignore          |
+| Signal     | Trigger                               | Default action  |
+| ---------- | ------------------------------------- | --------------- |
+| `sigint`   | Ctrl+C from terminal                  | terminate (130) |
+| `sigterm`  | `kill <pid>`, systemd/Docker shutdown | terminate (143) |
+| `sighup`   | Terminal hangup; convention: "reload" | terminate (129) |
+| `sigusr1`  | User-defined; convention: "status"    | terminate (138) |
+| `sigusr2`  | User-defined; convention: "toggle"    | terminate (140) |
+| `sigpipe`  | Write to closed pipe                  | terminate (141) |
+| `sigwinch` | Terminal resized                      | ignore          |
 
 **Caveats:**
 
@@ -2419,7 +2412,7 @@ If `title` is provided, it's printed before sleeping.
 **Duration string suffixes:**
 
 | Suffix       | Description  |
-|--------------|--------------|
+| ------------ | ------------ |
 | `d`          | Days         |
 | `h`          | Hours        |
 | `m`          | Minutes      |
@@ -2477,13 +2470,13 @@ print("UTC time:", utc_time.time)          // -> Time in UTC
 **Parameters:**
 
 | Parameter | Type            | Description                               |
-|-----------|-----------------|-------------------------------------------|
+| --------- | --------------- | ----------------------------------------- |
 | `tz`      | `str = "local"` | Timezone (e.g., "UTC", "America/Chicago") |
 
 Map values:
 
 | Accessor         | Description                           | Type   | Example             |
-|------------------|---------------------------------------|--------|---------------------|
+| ---------------- | ------------------------------------- | ------ | ------------------- |
 | `.date`          | Current date YYYY-MM-DD               | string | 2019-12-13          |
 | `.year`          | Current calendar year                 | int    | 2019                |
 | `.month`         | Current calendar month                | int    | 12                  |
@@ -2499,7 +2492,7 @@ Map values:
 
 ### parse_date
 
-Parses a date string into the same time map format as [`now()`](#now) and [`parse_epoch()`](#parse_epoch).
+Parses a date string into the same time map format as `now()` and `parse_epoch()`.
 
 ```rad
 parse_date(_date: str, *, format: str?, tz: str = "local") -> error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
@@ -2532,11 +2525,11 @@ time = parse_date("bad input") catch:
 
 **Parameters:**
 
-| Parameter | Type            | Description                                            |
-|-----------|-----------------|--------------------------------------------------------|
-| `_date`   | `str`           | The date string to parse                               |
+| Parameter | Type            | Description                                                     |
+| --------- | --------------- | --------------------------------------------------------------- |
+| `_date`   | `str`           | The date string to parse                                        |
 | `format`  | `str?`          | Format string using tokens (see below). Auto-detects if omitted |
-| `tz`      | `str = "local"` | Timezone (e.g., "UTC", "America/Chicago")              |
+| `tz`      | `str = "local"` | Timezone (e.g., "UTC", "America/Chicago")                       |
 
 **Auto-detected formats** (when `format` is omitted):
 
@@ -2548,14 +2541,14 @@ time = parse_date("bad input") catch:
 
 **Format tokens** (for the `format` parameter):
 
-| Token  | Meaning              | Example |
-|--------|----------------------|---------|
-| `YYYY` | 4-digit year         | `2026`  |
-| `MM`   | 2-digit month (01-12)| `03`    |
-| `DD`   | 2-digit day (01-31)  | `22`    |
-| `HH`   | 2-digit hour, 24h    | `14`    |
-| `mm`   | 2-digit minute       | `30`    |
-| `ss`   | 2-digit second       | `00`    |
+| Token  | Meaning               | Example |
+| ------ | --------------------- | ------- |
+| `YYYY` | 4-digit year          | `2026`  |
+| `MM`   | 2-digit month (01-12) | `03`    |
+| `DD`   | 2-digit day (01-31)   | `22`    |
+| `HH`   | 2-digit hour, 24h     | `14`    |
+| `mm`   | 2-digit minute        | `30`    |
+| `ss`   | 2-digit second        | `00`    |
 
 All other characters in the format string are treated as literal separators. Format strings should
 contain only tokens and separators - avoid embedding prose text, as tokens like `mm` and `ss` will be
@@ -2605,11 +2598,11 @@ if err:
 **Parameters:**
 
 | Parameter | Type                                                        | Description                                         |
-|-----------|-------------------------------------------------------------|-----------------------------------------------------|
-| `_epoch`  | `int\|float`                                                | Unix epoch timestamp (float for sub-unit precision) |
+| --------- | ----------------------------------------------------------- | --------------------------------------------------- |
+| `_epoch`  | `int|float`                                                 | Unix epoch timestamp (float for sub-unit precision) |
 | `tz`      | `str = "local"`                                             | Timezone (e.g., "UTC", "America/Chicago")           |
 | `unit`    | `["auto", "seconds", "millis", "micros", "nanos"] = "auto"` | Timestamp unit (auto-detects by default)            |
 
-Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
+Converts an epoch timestamp to the same format as `now()`. Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).

@@ -340,6 +340,7 @@ print(all_words)  // ["hello", "world", "foo", "bar"]
 ## Reference
 
 There are a lot of built-in functions. If you want to see what's available and how to use them, refer to the [reference](../reference/functions.md).
+You can also look up any individual function directly from the terminal: `rad docs len`, `rad docs sort`, etc.
 
 ## Summary
 

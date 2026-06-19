@@ -1,0 +1,13 @@
+# ceil
+
+Rounds a number up to the next integer.
+
+```rad
+ceil(_num: float) -> int
+```
+
+```rad
+ceil(1.21)     // -> 2
+ceil(-1.8)     // -> -1
+ceil(5.0)      // -> 5
+```

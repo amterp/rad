@@ -1,7 +1,7 @@
 Real-world scripts demonstrating Rad's features in practice.
 
-| Example | Description | Demonstrates |
-|---------|-------------|--------------|
-| [brewi](./brewi.md) | Check a Homebrew formula before installing | Args, shell commands, `confirm()` prompt |
-| [epoch](./epoch.md) | Convert epoch timestamps across timezones | Optional args, `display` blocks, `.map()`, loop unpacking |
-| [hm](./hm.md) | Personal command cheatsheet manager | Stashes, script commands, file storage |
+| Example                         | Description                                | Demonstrates                                              |
+| ------------------------------- | ------------------------------------------ | --------------------------------------------------------- |
+| brewi (rad docs examples/brewi) | Check a Homebrew formula before installing | Args, shell commands, `confirm()` prompt                  |
+| epoch (rad docs examples/epoch) | Convert epoch timestamps across timezones  | Optional args, `display` blocks, `.map()`, loop unpacking |
+| hm (rad docs examples/hm)       | Personal command cheatsheet manager        | Stashes, script commands, file storage                    |

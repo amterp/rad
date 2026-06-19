@@ -1,0 +1,14 @@
+# int
+
+Converts a value to an integer. Does not work on strings - use `parse_int` for string parsing.
+
+```rad
+int(_var: any) -> int|error
+```
+
+```rad
+int(3.14)     // -> 3
+int(true)     // -> 1
+int(false)    // -> 0
+int("42")     // -> Error: cannot convert string
+```

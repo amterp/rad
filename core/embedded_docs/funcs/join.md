@@ -1,0 +1,13 @@
+# join
+
+Joins a list into a string with separator, prefix, and suffix.
+
+```rad
+join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -> str
+```
+
+```rad
+join([1, 2, 3], sep=", ")           // -> "1, 2, 3"
+join(["a", "b"], prefix="[", suffix="]")  // -> "[ab]"
+join(["x", "y", "z"], sep="-", prefix="(", suffix=")")  // -> "(x-y-z)"
+```

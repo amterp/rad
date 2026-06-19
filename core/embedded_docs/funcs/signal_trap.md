@@ -1,0 +1,75 @@
+# signal_trap
+
+Registers a function to run when one of the named signals is delivered to the
+script. The handler receives a single map argument with the signal name and the
+conventional `128 + sig` exit code. Re-registering replaces the previous handler.
+
+```rad
+signal_trap(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][], _handler: fn(any) -> any) -> void
+```
+
+```rad
+// Cleanup on Ctrl+C
+signal_trap("sigint", fn(ctx):
+    print_err("Cancelled, cleaning up")
+    exit(ctx.exit_code)  // 130
+)
+
+// One handler for several signals, dispatching on the name
+signal_trap(["sigterm", "sighup"], fn(ctx):
+    if ctx.signal == "sighup":
+        reload_config()  // no exit() - control continues
+    else:
+        exit(ctx.exit_code)
+)
+
+// Status dump - script keeps running after the handler returns
+signal_trap("sigusr1", fn(ctx):
+    print("progress: {progress}/{total}")
+)
+```
+
+## Notes
+
+The handler is invoked with one **map** argument (the parameter name `ctx` is
+conventional; call it whatever you like):
+
+| Field       | Type | Description                                              |
+| ----------- | ---- | -------------------------------------------------------- |
+| `signal`    | str  | The signal that fired (e.g. `"sigint"`).                 |
+| `exit_code` | int  | The conventional `128 + sig` exit code (130 for SIGINT). |
+
+After the handler returns, **execution always continues**. To terminate, the
+handler must explicitly call `exit()`. This matches Bash `trap`, Python's
+`signal.signal`, Ruby's `Signal.trap`, and Node's `process.on`. The
+always-continue rule applies only to a clean return: an **unhandled error in the
+handler aborts the script** (exit 1) and runs `defer`/`errdefer`, just like an
+unhandled error anywhere else.
+
+There is currently no built-in way to restore the platform default; once a
+signal is trapped, it stays trapped for the lifetime of the script.
+
+**Supported signals:**
+
+| Signal     | Trigger                               | Default action  |
+| ---------- | ------------------------------------- | --------------- |
+| `sigint`   | Ctrl+C from terminal                  | terminate (130) |
+| `sigterm`  | `kill <pid>`, systemd/Docker shutdown | terminate (143) |
+| `sighup`   | Terminal hangup; convention: "reload" | terminate (129) |
+| `sigusr1`  | User-defined; convention: "status"    | terminate (138) |
+| `sigusr2`  | User-defined; convention: "toggle"    | terminate (140) |
+| `sigpipe`  | Write to closed pipe                  | terminate (141) |
+| `sigwinch` | Terminal resized                      | ignore          |
+
+**Caveats:**
+
+- Handlers run at the next statement boundary - they do not preempt
+  mid-statement. A signal arriving during a long computation only fires when
+  control returns between statements.
+- A second SIGINT while a SIGINT handler is in progress force-exits with code
+  130, skipping defers - the escape hatch when a handler hangs.
+- Subprocesses started with `$` share Rad's process group, so Ctrl+C reaches the
+  subprocess directly and it terminates before the Rad handler runs. The handler
+  still runs (so temp-file cleanup works), but it cannot influence the already-
+  killed subprocess.
+- On Windows, only `sigint` and `sigterm` are supported.

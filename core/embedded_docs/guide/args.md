@@ -10,7 +10,7 @@ Arguments are declared as part of an **args block**.
 
 Here's an example script we'll call `printwords` that prints an input word some number of times:
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 args:
     word str
@@ -26,7 +26,6 @@ We can print its usage string using the `-h` flag:
 ./printwords -h
 ```
 
-<div class="result">
 ```
 Usage:
   printwords <word> <repeats>
@@ -35,19 +34,18 @@ Script args:
       --word str
       --repeats int
 ```
-</div>
 
 This script defines two mandatory arguments: `word` that is expected to be a string, and `repeats` which is expected to be an integer.
 
 Some important things to note:
 
-- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. See [How Argument Parsing Works](#how-argument-parsing-works) below for the full details.
+- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. See How Argument Parsing Works below for the full details.
 - The positional ordering of args follows the order of declaration in the args block.
 - Flags (like `--word` and `--repeats`) are generated for you based on each argument's name.
 
 Let's look at a more complex example to demonstrate some more features. Let's call it `wordjoin`.
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 ---
 Given some words, joins them together, and optionally capitalizes them.
@@ -69,7 +67,6 @@ If we run `-h` on this one:
 ./wordjoin -h
 ```
 
-<div class="result">
 ```
 Given some words, joins them together, and optionally capitalizes them.
 
@@ -81,7 +78,6 @@ Script args:
   -j, --joiner str   Joiner for the words. (default -)
   -c, --capitalize   If true, capitalize the words.
 ```
-</div>
 
 Let's break down each declaration to see what's going on here.
 
@@ -107,12 +103,10 @@ To bring it all together, this is the anatomy of an arg declaration (`<angle bra
 
 Feel free to go back up and check this against the example scripts we wrote, you'll see how each one fits this mold.
 
-!!! tip "Underscores become hyphens"
+**Tip: Underscores become hyphens**
 
     If you name an argument with underscores (e.g., `my_arg`), Rad automatically converts it to hyphens for the CLI
     flag: `--my-arg`. Inside your script, you still reference the variable as `my_arg`.
-
-[//]: # (todo TIP on when to use rename)
 
 ## How Argument Parsing Works
 
@@ -287,12 +281,10 @@ print("counts: {counts}")
 ./script -f hello.txt -f world.txt --counts 1 --counts 2 --counts 3
 ```
 
-<div class="result">
 ```
 files: [ "hello.txt", "world.txt" ]
 counts: [ 1, 2, 3 ]
 ```
-</div>
 
 Both long and short flags can be used interchangeably and repeated as needed.
 
@@ -314,12 +306,10 @@ print("files: {files}")
 ./script build file1.txt file2.txt file3.txt --verbose
 ```
 
-<div class="result">
 ```
 command: build
 files: [ "file1.txt", "file2.txt", "file3.txt" ]
 ```
-</div>
 
 Variadic args can have defaults and work with any type (`*numbers int`, `*values float`, etc.):
 
@@ -344,14 +334,12 @@ print("section2: {section2}")
 ./script a b c --flag 1 2 3
 ```
 
-<div class="result">
 ```
 section1: [ "a", "b", "c" ]
 section2: [ 1, 2, 3 ]
 ```
-</div>
 
-!!! note "List types vs variadic"
+**Note: List types vs variadic**
 
     List args and variadic args both produce lists, but they're filled differently. List args are primarily filled by **repeating the flag** (`--files a.txt --files b.txt`), though a single positional value also works. If you want to collect multiple bare positional values without repeating flags, use a variadic argument (`*args`) instead - that's exactly what they're for.
 
@@ -375,15 +363,13 @@ else:
 ./script Alice
 ```
 
-<div class="result">
 ```
 Alice has no role assigned
 ```
-</div>
 
 You can check for null values with `== null` or use truthy/falsy logic: `if role:` will be false when role is null.
 
-!!! info "Defaults vs Optional"
+**Info: Defaults vs Optional**
 
     There are three states an argument can be in:
 
@@ -448,7 +434,7 @@ If you have a string argument where you really only want to accept some limited 
 
 Let's use a simple example, we'll call the script `colors`:
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 args:
     color str
@@ -462,7 +448,6 @@ If we print the usage string, you can see it tells users what values are valid:
 ./colors -h
 ```
 
-<div class="result">
 ```
 Usage:
   colors <color>
@@ -470,7 +455,6 @@ Usage:
 Script args:
       --color str    Valid values: [red, green, blue].
 ```
-</div>
 
 If we invoke this script with a value outside the listed valid values:
 
@@ -478,7 +462,6 @@ If we invoke this script with a value outside the listed valid values:
 ./colors yellow
 ```
 
-<div class="result">
 ```
 Invalid 'color' value: yellow (valid values: red, green, blue)
 Usage:
@@ -487,7 +470,6 @@ Usage:
 Script args:
       --color str    Valid values: [red, green, blue].
 ```
-</div>
 
 Whereas using a valid value will run the script as intended:
 
@@ -495,11 +477,9 @@ Whereas using a valid value will run the script as intended:
 ./colors green
 ```
 
-<div class="result">
 ```
 You like green!
 ```
-</div>
 
 ### Range
 
@@ -528,13 +508,13 @@ args:
     score range (,100.0]  // No minimum, maximum of 100 (inclusive)
 ```
 
-!!! info "Floor/Ceiling Syntax"
+**Info: Floor/Ceiling Syntax**
 
     When specifying only a floor or ceiling, both `[0,]` and `[0,)` are equivalent (both mean "minimum of 0, no maximum"). The closing delimiter doesn't affect the meaning when the value is omitted.
 
 Let's look at a complete example with various range types:
 
-```rad title="File: validator"
+```rad
 #!/usr/bin/env rad
 args:
     age int              # Person's age
@@ -552,7 +532,6 @@ The help text automatically shows the constraints:
 ./validator -h
 ```
 
-<div class="result">
 ```
 Usage:
   validator <age> <score> <count> [OPTIONS]
@@ -562,7 +541,6 @@ Script args:
       --score float  Test score. Range: (0, 100]
       --count int    Item count. Range: [1, )
 ```
-</div>
 
 If a user provides an invalid value, they get a clear error:
 
@@ -570,7 +548,6 @@ If a user provides an invalid value, they get a clear error:
 ./validator 150 50.0 5
 ```
 
-<div class="result">
 ```
 'age' value 150 is > maximum 120
 
@@ -582,7 +559,6 @@ Script args:
       --score float  Test score. Range: (0, 100]
       --count int    Item count. Range: [1, )
 ```
-</div>
 
 When using exclusive bounds, values exactly at the boundary are rejected:
 
@@ -590,11 +566,9 @@ When using exclusive bounds, values exactly at the boundary are rejected:
 ./validator 25 0 5   # score of 0 is invalid (exclusive minimum)
 ```
 
-<div class="result">
 ```
 'score' value 0 is <= minimum (exclusive) 0
 ```
-</div>
 
 ### Regex
 
@@ -625,7 +599,7 @@ You can optionally precede these with the `mutually` keyword to indicate that th
 
 Use `excludes` to prevent arguments from being specified together. For example, consider a script that accepts either a file (`--file`) or a URL (`--url`), but not both:
 
-```rad title="File: fetcher"
+```rad
 #!/usr/bin/env rad
 args:
   file str
@@ -666,7 +640,7 @@ Consider a script that can authenticate either by using a token or by providing 
 
 If the user provides a username, the password is also required.
 
-```rad title="File: auth"
+```rad
 args:
   token str
   username str
@@ -722,11 +696,11 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 - Both `--flag=value` and `--flag value` work. Equals syntax is useful for negative numbers (`--count=-5`).
 - You can apply constraints to arguments inside the arg block:
     - `enum` for discrete values
-    - `range` for numeric bounds (using `[` for inclusive, `(` for exclusive)
+    - `range` for numeric bounds (using `` for inclusive, `(` for exclusive)
     - `regex` for pattern matching
     - Relational constraints (`requires`, `excludes`)
 - Details in the arg block are used by Rad to provide a better usage/help string.
 
 ## Next
 
-Next, we'll look at another important concept in Rad: [Functions](./functions.md).
+Next, we'll look at another important concept in Rad: [Functions (rad docs guide/functions).

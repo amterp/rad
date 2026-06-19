@@ -1,0 +1,19 @@
+# sum
+
+Sums all numbers in a list.
+
+```rad
+sum(_nums: float[]) -> error|int|float
+```
+
+```rad
+sum([1, 2, 3, 4])        // -> 10
+sum([1.5, 2.5, 3.0])     // -> 7.0
+sum([1, 2.0, 3])         // -> 6.0 (float because 2.0 is float)
+sum([])                  // -> 0
+sum([1, "text", 3])      // -> Error: requires list of numbers
+```
+
+## Notes
+
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.

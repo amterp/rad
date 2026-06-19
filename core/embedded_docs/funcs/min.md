@@ -1,0 +1,22 @@
+# min
+
+Returns the minimum value from a list of numbers or from variadic arguments.
+
+```rad
+min(*_nums: float|float[]) -> int|float|error
+```
+
+```rad
+min([1, 2, 3, 4])        // -> 1
+min(1, 2, 3, 4)          // -> 1
+min(5.5, 2.1, 8.9)       // -> 2.1
+min(1, 2.0, 3)           // -> 1.0 (float because 2.0 is float)
+min(5)                   // -> 5
+min([])                  // -> Error: cannot find minimum of empty list
+min([1, "text"])         // -> Error: requires list of numbers
+```
+
+## Notes
+
+Accepts either a single list of numbers or multiple number arguments.
+The return type preserves the input type: returns `int` if all inputs are integers, `float` if any input is a float.

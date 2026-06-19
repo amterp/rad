@@ -1,0 +1,15 @@
+# pow
+
+Raises `base` to the power of `exponent`. Useful for exponentiation, square roots, and cube roots.
+
+```rad
+pow(_base: float, _exponent: float) -> float
+```
+
+```rad
+pow(2, 3)      // -> 8
+pow(4, 0.5)    // -> 2.0 (square root)
+pow(8, 1/3)    // -> 2.0 (cube root)  
+pow(2, -2)     // -> 0.25
+pow(-2, 3)     // -> -8
+```

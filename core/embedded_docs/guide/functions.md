@@ -1,6 +1,6 @@
 Rad offers a range of built-in functions to help you write your scripts, and also allows you to define your own.
 In this section, we'll take a look at the syntax and a few examples.
-For a complete list of built-in functions, see the [reference](../reference/functions.md).
+For a complete list of built-in functions, see the reference (rad docs reference/functions).
 
 ## Syntax
 
@@ -15,14 +15,12 @@ sorted_names = sort(names)
 print(sorted_names)
 ```
 
-<div class="result">
 ```
 There are 3 people.
 [ "Alice", "Bob", "Charlie" ]
 ```
-</div>
 
-This example uses three different built-in functions [`len`](../reference/functions.md#len), [`print`](../reference/functions.md#print), and [`sort`](../reference/functions.md#sort).
+This example uses three different built-in functions `len` (rad docs len), `print` (rad docs print), and `sort` (rad docs sort).
 
 ### UFCS
 
@@ -52,7 +50,7 @@ The chained version is much more readable - you can follow the data flow natural
 
 UFCS works with any function where its first parameter matches the type you're calling it on.
 
-!!! tip "Encouraged Style"
+**Tip: Encouraged Style**
 
     You're encouraged to use UFCS, especially when it helps you avoid nested function calls.
 
@@ -74,7 +72,7 @@ text = "hello world".replace("world", "Rad")
 print(text)  // hello Rad
 ```
 
-Many functions also have **optional parameters with defaults**. For example, [`join`](../reference/functions.md#join) combines list items into a string:
+Many functions also have **optional parameters with defaults**. For example, `join` (rad docs join) combines list items into a string:
 
 ```rad
 numbers = [1, 2, 3]
@@ -92,18 +90,16 @@ print(numbers.join("... ", "Counting: "))
 print(numbers.join("... ", "Counting: ", "!"))
 ```
 
-<div class="result">
 ```
 123
 1... 2... 3
 Counting: 1... 2... 3
 Counting: 1... 2... 3!
 ```
-</div>
 
 The function signature for `join` shows these optional parameters: `join(list, sep="", prefix="", suffix="")`. You can provide as many or as few as you need.
 
-!!! tip "Example using join for url query params"
+**Tip: Example using join for url query params**
 
     The `prefix` parameter is handy for generating URL query params:
 
@@ -114,13 +110,13 @@ The function signature for `join` shows these optional parameters: `join(list, s
     print(url)
     ```
 
-    This produces: [`https://api.github.com/repos/amterp/rad/commits?path=README.md&per_page=5`](https://api.github.com/repos/amterp/rad/commits?path=README.md&per_page=5)
+    This produces: `https://api.github.com/repos/amterp/rad/commits?path=README.md&per_page=5` (https://api.github.com/repos/amterp/rad/commits?path=README.md&per_page=5)
 
 ### Named Arguments
 
 Some functions accept **named arguments** that you pass using `name=value` syntax. Named arguments always come after positional arguments and are typically optional.
 
-A good example is [`http_post`](../reference/functions.md#http-functions), which performs HTTP POST requests:
+A good example is `http_post` (rad docs reference/functions), which performs HTTP POST requests:
 
 ```rad
 // Just the URL (simplest form)
@@ -140,7 +136,7 @@ Named arguments make it clear what each value represents, especially when a func
 
 ### Variadic Arguments
 
-Some functions accept **unlimited arguments**. For example, [`zip`](../reference/functions.md#zip) can combine any number of lists:
+Some functions accept **unlimited arguments**. For example, `zip` (rad docs zip) can combine any number of lists:
 
 ```rad
 names = ["alice", "bob", "charlie"]
@@ -161,26 +157,24 @@ quads = zip(names, ages, cities, scores)
 print(quads)
 ```
 
-<div class="result">
 ```
 [ [ "alice", 30 ], [ "bob", 40 ], [ "charlie", 25 ] ]
 [ [ "alice", 30, "NYC" ], [ "bob", 40, "LA" ], [ "charlie", 25, "Chicago" ] ]
 [ [ "alice", 30, "NYC", 100 ], [ "bob", 40, "LA", 90 ], [ "charlie", 25, "Chicago", 85 ] ]
 ```
-</div>
 
 Variadic functions can also have named arguments. For example, `zip` accepts `strict=true` for ensuring that all lists have the same length.
 
 ### Mixed Patterns
 
-Some functions combine multiple argument patterns. For example, [`pick`](../reference/functions.md#pick) takes positional arguments and a named argument:
+Some functions combine multiple argument patterns. For example, `pick` (rad docs pick) takes positional arguments and a named argument:
 
 ```rad
 options = ["vim", "emacs", "nano"]
 editor = pick(options, prompt="Choose your editor")
 ```
 
-When in doubt about how to call a function, check the [Functions Reference](../reference/functions.md) for complete signature details.
+When in doubt about how to call a function, check the Functions Reference (rad docs reference/functions) for complete signature details.
 
 ## Custom Functions
 
@@ -228,13 +222,11 @@ x_pos, y_pos = get_coords()
 print("Position: ({x_pos}, {y_pos})")
 ```
 
-<div class="result">
 ```
 Position: (10, 20)
 ```
-</div>
 
-This uses **destructuring** (covered in [Basics](basics.md#destructuring)) to unpack the returned values into separate variables.
+This uses **destructuring** (covered in Basics (rad docs guide/basics)) to unpack the returned values into separate variables.
 
 #### Type Annotations
 
@@ -254,7 +246,7 @@ There are three benefits to using these.
 2. They are validated at runtime i.e. the above function will error early if a string is passed into `calculate_area`.
 3. They help Rad's static analysis tools reason about your code, making them more useful.
 
-They are covered in detail in a later section: [Type Annotations](./type-annotations.md).
+They are covered in detail in a later section: Type Annotations (rad docs guide/type-annotations).
 
 #### Hoisting
 
@@ -309,10 +301,8 @@ calculate = fn(x):
 print(calculate(5))  // 20
 ```
 
-[//]: # (TODO closures behave poorly, fix and write here i.e. they should statically capture values!)
-
 Lambdas are particularly useful for defining once-off operations and passing them as arguments.
-For example, with [`map`](../reference/functions.md#map), [`filter`](../reference/functions.md#filter), and [`flat_map`](../reference/functions.md#flat_map):
+For example, with `map` (rad docs map), `filter` (rad docs filter), and `flat_map` (rad docs flat_map):
 
 ```rad
 numbers = [1, 2, 3, 4, 5]
@@ -328,14 +318,15 @@ all_words = words.flat_map(fn(s) s.split(" "))
 print(all_words)  // ["hello", "world", "foo", "bar"]
 ```
 
-!!! tip "Named Functions vs Lambdas"
+**Tip: Named Functions vs Lambdas**
 
     - Use **named functions** (`fn add(x, y):`) for reusable logic that you'll call from multiple places
     - Use **lambdas** (`fn(x) x * 2`) for one-off operations or callbacks
 
 ## Reference
 
-There are a lot of built-in functions. If you want to see what's available and how to use them, refer to the [reference](../reference/functions.md).
+There are a lot of built-in functions. If you want to see what's available and how to use them, refer to the reference (rad docs reference/functions).
+You can also look up any individual function directly from the terminal: `rad docs len`, `rad docs sort`, etc.
 
 ## Summary
 
@@ -357,8 +348,8 @@ There are a lot of built-in functions. If you want to see what's available and h
 
 ## Next
 
-We've already covered the [Basics of strings](./basics.md#str),
+We've already covered the Basics of strings (rad docs guide/basics),
 but there are some more advanced string concepts which are worth covering, such as formatting in string interpolations,
 raw strings, etc.
 
-We'll cover these in the next section: [Strings (Advanced)](./strings-advanced.md)
+We'll cover these in the next section: Strings (Advanced) (rad docs guide/strings-advanced)

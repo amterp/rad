@@ -215,10 +215,11 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 so it always reflects the version you have installed - no browser, no network required.
 
 ```
-rad docs                    # list all topics grouped by section
-rad docs guide/basics       # read the Basics guide page
+rad docs                     # list all topics grouped by section
+rad docs guide/basics        # read the Basics guide page
+rad docs len                 # look up a single built-in function
 rad docs reference/functions # read the functions reference
-rad docs all                # dump the full doc corpus
+rad docs all                 # dump the full doc corpus
 ```
 
 Error codes are also accessible this way:

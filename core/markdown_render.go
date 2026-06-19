@@ -38,6 +38,10 @@ var (
 
 	// Code fence: ``` with optional language (may be indented)
 	codeFencePattern = regexp.MustCompile("^\\s*```")
+
+	// Table separator: the dashes-and-colons row under a GFM table
+	// header (must contain a pipe so a bare `---` rule isn't matched).
+	tableSepPattern = regexp.MustCompile(`^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$`)
 )
 
 // RenderMarkdownForTerminal converts markdown text to a styled RadString
@@ -51,8 +55,18 @@ func RenderMarkdownForTerminal(markdown string) RadString {
 	codeBlockBaseIndent := "" // The indentation of the opening fence
 	const codeBlockIndent = "    "
 
-	for i, line := range lines {
-		var renderedLine RadString
+	appended := false
+	add := func(rs RadString) {
+		if appended {
+			result = result.ConcatStr("\n")
+		}
+		result = result.Concat(rs)
+		appended = true
+	}
+
+	i := 0
+	for i < len(lines) {
+		line := lines[i]
 
 		if codeFencePattern.MatchString(line) {
 			if !inCodeBlock {
@@ -61,26 +75,149 @@ func RenderMarkdownForTerminal(markdown string) RadString {
 			}
 			// Toggle code block state, skip the fence line itself
 			inCodeBlock = !inCodeBlock
+			i++
 			continue
 		}
 
 		if inCodeBlock {
 			// Inside code block: strip the base indentation, then add our standard indent
 			strippedLine := strings.TrimPrefix(line, codeBlockBaseIndent)
-			renderedLine = renderCodeLine(codeBlockIndent + strippedLine)
-		} else {
-			// Outside code block: process markdown syntax
-			renderedLine = renderMarkdownLine(line)
+			add(renderCodeLine(codeBlockIndent + strippedLine))
+			i++
+			continue
 		}
 
-		// Append newline between lines (but not after the last line)
-		if i > 0 || result.Len() > 0 {
-			result = result.ConcatStr("\n")
+		// A GFM table is the one construct whose visible widths only
+		// become knowable here — inline styling (e.g. stripping the
+		// backticks off `code` cells) changes cell width, so any
+		// alignment baked in upstream wouldn't survive. Render the
+		// whole table block aligned to the post-styling widths.
+		if isTableHeader(lines, i) {
+			block, consumed := renderTableBlock(lines, i)
+			add(block)
+			i += consumed
+			continue
 		}
-		result = result.Concat(renderedLine)
+
+		add(renderMarkdownLine(line))
+		i++
 	}
 
 	return result
+}
+
+// isTableHeader reports whether line i starts a GFM table: a row with a
+// pipe immediately followed by a separator row that also has a pipe.
+func isTableHeader(lines []string, i int) bool {
+	if strings.TrimSpace(lines[i]) == "" || !strings.Contains(lines[i], "|") {
+		return false
+	}
+	if i+1 >= len(lines) {
+		return false
+	}
+	return strings.Contains(lines[i+1], "|") && tableSepPattern.MatchString(lines[i+1])
+}
+
+// renderTableBlock renders a GFM table starting at start into an
+// aligned, styled block, returning the rendered RadString and how many
+// source lines it consumed. Cells are styled first, then padded to the
+// per-column max of the rendered (visible) width so columns line up
+// after backticks are stripped and code is colored.
+func renderTableBlock(lines []string, start int) (RadString, int) {
+	end := start + 2 // header + separator
+	for end < len(lines) && strings.TrimSpace(lines[end]) != "" && strings.Contains(lines[end], "|") {
+		end++
+	}
+
+	// Header is at start; the separator row (start+1) is regenerated.
+	rawRows := [][]string{splitMarkdownTableRow(lines[start])}
+	for r := start + 2; r < end; r++ {
+		rawRows = append(rawRows, splitMarkdownTableRow(lines[r]))
+	}
+
+	cols := 0
+	for _, r := range rawRows {
+		if len(r) > cols {
+			cols = len(r)
+		}
+	}
+
+	rendered := make([][]RadString, len(rawRows))
+	widths := make([]int, cols)
+	for ri, row := range rawRows {
+		rendered[ri] = make([]RadString, cols)
+		for ci := 0; ci < cols; ci++ {
+			cell := NewRadString("")
+			if ci < len(row) {
+				cell = renderInlineFormatting(row[ci])
+			}
+			rendered[ri][ci] = cell
+			if w := int(cell.Len()); w > widths[ci] {
+				widths[ci] = w
+			}
+		}
+	}
+	for ci := range widths {
+		if widths[ci] < 3 {
+			widths[ci] = 3
+		}
+	}
+
+	renderRow := func(cells []RadString) RadString {
+		row := NewRadString("|")
+		for ci := 0; ci < cols; ci++ {
+			pad := widths[ci] - int(cells[ci].Len())
+			if pad < 0 {
+				pad = 0
+			}
+			row = row.ConcatStr(" ").Concat(cells[ci]).ConcatStr(strings.Repeat(" ", pad) + " |")
+		}
+		return row
+	}
+
+	out := renderRow(rendered[0])
+	sep := NewRadString("|")
+	for ci := 0; ci < cols; ci++ {
+		sep = sep.ConcatStr(" " + strings.Repeat("-", widths[ci]) + " |")
+	}
+	out = out.ConcatStr("\n").Concat(sep)
+	for ri := 1; ri < len(rendered); ri++ {
+		out = out.ConcatStr("\n").Concat(renderRow(rendered[ri]))
+	}
+	return out, end - start
+}
+
+// splitMarkdownTableRow splits a table row on unescaped pipes, treating
+// backtick-delimited code spans as atomic so a literal pipe inside a
+// type like `int | float` isn't read as a column boundary. Cells are
+// trimmed. (Mirrors tools/docir's splitter; the runtime can't import
+// that build-time package.)
+func splitMarkdownTableRow(line string) []string {
+	s := strings.TrimSpace(line)
+	s = strings.TrimPrefix(s, "|")
+	s = strings.TrimSuffix(s, "|")
+
+	var cells []string
+	var cur strings.Builder
+	inCode := false
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		switch {
+		case c == '\\' && i+1 < len(s) && s[i+1] == '|':
+			cur.WriteByte('|')
+			i++
+		case c == '`':
+			inCode = !inCode
+			cur.WriteByte(c)
+		case c == '|' && !inCode:
+			cells = append(cells, strings.TrimSpace(cur.String()))
+			cur.Reset()
+		default:
+			cur.WriteByte(c)
+		}
+	}
+	cells = append(cells, strings.TrimSpace(cur.String()))
+	return cells
 }
 
 // extractLeadingWhitespace returns the leading whitespace from a string

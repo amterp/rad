@@ -22,7 +22,7 @@ import (
 // mkdocs.yml nav) into core/embedded_docs/ so the binary can serve
 // them via `rad docs`. It runs LAST in this batch because it reads
 // the just-generated functions.md / errors.md reference pages.
-//go:generate go run ../tools/gen-docs-embed -nav ../docs-web/mkdocs.yml -docs ../docs-web/docs -out ../core/embedded_docs
+//go:generate go run ../tools/gen-docs-embed -nav ../docs-web/mkdocs.yml -docs ../docs-web/docs -funcs ../docs/funcs -out ../core/embedded_docs
 
 type FnSignature struct {
 	Name      string
@@ -75,6 +75,7 @@ var internalSignatures = []FnSignature{
 	newInternalFnSignature(`_rad_docs_get(_slug: str) -> str?`),
 	newInternalFnSignature(`_rad_docs_full() -> str`),
 	newInternalFnSignature(`_rad_docs_slugs() -> str[]`),
+	newInternalFnSignature(`_rad_docs_funcs() -> str[]`),
 	newInternalFnSignature(`_rad_render(_md: str, _mode: str) -> str`),
 }
 

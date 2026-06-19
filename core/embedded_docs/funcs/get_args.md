@@ -1,0 +1,19 @@
+# get_args
+
+Returns the raw command-line arguments passed to the script.
+
+```rad
+get_args() -> str[]
+```
+
+```rad
+// If script was called: rad myscript.rad arg1 arg2 --flag
+raw_args = get_args()  // -> ["./myscript.rad", "arg1", "arg2", "--flag"]
+```
+
+## Notes
+
+Returns all arguments after the script name. Unlike parsed args, this gives you raw access to all arguments.
+
+The name `args` is reserved (it's the args-block keyword), so the
+local has to be called something else.

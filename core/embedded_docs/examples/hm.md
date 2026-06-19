@@ -1,6 +1,6 @@
 ## Preview
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -102,7 +102,7 @@ Some commands have notoriously hard-to-remember syntax - `tar`, `find`, `rsync`.
 forget again. Tools like `tldr` help, but sometimes you want your *own* notes - the specific incantations that work for
 your use cases.
 
-Let's build `hm` - a personal cheatsheet manager that stores your notes in a [stash](../guide/stashes.md), so they
+Let's build `hm` - a personal cheatsheet manager that stores your notes in a stash (rad docs guide/stashes), so they
 persist between sessions.
 
 ### Writing the script
@@ -116,7 +116,7 @@ rad new hm -s
 First, we'll add a description and set up a stash ID. The stash ID is what tells Rad where to store our persistent data.
 You can generate one with `rad gen-id`:
 
-```rad linenums="1" hl_lines="2-6"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -130,10 +130,10 @@ script.
 
 ### Defining commands
 
-We'll use [script commands](../guide/script-commands.md) to organize our CLI into commands. Each command gets its own
+We'll use script commands (rad docs guide/script-commands) to organize our CLI into commands. Each command gets its own
 description and arguments:
 
-```rad linenums="1" hl_lines="8-26"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -170,7 +170,7 @@ The `---` sections become the command descriptions shown in `--help`.
 Before implementing our commands, we need to set up state management. We'll use state to remember user preferences (like
 their preferred editor):
 
-```rad linenums="1" hl_lines="28-29"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -208,7 +208,7 @@ The `defer save_state(state)` ensures our state is saved when the script exits, 
 
 Now let's implement `do_show()`. We check if the entry exists and display it:
 
-```rad linenums="1" hl_lines="31-36"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -253,10 +253,9 @@ tell the user how to create it. If it does exist, we read and print it with `.re
 
 ### The edit command
 
-The edit command opens the entry in the user's editor. Here's where it gets interesting - we use [
-`load()`](../reference/functions.md#load) to handle first-run configuration:
+The edit command opens the entry in the user's editor. Here's where it gets interesting - we use `load()` (rad docs load) to handle first-run configuration:
 
-```rad linenums="1" hl_lines="38-42"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -313,7 +312,7 @@ Since we have `defer save_state(state)`, the editor preference persists between 
 
 Finally, we list all stored entries by finding files in the entries directory:
 
-```rad linenums="1" hl_lines="44-56"
+```rad
 #!/usr/bin/env rad
 ---
 A personal cheatsheet manager.
@@ -371,10 +370,8 @@ fn do_list():
         print(name)
 ```
 
-We use [`get_stash_path()`](../reference/functions.md#get_stash_path) to get the path to our entries folder - note the
-`"files/"` prefix since stash files live in a `files/` subdirectory. We chain [
-`.get_path()`](../reference/functions.md#get_path) to check if it exists, and [
-`.find_paths()`](../reference/functions.md#find_paths) to list all files. The `depth=1` parameter limits the search to
+We use `get_stash_path()` (rad docs get_stash_path) to get the path to our entries folder - note the
+`"files/"` prefix since stash files live in a `files/` subdirectory. We chain `.get_path()` (rad docs get_path) to check if it exists, and `.find_paths()` (rad docs find_paths) to list all files. The `depth=1` parameter limits the search to
 direct children only, and `relative="absolute"` gives us full paths so that subsequent `get_path()` calls resolve
 correctly. For each file, we extract the topic name with `.get_path().base_name` and strip the `.txt` extension.
 
@@ -421,18 +418,18 @@ Your notes live at `~/.rad/stashes/J8xKmN3pQrT/files/entries/` and your preferen
 
 ## Concepts demonstrated
 
-| Concept                                                           | Where                                              |
-|-------------------------------------------------------------------|----------------------------------------------------|
-| [Stash ID](../guide/stashes.md)                                   | `@stash_id = J8xKmN3pQrT`                          |
-| [State persistence](../guide/stashes.md#state-storage)            | `load_state()` / `save_state()`                    |
-| [Defer pattern](../guide/stashes.md#the-defer-save-state-pattern) | `defer save_state(state)`                          |
-| [`load()`](../reference/functions.md#load)                        | First-run config with `state.load("editor", ...)`  |
-| [`input()`](../reference/functions.md#input)                      | Prompting for editor preference                    |
-| [`load_stash_file()`](../reference/functions.md#load_stash_file)  | Creating entry files in `do_edit()`                |
-| [`read_file()`](../reference/functions.md#read_file)              | Reading entry content in `do_show()`               |
-| [`get_stash_path()`](../reference/functions.md#get_stash_path)    | Getting entries paths                              |
-| [Script commands](../guide/script-commands.md)                    | `command show:`, `command edit:`, `command list:`  |
-| [Shell commands](../guide/shell-commands.md)                      | `$\`{editor} {result.full_path}\``                 |
-| [`find_paths()`](../reference/functions.md#find_paths)            | Listing files in the entries directory             |
-| [`get_path()`](../reference/functions.md#get_path)                | Checking if directory exists, extracting base name |
-| [Custom functions](../guide/functions.md)                         | `fn do_show():`, etc.                              |
+| Concept                                          | Where                                              |
+| ------------------------------------------------ | -------------------------------------------------- |
+| Stash ID (rad docs guide/stashes)                | `@stash_id = J8xKmN3pQrT`                          |
+| State persistence (rad docs guide/stashes)       | `load_state()` / `save_state()`                    |
+| Defer pattern (rad docs guide/stashes)           | `defer save_state(state)`                          |
+| `load()` (rad docs load)                         | First-run config with `state.load("editor", ...)`  |
+| `input()` (rad docs input)                       | Prompting for editor preference                    |
+| `load_stash_file()` (rad docs load_stash_file)   | Creating entry files in `do_edit()`                |
+| `read_file()` (rad docs read_file)               | Reading entry content in `do_show()`               |
+| `get_stash_path()` (rad docs get_stash_path)     | Getting entries paths                              |
+| Script commands (rad docs guide/script-commands) | `command show:`, `command edit:`, `command list:`  |
+| Shell commands (rad docs guide/shell-commands)   | `$\`{editor} {result.full_path}\``                 |
+| `find_paths()` (rad docs find_paths)             | Listing files in the entries directory             |
+| `get_path()` (rad docs get_path)                 | Checking if directory exists, extracting base name |
+| Custom functions (rad docs guide/functions)      | `fn do_show():`, etc.                              |

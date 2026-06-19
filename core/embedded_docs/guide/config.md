@@ -1,6 +1,6 @@
 Rad stores its configuration in a single file: `~/.rad/config.toml`. This file is optional - if it doesn't exist, Rad uses sensible defaults for everything.
 
-The file uses [TOML](https://toml.io) format.
+The file uses TOML (https://toml.io) format.
 
 ## Invocation Logging
 
@@ -25,11 +25,9 @@ After upgrading Rad, you can check whether your scripts still parse correctly:
 rad check --from-logs all
 ```
 
-<div class="result">
 ```
 Checked 47 scripts: 47 passed, 0 failed (3 hints, 120 skipped).
 ```
-</div>
 
 This reads the invocation log to find scripts you've actually used, then checks each one. It's a quick way to catch compatibility issues before they surprise you.
 
@@ -65,4 +63,4 @@ keep_rolled_logs = 2    # Rotated log files to keep (default: 2)
 
 Now that you've configured Rad, there's one more setup step that can make your workflow smoother: shell tab completion for rad commands, script flags, and even enum values.
 
-Continue to [Shell Completion](./shell-completion.md).
+Continue to Shell Completion (rad docs guide/shell-completion).

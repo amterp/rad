@@ -13,7 +13,7 @@ This concept will become clearer with an example.
 Below is a simple script capable of querying a given GitHub repo (leveraging GitHub's public API) for information about
 its latest commits.
 
-```rad title="File: commits"
+```rad
 args:
     repo str        # The repo to query. Format: user/project
     limit int = 20  # The max commits to return.
@@ -34,7 +34,6 @@ And running it looks something like this:
 rad commits amterp/rad 5
 ```
 
-<div class="result">
 ```
 Querying url: https://api.github.com/repos/amterp/rad/commits?per_page=5
 Time                  Author          SHA
@@ -44,7 +43,6 @@ Time                  Author          SHA
 2025-01-10T12:11:08Z  Alexander Terp  4b64f585d08d9a5ee40549b6b9624530ac713eb1
 2025-01-09T11:34:51Z  Alexander Terp  abfcf2d940a18b819f7ae9e9040550a9644e5120
 ```
-</div>
 
 This is a simple example, but it demonstrates the ability to query GitHub's API (which returns JSON), extracting fields we're interested in (commits' time, author, and SHA).
 
@@ -60,8 +58,8 @@ args:
 url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 ```
 
-Here we have an [args block](./args.md) where we declare a `repo` string and a `limit` int with a default of 20.
-After the args block, we create a `url` string using [string interpolation](strings-advanced.md#string-interpolation) to fill in the repo name, and the limit for how many commits we want GitHub to give us.
+Here we have an args block (rad docs guide/args) where we declare a `repo` string and a `limit` int with a default of 20.
+After the args block, we create a `url` string using string interpolation (rad docs guide/strings-advanced) to fill in the repo name, and the limit for how many commits we want GitHub to give us.
 
 ### Json Paths
 
@@ -121,7 +119,7 @@ The examples above demonstrate the core JSON path patterns you'll use most often
 - **Array unwrapping**: `json[]` tells Rad to iterate through a list
 - **Combined**: `json[].field.nested` extracts nested data from each array item
 
-!!! tip "Advanced JSON Path Features"
+**Tip: Advanced JSON Path Features**
 
     The JSON path syntax supports additional powerful features like wildcards (`json[].*`), indexed access
     (`json[0]`, `json.items[2]`), and multiple levels of array unwrapping (`json[].items[][].related[]`).
@@ -137,7 +135,7 @@ rad url:
     fields Time, Author, SHA
 ```
 
-!!! info "Why 'rad'?"
+**Info: Why 'rad'?**
 
     The project name **Rad** comes from its original core use case: **R**equest **A**nd **D**isplay.
     This workflow - querying data from APIs and displaying it in readable tables - is exactly
@@ -188,7 +186,6 @@ rad url:
     sort
 ```
 
-<div class="result">
 ```
 City         Country  Population
 Copenhagen   Denmark  640000
@@ -196,7 +193,6 @@ Houston      USA      2300000
 London       England  8800000
 Los Angeles  USA      3800000
 ```
-</div>
 
 What if we wanted to sort by Country, though? And then break ties with City? We can do that:
 
@@ -206,7 +202,6 @@ rad url:
     sort Country, City
 ```
 
-<div class="result">
 ```
 City         Country  Population
 Copenhagen   Denmark  640000
@@ -214,7 +209,6 @@ London       England  8800000
 Houston      USA      2300000
 Los Angeles  USA      3800000
 ```
-</div>
 
 If we wanted to sort by descending population, you can add `desc` after the name of the column:
 
@@ -224,7 +218,6 @@ rad url:
     sort Population desc
 ```
 
-<div class="result">
 ```
 City         Country  Population
 London       England  8800000
@@ -232,9 +225,8 @@ Los Angeles  USA      3800000
 Houston      USA      2300000
 Copenhagen   Denmark  640000
 ```
-</div>
 
-!!! note "'asc' is the default"
+**Note: 'asc' is the default**
 
     `sort City` and `sort City asc` are both valid and identical in functionality - you can include it if you want to be explicit.
 
@@ -253,7 +245,7 @@ rad url:
 
 The syntax here is `map <lambda>`. In this example, the lambda is `fn(p) "{p/1e6:.1}"`.
 
-You can read about lambdas in an earlier section here: [Functions: Lambdas](./functions.md#lambdas).
+You can read about lambdas in an earlier section here: Functions: Lambdas (rad docs guide/functions).
 
 If we run this, you'll see the change:
 
@@ -272,7 +264,7 @@ Population:
     map fn(p) "{p/1e6:.1}"
 ```
 
-`Population:` begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as `map` or [`color`](#color).
+`Population:` begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as `map` or `color`.
 
 `map` is considered a keyword in the context of rad blocks. After `map`, a lambda expression is expected, which you can think of as a mini-function.
 
@@ -283,9 +275,7 @@ It is the *output* of your lambda mini-function. In this example, we turn it int
 Inside the string interpolation expression, we first divide it by one million (`p/1e6`, using scientific notation), and then
 use formatting syntax (right of the colon) to specify that we want the resulting float to be stringified with one decimal place (`.1`).
 
-[//]: # (todo visual aid perhaps, to demonstrate what the lambda is doing exactly?)
-
-!!! note "Modifier Execution Order"
+**Note: Modifier Execution Order**
 
     Field modifiers execute in a specific order: **filter → sort → map**
 
@@ -333,7 +323,7 @@ timestamp, strategy, fund:
         return str(x)
 ```
 
-!!! note "Context is Optional"
+**Note: Context is Optional**
 
     Single-parameter lambdas continue to work exactly as before. The context parameter is completely optional:
 
@@ -381,13 +371,11 @@ rad:
         filter fn(s) s == "active"
 ```
 
-<div class="result">
 ```
 Names   Ages  Status
 Alice   25    active
 Diana   20    active
 ```
-</div>
 
 Notice that Charlie doesn't appear (age >= 18 but status is inactive), Bob doesn't appear (active but age < 18), and Eve doesn't appear (active but age < 18).
 
@@ -415,7 +403,7 @@ Age:
     filter fn(age, ctx) age < sum(ctx.src) / ctx.src.len()
 ```
 
-!!! note "Execution Order: filter → sort → map"
+**Note: Execution Order: filter → sort → map**
 
     Filtering happens **before** sorting and mapping. This means:
     - Filters see the original extracted values (not transformed by `map`)
@@ -426,7 +414,7 @@ Age:
 
 ### Color
 
-Another column modifier uses the keyword `color`. You can tell Rad to color a cell's value depending on its contents by using a [regex](https://en.wikipedia.org/wiki/Regular_expression).
+Another column modifier uses the keyword `color`. You can tell Rad to color a cell's value depending on its contents by using a regex (https://en.wikipedia.org/wiki/Regular_expression).
 
 For example:
 
@@ -443,7 +431,7 @@ The syntax is `color <color> <regex>`. You can apply multiple rules, and later r
 For example, here we start off by coloring *everything* pink.
 Then, we add three more rules: any sequence "Denmark" should be colored red, and "USA" should be colored blue.
 
-![color](../assets/rad-color.png)
+!color
 
 This screenshot from a terminal demonstrates the colors. England is colored pink because the initial `.*` rule is the only regex that matched it.
 
@@ -539,12 +527,10 @@ rad:
     transpose
 ```
 
-<div class="result">
 ```
 Name  Alice  Bob  Charlie
 Age   30     40   25
 ```
-</div>
 
 This is handy when you have only a few records but many fields - the normal layout would scroll off-screen horizontally, while the transposed layout keeps each field visible on its own line.
 
@@ -602,15 +588,13 @@ rad:
     fields Nums, Words
 ```
 
-<div class="result">
 ```
 Nums  Words
 1     hi
 2     hello
 ```
-</div>
 
-!!! info "Modifiers and Data Mutation"
+**Info: Modifiers and Data Mutation**
 
     When a rad block has a source, it's performing data extraction - pulling values from JSON into your field
     variables. Since it's *populating* those variables, it naturally owns them, and modifiers (`filter`, `sort`,
@@ -626,9 +610,7 @@ This happens behind the scenes - you don't need to explicitly call any HTTP func
 
 ### Headers and Authentication
 
-Currently, `rad` blocks with URL sources don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the [`http_get`](../reference/functions.md#http-functions) or [`http_post`](../reference/functions.md#http-functions) functions first, then pass the response body as the source:
-
-[//]: # (TODO WARN: ^ above might go out of date)
+Currently, `rad` blocks with URL sources don't support custom headers or authentication directly. If you need to add headers (for example, to authenticate with an API), use the `http_get` (rad docs reference/functions) or `http_post` (rad docs reference/functions) functions first, then pass the response body as the source:
 
 ```rad
 args:
@@ -680,4 +662,4 @@ This pattern gives you full control over the HTTP request while still leveraging
 
 ## Next
 
-Next, we'll cover an important concept for keeping your scripts maintainable: [Type Annotations](./type-annotations.md).
+Next, we'll cover an important concept for keeping your scripts maintainable: Type Annotations (rad docs guide/type-annotations).

@@ -604,7 +604,7 @@ a = parse_epoch(1712345678000, unit="millis")
 - `"nanos"`
 
 The longer aliases (`milliseconds`, `microseconds`, `nanoseconds`) were
-removed in v0.9. See the [v0.9 migration guide](/migrations/v0.9/).
+removed in v0.9. See the v0.9 migration guide.
 
 ### RAD20009: Invalid Timezone
 
@@ -945,7 +945,7 @@ result = load_stash_file("config.json", r'{"theme": "dark"}')
 
 To see existing stashes, run `rad stash list`.
 
-See also: [Stashes guide](/guide/stashes/).
+See also: Stashes guide.
 
 ### RAD20023: Invalid Sleep Duration
 
@@ -969,7 +969,7 @@ sleep("1h")       // 1 hour
 #### Valid Units
 
 | Unit | Meaning      |
-|------|--------------|
+| ---- | ------------ |
 | ms   | milliseconds |
 | s    | seconds      |
 | m    | minutes      |
@@ -1156,7 +1156,7 @@ for x in [1, 2, 3]:
 #### Iterable Types
 
 | Type   | Iterates over |
-|--------|---------------|
+| ------ | ------------- |
 | List   | elements      |
 | String | characters    |
 | Map    | keys          |
@@ -1437,14 +1437,14 @@ When no `format` is specified, `parse_date` tries these formats:
 
 When using the `format` parameter, these tokens are available:
 
-| Token  | Meaning           | Example |
-|--------|-------------------|---------|
-| `YYYY` | 4-digit year      | `2026`  |
-| `MM`   | 2-digit month     | `03`    |
-| `DD`   | 2-digit day       | `22`    |
-| `HH`   | 2-digit hour (24h)| `14`    |
-| `mm`   | 2-digit minute    | `30`    |
-| `ss`   | 2-digit second    | `00`    |
+| Token  | Meaning            | Example |
+| ------ | ------------------ | ------- |
+| `YYYY` | 4-digit year       | `2026`  |
+| `MM`   | 2-digit month      | `03`    |
+| `DD`   | 2-digit day        | `22`    |
+| `HH`   | 2-digit hour (24h) | `14`    |
+| `mm`   | 2-digit minute     | `30`    |
+| `ss`   | 2-digit second     | `00`    |
 
 Note: `MM` (uppercase) is month, `mm` (lowercase) is minute. Mixing these
 up will produce wrong results or parse errors.
@@ -1501,12 +1501,12 @@ print(n)
 
 #### Type Conversion Functions
 
-| Function | Description |
-|----------|-------------|
-| `int(value)` | Convert to integer (or `error`) |
-| `float(value)` | Convert to float (or `error`) |
-| `str(value)` | Convert to string |
-| `bool(value)` | Convert to boolean |
+| Function       | Description                     |
+| -------------- | ------------------------------- |
+| `int(value)`   | Convert to integer (or `error`) |
+| `float(value)` | Convert to float (or `error`)   |
+| `str(value)`   | Convert to string               |
+| `bool(value)`  | Convert to boolean              |
 
 ### RAD30002: Invalid Type for Operation
 
@@ -1527,14 +1527,14 @@ x = "count: " + str(5)
 
 #### Supported Type Combinations
 
-| Operator | Works with |
-|----------|------------|
-| `+` | int+int, float+float, str+str, str+error, error+str, error+error, list+list |
-| `-`, `*`, `/` | int, float |
-| `%` | int |
-| `==`, `!=` | any types |
-| `<`, `>`, `<=`, `>=` | int, float, str |
-| `and`, `or` | any (uses truthiness) |
+| Operator             | Works with                                                                  |
+| -------------------- | --------------------------------------------------------------------------- |
+| `+`                  | int+int, float+float, str+str, str+error, error+str, error+error, list+list |
+| `-`, `*`, `/`        | int, float                                                                  |
+| `%`                  | int                                                                         |
+| `==`, `!=`           | any types                                                                   |
+| `<`, `>`, `<=`, `>=` | int, float, str                                                             |
+| `and`, `or`          | any (uses truthiness)                                                       |
 
 #### How to Fix
 
@@ -1542,7 +1542,7 @@ Use interpolation to mix types in strings - it handles any type automatically:
 `"Value: {x}"`. Alternatively, convert types explicitly with `int()`, `float()`, or `str()`.
 
 > **v0.9 Migration Note:** The `+` operator no longer coerces types. If you're seeing this
-> error after upgrading, see the [v0.9 migration guide](https://amterp.dev/rad/migrations/v0.9/).
+> error after upgrading, see the v0.9 migration guide (https://amterp.dev/rad/migrations/v0.9/).
 
 ### RAD30003: Cannot Format
 
@@ -1561,19 +1561,19 @@ print("{parse_int('42'):,}")  // Convert before formatting
 
 #### Format Specifiers
 
-| Specifier | Requires | Example |
-|-----------|----------|---------|
-| `{x}` | any type | Default formatting |
-| `{x:10}` | any type | Right-align, width 10 |
-| `{x:<10}` | any type | Left-align, width 10 |
-| `{x:*>10}` | any type | Fill with `*`, right-align |
-| `{x:.<10}` | any type | Fill with `.`, left-align |
-| `{x:05}` | any type | Zero-pad shorthand, width 5 |
-| `{x:<05}` | any type | Zero-pad, left-align |
-| `{x:0>5}` | any type | Explicit zero fill (any type) |
-| `{x:.2}` | number | Precision (2 decimals) |
-| `{x:,}` | number | Thousands separator |
-| `{x:010,}` | number | Zero-pad + thousands |
+| Specifier  | Requires | Example                       |
+| ---------- | -------- | ----------------------------- |
+| `{x}`      | any type | Default formatting            |
+| `{x:10}`   | any type | Right-align, width 10         |
+| `{x:<10}`  | any type | Left-align, width 10          |
+| `{x:*>10}` | any type | Fill with `*`, right-align    |
+| `{x:.<10}` | any type | Fill with `.`, left-align     |
+| `{x:05}`   | any type | Zero-pad shorthand, width 5   |
+| `{x:<05}`  | any type | Zero-pad, left-align          |
+| `{x:0>5}`  | any type | Explicit zero fill (any type) |
+| `{x:.2}`   | number   | Precision (2 decimals)        |
+| `{x:,}`    | number   | Thousands separator           |
+| `{x:010,}` | number   | Zero-pad + thousands          |
 
 The zero-pad shorthand (`{x:05}`) works on any type. For numbers,
 it is sign-aware (negative signs placed before zeros). For other
@@ -1603,11 +1603,11 @@ print(data["a"])     // 1
 
 #### Indexable Types
 
-| Type | Syntax |
-|------|--------|
-| Lists | `items[0]`, `items[-1]`, `items[1:3]` |
-| Strings | `text[0]`, `text[-1]`, `text[1:3]` |
-| Maps | `data["key"]` |
+| Type    | Syntax                                |
+| ------- | ------------------------------------- |
+| Lists   | `items[0]`, `items[-1]`, `items[1:3]` |
+| Strings | `text[0]`, `text[-1]`, `text[1:3]`    |
+| Maps    | `data["key"]`                         |
 
 To index a number's digits, convert it first: `str(12345)[0]` gives `"1"`.
 
@@ -1679,6 +1679,7 @@ add(5, 10)  // Correct: two arguments
 ```
 
 Named arguments can help clarify which is which:
+
 ```rad
 fn process(input, output):
     print("Processing {input} -> {output}")
@@ -2031,7 +2032,7 @@ The `rad` keyword now handles all source types:
 - **List/map source**: `rad myData:` (replaces `display`)
 - **No source**: `rad:` (replaces `display` with no argument)
 
-See the [migration guide](https://amterp.dev/rad/migrations/v0.9/)
+See the migration guide (https://amterp.dev/rad/migrations/v0.9/)
 for full details.
 
 ### RAD40009: Duplicate Parameter
@@ -2217,7 +2218,7 @@ are left alone - the analyzer can't prove they collide.
 
 A `switch` case key has a value that the discriminant can never
 hold. The arm is unreachable not because of an earlier `case`
-(that's [RAD40012](40012.md)), but because the discriminant's
+(that's RAD40012), but because the discriminant's
 *type* statically forbids the value.
 
 This typically surfaces after a refactor: an enum variant gets
@@ -2282,7 +2283,7 @@ analyzer can't prove they fall outside the domain.
 ### RAD40014: Unknown Map Key
 
 A map access reads a key that the map's *type* doesn't declare. The
-access is guaranteed to fail at runtime ([RAD20041](20041.md),
+access is guaranteed to fail at runtime (RAD20041,
 key not found), so the analyzer flags it statically.
 
 This fires only when the receiver has a closed map shape the
@@ -2311,7 +2312,7 @@ print(gp.full_path)
 If the key you want is optional (marked `?` in the type, e.g.
 `get_path`'s `size_bytes?`), it's a valid key and won't fire this -
 but it may be absent at runtime. Guard the access so a missing key
-doesn't error ([RAD20041](20041.md)).
+doesn't error (RAD20041).
 
 #### When the check fires
 

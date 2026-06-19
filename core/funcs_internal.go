@@ -199,6 +199,16 @@ func AddInternalFuncs() {
 			},
 		},
 		{
+			Name: INTERNAL_FUNC_DOCS_FUNCS,
+			Execute: func(f FuncInvocation) RadValue {
+				list := NewRadList()
+				for _, name := range GetDocFuncs() {
+					list.Append(newRadValueStr(name))
+				}
+				return newRadValues(f.i, f.callNode, list)
+			},
+		},
+		{
 			// Single rendering gate for `rad docs` output: raw markdown
 			// when piped (agent capture), pretty-rendered on a TTY
 			// (human at the terminal), with explicit overrides. Keeping

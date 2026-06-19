@@ -1,6 +1,6 @@
 ## Preview
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -45,16 +45,16 @@ rad new brewi -s -o code
 
 First, we want to quickly describe what the script is aiming to do, so we'll add a file header.
 
-```rad linenums="1" hl_lines="2-4"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
 ---
 ```
 
-We want the script to accept a formula as an argument, i.e. the formula we may be installing. It'll be a string, so let's add this in an [arg block](../guide/args.md). We'll include a little comment to improve our usage string.
+We want the script to accept a formula as an argument, i.e. the formula we may be installing. It'll be a string, so let's add this in an arg block (rad docs guide/args). We'll include a little comment to improve our usage string.
 
-```rad linenums="1" hl_lines="5-6"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -65,13 +65,13 @@ args:
 
 `formula` will serve both as the variable name for the rest of the script, and be exposed to the user as the script's CLI API.
 
-Setup done. First thing we'll wanna do is run `brew info` with the formula. We'll do this via a [shell command](../guide/shell-commands.md).
+Setup done. First thing we'll wanna do is run `brew info` with the formula. We'll do this via a shell command (rad docs guide/shell-commands).
 
-Specifically, we'll use a [*critical*](../guide/shell-commands.md#critical-shell-commands) shell command, because if the command fails (including if the formula just doesn't exist), we want to just print the error and exit the script.
+Specifically, we'll use a *critical* (rad docs guide/shell-commands) shell command, because if the command fails (including if the formula just doesn't exist), we want to just print the error and exit the script.
 
 This uses the `$` syntax.
 
-```rad linenums="1" hl_lines="8"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -82,14 +82,14 @@ args:
 $`brew info {formula}`
 ```
 
-We use [string interpolation](../guide/strings-advanced.md#string-interpolation) to insert the formula into the command.
+We use string interpolation (rad docs guide/strings-advanced) to insert the formula into the command.
 
 You can try running the command now! Make sure it's executable (`chmod +x ./brewi`).
 
-Next, we want to ask the user if they'd like to proceed with installing the formula. For that, Rad offers the [`confirm`](../reference/functions.md#confirm) function.
+Next, we want to ask the user if they'd like to proceed with installing the formula. For that, Rad offers the `confirm` (rad docs confirm) function.
 The default prompt is `Confirm? [Y/n] > `, which works fine for us here, so we'll do a simple 0-arg `confirm()` call. The function returns a bool for yes/no, so we'll put it in an if statement.
 
-```rad linenums="1" hl_lines="9-10"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -106,10 +106,10 @@ Feel free to try it again now!
 
 One last touch: we should also allow installing casks with this script. We'll aim to offer a simple `-c` flag users can set which modifies the command. 
 
-We'll add the `bool` arg, and insert an additional interpolation in our `brew install` command, leveraging Rad's [ternary](../guide/basics.md#ternary) syntax.
+We'll add the `bool` arg, and insert an additional interpolation in our `brew install` command, leveraging Rad's ternary (rad docs guide/basics) syntax.
 We need to pay close attention to whitespace so we make sure the command comes out correct in the cask and non-cask cases.
 
-```rad linenums="1" hl_lines="7 11"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates checking a brew formula before installing it.
@@ -129,12 +129,12 @@ Done! You've now got a great, convenient helper script for installing things wit
 
 ## Concepts demonstrated
 
-| Concept | Where |
-|---------|-------|
-| [File header](../guide/getting-started.md#shebang) | Script description for `--help` |
-| [Args block](../guide/args.md) | `formula str`, `cask c bool` |
-| [Short flags](../guide/args.md) | `cask c bool` gives `-c` |
-| [Shell commands](../guide/shell-commands.md) | `$\`brew info {formula}\`` |
-| [String interpolation](../guide/strings-advanced.md#string-interpolation) | `{formula}` in shell command |
-| [`confirm()`](../reference/functions.md#confirm) | Interactive yes/no prompt |
-| [Ternary operator](../guide/basics.md#ternary) | `cask ? " --cask" : ""` |
+| Concept                                                | Where                           |
+| ------------------------------------------------------ | ------------------------------- |
+| File header (rad docs guide/getting-started)           | Script description for `--help` |
+| Args block (rad docs guide/args)                       | `formula str`, `cask c bool`    |
+| Short flags (rad docs guide/args)                      | `cask c bool` gives `-c`        |
+| Shell commands (rad docs guide/shell-commands)         | `$\`brew info {formula}\``      |
+| String interpolation (rad docs guide/strings-advanced) | `{formula}` in shell command    |
+| `confirm()` (rad docs confirm)                         | Interactive yes/no prompt       |
+| Ternary operator (rad docs guide/basics)               | `cask ? " --cask" : ""`         |

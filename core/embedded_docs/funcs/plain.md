@@ -1,0 +1,16 @@
+# plain
+
+Returns its argument as a plain string with no terminal colour or style applied. Useful for stripping styling back out of an expression where some branches have it and others don't.
+
+```rad
+plain(_item: any) -> str
+```
+
+```rad
+plain("Hello")        // -> "Hello" wrapped in the plain escape
+plain(42)             // -> "42" wrapped in the plain escape
+```
+
+## See also
+
+`colorize`, `color_rgb`

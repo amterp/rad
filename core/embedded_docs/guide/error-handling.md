@@ -18,7 +18,7 @@ In this section, we'll explore:
 
 Let's start with a simple script that takes a user's age as input:
 
-```rad linenums="1" title="File: age"
+```rad
 args:
     age_str str  # User's age as a string
 
@@ -35,11 +35,9 @@ If we run this with a valid number, everything works:
 rad age 25
 ```
 
-<div class="result">
 ```
 You are 25 years old
 ```
-</div>
 
 But what happens with invalid input?
 
@@ -47,14 +45,12 @@ But what happens with invalid input?
 rad age "not-a-number"
 ```
 
-<div class="result">
 ```
 Error at L4:7
 
 age = parse_int(age_str)
       ^^^^^^^^^^^^^^^^^^ parse_int() failed to parse "not-a-number" (RAD20001)
 ```
-</div>
 
 The script **exits immediately** with an error code of 1 when `parse_int` encounters invalid input.
 What's happening is that `parse_int` returned an `error` value, and since we're not handling it, it immediately gets propagated up.
@@ -64,7 +60,7 @@ Since we're at the root of the script and not nested within any other function c
 
 Errors don't just propagate from built-in functions - they bubble up through your own function calls too. Here's an example:
 
-```rad linenums="1"
+```rad
 fn calculate_discount(price_str: str) -> float|error:
     price = parse_float(price_str)  // Error starts here...
     return price * 0.1
@@ -77,7 +73,6 @@ result = process_order("invalid")  // ...and exits the script here
 print(result)
 ```
 
-<div class="result">
 ```
 Error at L2:13
 
@@ -85,7 +80,6 @@ Error at L2:13
               ^^^^^^^^^^^^^^^^^^^^^^
               parse_float() failed to parse "invalid" (RAD20002)
 ```
-</div>
 
 The error originates in `parse_float`, propagates through `calculate_discount`, then through `process_order`, and finally exits at the top level. At any point in this chain, we could choose to handle the error instead of letting it propagate.
 
@@ -99,7 +93,7 @@ The `catch:` block gives you full control over error handling. Attach it as a su
 
 Here's how to handle our age parsing example gracefully:
 
-```rad linenums="1" title="File: age"
+```rad
 args:
     age_str str
 
@@ -116,12 +110,10 @@ Now when we run it with invalid input:
 rad age "not-a-number"
 ```
 
-<div class="result">
 ```
 Invalid age, falling back to 0: parse_int() failed to parse "not-a-number"
 Age: 0
 ```
-</div>
 
 The script **continues running** with our fallback value. Inside the `catch:` block, the `age` variable contains the
 error string, as returned by `parse_int`, which we can log or inspect. We then reassign `age` to a sensible default value of `0`.
@@ -137,7 +129,7 @@ To summarize:
 
 Sometimes you want to fail fast - handle the error just enough to log a helpful message, then exit:
 
-```rad linenums="1" title="File: readconfig"
+```rad
 args:
     config_file str
 
@@ -155,11 +147,9 @@ Running this with a non-existent file:
 rad readconfig "missing.txt"
 ```
 
-<div class="result">
 ```
 Failed to read config: open missing.txt: no such file or directory
 ```
-</div>
 
 This example is not much better than the default error propagation and exit, but you can imagine providing
 more useful guidance to users in a more detailed error message.
@@ -168,7 +158,7 @@ more useful guidance to users in a more detailed error message.
 
 Sometimes you want to ignore errors entirely - the operation might fail, but that's perfectly fine and requires no action:
 
-```rad linenums="1"
+```rad
 // Custom fn to clean up temp file if it exists
 delete_path(temp_file) catch:
     pass  // File already doesn't exist, that's fine
@@ -226,9 +216,9 @@ Like `??`, `catch` supports lazy evaluation and chaining:
 result = risky_call() catch fallback_call() catch "final default"
 ```
 
-!!! note "Not to be confused with `catch:` blocks"
+**Note: Not to be confused with `catch:` blocks**
 
-    The `catch` operator is an inline expression. The `catch:` block (with a colon) is a statement-level construct covered [above](#catch-blocks) that gives you full control, including logging and conditional exit.
+    The `catch` operator is an inline expression. The `catch:` block (with a colon) is a statement-level construct covered above that gives you full control, including logging and conditional exit.
 
 ### Comparing `??`, `catch`, and `catch:`
 
@@ -247,7 +237,7 @@ age = parse_int(age_str) catch:
     age = 0
 ```
 
-!!! tip "When to use which"
+**Tip: When to use which**
 
     Use `??` when you want a default for both null and error cases.
     Use `catch` when you only want to handle errors and null is a valid value.
@@ -258,7 +248,7 @@ age = parse_int(age_str) catch:
 When writing your own functions, you can return errors using the `error(str)` function.
 If you're using type annotations, then functions that may return errors should reflect that in its return type: `T|error`.
 
-```rad linenums="1"
+```rad
 fn validate_port(port: int) -> int|error:
     if port < 1 or port > 65535:
         return error("Port must be between 1-65535, got {port}")
@@ -276,11 +266,9 @@ fn start_server(port_str: str) -> void:
 start_server("99999")
 ```
 
-<div class="result">
 ```
 Invalid port: Port must be between 1-65535, got 99999
 ```
-</div>
 
 Our custom error message provides clear feedback about what went wrong.
 By returning `int|error`, the type signature tells you three things:
@@ -298,9 +286,9 @@ This pattern is used throughout Rad's built-in functions:
 
 The error union makes your code self-documenting - anyone reading your function signature knows immediately that it can fail.
 
-!!! info "More on Union Types"
+**Info: More on Union Types**
 
-    We covered union types in detail in an earlier section: [Type Annotations](./type-annotations.md#union-types).
+    We covered union types in detail in an earlier section: Type Annotations (rad docs guide/type-annotations).
     Error unions are just one application of Rad's union type system.
 
 ## Summary
@@ -325,4 +313,4 @@ Rad's error handling model gives you the tools to write robust scripts that hand
 ## Next
 
 CLI scripts and the shell go hand in hand, and Rad offers first-class support for invoking shell commands and handling its output.
-We explore this in the next section: [Shell Commands](./shell-commands.md).
+We explore this in the next section: Shell Commands (rad docs guide/shell-commands).

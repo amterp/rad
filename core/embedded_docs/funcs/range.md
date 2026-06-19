@@ -1,0 +1,27 @@
+# range
+
+Returns a list of numbers covering the half-open interval
+`[start, stop)`. With one argument, `start` defaults to 0. The list
+type matches the inputs - all ints produces an `int[]`, any float
+produces a `float[]`.
+
+```rad
+range(_arg1: float|int, _arg2: (float|int)?, _step: float|int = 1) -> float[]|int[]
+```
+
+```rad
+range(5)              // -> [0, 1, 2, 3, 4]
+range(1, 5)           // -> [1, 2, 3, 4]
+range(0, 1, 0.25)     // -> [0.0, 0.25, 0.5, 0.75]
+range(10, 0, -2)      // -> [10, 8, 6, 4, 2]
+```
+
+## Parameters
+
+- `_arg1` (`float|int`): when `_arg2` is null, this is the upper
+- `_arg2` (`optional `float|int`): the upper bound `stop`. The
+- `_step` (`float|int`, default `1`): the spacing between
+
+## See also
+
+`for`, `len`

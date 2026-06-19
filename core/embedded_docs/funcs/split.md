@@ -1,0 +1,22 @@
+# split
+
+Splits a string using regex pattern as delimiter. Does not preserve string color attributes.
+
+```rad
+split(_val: str, _sep: str, *, limit: int?) -> str[]
+```
+
+```rad
+split("a,b,c", ",")               // -> ["a", "b", "c"]
+split("word1 word2", "\\s+")      // -> ["word1", "word2"]
+split("abc123def", "\\d+")        // -> ["abc", "def"]
+split("key=val=ue", "=", limit=1) // -> ["key", "val=ue"]
+split("a,b,c,d", ",", limit=2)    // -> ["a", "b", "c,d"]
+```
+
+## Notes
+
+The `_sep` parameter is treated as a regex pattern if valid, otherwise as literal string.
+
+When `limit` is provided, it caps the number of splits performed. The final element contains
+the unsplit remainder. `limit` must be >= 1.

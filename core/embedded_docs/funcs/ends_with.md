@@ -1,0 +1,12 @@
+# ends_with
+
+Checks if a string ends with a given substring.
+
+```rad
+ends_with(_val: str, _end: str) -> bool
+```
+
+```rad
+ends_with("hello world", "world")    // -> true
+ends_with("hello world", "hello")    // -> false
+```

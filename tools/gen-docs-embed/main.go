@@ -10,10 +10,13 @@
 //   - llms.txt / llms-full.txt (docs-web/hooks/generate_llms_txt.py)
 //   - rad docs (this generator)
 //
-// To keep all three in lockstep, the front-matter-stripping and
-// title-resolution rules here intentionally mirror the Python hook
-// (`_strip_front_matter`, `_resolve_title`, `_extract_h2s`,
-// `_parse_nav`). The drift gate test in core/testing guards parity
+// The Python hook resolves titles/H2s/nav the same way for its table
+// of contents, so those rules here (`_strip_front_matter`,
+// `_resolve_title`, `_extract_h2s`, `_parse_nav`) intentionally mirror
+// it. For the full page bodies, the hook now reads this generator's
+// cleaned output (core/embedded_docs/) rather than re-cleaning the raw
+// sources, so llms-full.txt and `rad docs all` are byte-for-byte the
+// same content. The drift gate test in core/testing guards parity
 // between the nav and the embedded tree.
 //
 // Behaviour:
@@ -24,7 +27,12 @@
 //     reference/syntax.md symlink to root SYNTAX.md, and reading the
 //     already-generated functions.md / errors.md), strips YAML front
 //     matter, resolves the title, and extracts H2s for the TOC.
-//   - Writes the stripped body to core/embedded_docs/<slug>.md and a
+//   - Normalizes the body through tools/docir: mkdocs-only markup
+//     (admonitions, content tabs, result <div>s, ragged GFM tables)
+//     and HTML-comment authoring notes don't survive a terminal
+//     renderer, so docir converts them to clean markdown that reads
+//     well both rendered in a TTY and piped raw into LLM context.
+//   - Writes the normalized body to core/embedded_docs/<slug>.md and a
 //     manifest.json capturing ordered {slug, section, title, h2s}.
 //   - Idempotent (no mtime bump when unchanged) and prunes stale
 //     slugs, like tools/gen-funcs-go.
@@ -39,10 +47,14 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 
+	"github.com/amterp/rad/rts"
+	"github.com/amterp/rad/tools/docir"
 	"gopkg.in/yaml.v3"
 )
 
@@ -73,14 +85,15 @@ var (
 
 func main() {
 	var (
-		navFile = flag.String("nav", "docs-web/mkdocs.yml", "path to mkdocs.yml (the nav manifest)")
-		docsDir = flag.String("docs", "docs-web/docs", "path to the docs-web/docs/ directory")
-		target  = flag.String("out", "core/embedded_docs", "path to the embedded_docs output directory")
-		dryRun  = flag.Bool("dry-run", false, "print planned actions without writing")
+		navFile  = flag.String("nav", "docs-web/mkdocs.yml", "path to mkdocs.yml (the nav manifest)")
+		docsDir  = flag.String("docs", "docs-web/docs", "path to the docs-web/docs/ directory")
+		funcsDir = flag.String("funcs", "docs/funcs", "path to the docs/funcs/ directory (per-function source of truth)")
+		target   = flag.String("out", "core/embedded_docs", "path to the embedded_docs output directory")
+		dryRun   = flag.Bool("dry-run", false, "print planned actions without writing")
 	)
 	flag.Parse()
 
-	if err := run(*navFile, *docsDir, *target, *dryRun); err != nil {
+	if err := run(*navFile, *docsDir, *funcsDir, *target, *dryRun); err != nil {
 		fmt.Fprintf(os.Stderr, "gen-docs-embed: %v\n", err)
 		os.Exit(1)
 	}
@@ -101,9 +114,10 @@ type docPageMeta struct {
 
 type manifest struct {
 	Pages []docPageMeta `json:"pages"`
+	Funcs []string      `json:"funcs"`
 }
 
-func run(navFile, docsDir, target string, dryRun bool) error {
+func run(navFile, docsDir, funcsDir, target string, dryRun bool) error {
 	navBytes, err := os.ReadFile(navFile)
 	if err != nil {
 		return fmt.Errorf("read nav %s: %w", navFile, err)
@@ -131,6 +145,55 @@ func run(navFile, docsDir, target string, dryRun bool) error {
 		return fmt.Errorf("no embeddable pages found in %s nav", navFile)
 	}
 
+	// Per-function pages: docs/funcs/<name>.md is the source of truth.
+	// `rad docs <name>` resolves to these (routed like an error code).
+	// Loaded first so the link rewriter knows which names are addressable.
+	funcDocs, err := loadFuncDocs(funcsDir)
+	if err != nil {
+		return err
+	}
+	sort.Slice(funcDocs, func(i, j int) bool { return funcDocs[i].Name < funcDocs[j].Name })
+
+	funcNames := make([]string, 0, len(funcDocs))
+	funcSet := make(map[string]bool, len(funcDocs))
+	for _, fn := range funcDocs {
+		if fn.Name == "all" {
+			return fmt.Errorf("a function named %q would shadow `rad docs all`", fn.Name)
+		}
+		funcNames = append(funcNames, fn.Name)
+		funcSet[fn.Name] = true
+	}
+
+	// Slug set drives link resolution: a relative .md link resolving to
+	// a known page becomes `rad docs <slug>`.
+	slugSet := make(map[string]bool, len(kept))
+	for _, p := range kept {
+		slugSet[strings.TrimSuffix(p.path, ".md")] = true
+	}
+
+	// normalize is the shared cleanup: rewrite web links first (so table
+	// alignment reflects the final cell text), then parse + emit through
+	// docir to strip mkdocs-only markup and align tables. baseSlug gives
+	// the link rewriter the page's location for resolving relative paths.
+	normalize := func(src, baseSlug string) []byte {
+		src = docir.RewriteInlineLinks(src, func(linkText, href string) string {
+			return resolveDocLink(linkText, href, baseSlug, slugSet, funcSet)
+		})
+		return []byte(docir.EmitTerminal(docir.Parse(src)))
+	}
+
+	type stagedFunc struct {
+		name string
+		body []byte
+	}
+	stagedFuncs := make([]stagedFunc, 0, len(funcDocs))
+	for _, fn := range funcDocs {
+		stagedFuncs = append(stagedFuncs, stagedFunc{
+			name: fn.Name,
+			body: normalize(renderFuncPage(fn), "reference/functions"),
+		})
+	}
+
 	type staged struct {
 		meta docPageMeta
 		body []byte
@@ -151,7 +214,7 @@ func run(navFile, docsDir, target string, dryRun bool) error {
 				Title:   resolveTitle(text, p.title, p.path),
 				H2s:     extractH2s(text),
 			},
-			body: []byte(stripFrontMatter(text)),
+			body: normalize(stripFrontMatter(text), slug),
 		})
 	}
 
@@ -162,29 +225,40 @@ func run(navFile, docsDir, target string, dryRun bool) error {
 	}
 
 	wrote := 0
-	want := make(map[string]struct{}, len(stagedPages)+1)
-	for _, sp := range stagedPages {
-		rel := filepath.FromSlash(sp.meta.Slug + ".md")
+	want := make(map[string]struct{}, len(stagedPages)+len(stagedFuncs)+1)
+	writeFile := func(rel string, body []byte) error {
 		want[rel] = struct{}{}
 		dst := filepath.Join(target, rel)
 		if dryRun {
 			fmt.Printf("would write %s\n", dst)
-			continue
+			return nil
 		}
 		if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 			return fmt.Errorf("mkdir %s: %w", filepath.Dir(dst), err)
 		}
-		if existing, err := os.ReadFile(dst); err == nil && string(existing) == string(sp.body) {
-			continue // already in sync, don't bump mtime
+		if existing, err := os.ReadFile(dst); err == nil && string(existing) == string(body) {
+			return nil // already in sync, don't bump mtime
 		}
-		if err := os.WriteFile(dst, sp.body, 0o644); err != nil {
+		if err := os.WriteFile(dst, body, 0o644); err != nil {
 			return fmt.Errorf("write %s: %w", dst, err)
 		}
 		wrote++
+		return nil
+	}
+
+	for _, sp := range stagedPages {
+		if err := writeFile(filepath.FromSlash(sp.meta.Slug+".md"), sp.body); err != nil {
+			return err
+		}
+	}
+	for _, sf := range stagedFuncs {
+		if err := writeFile(filepath.FromSlash("funcs/"+sf.name+".md"), sf.body); err != nil {
+			return err
+		}
 	}
 
 	// Write the manifest (deterministic: ordered by nav, indented).
-	m := manifest{Pages: make([]docPageMeta, 0, len(stagedPages))}
+	m := manifest{Pages: make([]docPageMeta, 0, len(stagedPages)), Funcs: funcNames}
 	for _, sp := range stagedPages {
 		m.Pages = append(m.Pages, sp.meta)
 	}
@@ -209,8 +283,138 @@ func run(navFile, docsDir, target string, dryRun bool) error {
 		return err
 	}
 
-	fmt.Printf("gen-docs-embed: %d pages; %d updated; %d pruned\n", len(stagedPages), wrote, removed)
+	fmt.Printf("gen-docs-embed: %d pages; %d functions; %d updated; %d pruned\n",
+		len(stagedPages), len(stagedFuncs), wrote, removed)
 	return nil
+}
+
+// resolveDocLink turns a markdown link into terminal-friendly text.
+// Web links keep the bare URL (the runtime renderer auto-links those);
+// relative .md links that resolve to a known page or function become
+// "text (rad docs <topic>)"; everything else (in-page anchors, images,
+// unknown targets) collapses to just the link text. baseSlug is the
+// current page's slug, used to resolve relative paths.
+func resolveDocLink(text, href, baseSlug string, slugs, funcs map[string]bool) string {
+	text = strings.TrimSpace(text)
+	if strings.HasPrefix(href, "http://") || strings.HasPrefix(href, "https://") {
+		return text + " (" + href + ")"
+	}
+
+	rel, anchor := href, ""
+	if i := strings.Index(href, "#"); i >= 0 {
+		rel, anchor = href[:i], href[i+1:]
+	}
+	// Pure in-page anchor, or a non-page target (mailto, image): nothing
+	// to point at from a terminal, so keep just the text.
+	if rel == "" || !strings.HasSuffix(rel, ".md") {
+		return text
+	}
+
+	baseDir := ""
+	if i := strings.LastIndex(baseSlug, "/"); i >= 0 {
+		baseDir = baseSlug[:i]
+	}
+	target := path.Join(baseDir, strings.TrimSuffix(rel, ".md"))
+
+	// A deep link into the function reference (#pick) is best served by
+	// that function's own page.
+	if target == "reference/functions" && funcs[anchor] {
+		return text + " (rad docs " + anchor + ")"
+	}
+	if slugs[target] {
+		return text + " (rad docs " + target + ")"
+	}
+	return text
+}
+
+// loadFuncDocs parses every per-function doc under dir into a FuncDoc.
+// Mirrors gen-funcs-page's loader: non-function files (README, scratch
+// notes) are skipped via the stem validity check.
+func loadFuncDocs(dir string) ([]*rts.FuncDoc, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %w", dir, err)
+	}
+	var docs []*rts.FuncDoc
+	for _, e := range entries {
+		if e.IsDir() || !strings.HasSuffix(e.Name(), ".md") {
+			continue
+		}
+		stem := strings.TrimSuffix(e.Name(), ".md")
+		if !rts.IsValidFuncDocStem(stem) {
+			continue
+		}
+		body, err := os.ReadFile(filepath.Join(dir, e.Name()))
+		if err != nil {
+			return nil, fmt.Errorf("read %s: %w", e.Name(), err)
+		}
+		doc, err := rts.ParseFuncDoc(stem, string(body))
+		if err != nil {
+			return nil, fmt.Errorf("parse %s: %w", e.Name(), err)
+		}
+		docs = append(docs, doc)
+	}
+	return docs, nil
+}
+
+// renderFuncPage reconstructs a standalone `rad docs <name>` page from
+// a parsed FuncDoc. Unlike the compact aggregate (gen-funcs-page),
+// this is the deep-dive view: an H1 name, all examples, and structured
+// Parameters/Notes/See also sections. The `## Category` metadata is
+// deliberately omitted - it's a docs-pipeline detail, not user content.
+func renderFuncPage(fn *rts.FuncDoc) string {
+	var b strings.Builder
+	b.WriteString("# ")
+	b.WriteString(fn.Name)
+	b.WriteString("\n\n")
+	if fn.Description != "" {
+		b.WriteString(fn.Description)
+		b.WriteString("\n\n")
+	}
+	b.WriteString("```rad\n")
+	b.WriteString(fn.Signature)
+	b.WriteString("\n```\n")
+	for _, ex := range fn.Examples {
+		b.WriteString("\n```rad\n")
+		b.WriteString(strings.TrimRight(ex, "\n"))
+		b.WriteString("\n```\n")
+	}
+	if len(fn.Parameters) > 0 {
+		b.WriteString("\n## Parameters\n\n")
+		for _, p := range fn.Parameters {
+			b.WriteString("- `")
+			b.WriteString(p.Name)
+			b.WriteString("`")
+			if p.Type != "" {
+				b.WriteString(" (`")
+				b.WriteString(p.Type)
+				b.WriteString("`)")
+			}
+			if p.Description != "" {
+				b.WriteString(": ")
+				b.WriteString(p.Description)
+			}
+			b.WriteString("\n")
+		}
+	}
+	if strings.TrimSpace(fn.Notes) != "" {
+		b.WriteString("\n## Notes\n\n")
+		b.WriteString(strings.TrimSpace(fn.Notes))
+		b.WriteString("\n")
+	}
+	if len(fn.SeeAlso) > 0 {
+		b.WriteString("\n## See also\n\n")
+		for i, name := range fn.SeeAlso {
+			if i > 0 {
+				b.WriteString(", ")
+			}
+			b.WriteString("`")
+			b.WriteString(name)
+			b.WriteString("`")
+		}
+		b.WriteString("\n")
+	}
+	return b.String()
 }
 
 // parseNav walks the nav config and appends (section, path, title)

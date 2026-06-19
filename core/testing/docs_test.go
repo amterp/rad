@@ -33,6 +33,17 @@ func TestDocsManifestConsistency(t *testing.T) {
 		manifestSlugs[p.Slug] = true
 	}
 
+	// Per-function pages are addressable by bare name; on disk they
+	// live under funcs/<name>.md (slug "funcs/<name>").
+	funcs := core.GetDocFuncs()
+	require.NotEmpty(t, funcs, "manifest funcs list is empty - did gen-docs-embed run?")
+	for _, name := range funcs {
+		content, ok := core.GetFuncDoc(name)
+		assert.Truef(t, ok, "manifest func %q has no embedded file", name)
+		assert.NotEmptyf(t, content, "manifest func %q is empty", name)
+		manifestSlugs["funcs/"+name] = true
+	}
+
 	// Every embedded .md on disk must be in the manifest (no orphans
 	// left behind by a stale generation).
 	root := "../embedded_docs"
@@ -57,6 +68,42 @@ func TestDocsManifestConsistency(t *testing.T) {
 	}
 }
 
+// TestEmbeddedCorpusIsClean guards that the embedded corpus carries no
+// mkdocs-only markup or authoring comments - those don't survive the
+// terminal renderer and used to leak as literal noise (and into piped
+// LLM context). gen-docs-embed normalizes them through tools/docir; if
+// this regresses, the source authored a construct docir doesn't handle.
+func TestEmbeddedCorpusIsClean(t *testing.T) {
+	banned := map[string]string{
+		"[//]:":  "authoring comment",
+		"!!!":    "admonition",
+		`=== "`:  "content tab",
+		"<div":   "raw HTML wrapper",
+		"</div>": "raw HTML wrapper",
+	}
+	root := "../embedded_docs"
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() || !strings.HasSuffix(path, ".md") {
+			return nil
+		}
+		content, readErr := os.ReadFile(path)
+		require.NoError(t, readErr)
+		rel, _ := filepath.Rel(root, path)
+		for _, line := range strings.Split(string(content), "\n") {
+			trimmed := strings.TrimSpace(line)
+			for marker, desc := range banned {
+				assert.Falsef(t, strings.HasPrefix(trimmed, marker),
+					"%s: %s leaked into embedded corpus: %q", rel, desc, line)
+			}
+		}
+		return nil
+	})
+	require.NoError(t, err)
+}
+
 // TestDocsTopicResolution verifies `rad docs <topic>` routing: error
 // codes (with or without the RAD prefix) resolve to error docs, page
 // slugs resolve to pages, and unknown topics miss. This is what makes
@@ -74,6 +121,11 @@ func TestDocsTopicResolution(t *testing.T) {
 	// Page slugs route to pages.
 	_, ok = core.GetDocTopic("reference/functions")
 	assert.True(t, ok, "reference/functions should resolve")
+
+	// Bare function names route to per-function pages.
+	fnDoc, ok := core.GetDocTopic("len")
+	require.True(t, ok, "rad docs len should resolve to a function page")
+	assert.Contains(t, fnDoc, "len", "function page should mention the function")
 
 	// Unknown topics miss.
 	_, ok = core.GetDocTopic("nonsense")

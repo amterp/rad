@@ -1,0 +1,18 @@
+# matches
+
+Tests whether `_str` matches the regular-expression `_pattern`. By default the pattern must match the whole string; pass `partial=true` to match any substring. Returns an `error` when the pattern is malformed.
+
+```rad
+matches(_str: str, _pattern: str, *, partial: bool = false) -> bool|error
+```
+
+```rad
+matches("hello", "h.+o")               // -> true
+matches("hello world", "world")        // -> false (default is full-string match)
+matches("hello world", "world", partial=true)  // -> true
+matches("abc", "(")                    // -> error: invalid regex
+```
+
+## See also
+
+`replace`, `split`

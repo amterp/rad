@@ -1,6 +1,6 @@
 ## Preview
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -78,17 +78,17 @@ We can use `rad` to create the script file for us.
 rad new epoch -s
 ```
 
-This will set us up with an executable script named `epoch`, and the `-s` simplifies the template it's instantiated with to contain *just* a [shebang](../guide/getting-started.md#shebang).
+This will set us up with an executable script named `epoch`, and the `-s` simplifies the template it's instantiated with to contain *just* a shebang (rad docs guide/getting-started).
 
 The shebang will allow us to invoke the script as `epoch` from the CLI rather than writing out `rad ./epoch`. Open up `epoch` in your editor, and you should see something like this:
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 ```
 
 Let's begin editing it. First, we want to quickly describe what the script is aiming to do, so we'll add a file header.
 
-```rad linenums="1" hl_lines="2-4"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -99,7 +99,7 @@ Convert epoch timestamps to human-readable times across multiple timezones.
 
 We want the script to accept an epoch timestamp, but it should also work without one - defaulting to the current time. We declare this with `int?`, where the `?` makes it optional (it will be `null` if not provided).
 
-```rad linenums="1" hl_lines="5-6"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -110,7 +110,7 @@ args:
 
 Now we handle the case where no epoch was provided:
 
-```rad linenums="1" hl_lines="8-10"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -123,13 +123,13 @@ if not epoch:
     print("Epoch millis: {epoch.yellow()}")
 ```
 
-The [`now()`](../reference/functions.md#now) function returns a map with various time fields. We access `.epoch.millis` to get the current epoch in milliseconds, then print it so the user knows what value we're working with.
+The `now()` (rad docs now) function returns a map with various time fields. We access `.epoch.millis` to get the current epoch in milliseconds, then print it so the user knows what value we're working with.
 
 ### Setting up our timezone data
 
 We'll store our timezones alongside their flag emoji in a list of pairs. Each inner list contains `[timezone_id, flag]`:
 
-```rad linenums="1" hl_lines="12-17"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -153,9 +153,9 @@ tz_to_flag = [
 
 For our table output, we need two columns: `Timezone` (for display) and `Time` (the converted times).
 
-First, let's create the `Timezone` column. We want it to show the flag followed by the timezone name, like "🇬🇧 Europe/London". We'll use [`.map()`](../reference/functions.md#map) with a lambda to transform each pair:
+First, let's create the `Timezone` column. We want it to show the flag followed by the timezone name, like "🇬🇧 Europe/London". We'll use `.map()` (rad docs map) with a lambda to transform each pair:
 
-```rad linenums="1" hl_lines="19"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -179,8 +179,10 @@ Timezone = tz_to_flag.map(fn(x) "{x[1]} {x[0]}")
 
 Each `x` is a `[timezone, flag]` pair, so `x[1]` is the flag and `x[0]` is the timezone name. We interpolate them into a string with the flag first.
 
-!!! tip "List comprehension alternative"
+**Tip: List comprehension alternative**
+
     You could also write this as a list comprehension, which is a bit more concise in this case:
+
     ```rad
     Timezone = ["{x[1]} {x[0]}" for x in tz_to_flag]
     ```
@@ -189,7 +191,7 @@ Each `x` is a `[timezone, flag]` pair, so `x[1]` is the flag and `x[0]` is the t
 
 Now we need to build the `Time` column by converting the epoch for each timezone. When iterating over a list of lists, we can *unpack* each inner list directly into named variables:
 
-```rad linenums="1" hl_lines="21-24"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -232,7 +234,7 @@ We're calling a `parse_time` function we haven't written yet - let's do that nex
 
 We'll define a function that takes an epoch and timezone, then returns a formatted string:
 
-```rad linenums="1" hl_lines="28-32"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -265,15 +267,15 @@ fn parse_time(epoch: int, tz: str) -> str:
     return "{time.date} {time.time}"
 ```
 
-The [`parse_epoch()`](../reference/functions.md#parse_epoch) function converts an epoch timestamp to a time map, accepting a `tz` parameter for the timezone. We then format the `.date` and `.time` fields into a string.
+The `parse_epoch()` (rad docs parse_epoch) function converts an epoch timestamp to a time map, accepting a `tz` parameter for the timezone. We then format the `.date` and `.time` fields into a string.
 
 Note the type annotations `epoch: int, tz: str` and `-> str` - these are optional but help document what the function expects and returns.
 
 ### The rad block
 
-Finally, we use a [`rad` block](../guide/rad-blocks.md) (with no source) to render our two columns as a formatted table:
+Finally, we use a `rad` block (rad docs guide/rad-blocks) (with no source) to render our two columns as a formatted table:
 
-```rad linenums="1" hl_lines="26-27"
+```rad
 #!/usr/bin/env rad
 ---
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -334,14 +336,14 @@ Timezone                Time
 
 ## Concepts demonstrated
 
-| Concept | Where |
-|---------|-------|
-| [Optional arguments](../guide/args.md) | `epoch int?` |
-| Null checking | `if not epoch:` |
-| [Built-in `now()`](../reference/functions.md#now) | `now().epoch.millis` |
-| [List of lists](../guide/basics.md#list) | `tz_to_flag` |
-| [`.map()` with lambdas](../reference/functions.md#map) | `tz_to_flag.map(fn(x) ...)` |
-| [Loop unpacking](../guide/basics.md#for-loops) | `for tz, _ in tz_to_flag:` |
-| [Functions with types](../guide/functions.md) | `fn parse_time(epoch: int, tz: str) -> str:` |
-| [`parse_epoch()`](../reference/functions.md#parse_epoch) | Time conversion |
-| [`rad` blocks](../guide/rad-blocks.md) | Tabular output |
+| Concept                                         | Where                                        |
+| ----------------------------------------------- | -------------------------------------------- |
+| Optional arguments (rad docs guide/args)        | `epoch int?`                                 |
+| Null checking                                   | `if not epoch:`                              |
+| Built-in `now()` (rad docs now)                 | `now().epoch.millis`                         |
+| List of lists (rad docs guide/basics)           | `tz_to_flag`                                 |
+| `.map()` with lambdas (rad docs map)            | `tz_to_flag.map(fn(x) ...)`                  |
+| Loop unpacking (rad docs guide/basics)          | `for tz, _ in tz_to_flag:`                   |
+| Functions with types (rad docs guide/functions) | `fn parse_time(epoch: int, tz: str) -> str:` |
+| `parse_epoch()` (rad docs parse_epoch)          | Time conversion                              |
+| `rad` blocks (rad docs guide/rad-blocks)        | Tabular output                               |

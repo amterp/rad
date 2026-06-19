@@ -27,6 +27,7 @@ type DocPage struct {
 
 var (
 	docsManifest     []DocPage
+	docsFuncs        []string
 	docsManifestOnce sync.Once
 )
 
@@ -37,17 +38,26 @@ func loadDocsManifest() {
 	}
 	var m struct {
 		Pages []DocPage `json:"pages"`
+		Funcs []string  `json:"funcs"`
 	}
 	if err := json.Unmarshal(data, &m); err != nil {
 		return
 	}
 	docsManifest = m.Pages
+	docsFuncs = m.Funcs
 }
 
 // GetDocsManifest returns the embedded doc pages in nav order.
 func GetDocsManifest() []DocPage {
 	docsManifestOnce.Do(loadDocsManifest)
 	return docsManifest
+}
+
+// GetDocFuncs returns the names of every built-in with an embedded
+// per-function doc page (i.e. every `rad docs <name>` that resolves).
+func GetDocFuncs() []string {
+	docsManifestOnce.Do(loadDocsManifest)
+	return docsFuncs
 }
 
 // GetDocSlugs returns every page slug, in nav order. Used to
@@ -77,17 +87,34 @@ func GetDocPage(slug string) (string, bool) {
 // or letters, so they never collide with this.
 var errorCodePattern = regexp.MustCompile(`(?i)^(?:rad)?(\d{4,6})$`)
 
+// GetFuncDoc returns the per-function doc page for a built-in (e.g.
+// "len"), or false if no such function is documented.
+func GetFuncDoc(name string) (string, bool) {
+	content, err := docFiles.ReadFile("embedded_docs/funcs/" + name + ".md")
+	if err != nil {
+		return "", false
+	}
+	return strings.TrimSpace(string(content)), true
+}
+
 // GetDocTopic resolves a `rad docs <topic>` argument to raw markdown.
-// It accepts both page slugs and error codes, so `rad docs` is the
-// single entry point: `rad docs guide/basics` prints a page, while
-// `rad docs RAD10001` prints that error's doc (the old `rad explain`
-// behavior). Returns false if the topic matches neither.
+// It's the single entry point, accepting (in precedence order) error
+// codes, built-in function names, and page slugs: `rad docs RAD10001`
+// explains an error, `rad docs len` prints a function's doc, and
+// `rad docs guide/basics` prints a page. Precedence is unambiguous -
+// error codes are digits, function names are bare identifiers, and
+// page slugs always contain a "/". Returns false if nothing matches.
 func GetDocTopic(topic string) (string, bool) {
 	if m := errorCodePattern.FindStringSubmatch(topic); m != nil {
 		if doc := GetErrorDoc(m[1]); doc != "" {
 			return doc, true
 		}
 		return "", false
+	}
+	if !strings.Contains(topic, "/") {
+		if doc, ok := GetFuncDoc(topic); ok {
+			return doc, true
+		}
 	}
 	return GetDocPage(topic)
 }
@@ -98,7 +125,8 @@ func GetDocTopic(topic string) (string, bool) {
 func BuildDocsTOC() string {
 	var b strings.Builder
 	b.WriteString("# Rad Documentation\n\n")
-	b.WriteString("Run `rad docs <topic>` to print a page, `rad docs all` for the full corpus, ")
+	b.WriteString("Run `rad docs <topic>` to print a page, `rad docs <function>` for a built-in ")
+	b.WriteString("(e.g. `rad docs len`), `rad docs all` for the full corpus, ")
 	b.WriteString("or `rad docs RAD<code>` (e.g. `rad docs RAD10001`) to explain an error code.\n")
 
 	section := ""

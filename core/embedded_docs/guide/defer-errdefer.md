@@ -8,7 +8,7 @@ You may wish to use them to clean up or undo operations before exiting.
 
 Here is an example:
 
-```rad title="defer.rad"
+```rad
 $`mv notes.txt notes-tmp.txt`
 defer:
     $`mv notes-tmp.txt notes.txt`
@@ -18,7 +18,7 @@ $`echo "hi!" >> notes.txt`
 $`cat notes.txt`
 ```
 
-Let's say we already have a file `notes.txt` containing some text. In this script, we take the following steps, largely by invoking [shell commands](./shell-commands.md):
+Let's say we already have a file `notes.txt` containing some text. In this script, we take the following steps, largely by invoking shell commands (rad docs guide/shell-commands):
 
 1. Rename `notes.txt` to `notes-tmp.txt`
 2. Define a `defer` block which will undo the rename, and then print `Moved back!`.
@@ -31,7 +31,6 @@ When run:
 rad defer.rl
 ```
 
-<div class="result">
 ```
 ⚡️ Running: mv notes.txt notes-tmp.txt
 ⚡️ Running: echo "hi!" >> notes.txt
@@ -40,7 +39,6 @@ hi!
 ⚡️ Running: mv notes-tmp.txt notes.txt
 Moved back!
 ```
-</div>
 
 Note that despite the `Moved back!` print statement appearing *earlier* in the script, it only gets run at the end due to being in a `defer` block.
 
@@ -54,7 +52,7 @@ Below is an example of a version-bumping script. Using `sed`, this script replac
 and commits it. However, if there's a failure in between the `sed` and `commit` steps, then we want to undo earlier steps as a cleanup, in order to
 make the script *atomic* i.e. it either succeeds entirely or does nothing, leaving no intermediary state changes behind. We accomplish this through `errdefer` blocks. 
 
-```rad title="bump.rad"
+```rad
 args:
     version str
 
@@ -86,7 +84,7 @@ We include a couple of "failure points". We can set their condition to `true` to
 
 Before we do that though, we can see an example of this script working correctly. Let's say we define our `VERSION` file in the same directory as the script as follows:
 
-```txt title="VERSION"
+```txt
 Version = 1
 ```
 
@@ -96,7 +94,6 @@ If we execute our script, we get the following output:
 rad bump.rl 2
 ```
 
-<div class="result">
 ```
 ⚡️ Running: sed -i '' "s/Version = .*/Version = 2/" VERSION
 ⚡️ Running: git add VERSION
@@ -105,7 +102,6 @@ rad bump.rl 2
  1 file changed, 1 insertion(+), 1 deletion(-)
 Done!
 ```
-</div>
 
 We can see the series of commands get run as we expect, including output from git. Notice that none of our `errdefer` blocks ran, because there were no failures.
 
@@ -115,14 +111,12 @@ We can see the series of commands get run as we expect, including output from gi
 rad bump.rl 3
 ```
 
-<div class="result">
 ```
 ⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
 Oh no! ERROR!
 Undoing bump...
 ⚡️ Running: git checkout -- VERSION
 ```
-</div>
 
 If you run this locally, you should see with `git status` that there are no changes to the `VERSION` file, thanks to our `errdefer` block rolling back the `sed` replacement.
 
@@ -132,7 +126,6 @@ Next let's try deactivating failure point 1 again and enabling failure point 2, 
 rad bump.rl 3
 ```
 
-<div class="result">
 ```
 ⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
 ⚡️ Running: git add VERSION
@@ -142,7 +135,6 @@ Resetting VERSION...
 Undoing bump...
 ⚡️ Running: git checkout -- VERSION
 ```
-</div>
 
 Here we see a very important detail about defer blocks that applies both to `defer` and `errdefer` - if you have multiple, they run in LIFO (last in, first out) order. In other words, the defer blocks defined *later* run *first*.
 
@@ -164,4 +156,4 @@ If a script exits successfully and has multiple `defer` blocks, and the first on
 
 Now that you understand `defer`, you're ready to learn about **stashes** - Rad's built-in persistent storage that pairs perfectly with `defer` for saving state reliably.
 
-Continue to [Stashes](./stashes.md).
+Continue to Stashes (rad docs guide/stashes).

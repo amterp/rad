@@ -1,0 +1,12 @@
+# upper
+
+Converts a string to uppercase. Preserves color attributes.
+
+```rad
+upper(_val: str) -> str
+```
+
+```rad
+upper("hello")          // -> "HELLO"
+upper("Hello World")    // -> "HELLO WORLD"
+```

@@ -12,6 +12,9 @@ Prints the 'basics' guide page.
 > rad docs reference/functions
 Prints the function reference.
 
+> rad docs len
+Prints the doc for the 'len' built-in function.
+
 > rad docs all
 Prints the entire documentation corpus (the same set as llms-full.txt).
 
@@ -33,6 +36,9 @@ if web:
     url = `https://amterp.dev/rad`
     if _rad_docs_slugs().index_of(topic) != null:
         url = "{url}/{topic}"
+    else if _rad_docs_funcs().index_of(topic) != null:
+        // Functions live on the function reference page, anchored by name.
+        url = "{url}/reference/functions#{topic}"
     else if topic.starts_with("RAD") or parse_int(topic) != null:
         // Error codes live on the errors reference page.
         url = "{url}/reference/errors"
@@ -54,6 +60,6 @@ else:
     content = _rad_docs_get(topic)
     if content == null:
         print_err("Unknown docs topic: {topic}")
-        print_err("Run 'rad docs' to see available topics, or 'rad docs RAD<code>' to explain an error code.")
+        print_err("Run 'rad docs' to see available topics, 'rad docs <function>' (e.g. 'rad docs len') for a built-in, or 'rad docs RAD<code>' to explain an error code.")
         exit(1)
     print(_rad_render(content, mode))

@@ -614,7 +614,6 @@ Relational constraints:
 - `a excludes b`
 - `a mutually excludes b`
 
-
 ## Script Commands
 
 Organize CLI tools around subcommands, like `git commit` or `docker build`. The `args:` and `command` blocks must appear before any executable code.
@@ -684,7 +683,6 @@ command greet:
 - `./tool.rad -h` — lists all commands with descriptions
 - `./tool.rad deploy -h` — shows command-specific arguments
 
-
 ## Shell Commands
 
 ### Invocation (`$`) — critical by default
@@ -694,7 +692,7 @@ If an error propagates up to the root level of the script and doesn't get handle
 
 > **Note on signals:** Rad shares its process group with subprocesses, so
 > Ctrl+C reaches them too. The subprocess typically dies before Rad's signal
-> handler runs. See [Signal Handling](#signal-handling) for details.
+> handler runs. See Signal Handling for details.
 
 ```rad
 // Fails script if code != 0
@@ -876,11 +874,11 @@ rad:
 
 **Context fields:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `idx` | `int` | Current row index (0-based) |
-| `src` | `list` | Immutable snapshot of the full column data |
-| `field` | `str` | Name of the field being processed |
+| Field   | Type   | Description                                |
+| ------- | ------ | ------------------------------------------ |
+| `idx`   | `int`  | Current row index (0-based)                |
+| `src`   | `list` | Immutable snapshot of the full column data |
+| `field` | `str`  | Name of the field being processed          |
 
 ```rad
 // Filter to values below average
@@ -931,7 +929,7 @@ exit(0)  // defer blocks run just before this
 and routed through the normal exit path with code `128 + signal_number`.
 This means `defer` blocks run on Ctrl+C, and `errdefer` blocks run because
 the exit code is non-zero. Scripts that allocate temp files or write
-half-output get a chance to clean up. See [Signal Handling](#signal-handling)
+half-output get a chance to clean up. See Signal Handling
 below for custom handlers beyond auto-defer.
 
 ### Signal Handling
@@ -1142,7 +1140,6 @@ scores = {"alice": 1}
 has_alice = "alice" in scores   // true - "alice" is a key
 has_one = 1 in scores           // false - values aren't checked
 ```
-
 
 ### Coalescing Operator (`??`)
 

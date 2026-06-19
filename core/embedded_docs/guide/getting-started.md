@@ -1,6 +1,6 @@
 ## What is Rad?
 
-*If you want to jump straight to programming, feel free to skip forwards to [Installation](#installation).*
+*If you want to jump straight to programming, feel free to skip forwards to Installation.*
 
 **Rad is a modern programming language and interpreter designed to make writing CLI scripts delightful.** It has a familiar, Python-like syntax with
 built-in concepts like declarative arguments, JSON handling, first-class shell integration, and user prompts - making common scripting tasks easy and
@@ -57,7 +57,7 @@ For automated updates, use one of the supported package managers that allow it.
 
 ### Binary Downloads
 
-Pre-built binaries for macOS, Linux, and Windows: [releases page](https://github.com/amterp/rad/releases)
+Pre-built binaries for macOS, Linux, and Windows: releases page (https://github.com/amterp/rad/releases)
 
 Each release archive includes both `rad` (the interpreter) and `radls` (the language server).
 
@@ -75,7 +75,7 @@ If this prints the help string for Rad, you're set!
 
 ### Visual Studio Code
 
-Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which provides:
+Rad has a VS Code extension here (https://marketplace.visualstudio.com/items?itemName=amterp.rad-extension) which provides:
 
 - **Syntax highlighting** - makes your Rad code easy to read
 - **Real-time validation** - catches syntax errors as you type
@@ -83,9 +83,10 @@ Rad has a VS Code extension [here](https://marketplace.visualstudio.com/items?it
 
 Installing it is highly recommended!
 
-![vsc-example.png](../assets/vsc-example.png)
+!vsc-example.png
 
-!!! note "Language Server Requirement"
+**Note: Language Server Requirement**
+
     The VS Code extension uses the Rad Language Server (`radls`) for real-time validation and diagnostics.
     This is installed automatically when you install Rad via Homebrew or `go install`.
 
@@ -106,17 +107,17 @@ Let's write the classic "Hello, World!" program. We'll then modify it to give it
 
 First, create a file, let's call it simply `hello`, and give it the following contents:
 
-```rad linenums="1" hl_lines="0"
+```rad
 print("Hello, World!") 
 ```
 
-!!! tip "`print()`"
+**Tip: `print()`**
 
     `print()` is the go-to function for outputting to stdout. It behaves a lot like `print()` in Python.
 
-    You can read more about it [in the reference](../reference/functions.md#print).
+    You can read more about it in the reference (rad docs print).
 
-!!! info "File Extension"
+**Info: File Extension**
 
     If you want to give your Rad scripts an extension, you can use `.rad` as a convention.
 
@@ -126,11 +127,9 @@ Then, run the script from your CLI by invoking `rad` on it, and you should see i
 > rad hello
 ```
 
-<div class="result">
 ```
 Hello, World!
 ```
-</div>
 
 Nice! Now, let's spruce it up with a few Rad features.
 
@@ -140,7 +139,7 @@ One of Rad's primary features is its simple, declarative style to defining scrip
 
 Let's modify the script to greet a name you input from command line.
 
-```rad linenums="1" hl_lines="1-4"
+```rad
 args:
   name str
 
@@ -149,8 +148,8 @@ print("Hello, {name}!")
 
 A couple of things to note here:
 
-1. We define an "args block". Right now it contains just the one line, but [you can do lots of things in here](./args.md).
-2. The modified `print()` utilizes [string interpolation](strings-advanced.md#string-interpolation). String interpolation in Rad behaves a lot like it does in Python (you'll see this is a pattern).
+1. We define an "args block". Right now it contains just the one line, but you can do lots of things in here (rad docs guide/args).
+2. The modified `print()` utilizes string interpolation (rad docs guide/strings-advanced). String interpolation in Rad behaves a lot like it does in Python (you'll see this is a pattern).
 
 Now, let's try invoking the script again, and this time, input a name:
 
@@ -158,11 +157,9 @@ Now, let's try invoking the script again, and this time, input a name:
 > rad hello Alex
 ```
 
-<div class="result">
 ```
 Hello, Alex!
 ```
-</div>
 
 Cool! What happens if we invoke *without* a name?
 
@@ -170,7 +167,6 @@ Cool! What happens if we invoke *without* a name?
 > rad hello
 ```
 
-<div class="result">
 ```
 Usage:
   hello <name>
@@ -178,11 +174,10 @@ Usage:
 Script args:
       --name str
 ```
-</div>
 
 If you run a Rad script without providing *any* args to a script which expects at least one, Rad will print out the script usage, interpreting your invocation as if you had passed `--help`.
 
-!!! tip "Positional vs Flag Arguments"
+**Tip: Positional vs Flag Arguments**
 
     Arguments can be passed positionally or via flags. For example, both `./hello Alice` and `./hello --name Alice` work identically. The help text shows both forms: `<name>` for positional usage and `--name str` for the flag form.
 
@@ -194,7 +189,7 @@ Rad facilitates writing well-documented and easy-to-use scripts, in part through
 
 First, we'll add a **file header** to your script.
 
-```rad linenums="1" hl_lines="1-3"
+```rad
 ---
 Prints a polite greeting using an input name.
 ---
@@ -204,7 +199,7 @@ args:
 print("Hello, {name}!")
 ```
 
-!!! tip "File Headers"
+**Tip: File Headers**
 
     File headers, as the name suggests, go at the top of Rad scripts (with the exception of shebangs, to be covered later). 
     They allow you to write a description for your script in between two `---` lines. The contents will get printed as part of the script's usage string.
@@ -216,7 +211,7 @@ print("Hello, {name}!")
 
 Second, we can add **comments** to args that a script declares. Let's do that too:
 
-```rad linenums="1" hl_lines="5"
+```rad
 ---
 Prints a polite greeting using an input name.
 ---
@@ -226,7 +221,7 @@ args:
 print("Hello, {name}!")
 ```
 
-!!! info "Note on `#` vs. `//`"
+**Info: Note on `#` vs. `//`**
 
     Rad uses `#` to denote *arg* comments.
     `#` comments are special and **do get passed** to Rad's parser and can affect script behavior (namely in this case, adding information to the script usage string). 
@@ -241,7 +236,6 @@ But it gets better! Let's try invoking the script's usage string again (this tim
 > rad hello -h
 ```
 
-<div class="result">
 ```
 Prints a polite greeting using an input name.
 
@@ -251,7 +245,6 @@ Usage:
 Script args:
       --name str   The name of someone to greet.
 ```
-</div>
 
 Not only is the script now easier to maintain for developers, it's also easier for users to understand!
 
@@ -261,7 +254,7 @@ Needing to manually invoke `rad` each time you want to run a Rad script can be a
 
 Let's add one to our script. It has to go on the very first line.
 
-```rad linenums="1" hl_lines="1"
+```rad
 #!/usr/bin/env rad
 ---
 Prints a polite greeting using an input name.
@@ -284,23 +277,23 @@ Now, you can invoke the script directly:
 > ./hello Bob
 ```
 
-<div class="result">
 ```
 Hello, Bob!
 ```
-</div>
 
 When you invoke an executable script this way, the kernel scans for a shebang (`#!`) in the first line.
 If it finds a path to an interpreter (in this case, it will find `rad`, if set up correctly in your `PATH`),
 then it will invoke said interpreter on the script (equivalent to `rad hello` like we were doing before).
 
-!!! tip "rad new"
+**Tip: rad new**
+
     Rad has a command `rad new <script>` which saves you repeating these steps.
     It creates a ready-to-edit executable file with a `rad` shebang on the top.
 
-!!! tip "Tab completion"
+**Tip: Tab completion**
+
     Once you have scripts on your PATH, you can enable tab completion for them.
-    See [Shell Completion](./shell-completion.md) for setup instructions.
+    See Shell Completion (rad docs guide/shell-completion) for setup instructions.
 
 ## A Complete Example
 
@@ -309,7 +302,7 @@ Don't worry - we'll cover everything in detail in later sections. For now, just 
 
 Update your `hello` script to this:
 
-```rad linenums="1" hl_lines="0"
+```rad
 #!/usr/bin/env rad
 ---
 Prints a polite greeting using an input name.
@@ -351,13 +344,11 @@ Normal usage with short flags:
 > ./hello Alice -t 3 -s excited
 ```
 
-<div class="result">
 ```
 HEY, Alice!
 HEY, Alice!
 HEY, Alice!
 ```
-</div>
 
 Check the automatically generated help:
 
@@ -365,7 +356,6 @@ Check the automatically generated help:
 > ./hello -h
 ```
 
-<div class="result">
 ```
 Prints a polite greeting using an input name.
 
@@ -377,7 +367,6 @@ Script args:
   -t, --times int   How many times to greet them. Range: (0, 10] (default 1)
   -s, --style str   Greeting style. Valid values: [normal, excited, formal] (default normal)
 ```
-</div>
 
 Note how the constraints appear in the help automatically.
 
@@ -389,11 +378,9 @@ Try providing an invalid range:
 > ./hello Bob -t 15
 ```
 
-<div class="result">
 ```
 'times' value 15 is > maximum 10
 ```
-</div>
 
 Try an invalid enum value:
 
@@ -401,11 +388,9 @@ Try an invalid enum value:
 > ./hello Bob -s casual
 ```
 
-<div class="result">
 ```
 Invalid 'style' value: casual (valid values: normal, excited, formal)
 ```
-</div>
 
 **You didn't write any of this validation code.**
 Rad enforced the constraints you declared and generated helpful error messages automatically.
@@ -424,18 +409,18 @@ In this section, we were introduced to several key features:
 
 Features you'd normally skip in Bash, or need external dependencies for in other languages, come built-in with Rad's declarative syntax. 🤙
 
-!!! info "Note on Rad script content ordering"
+**Info: Note on Rad script content ordering**
 
     Rad expects a certain order between shebangs, file headers, arg blocks, and the rest of your code.
 
     **It's important to adhere to the following ordering in Rad scripts**, or you'll see errors:
-    
+
     1) Shebang (if present)
-  
+
     2) File header (if present)
-    
+
     3) Args block (if present)
-    
+
     4) Rest of the file
 
 ## Next
@@ -444,12 +429,10 @@ Great job on getting this far! You've gotten a small peek at what Rad has to off
 
 From here, you have a couple of options:
 
-1. Continue your Rad journey: dive into more details with the next section: [Basics](./basics.md).
+1. Continue your Rad journey: dive into more details with the next section: Basics (rad docs guide/basics).
 
 2. If you'd like to see additional unique Rad features, here are some sections you can jump to:
-    - [Args](./args.md)
-    - [Rad Blocks](./rad-blocks.md)
-    - [Shell Commands](./shell-commands.md)
-    - [Example: brewi](../examples/brewi.md)
-
-[//]: # (TODO pick_from_resource ^)
+    - Args (rad docs guide/args)
+    - Rad Blocks (rad docs guide/rad-blocks)
+    - Shell Commands (rad docs guide/shell-commands)
+    - Example: brewi (rad docs examples/brewi)

@@ -4,13 +4,13 @@ Tab completion lets you press Tab in your terminal to auto-complete rad commands
 
 Add one of these lines to your shell startup file:
 
-=== "Bash (~/.bashrc)"
+**Bash (~/.bashrc)**
 
     ```shell
     eval "$(rad completion bash)"
     ```
 
-=== "Zsh (~/.zshrc)"
+**Zsh (~/.zshrc)**
 
     ```shell
     eval "$(rad completion zsh)"
@@ -35,13 +35,13 @@ You can generate tab completions for your own Rad scripts too - including their 
 
 To enable completion for a script, pass its path to `rad completion`:
 
-=== "Bash"
+**Bash**
 
     ```shell
     eval "$(rad completion bash ~/bin/deploy)"
     ```
 
-=== "Zsh"
+**Zsh**
 
     ```shell
     eval "$(rad completion zsh ~/bin/deploy)"
@@ -51,7 +51,7 @@ To enable completion for a script, pass its path to `rad completion`:
 
 Given a script like this:
 
-```rad title="deploy"
+```rad
 #!/usr/bin/env rad
 ---
 Deploy services to a target environment.
@@ -70,22 +70,23 @@ Tab completion will suggest:
 - `--service` and `--env` (or `-e`) as flags
 - `dev`, `staging`, `prod` as values when completing `--env`
 
-If your script uses [commands](./script-commands.md), those are completed too - along with each command's own arguments.
+If your script uses commands (rad docs guide/script-commands), those are completed too - along with each command's own arguments.
 
-!!! note "Shebang required"
+**Note: Shebang required**
+
     Scripts must have a `rad` shebang (e.g. `#!/usr/bin/env rad`) to be detected. Files without one are silently skipped.
 
 ## Multiple Scripts & Globs
 
 You can pass multiple paths or glob patterns to register completions for many scripts at once:
 
-=== "Bash"
+**Bash**
 
     ```shell
     eval "$(rad completion bash ~/.rad/bin/* ~/scripts/*)"
     ```
 
-=== "Zsh"
+**Zsh**
 
     ```shell
     eval "$(rad completion zsh ~/.rad/bin/* ~/scripts/*)"
@@ -93,14 +94,15 @@ You can pass multiple paths or glob patterns to register completions for many sc
 
 Non-Rad files matched by the glob are silently skipped, so it's safe to point at directories containing a mix of file types.
 
-!!! info "Separate lines for CLI and scripts"
+**Info: Separate lines for CLI and scripts**
+
     When you pass script paths, `rad completion` generates completions for those scripts only - not the rad CLI. Use a separate line without paths for rad CLI completions.
 
 ## Full Example
 
 Here's a typical setup in `~/.bashrc` that covers everything:
 
-=== "Bash (~/.bashrc)"
+**Bash (~/.bashrc)**
 
     ```shell
     # Rad tab completion
@@ -109,7 +111,7 @@ Here's a typical setup in `~/.bashrc` that covers everything:
     eval "$(rad completion bash ~/bin/deploy ~/bin/status)"  # specific scripts
     ```
 
-=== "Zsh (~/.zshrc)"
+**Zsh (~/.zshrc)**
 
     ```shell
     # Rad tab completion
@@ -118,7 +120,8 @@ Here's a typical setup in `~/.bashrc` that covers everything:
     eval "$(rad completion zsh ~/bin/deploy ~/bin/status)"  # specific scripts
     ```
 
-!!! tip "Adding new scripts"
+**Tip: Adding new scripts**
+
     When you add a new script to a directory that's already covered by a glob, re-source your shell config (or open a new terminal) to pick it up.
 
 ## Summary

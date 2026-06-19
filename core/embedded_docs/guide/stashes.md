@@ -6,7 +6,7 @@ Stashes are Rad's built-in mechanism for persistent, per-script storage.
 Every script can have its own **stash** - a dedicated storage area that persists between runs.
 To use a stash, you need to declare a **stash ID** in your script's file header using the `@stash_id` macro:
 
-```rad title="counter.rad"
+```rad
 #!/usr/bin/env rad
 ---
 A simple counter that remembers how many times it's been run.
@@ -29,21 +29,17 @@ Let's run it a few times:
 rad counter.rad
 ```
 
-<div class="result">
 ```
 This script has been run 1 time(s)!
 ```
-</div>
 
 ```shell
 rad counter.rad
 ```
 
-<div class="result">
 ```
 This script has been run 2 time(s)!
 ```
-</div>
 
 The count persists because it's saved to the stash.
 
@@ -56,11 +52,9 @@ You can use any string you like, but Rad provides a built-in command to generate
 rad gen-id
 ```
 
-<div class="result">
 ```
 K7mPqR2xNfL
 ```
-</div>
 
 Using `rad gen-id` is recommended, especially if you plan to share your scripts.
 It ensures your stash ID won't accidentally collide with another script's stash on someone else's machine.
@@ -76,7 +70,7 @@ defer save_state(state)
 // ... use and modify state ...
 ```
 
-The [`defer`](./defer-errdefer.md) ensures your state is saved even if the script exits early or encounters an error.
+The `defer` (rad docs guide/defer-errdefer) ensures your state is saved even if the script exits early or encounters an error.
 This pattern is so common that you'll want to use it almost every time you work with stashes.
 
 ## State Storage
@@ -85,7 +79,7 @@ The primary way to use stashes is through **state** - a map that gets persisted 
 
 ### Loading State
 
-[`load_state()`](../reference/functions.md#load_state) returns your script's saved state as a map.
+`load_state()` (rad docs load_state) returns your script's saved state as a map.
 If no state exists yet (first run), it returns an empty map `{}`:
 
 ```rad
@@ -95,7 +89,7 @@ print(state)  // {} on first run, or previously saved data
 
 ### Saving State
 
-[`save_state(map)`](../reference/functions.md#save_state) persists the map to disk:
+`save_state(map)` (rad docs save_state) persists the map to disk:
 
 ```rad
 state = {"username": "alice", "theme": "dark"}
@@ -107,9 +101,9 @@ The state is stored as JSON at `~/.rad/stashes/<stash_id>/state.json`, making it
 ### Working with State
 
 Since state is just a map, you can use all of Rad's map operations.
-The [`??` fallback operator](./basics.md#fallback-operator) is particularly useful for providing default values:
+The `??` fallback operator (rad docs guide/basics) is particularly useful for providing default values:
 
-```rad title="preferences.rad"
+```rad
 #!/usr/bin/env rad
 ---
 Remembers user preferences.
@@ -141,33 +135,27 @@ print("Current preferences: editor={editor}, theme={theme}")
 rad preferences.rad
 ```
 
-<div class="result">
 ```
 Current preferences: editor=vim, theme=dark
 ```
-</div>
 
 ```shell
 rad preferences.rad --set-editor nano --set-theme light
 ```
 
-<div class="result">
 ```
 Editor set to: nano
 Theme set to: light
 Current preferences: editor=nano, theme=light
 ```
-</div>
 
 ```shell
 rad preferences.rad
 ```
 
-<div class="result">
 ```
 Current preferences: editor=nano, theme=light
 ```
-</div>
 
 ## File Storage
 
@@ -175,7 +163,7 @@ Beyond state, stashes can also store arbitrary files. This is useful for caching
 
 ### Writing Files
 
-[`write_stash_file(path, content)`](../reference/functions.md#write_stash_file) writes a file to your stash:
+`write_stash_file(path, content)` (rad docs write_stash_file) writes a file to your stash:
 
 ```rad
 write_stash_file("cache.json", r'{"data": [1, 2, 3]}')
@@ -186,7 +174,7 @@ Nested paths work automatically - Rad creates any necessary directories.
 
 ### Loading Files
 
-[`load_stash_file(path, default)`](../reference/functions.md#load_stash_file) loads a file from your stash, creating it with the default content if it doesn't exist:
+`load_stash_file(path, default)` (rad docs load_stash_file) loads a file from your stash, creating it with the default content if it doesn't exist:
 
 ```rad
 result = load_stash_file("config.txt", "# Default config\nkey=value")
@@ -203,7 +191,7 @@ The return value is a map containing:
 
 The `created` field is particularly useful for first-time setup:
 
-```rad title="notes.rad"
+```rad
 #!/usr/bin/env rad
 ---
 A simple notes manager.
@@ -232,7 +220,7 @@ else:
 
 ### Getting the Stash Path
 
-[`get_stash_path(subpath?)`](../reference/functions.md#get_stash_path) returns the path to your stash directory:
+`get_stash_path(subpath?)` (rad docs get_stash_path) returns the path to your stash directory:
 
 ```rad
 stash_path = get_stash_path()
@@ -242,7 +230,7 @@ file_path = get_stash_path("data/config.json")
 print(file_path)  // ~/.rad/stashes/<stash_id>/data/config.json
 ```
 
-This is useful when you need to work with stash files using other Rad functions like [`read_file`](../reference/functions.md#read_file) or [`get_path`](../reference/functions.md#get_path).
+This is useful when you need to work with stash files using other Rad functions like `read_file` (rad docs read_file) or `get_path` (rad docs get_path).
 
 ## Stash Structure
 
@@ -270,7 +258,7 @@ rad stash myscript --id      # Show the stash ID
 rad stash myscript --delete  # Delete the stash
 ```
 
-!!! info "Scripts Must Be on PATH"
+**Info: Scripts Must Be on PATH**
 
     The `rad stash` command looks up scripts on your PATH.
     For scripts not on your PATH, you can inspect the stash directly at `~/.rad/stashes/<stash_id>/`.
@@ -289,4 +277,4 @@ rad stash myscript --delete  # Delete the stash
 
 Now that you know how scripts can persist their own data, learn how to configure Rad itself - including invocation logging, which tracks your script usage for diagnostics.
 
-Continue to [Configuration](./config.md).
+Continue to Configuration (rad docs guide/config).

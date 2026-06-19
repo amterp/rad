@@ -21,7 +21,7 @@ $cmd
 
 By default, the stdout/stderr will be printed directly to the user's terminal as if they had invoked it directly themselves.
 
-!!! tip "Prefer backticks for shell command strings"
+**Tip: Prefer backticks for shell command strings**
 
     Shell commands often use 'single' and "double" quotes, so backticks minimize delimiter conflicts.
     However, you can use any string delimiter.
@@ -107,7 +107,7 @@ exit_code, out, err = $`ls`         // Assigned in order
 
 This lets you write clear code like `stderr = $cmd` instead of `_, _, stderr = $cmd`.
 
-!!! tip "Silencing outputs"
+**Tip: Silencing outputs**
 
     You can use `_` to ignore specific outputs: `code, _ = $cmd` captures the code and ignores stdout.
     For silent execution, capture everything: `_, _, _ = $cmd` - nothing will print to the terminal.
@@ -152,13 +152,13 @@ code, stdout = $`git tag --list` catch:
 version = stdout.trim()
 ```
 
-This uses the same error model covered in [Error Handling](./error-handling.md) - errors propagate by default, so you need `catch:` blocks to handle them.
+This uses the same error model covered in Error Handling (rad docs guide/error-handling) - errors propagate by default, so you need `catch:` blocks to handle them.
 
 ## String Interpolation
 
 You can build commands dynamically using string interpolation:
 
-```rad linenums="1"
+```rad
 args:
     version str
     message str
@@ -191,11 +191,9 @@ $`touch hello.txt` catch:
 
 Shows in the terminal:
 
-<div class="result">
 ```
 ⚡️ touch hello.txt
 ```
-</div>
 
 To suppress this announcement, use the `quiet` modifier:
 
@@ -205,11 +203,9 @@ quiet $`touch hello.txt` catch:
     exit(1)
 ```
 
-<div class="result">
 ```
 (no output - unless there's an error)
 ```
-</div>
 
 This is useful for scripts that run many commands or when you want minimal output.
 
@@ -336,4 +332,4 @@ print("All prerequisites installed ✅".green())
 Shell commands let you invoke external programs, but what if you want to organize your *script* into multiple
 operations - like `git commit`, `docker build`, or `kubectl apply`?
 
-That's where commands come in. We'll explore them in the next section: [Script Commands](script-commands.md).
+That's where commands come in. We'll explore them in the next section: Script Commands (rad docs guide/script-commands).

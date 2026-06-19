@@ -2,7 +2,7 @@ Depending on your script, you may wish to look up values at some point, such as 
 
 ## `pick`
 
-[`pick`](../reference/functions.md#pick) is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, Rad will enter an interactive mode which allows the user to pick a single value to continue with.
+`pick` (rad docs pick) is an in-built function which allows you to choose one value from a list of inputs, using some filter. If the filter has several matches, Rad will enter an interactive mode which allows the user to pick a single value to continue with.
 
 You can try it yourself with this example:
 
@@ -31,7 +31,7 @@ You chose: chicken sandwich
 
 ## `pick_kv`
 
-A similar function is [`pick_kv`](../reference/functions.md#pick_kv). However, instead of the values you're filtering and picking between also being the *output*, `pick_kv` performs the filtering/picking on a list of *keys*, each which map to a value that will get output from the function if its associated key is picked. For example:
+A similar function is `pick_kv` (rad docs pick_kv). However, instead of the values you're filtering and picking between also being the *output*, `pick_kv` performs the filtering/picking on a list of *keys*, each which map to a value that will get output from the function if its associated key is picked. For example:
 
 ```rad
 keys = ["chicken burger", "chicken sandwich", "ham sandwich"]
@@ -61,11 +61,11 @@ Notice that the function did not output the *key* `ham sandwich` that was select
 
 ## `pick_from_resource`
 
-Now we'll look at actually using what this section is about - resources. [`pick_from_resource`](../reference/functions.md#pick_from_resource) allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous `pick` functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed. Unlike `pick` and `pick_kv`, `pick_from_resource` has `prefer_exact=true` by default—if your filter exactly matches one of the keys (case-insensitive), that option will be selected immediately.
+Now we'll look at actually using what this section is about - resources. `pick_from_resource` (rad docs pick_from_resource) allows you to pre-define a resource file (using JSON) which contains a range of key-value pairs. When invoked, it will behave similarly to the two previous `pick` functions i.e. it lets you apply an optional filter, and will launch into an interactive picking mode to narrow down a single choice, if needed. Unlike `pick` and `pick_kv`, `pick_from_resource` has `prefer_exact=true` by default—if your filter exactly matches one of the keys (case-insensitive), that option will be selected immediately.
 
 Let's do a simple example. As mentioned, a resource file is simply a JSON file. We'll create an example where we look up a url based on user input:
 
-```json title="websites.json"
+```json
 {
   "options": [
     {
@@ -80,11 +80,11 @@ Let's do a simple example. As mentioned, a resource file is simply a JSON file. 
 }
 ```
 
-You may see some similarity here to what we did with [`pick_kv`](#pick_kv). We're defining two options: one which can get matched by either `gl` or `lab`, and one which gets matched by `gh` or `hub`. In the first case, if chosen, `pick_from_resource` will return *two* values: `gitlab.com` and `GitLab`. Similarly it will return `github.com` and `GitHub` for the latter.
+You may see some similarity here to what we did with `pick_kv`. We're defining two options: one which can get matched by either `gl` or `lab`, and one which gets matched by `gh` or `hub`. In the first case, if chosen, `pick_from_resource` will return *two* values: `gitlab.com` and `GitLab`. Similarly it will return `github.com` and `GitHub` for the latter.
 
 Let's create a Rad script to use this resource:
 
-```rad title="example.rad"
+```rad
 args:
     website str = ""
 
@@ -106,8 +106,6 @@ This means that it doesn't matter where on your computer you invoke your script 
 
 TBC
 
-[//]: # (todo make pick_from_resource interactively select!)
-
 ## Summary
 
 - `pick` and `pick_kv` are built-in functions that allow users to select one option from many, allowing for an optional filter.
@@ -119,4 +117,4 @@ TBC
 
 The shell offers a ton of useful utilities, and Rad allows you to leverage them from within your scripts.
 
-We'll look at that in the next section: [Shell Commands](./shell-commands.md).
+We'll look at that in the next section: Shell Commands (rad docs guide/shell-commands).

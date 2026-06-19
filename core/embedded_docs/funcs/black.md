@@ -1,0 +1,16 @@
+# black
+
+Wraps its argument in the ANSI escape codes for black text.
+
+```rad
+black(_item: any) -> str
+```
+
+```rad
+black("Hello")        // -> "Hello" wrapped in the black escape
+black(42)             // -> "42" wrapped in the black escape
+```
+
+## See also
+
+`red`, `blue`, `color_rgb`

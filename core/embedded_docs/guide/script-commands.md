@@ -9,7 +9,7 @@ script, each with their own arguments and implementation.
 
 Let's start with a very simple example:
 
-```rad linenums="1"
+```rad
 #!/usr/bin/env rad
 
 command greet:
@@ -28,11 +28,9 @@ Invoke it by specifying the command name followed by its arguments:
 > ./script.rad greet Alice
 ```
 
-<div class="result">
 ```
 Hello, Alice!
 ```
-</div>
 
 Let's break down the syntax:
 
@@ -43,7 +41,7 @@ Let's break down the syntax:
 
 Command arguments (like `name`) become script-wide variables, accessible throughout your script.
 
-!!! note "Underscores become hyphens"
+**Note: Underscores become hyphens**
 
     Command names with underscores are automatically converted to hyphens for CLI invocation.
     This matches standard CLI conventions (like `kubectl`, `docker-compose`).
@@ -54,13 +52,13 @@ Command arguments (like `name`) become script-wide variables, accessible through
     > ./script.rad deploy-staging
     ```
 
-    This is the same convention used for [argument names](./args.md).
+    This is the same convention used for argument names (rad docs guide/args).
 
 ## Multiple Commands
 
 The power of commands emerges when you define several in one script. Let's create a simple deployment tool:
 
-```rad linenums="1" hl_lines="3-6 8-11 13-16 18-20"
+```rad
 #!/usr/bin/env rad
 
 command deploy:
@@ -86,23 +84,19 @@ Now you can invoke either command:
 > ./tool.rad deploy staging
 ```
 
-<div class="result">
 ```
 Deploying to staging...
 Deployment complete!
 ```
-</div>
 
 ```
 > ./tool.rad status production
 ```
 
-<div class="result">
 ```
 Checking status of production...
 Environment production is healthy
 ```
-</div>
 
 Each command has its own arguments and implementation, but they live in the same script and can share code.
 
@@ -110,7 +104,7 @@ Each command has its own arguments and implementation, but they live in the same
 
 Commands should include descriptions to make your tool self-documenting. Use the familiar `--- ... ---` header syntax:
 
-```rad linenums="1" hl_lines="4-6 11-13"
+```rad
 #!/usr/bin/env rad
 
 command deploy:
@@ -140,7 +134,6 @@ These descriptions appear in the help output:
 > ./tool.rad -h
 ```
 
-<div class="result">
 ```
 Usage:
   tool.rad [command] [OPTIONS]
@@ -149,11 +142,10 @@ Commands:
   deploy    Deploy the application to an environment
   status    Check the health of an environment
 ```
-</div>
 
 Notice how Rad automatically generates a usage string listing all available commands.
 
-!!! tip "Multi-line descriptions"
+**Tip: Multi-line descriptions**
 
     Just like script headers, command descriptions can span multiple lines:
 
@@ -170,10 +162,10 @@ Notice how Rad automatically generates a usage string listing all available comm
 
 ## Command Arguments
 
-Each command can define its own arguments using the same syntax you learned in [Args](./args.md). Let's expand our
+Each command can define its own arguments using the same syntax you learned in Args (rad docs guide/args). Let's expand our
 deployment tool:
 
-```rad linenums="1" hl_lines="4-10"
+```rad
 #!/usr/bin/env rad
 
 command deploy:
@@ -204,13 +196,11 @@ Invoke with positional arguments:
 > ./tool.rad deploy staging feature-branch
 ```
 
-<div class="result">
 ```
 Running tests...
 Deploying feature-branch to staging...
 ✅ Deployment complete!
 ```
-</div>
 
 Or use flags (especially for booleans):
 
@@ -218,20 +208,18 @@ Or use flags (especially for booleans):
 > ./tool.rad deploy --env=production --skip-tests
 ```
 
-<div class="result">
 ```
 ⚠️  Skipping tests
 Deploying main to production...
 ✅ Deployment complete!
 ```
-</div>
 
 ## Shared Args
 
 Often you want arguments that apply to *all* commands - like a `--verbose` flag or a `--config` path. Define these in
 an `args:` block to share them across commands:
 
-```rad linenums="1" hl_lines="3-5"
+```rad
 #!/usr/bin/env rad
 
 args:
@@ -271,27 +259,23 @@ Shared args are available to all commands:
 > ./tool.rad deploy staging --verbose
 ```
 
-<div class="result">
 ```
 Config: ~/.config/tool.yaml
 Deploying to staging...
 ✅ Deployed!
 ```
-</div>
 
 ```
 > ./tool.rad status production --verbose
 ```
 
-<div class="result">
 ```
 Config: ~/.config/tool.yaml
 Checking production...
 Environment healthy
 ```
-</div>
 
-!!! note "Shared args are flag-only"
+**Note: Shared args are flag-only**
 
     When commands exist, shared args can only be passed as flags (like `--verbose`, `-v`, or `--config=value`), not
     positionally. This keeps the invocation clear: the first positional argument is always the command name.
@@ -305,7 +289,7 @@ Environment healthy
 We've been using function references (`calls on_deploy`), which is the recommended approach for most commands.
 However, for very short implementations, you can also use inline lambdas:
 
-```rad linenums="1" hl_lines="3-8 10-17 19-21"
+```rad
 #!/usr/bin/env rad
 
 command deploy:
@@ -333,7 +317,7 @@ fn on_deploy():
 
 You can write code after all command blocks that runs before any callback is invoked. This is useful for setup logic that all commands need:
 
-```rad linenums="1"
+```rad
 #!/usr/bin/env rad
 
 command deploy:
@@ -376,7 +360,6 @@ Rad automatically generates help documentation for your commands. There are two 
 > ./tool.rad -h
 ```
 
-<div class="result">
 ```
 Usage:
   tool.rad [command] [OPTIONS]
@@ -386,7 +369,6 @@ Commands:
   rollback    Rollback a deployment
   status      Check environment status
 ```
-</div>
 
 **Command-level help** shows arguments for a specific command:
 
@@ -394,7 +376,6 @@ Commands:
 > ./tool.rad deploy -h
 ```
 
-<div class="result">
 ```
 Deploy the application
 
@@ -408,7 +389,6 @@ Command args:
   -v, --verbose       Enable verbose output
       --config str    (default "~/.config/tool.yaml")
 ```
-</div>
 
 Notice how the help includes:
 
@@ -427,7 +407,7 @@ Here's a concise, realistic example that demonstrates the "dev script" pattern -
 Instead of remembering different commands for building, testing, and running your project, you can wrap them in a
 single `dev.rad` script. This demonstrates shared arguments, boolean flags, and how to pass arguments down to underlying tools:
 
-```rad linenums="1"
+```rad
 #!/usr/bin/env rad
 ---
 Facilitates working with this repo's project.
@@ -554,4 +534,4 @@ Notice how this example uses:
 Rad provides a powerful system for looking up values from predefined resource files, which is particularly useful for
 building interactive tools.
 
-We'll explore this in the next section: [Resources](./resources.md).
+We'll explore this in the next section: Resources (rad docs guide/resources).

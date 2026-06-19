@@ -1,4 +1,4 @@
-Strings are everywhere in scripting - from building messages to formatting output. In the [Basics](./basics.md#str) section, we covered simple string operations, but Rad offers much more powerful features for working with text.
+Strings are everywhere in scripting - from building messages to formatting output. In the Basics (rad docs guide/basics) section, we covered simple string operations, but Rad offers much more powerful features for working with text.
 
 In this section, we'll explore:
 
@@ -26,13 +26,11 @@ print("Uppercase: {name.upper()}")
 print("Conditions: {name.len() > 5 ? 'long name' : 'short name'}!")
 ```
 
-<div class="result">
 ```
 Hi, Alice!
 Uppercase: ALICE
 Conditions: short name!
 ```
-</div>
 
 String interpolation expressions can be as simple as just an identifier, or can involve function calls, math, list comprehensions, etc (though you should consider extracting complex expressions into named variables beforehand for the sake of clarity).
 
@@ -47,12 +45,10 @@ print("{tokens.join(" ")}")
 print("Count: {tokens.len() > 1 ? "several" : "just one"}")
 ```
 
-<div class="result">
 ```
 Hello World
 Count: several
 ```
-</div>
 
 ## Formatting
 
@@ -70,7 +66,6 @@ print("Pi: {pi:.3}_")    // print to 3 decimal places
 print("Pi: {pi:10.2}_")  // left-pad to 10 places, including 2 decimal places
 ```
 
-<div class="result">
 ```
 Pi: 3.14159265359_
 Pi:             3.141593_
@@ -78,7 +73,6 @@ Pi: 3.141593            _
 Pi: 3.142_
 Pi:       3.14_
 ```
-</div>
 
 ### Fill Characters
 
@@ -93,13 +87,11 @@ print("_{name:.<10}_")   // fill with ., left-align
 print("_{num:->8}_")     // fill with -, right-align
 ```
 
-<div class="result">
 ```
 _*****Alice_
 _Alice....._
 _------42_
 ```
-</div>
 
 The fill character can be any single character. The `>` and `<` after it control the alignment, just like without a fill character.
 
@@ -118,14 +110,12 @@ print("_{neg:06}_")      // sign-aware for numbers: sign before zeros
 print("_{num:08.2}_")    // combine with precision
 ```
 
-<div class="result">
 ```
 _000alice_
 _00042_
 _-00007_
 _00042.00_
 ```
-</div>
 
 You can also combine zero-padding with thousands separators:
 
@@ -134,11 +124,9 @@ num = 7000
 print("_{num:010,}_")
 ```
 
-<div class="result">
 ```
 _00,007,000_
 ```
-</div>
 
 For numbers, zero-pad is sign-aware (signs placed before zeros). For non-numbers, it simply prepends zeros (same as explicit zero fill `{x:0>5}`).
 
@@ -155,13 +143,11 @@ print("Price: {price:,.2}")
 print("Large: {population:20,.0}")  // combine padding, comma, and precision
 ```
 
-<div class="result">
 ```
 Population: 1,234,567
 Price: 1,234.56
 Large:            1,234,567
 ```
-</div>
 
 ### Number vs String Formatting
 
@@ -198,14 +184,12 @@ One plus one equals {1 + 1}
 print(text)
 ```
 
-<div class="result">
 ```
 This is an
 example of text
 that "may contain quotes"!
 One plus one equals 2
 ```
-</div>
 
 Multiline strings must follow some rules:
 
@@ -227,15 +211,11 @@ text = """
 print(text)
 ```
 
-<div class="result">
 ```
 ..This is an
 ...example of text
 that "may contain quotes"!
 ```
-</div>
-
-[//]: # (todo when n-""" delimiters are implemented, update this)
 
 ## Raw Strings
 
@@ -250,11 +230,9 @@ text = r"Hello\n{name}"
 print(text)
 ```
 
-<div class="result">
 ```
 Hello\n{name}
 ```
-</div>
 
 Notice the printed string is exactly as written in code - the newline character and string interpolation are left as-is.
 
@@ -269,7 +247,7 @@ Hello\n{name}
 """
 ```
 
-!!! tip "Common uses for raw strings"
+**Tip: Common uses for raw strings**
 
     Raw strings can be quite handy for file paths, especially Windows-style ones that use backslashes:
 
@@ -294,7 +272,6 @@ print("Path: C:\\Users")     // backslash
 print("She said \"Hi!\"")    // quote (though prefer using a different delimiter, or raw strings)
 ```
 
-<div class="result">
 ```
 Line 1
 Line 2
@@ -302,7 +279,6 @@ Col1	Col2
 Path: C:\Users
 She said "Hi!"
 ```
-</div>
 
 **Available escape sequences:**
 
@@ -332,17 +308,17 @@ print(warning)
 ```
 
 Rad provides color functions (`red`, `green`, `blue`, `yellow`, etc.), style functions (`bold`, `dim`, `italic`, `strikethrough`, `underline`),
-and the `hyperlink` function for creating clickable terminal links. See the [functions reference](../reference/functions.md#colors--attributes).
+and the `hyperlink` function for creating clickable terminal links. See the functions reference (rad docs reference/functions).
 
-!!! info "When Attributes Are Preserved"
+**Info: When Attributes Are Preserved**
 
     - **Preserved**: Interpolation, concatenation, index lookup, slicing, `upper()`, `lower()`, `trim()`, `trim_prefix()`, `trim_suffix()`, `trim_left()`, `trim_right()`, and `reverse()`
     - **Not preserved**: `replace()`, `split()`
 
-!!! tip "String Manipulation Functions"
+**Tip: String Manipulation Functions**
 
     In addition to the syntax features covered here, Rad provides many built-in functions for working with strings.
-    Use [UFCS](./functions.md#ufcs) (dot notation) for cleaner, more readable code:
+    Use UFCS (rad docs guide/functions) (dot notation) for cleaner, more readable code:
 
     - `text.upper()`, `text.lower()` - change case
     - `text.replace(old, new)`, `text.split(sep)`, `items.join(sep)` - transform and combine strings
@@ -352,7 +328,7 @@ and the `hyperlink` function for creating clickable terminal links. See the [fun
     - `text.count(substr)` - count substring occurrences
     - And many more!
 
-    See the [Functions Reference](../reference/functions.md) for the complete list with examples.
+    See the Functions Reference (rad docs reference/functions) for the complete list with examples.
 
 ## Summary
 
@@ -362,8 +338,8 @@ and the `hyperlink` function for creating clickable terminal links. See the [fun
 - We explored **multiline strings** using `"""` syntax, which support both quotes and interpolation.
 - We learned about **raw strings** (prefixed with `r`) that prevent interpolation and escaping.
 - We covered **string attributes** like color and bold that are preserved through interpolation and concatenation.
-- Rad also provides many built-in string manipulation functions covered in the [Functions Reference](../reference/functions.md).
+- Rad also provides many built-in string manipulation functions covered in the Functions Reference (rad docs reference/functions).
 
 ## Next
 
-Next, let's look at another Rad feature which makes it uniquely suited to certain types of scripting: [Rad Blocks](./rad-blocks.md).
+Next, let's look at another Rad feature which makes it uniquely suited to certain types of scripting: Rad Blocks (rad docs guide/rad-blocks).
