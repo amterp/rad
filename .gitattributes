@@ -12,3 +12,8 @@ rts/embedded/functions.txt            linguist-generated=true text eol=lf
 rts/signatures_gen.go                 linguist-generated=true
 docs-web/docs/reference/functions.md  linguist-generated=true
 docs-web/docs/reference/errors.md     linguist-generated=true
+
+# Per-function doc source of truth, mirrored byte-for-byte into the embedded
+# copy (rts/embedded_funcs/) with a test asserting they match - so the source
+# must share the embedded copy's LF endings on every platform.
+docs/funcs/**                         text eol=lf
