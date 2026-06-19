@@ -44,7 +44,7 @@ error[RAD40001]: Scientific notation value does not evaluate to a whole number
 2 |     print("{x}")
 3 |
   |
-   = info: rad explain RAD40001
+   = info: rad docs RAD40001
 
 
 ### EXIT ###
@@ -65,7 +65,7 @@ error[RAD40001]: Scientific notation value does not evaluate to a whole number
 2 |     print("{x}")
 3 |
   |
-   = info: rad explain RAD40001
+   = info: rad docs RAD40001
 
 
 ### EXIT ###
@@ -111,7 +111,7 @@ error[RAD40001]: Scientific notation value does not evaluate to a whole number
   |                 ^^^^
 2 | print("{f()}")
   |
-   = info: rad explain RAD40001
+   = info: rad docs RAD40001
 
 
 ### EXIT ###

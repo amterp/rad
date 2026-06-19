@@ -57,7 +57,7 @@ error[RAD20017]: Precision must be non-negative, got -1
 3 | print(round(a, b))
   |       ^^^^^^^^^^^
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 
 ### EXIT ###
@@ -76,7 +76,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 3 | print(round(a, b))
   |                ^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###
@@ -95,7 +95,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 3 | print(round(a, b))
   |             ^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

@@ -11,7 +11,7 @@ error[RAD20029]: Index out of bounds: 10 (length 3)
 2 | print(x[10])
   |         ^^
   |
-   = info: rad explain RAD20029
+   = info: rad docs RAD20029
 
 
 ### EXIT ###

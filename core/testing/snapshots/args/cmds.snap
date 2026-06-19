@@ -422,8 +422,8 @@ Usage:
 Commands:
   check         Validates & lints Rad scripts.
   completion    Generate shell tab-completion scripts.
-  docs          Opens rad's documentation website.
-  explain       Explains Rad error codes with detailed documentation.
+  docs          Prints Rad's documentation - a page, the full corpus, or an error code.
+  explain       Explains Rad error codes. Deprecated - use 'rad docs' instead.
   fmt           Formats Rad scripts.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.

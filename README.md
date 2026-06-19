@@ -160,6 +160,14 @@ The extension requires `radls` to be on your PATH (installed automatically via H
 [**Getting Started Guide**](https://amterp.dev/rad/guide/getting-started/)
 | [Full Documentation](https://amterp.dev/rad/)
 
+Once installed, `rad docs` gives you the full documentation right in your terminal - no browser needed:
+
+```
+rad docs                 # list all topics
+rad docs guide/basics    # read a specific page
+rad docs RAD20003        # explain an error code
+```
+
 ## Project Status 🚧
 
 **Rad is in early development** but useful today for real scripts.

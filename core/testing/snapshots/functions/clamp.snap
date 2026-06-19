@@ -23,7 +23,7 @@ error[RAD30007]: Missing required argument 'max'
 1 | print(clamp(1, 2))
   |       ^^^^^^^^^^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 
 ### EXIT ###
@@ -39,7 +39,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int|flo
 1 | print(clamp(1, "ab", 2))
   |                ^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

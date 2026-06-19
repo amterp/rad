@@ -24,7 +24,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type '["sha1"
 1 | hash("hello friend!", algo="does not exist")
   |                            ^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

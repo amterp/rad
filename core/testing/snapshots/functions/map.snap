@@ -49,7 +49,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'fn(any)
 2 | a.map("not a fn")
   |       ^^^^^^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

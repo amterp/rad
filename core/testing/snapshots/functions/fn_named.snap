@@ -50,7 +50,7 @@ error[RAD20028]: Undefined identifier 'add'
 5 | 		return x + y
   |
    = help: did you mean 'abs', 'rand', or 'red'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

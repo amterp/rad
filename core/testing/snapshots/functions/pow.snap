@@ -72,7 +72,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 1 | print(pow("abc", 2))
   |           ^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###
@@ -88,7 +88,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 1 | print(pow(2, "abc"))
   |              ^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

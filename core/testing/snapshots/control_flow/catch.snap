@@ -30,7 +30,7 @@ error[RAD20000]: this is an error
 3 | print("Got: {a}")
 4 |
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -106,7 +106,7 @@ error[RAD20000]: this is an error
 3 |
 4 | fn foo():
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -129,7 +129,7 @@ error[RAD20000]: this is an error
 3 |
 4 | fn foo():
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -156,7 +156,7 @@ error[RAD20000]: bar error
 6 | 	return error("foo error")
 7 |
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -184,7 +184,7 @@ error[RAD20000]: foo error bar error
 3 |
 4 | fn foo():
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -208,7 +208,7 @@ error[RAD20000]: this is an error
 4 |
 5 | fn foo(x):
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -357,7 +357,7 @@ error[RAD20028]: Undefined identifier 'out'
   |                ^^^
   |
    = help: did you mean 'count', 'int', or 'sort'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -385,7 +385,7 @@ error[RAD20000]: error 1
 10 | 	return [foo(a) for a in [1, 2]]
    |          ^^^^^^
    |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -438,7 +438,7 @@ error[RAD20028]: Undefined identifier 'x'
 13 |
    |
    = help: did you mean 'max' or 't0'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

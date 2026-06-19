@@ -1,0 +1,304 @@
+{
+  "pages": [
+    {
+      "slug": "guide/getting-started",
+      "section": "Guide",
+      "title": "Getting Started",
+      "h2s": [
+        "What is Rad?",
+        "Installation",
+        "Editor Support",
+        "Your First Rad Script - Hello World",
+        "Adding In Some Rad Features",
+        "Improving The Script Usage String",
+        "Shebang",
+        "A Complete Example"
+      ]
+    },
+    {
+      "slug": "guide/basics",
+      "section": "Guide",
+      "title": "Basics",
+      "h2s": [
+        "Variables \u0026 Assignment",
+        "Data Types",
+        "Destructuring",
+        "Operators",
+        "Functions",
+        "Control Flow",
+        "List Comprehensions",
+        "Truthy / Falsy",
+        "Converting Types",
+        "Errors"
+      ]
+    },
+    {
+      "slug": "guide/args",
+      "section": "Guide",
+      "title": "Args",
+      "h2s": [
+        "Arg Declarations",
+        "How Argument Parsing Works",
+        "Argument Types and User Input",
+        "Constraints"
+      ]
+    },
+    {
+      "slug": "guide/functions",
+      "section": "Guide",
+      "title": "Functions",
+      "h2s": [
+        "Syntax",
+        "Function Arguments",
+        "Custom Functions",
+        "Reference"
+      ]
+    },
+    {
+      "slug": "guide/strings-advanced",
+      "section": "Guide",
+      "title": "Strings (Advanced)",
+      "h2s": [
+        "String Interpolation",
+        "Formatting",
+        "Multiline Strings",
+        "Raw Strings",
+        "Escape Sequences",
+        "String Attributes"
+      ]
+    },
+    {
+      "slug": "guide/rad-blocks",
+      "section": "Guide",
+      "title": "Rad Blocks",
+      "h2s": [
+        "Basic Example",
+        "Additional Rad Block Options",
+        "Rad Block Options",
+        "Source Types",
+        "Understanding HTTP Requests"
+      ]
+    },
+    {
+      "slug": "guide/type-annotations",
+      "section": "Guide",
+      "title": "Type Annotations",
+      "h2s": [
+        "The Basics",
+        "Collection Types",
+        "Optional Types",
+        "Defaults",
+        "Union Types",
+        "Advanced Types",
+        "Variadic and Named Parameters"
+      ]
+    },
+    {
+      "slug": "guide/error-handling",
+      "section": "Guide",
+      "title": "Error Handling",
+      "h2s": [
+        "Error Propagation",
+        "Catch Blocks",
+        "The `??` Operator",
+        "The `catch` Operator",
+        "Creating Your Own Errors"
+      ]
+    },
+    {
+      "slug": "guide/shell-commands",
+      "section": "Guide",
+      "title": "Shell Commands",
+      "h2s": [
+        "Invoking Commands",
+        "Which Shell Runs My Command?",
+        "Capturing Output",
+        "Error Handling",
+        "String Interpolation",
+        "Modifiers",
+        "Practical Examples"
+      ]
+    },
+    {
+      "slug": "guide/script-commands",
+      "section": "Guide",
+      "title": "Script Commands",
+      "h2s": [
+        "Basic Syntax",
+        "Multiple Commands",
+        "Adding Descriptions",
+        "Command Arguments",
+        "Shared Args",
+        "Command Callbacks",
+        "Shared Logic",
+        "Getting Help",
+        "Practical Example"
+      ]
+    },
+    {
+      "slug": "guide/resources",
+      "section": "Guide",
+      "title": "Resources",
+      "h2s": [
+        "`pick`",
+        "`pick_kv`",
+        "`pick_from_resource`"
+      ]
+    },
+    {
+      "slug": "guide/global-flags",
+      "section": "Guide",
+      "title": "Global Flags",
+      "h2s": [
+        "`help`",
+        "`interactive`",
+        "`debug`",
+        "`quiet`",
+        "`color`",
+        "`src`",
+        "`cst-tree`",
+        "`ast-tree`",
+        "`tls-insecure`",
+        "`mock-response`",
+        "`rad docs`"
+      ]
+    },
+    {
+      "slug": "guide/defer-errdefer",
+      "section": "Guide",
+      "title": "Defer \u0026 Errdefer",
+      "h2s": [
+        "Defer",
+        "Errdefer",
+        "Errors in defer blocks"
+      ]
+    },
+    {
+      "slug": "guide/stashes",
+      "section": "Guide",
+      "title": "Stashes",
+      "h2s": [
+        "The Basics",
+        "State Storage",
+        "File Storage",
+        "Stash Structure",
+        "Managing Stashes"
+      ]
+    },
+    {
+      "slug": "guide/config",
+      "section": "Guide",
+      "title": "Configuration",
+      "h2s": [
+        "Invocation Logging"
+      ]
+    },
+    {
+      "slug": "guide/shell-completion",
+      "section": "Guide",
+      "title": "Shell Completion",
+      "h2s": [
+        "Quick Setup",
+        "What Gets Completed",
+        "Script Completions",
+        "Multiple Scripts \u0026 Globs",
+        "Full Example"
+      ]
+    },
+    {
+      "slug": "examples/index",
+      "section": "Examples",
+      "title": "Examples",
+      "h2s": []
+    },
+    {
+      "slug": "examples/brewi",
+      "section": "Examples",
+      "title": "brewi",
+      "h2s": [
+        "Preview",
+        "Tutorial: Building `brewi`",
+        "Concepts demonstrated"
+      ]
+    },
+    {
+      "slug": "examples/epoch",
+      "section": "Examples",
+      "title": "epoch",
+      "h2s": [
+        "Preview",
+        "Tutorial: Building `epoch`",
+        "Concepts demonstrated"
+      ]
+    },
+    {
+      "slug": "examples/hm",
+      "section": "Examples",
+      "title": "hm",
+      "h2s": [
+        "Preview",
+        "Tutorial: Building `hm`",
+        "Concepts demonstrated"
+      ]
+    },
+    {
+      "slug": "reference/syntax",
+      "section": "Reference",
+      "title": "Language Reference",
+      "h2s": [
+        "Script Structure",
+        "Comments",
+        "Data Types",
+        "Variables and Assignment",
+        "String Interpolation",
+        "Ternary Operator",
+        "Collection Access and Slicing",
+        "Control Flow",
+        "Additional Control Flow",
+        "Functions",
+        "List Comprehensions",
+        "Argument Parsing",
+        "Script Commands",
+        "Shell Commands",
+        "JSON Processing and Display Blocks",
+        "Advanced Features",
+        "Operators",
+        "Scoping and Variables",
+        "Built-in Types and Methods",
+        "Type System",
+        "Rad Code Style"
+      ]
+    },
+    {
+      "slug": "reference/functions",
+      "section": "Reference",
+      "title": "Functions",
+      "h2s": [
+        "How to Read This Document",
+        "Crypto",
+        "Formatting",
+        "HTTP",
+        "IO",
+        "Lists",
+        "Math",
+        "Parsing",
+        "Random",
+        "Stash",
+        "Strings",
+        "System",
+        "Time"
+      ]
+    },
+    {
+      "slug": "reference/errors",
+      "section": "Reference",
+      "title": "Errors",
+      "h2s": [
+        "Syntax Errors (RAD1xxxx)",
+        "Runtime Errors (RAD2xxxx)",
+        "Type Errors (RAD3xxxx)",
+        "Validation \u0026 Lint Errors (RAD4xxxx)"
+      ]
+    }
+  ]
+}

@@ -14,7 +14,7 @@ error[RAD20030]: 'break' can only be used inside a loop
   |         ^^^^^
 4 |     f()
   |
-   = info: rad explain RAD20030
+   = info: rad docs RAD20030
 
 
 ### EXIT ###

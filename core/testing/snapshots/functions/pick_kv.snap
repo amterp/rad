@@ -30,7 +30,7 @@ error[RAD20000]: Filtered 0 options to 0 with filters: []
 3 | pick_kv(keys, values)
   | ^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -49,7 +49,7 @@ error[RAD20000]: Number of keys and values must match, but got 1 key and 2 value
 3 | pick_kv(keys, values)
   | ^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###

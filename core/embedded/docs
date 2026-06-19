@@ -1,28 +1,59 @@
 #!/usr/bin/env rad
 ---
-Opens rad's documentation website.
+Prints Rad's documentation - a page, the full corpus, or an error code.
 
-Example:
-> rad docs functions get_path
-Opens the functions reference page on the 'get_path' function (via header).
+Examples:
+> rad docs
+Lists every documentation topic.
+
+> rad docs guide/basics
+Prints the 'basics' guide page.
+
+> rad docs reference/functions
+Prints the function reference.
+
+> rad docs all
+Prints the entire documentation corpus (the same set as llms-full.txt).
+
+> rad docs RAD10001
+Explains error code RAD10001.
+
+> rad docs guide/basics --web
+Opens the page on the documentation website instead of printing.
 ---
 args:
-    page str = "home" # The page to open on.
-    header str = ""   # An optional header to open to.
+    topic str = "" # The topic to print: a page slug (e.g. 'guide/basics'), an error code (e.g. 'RAD10001'), or 'all'.
+    web w bool     # Open the documentation website in a browser instead of printing.
+    raw bool       # Force raw markdown output (no terminal rendering).
+    render bool    # Force terminal-rendered output, even when piped.
 
-    page enum ["home", "functions"]
+    raw excludes render
 
-url = `https://amterp.dev/rad`
+if web:
+    url = `https://amterp.dev/rad`
+    if _rad_docs_slugs().index_of(topic) != null:
+        url = "{url}/{topic}"
+    else if topic.starts_with("RAD") or parse_int(topic) != null:
+        // Error codes live on the errors reference page.
+        url = "{url}/reference/errors"
+    print("Opening {url}")
+    quiet $`open {url}`
+    exit(0)
 
-// todo rad: convert to switch stmt
-if page == "home":
-    // nothing to do
-else if page == "functions":
-    url += "/reference/functions"
+mode = "auto"
+if raw:
+    mode = "raw"
+if render:
+    mode = "render"
 
-if header:
-    header = lower(header)
-    url += "/#{header}"
-
-print("Opening {url}")
-quiet $`open {url}`
+if topic == "":
+    print(_rad_render(_rad_docs_toc(), mode))
+else if topic == "all":
+    print(_rad_render(_rad_docs_full(), mode))
+else:
+    content = _rad_docs_get(topic)
+    if content == null:
+        print_err("Unknown docs topic: {topic}")
+        print_err("Run 'rad docs' to see available topics, or 'rad docs RAD<code>' to explain an error code.")
+        exit(1)
+    print(_rad_render(content, mode))

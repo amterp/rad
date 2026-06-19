@@ -139,7 +139,7 @@ error[RAD10001]: Expected identifier
 3 | ? "not empty" : "empty"
 4 | 	print("one")
   |
-   = info: rad explain RAD10001
+   = info: rad docs RAD10001
 
 error[RAD20028]: Undefined identifier ''
   --> <script>:2:12
@@ -150,7 +150,7 @@ error[RAD20028]: Undefined identifier ''
 4 | 	print("one")
   |
    = help: did you mean 'a'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

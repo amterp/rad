@@ -37,7 +37,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 1 | print(floor("ab"))
   |             ^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

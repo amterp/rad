@@ -51,7 +51,7 @@ error[RAD20000]: flat_map requires all elements to be lists, but element at inde
 2 | a.flat_map().print()
   |   ^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -69,7 +69,7 @@ error[RAD20000]: flat_map requires all elements to be lists, but element at inde
 2 | a.flat_map().print()
   |   ^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -128,7 +128,7 @@ error[RAD20000]: flat_map function must return a list, but returned int for elem
 2 | a.flat_map(fn(x) x * 2).print()
   |   ^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -146,7 +146,7 @@ error[RAD20000]: flat_map on maps requires a function argument
 2 | a.flat_map().print()
   |   ^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -188,7 +188,7 @@ error[RAD20000]: flat_map function must return a list, but returned int for key 
 2 | a.flat_map(fn(k, v) v * 2).print()
   |   ^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###

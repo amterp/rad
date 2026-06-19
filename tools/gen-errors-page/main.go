@@ -1,7 +1,7 @@
 // gen-errors-page regenerates the public-facing errors reference at
 // `docs-web/docs/reference/errors.md` from the canonical per-code
 // markdown files under `core/error_docs/*.md` (the same files that
-// power `rad explain <code>`).
+// power `rad docs <code>`).
 //
 // The pipeline:
 //

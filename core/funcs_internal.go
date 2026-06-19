@@ -165,6 +165,61 @@ func AddInternalFuncs() {
 				return newRadValues(f.i, f.callNode, list)
 			},
 		},
+		{
+			Name: INTERNAL_FUNC_DOCS_TOC,
+			Execute: func(f FuncInvocation) RadValue {
+				return newRadValues(f.i, f.callNode, NewRadString(BuildDocsTOC()))
+			},
+		},
+		{
+			Name: INTERNAL_FUNC_DOCS_GET,
+			Execute: func(f FuncInvocation) RadValue {
+				slug := f.GetStr("_slug").Plain()
+				content, ok := GetDocTopic(slug)
+				if !ok {
+					return RAD_NULL_VAL
+				}
+				return newRadValues(f.i, f.callNode, NewRadString(content))
+			},
+		},
+		{
+			Name: INTERNAL_FUNC_DOCS_FULL,
+			Execute: func(f FuncInvocation) RadValue {
+				return newRadValues(f.i, f.callNode, NewRadString(BuildDocsFull()))
+			},
+		},
+		{
+			Name: INTERNAL_FUNC_DOCS_SLUGS,
+			Execute: func(f FuncInvocation) RadValue {
+				list := NewRadList()
+				for _, slug := range GetDocSlugs() {
+					list.Append(newRadValueStr(slug))
+				}
+				return newRadValues(f.i, f.callNode, list)
+			},
+		},
+		{
+			// Single rendering gate for `rad docs` output: raw markdown
+			// when piped (agent capture), pretty-rendered on a TTY
+			// (human at the terminal), with explicit overrides. Keeping
+			// it here means the data funcs above stay pure (raw md).
+			Name: INTERNAL_FUNC_RENDER,
+			Execute: func(f FuncInvocation) RadValue {
+				md := f.GetStr("_md").Plain()
+				mode := f.GetStr("_mode").Plain()
+				render := com.IsTty
+				switch mode {
+				case "raw":
+					render = false
+				case "render":
+					render = true
+				}
+				if render {
+					return newRadValues(f.i, f.callNode, RenderMarkdownForTerminal(md))
+				}
+				return newRadValues(f.i, f.callNode, NewRadString(md))
+			},
+		},
 	}
 
 	for _, f := range functions {

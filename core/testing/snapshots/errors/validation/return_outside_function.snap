@@ -9,7 +9,7 @@ error[RAD40004]: 'return' can only be used inside a function
 1 | return 5
   | ^^^^^^^^
   |
-   = info: rad explain RAD40004
+   = info: rad docs RAD40004
 
 
 ### EXIT ###

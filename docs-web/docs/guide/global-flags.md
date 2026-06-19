@@ -209,12 +209,37 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 
 [//]: # (todo can be set several times?)
 
+## `rad docs`
+
+`rad docs` is Rad's built-in documentation browser. It serves docs embedded directly in the binary,
+so it always reflects the version you have installed - no browser, no network required.
+
+```
+rad docs                    # list all topics grouped by section
+rad docs guide/basics       # read the Basics guide page
+rad docs reference/functions # read the functions reference
+rad docs all                # dump the full doc corpus
+```
+
+Error codes are also accessible this way:
+
+```
+rad docs RAD20003           # explain a specific error code
+rad docs 20003              # shorthand (no RAD prefix needed)
+```
+
+By default, `rad docs` renders markdown with color and formatting on a TTY,
+and outputs raw markdown when piped. Use `--raw` to force raw output, or `--render`
+to force rendered output regardless of destination. Pass `--web` / `-w` to open the
+corresponding page on the documentation website instead.
+
 ## Summary
 
 - Rad provides several global flags that can be used across all Rad scripts.
 - Use `--src`, `--cst-tree`, and `--ast-tree` to inspect scripts without running them.
 - Use `--tls-insecure` for development against self-signed certs.
 - Use `--mock-response` to test your scripts against canned API responses.
+- Use `rad docs` to browse the full documentation from the terminal.
 
 !!! info "Script args can shadow global flags"
 

@@ -82,7 +82,7 @@ error[RAD20043]: Failed to parse duration "invalid!": invalid duration: time: in
 1 | parse_duration("invalid!")
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20043
+   = info: rad docs RAD20043
 
 
 ### EXIT ###
@@ -112,7 +112,7 @@ error[RAD20043]: Failed to parse duration "-": empty duration string
 1 | parse_duration("-")
   | ^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20043
+   = info: rad docs RAD20043
 
 
 ### EXIT ###
@@ -128,7 +128,7 @@ error[RAD20043]: Failed to parse duration "1d2d": multiple day components in dur
 1 | parse_duration("1d2d")
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20043
+   = info: rad docs RAD20043
 
 
 ### EXIT ###
@@ -144,7 +144,7 @@ error[RAD20043]: Failed to parse duration "106751d24h": duration overflow: total
 1 | parse_duration("106751d24h")
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20043
+   = info: rad docs RAD20043
 
 
 ### EXIT ###
@@ -209,7 +209,7 @@ error[RAD20043]: Failed to parse duration "1w2w": multiple week components in du
 1 | parse_duration("1w2w")
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20043
+   = info: rad docs RAD20043
 
 
 ### EXIT ###

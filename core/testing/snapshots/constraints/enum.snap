@@ -59,7 +59,7 @@ error[RAD10009]: Unexpected '2'
   |                         ^
 4 | print("Hi", name)
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 
 ### EXIT ###

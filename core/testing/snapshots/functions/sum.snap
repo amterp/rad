@@ -27,7 +27,7 @@ error[RAD30001]: Argument type '(int|str)[]' is not assignable to expected type 
 2 | print(sum(a))
   |           ^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

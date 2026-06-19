@@ -11,7 +11,7 @@ error[RAD20000]: Cannot multipick from empty options list
 2 | multipick(opts)
   | ^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -29,7 +29,7 @@ error[RAD20000]: min must be non-negative, got -1
 2 | multipick(opts, min=-1)
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -47,7 +47,7 @@ error[RAD20000]: max must be positive, got -1
 2 | multipick(opts, max=-1)
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -65,7 +65,7 @@ error[RAD20000]: max must be positive, got 0
 2 | multipick(opts, max=0)
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -83,7 +83,7 @@ error[RAD20000]: min (5) cannot be greater than max (3)
 2 | multipick(opts, min=5, max=3)
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -101,7 +101,7 @@ error[RAD20000]: min is 3 but only 2 options available
 2 | multipick(opts, min=3)
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -354,7 +354,7 @@ error[RAD20000]: multipick canceled
 2 | print(multipick(opts))
   |       ^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### FRAMES ###

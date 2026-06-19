@@ -71,7 +71,7 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |                   ^
 3 | 	print(valA, valB)
   |
-   = info: rad explain RAD20033
+   = info: rad docs RAD20033
 
 
 ### EXIT ###
@@ -94,7 +94,7 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |                   ^
 3 | 	print(valA, valB)
   |
-   = info: rad explain RAD20033
+   = info: rad docs RAD20033
 
 
 ### EXIT ###
@@ -112,7 +112,7 @@ error[RAD20033]: Expected at least 3 values in inner list, got 2
   |                         ^^^^^^^^^^^^^^^^^^^^
 2 | 	print(valA, valB, valC)
   |
-   = info: rad explain RAD20033
+   = info: rad docs RAD20033
 
 
 ### EXIT ###
@@ -145,7 +145,7 @@ error[RAD20033]: Cannot unpack "int" into 2 values
 2 | 	print(idx, item)
   |
    = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
-   = info: rad explain RAD20033
+   = info: rad docs RAD20033
 
 
 ### EXIT ###
@@ -166,7 +166,7 @@ error[RAD20033]: Cannot unpack "int" into 3 values
 2 | 	print(idx, item, extra)
   |
    = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
-   = info: rad explain RAD20033
+   = info: rad docs RAD20033
 
 
 ### EXIT ###

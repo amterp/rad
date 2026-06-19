@@ -9,7 +9,7 @@ error[RAD10009]: Unexpected '1 ='
 1 | 1 = 2
   | ^^^
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 
 ### EXIT ###
@@ -28,7 +28,7 @@ error[RAD20039]: Cannot use '_' as a value
 3 | print(_)
   |       ^
   |
-   = info: rad explain RAD20039
+   = info: rad docs RAD20039
 
 
 ### EXIT ###
@@ -132,8 +132,8 @@ Usage:
 Commands:
   check         Validates & lints Rad scripts.
   completion    Generate shell tab-completion scripts.
-  docs          Opens rad's documentation website.
-  explain       Explains Rad error codes with detailed documentation.
+  docs          Prints Rad's documentation - a page, the full corpus, or an error code.
+  explain       Explains Rad error codes. Deprecated - use 'rad docs' instead.
   fmt           Formats Rad scripts.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.
@@ -203,7 +203,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int|flo
 2 | a = abs("asd")
   |         ^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###
@@ -223,8 +223,8 @@ Usage:
 Commands:
   check         Validates & lints Rad scripts.
   completion    Generate shell tab-completion scripts.
-  docs          Opens rad's documentation website.
-  explain       Explains Rad error codes with detailed documentation.
+  docs          Prints Rad's documentation - a page, the full corpus, or an error code.
+  explain       Explains Rad error codes. Deprecated - use 'rad docs' instead.
   fmt           Formats Rad scripts.
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.
@@ -502,7 +502,7 @@ error[RAD20028]: Undefined identifier 'usernme'
   |       ^^^^^^^
   |
    = help: did you mean 'username'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -523,7 +523,7 @@ error[RAD20028]: Undefined identifier 'usernme'
   |       ^^^^^^^
   |
    = help: did you mean 'username' or 'user_name'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -542,7 +542,7 @@ error[RAD20028]: Undefined identifier 'completely_different_name'
 3 | print(completely_different_name)
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

@@ -28,7 +28,7 @@ generate:
 # false-positive on a PR that legitimately updates generated
 # files. We want to know "did running generate change anything?",
 # not "is the working tree dirty?".
-GENERATED_PATHS := rts/signatures_gen.go rts/embedded_funcs rts/embedded/functions.txt docs-web/docs/reference/functions.md docs-web/docs/reference/errors.md
+GENERATED_PATHS := rts/signatures_gen.go rts/embedded_funcs rts/embedded/functions.txt docs-web/docs/reference/functions.md docs-web/docs/reference/errors.md core/embedded_docs
 # When adding a new generator, append its OUTPUT path here so
 # verify-generated catches drift. Forgetting is the failure mode -
 # the generator runs and writes, but CI can't see the drift.

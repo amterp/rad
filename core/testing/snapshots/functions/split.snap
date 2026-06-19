@@ -81,7 +81,7 @@ error[RAD20017]: limit must be at least 1, got 0
 1 | split("a,b,c", ",", limit=0)
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 
 ### EXIT ###
@@ -97,7 +97,7 @@ error[RAD20017]: limit must be at least 1, got -1
 1 | split("a,b,c", ",", limit=-1)
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 
 ### EXIT ###

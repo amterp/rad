@@ -43,7 +43,7 @@ error[RAD20028]: Undefined identifier 'a'
 4 | foo(10).print()
   |
    = help: did you mean 'b', 'abs', or 'map'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -309,7 +309,7 @@ error[RAD30002]: Invalid operand types: cannot do 'void + int'
 3 | f() + 1
   | ^^^^^^^
   |
-   = info: rad explain RAD30002
+   = info: rad docs RAD30002
 
 
 ### EXIT ###
@@ -328,7 +328,7 @@ error[RAD20038]: Cannot use void value in expression
 3 | f() == null
   | ^^^
   |
-   = info: rad explain RAD20038
+   = info: rad docs RAD20038
 
 
 ### EXIT ###
@@ -347,7 +347,7 @@ error[RAD20038]: Cannot use void value in expression
 3 | print("{f()}")
   |         ^^^
   |
-   = info: rad explain RAD20038
+   = info: rad docs RAD20038
 
 
 ### EXIT ###
@@ -368,7 +368,7 @@ error[RAD20038]: Cannot use void value in expression
   |        ^^^
 4 | 	case 1 -> print("one")
   |
-   = info: rad explain RAD20038
+   = info: rad docs RAD20038
 
 
 ### EXIT ###
@@ -387,7 +387,7 @@ error[RAD30002]: Invalid operand type 'void' for unary '-'
 3 | -f()
   | ^^^^
   |
-   = info: rad explain RAD30002
+   = info: rad docs RAD30002
 
 
 ### EXIT ###

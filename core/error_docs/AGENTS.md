@@ -1,6 +1,6 @@
 # Error Documentation Guidelines
 
-These docs are displayed when users run `rad explain RAD<code>`. They're the second layer of help - the inline error message is first, these docs go deeper.
+These docs are displayed when users run `rad docs RAD<code>`. They're the second layer of help - the inline error message is first, these docs go deeper.
 
 ## Audience
 

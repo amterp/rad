@@ -289,10 +289,11 @@ func (r *DiagnosticRenderer) renderHints(d Diagnostic) {
 	}
 }
 
-// renderInfoLine renders the "rad explain" info line.
+// renderInfoLine renders the "rad docs" info line pointing at the
+// error code's documentation.
 func (r *DiagnosticRenderer) renderInfoLine(d Diagnostic) {
 	if d.Code != "" {
-		info := fmt.Sprintf("= info: rad explain %s", d.Code.String())
+		info := fmt.Sprintf("= info: rad docs %s", d.Code.String())
 		fmt.Fprintf(r.writer, "   %s\n", r.cyan(info))
 	}
 }

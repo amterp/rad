@@ -35,7 +35,7 @@ error[RAD20000]: Filtered 0 options to 0 with filters: []
 2 | pick(opts)
   | ^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -53,7 +53,7 @@ error[RAD20000]: Filtered 5 options to 0 with filters: [asdasdasd]
 2 | pick(opts, "asdasdasd")
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### EXIT ###
@@ -145,7 +145,7 @@ error[RAD20000]: pick canceled
 2 | print(pick(opts))
   |       ^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 
 ### FRAMES ###

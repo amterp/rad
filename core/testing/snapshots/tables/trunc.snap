@@ -40,7 +40,7 @@ error[RAD20028]: Cannot modify undefined field "does_not_exist"
   |     ^^^^^^^^^^^^^^
 6 |         map fn(x) truncate(x, 5)
   |
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

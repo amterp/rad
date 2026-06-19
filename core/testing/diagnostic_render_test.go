@@ -55,7 +55,7 @@ func TestRenderSingleSpanError(t *testing.T) {
 	assert.Contains(t, output, "^^^^^^^^^")
 	assert.Contains(t, output, "= help:")
 	assert.Contains(t, output, "variable names cannot start with '$'")
-	assert.Contains(t, output, "= info: rad explain RAD10009")
+	assert.Contains(t, output, "= info: rad docs RAD10009")
 }
 
 func TestRenderWarning(t *testing.T) {
@@ -341,7 +341,7 @@ func TestRenderFormatMatchesSpec(t *testing.T) {
 	assert.Contains(t, output, "= help:")
 
 	// 6. Info line
-	assert.Contains(t, output, "= info: rad explain")
+	assert.Contains(t, output, "= info: rad docs")
 }
 
 func TestMain(m *testing.M) {

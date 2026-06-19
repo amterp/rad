@@ -14,7 +14,7 @@ error[RAD20031]: 'continue' can only be used inside a loop
   |         ^^^^^^^^
 4 |     f()
   |
-   = info: rad explain RAD20031
+   = info: rad docs RAD20031
 
 
 ### EXIT ###

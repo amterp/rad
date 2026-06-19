@@ -29,7 +29,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 1 | a = 1 / 0
   |         ^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -45,7 +45,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 1 | a = 1.0 / 0
   |           ^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -61,7 +61,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 1 | a = 1 / 0.0
   |         ^^^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -77,7 +77,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 1 | a = 1.0 / 0.0
   |           ^^^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -95,7 +95,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 2 | a /= 0
   |      ^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -113,7 +113,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 2 | a /= 0.0
   |      ^^^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -131,7 +131,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 2 | a /= 0
   |      ^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###
@@ -149,7 +149,7 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 2 | a /= 0.0
   |      ^^^
   |
-   = info: rad explain RAD20036
+   = info: rad docs RAD20036
 
 
 ### EXIT ###

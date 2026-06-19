@@ -41,7 +41,7 @@ error[RAD10001]: Json paths must be defined to plain identifiers
 2 | a[0] = json.id
   | ^^^^
   |
-   = info: rad explain RAD10001
+   = info: rad docs RAD10001
 
 
 ### EXIT ###

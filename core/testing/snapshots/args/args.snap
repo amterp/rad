@@ -238,7 +238,7 @@ error[RAD10001]: Invalid argument declaration
 2 | 	intArg int = 1.2
   |                ^^
   |
-   = info: rad explain RAD10001
+   = info: rad docs RAD10001
 
 
 ### EXIT ###

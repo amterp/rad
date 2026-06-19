@@ -27,7 +27,7 @@ error[RAD10009]: Unexpected 'rad url'
 2 | rad url
   | ^^^^^^^
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 
 ### EXIT ###

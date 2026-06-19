@@ -36,7 +36,7 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str|lis
 2 | print(reverse(a))
   |               ^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

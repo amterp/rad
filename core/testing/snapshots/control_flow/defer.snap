@@ -73,7 +73,7 @@ error[RAD20028]: Undefined identifier 'asd'
   |       ^^^
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -97,7 +97,7 @@ error[RAD20028]: Undefined identifier 'asd'
 5 | print("hi")
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -122,7 +122,7 @@ error[RAD20028]: Undefined identifier 'asd'
 5 | defer print("bye2")
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -147,7 +147,7 @@ error[RAD20028]: Undefined identifier 'asd'
 6 | print("hi")
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -172,7 +172,7 @@ error[RAD20028]: Undefined identifier 'asd'
 5 | defer print("bye2")
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

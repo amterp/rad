@@ -20,7 +20,9 @@ HEADER = """\
 Familiar, Python-like syntax with CLI essentials built-in."""
 
 # Nav sections whose pages get full content inlined in llms-full.txt.
-FULL_CONTENT_SECTIONS = {"Reference"}
+# Kept in sync with embeddedSections in tools/gen-docs-embed so
+# llms-full.txt and `rad docs all` cover the same corpus.
+FULL_CONTENT_SECTIONS = {"Guide", "Reference", "Examples"}
 
 # Pages to skip entirely (not useful for LLM consumption).
 SKIP_PAGES = {"index.md"}

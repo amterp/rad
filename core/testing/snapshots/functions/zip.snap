@@ -58,7 +58,7 @@ error[RAD20015]: Strict mode enabled: all lists must have the same length, but g
 1 | print(zip([1, 2, 3, 4], ["a", "b"], strict=true))
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20015
+   = info: rad docs RAD20015
 
 
 ### EXIT ###
@@ -74,7 +74,7 @@ error[RAD20014]: Cannot enable 'strict' with 'fill' specified
 1 | print(zip([1, 2, 3, 4], ["a", "b", "c", "d"], strict=true, fill="-"))
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20014
+   = info: rad docs RAD20014
 
 
 ### EXIT ###

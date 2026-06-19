@@ -22,7 +22,7 @@ error[RAD30001]: Argument type 'null' is not assignable to expected type 'str'
 1 | split(null, ",")
   |       ^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###

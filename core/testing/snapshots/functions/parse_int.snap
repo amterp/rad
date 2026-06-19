@@ -20,7 +20,7 @@ error[RAD20001]: parse_int() failed to parse "asd"
 1 | a = parse_int("asd")
   |     ^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20001
+   = info: rad docs RAD20001
 
 
 ### EXIT ###
@@ -36,7 +36,7 @@ error[RAD20001]: parse_int() failed to parse "2.4"
 1 | a = parse_int("2.4")
   |     ^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20001
+   = info: rad docs RAD20001
 
 
 ### EXIT ###

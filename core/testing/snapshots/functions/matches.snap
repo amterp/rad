@@ -101,7 +101,7 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing ar
   |          ^^^^^^^^^^^^^^^^^^^^
 2 | print("Should not reach this")
   |
-   = info: rad explain RAD20024
+   = info: rad docs RAD20024
 
 
 ### EXIT ###
@@ -119,7 +119,7 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing cl
   |          ^^^^^^^^^^^^^^^^^^^^^^^
 2 | print("Should not reach this")
   |
-   = info: rad explain RAD20024
+   = info: rad docs RAD20024
 
 
 ### EXIT ###

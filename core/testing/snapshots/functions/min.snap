@@ -23,7 +23,7 @@ error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected t
 1 | print(min([1, "ab", 3]))
   |           ^^^^^^^^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###
@@ -81,7 +81,7 @@ error[RAD20018]: Cannot find min of empty list
 1 | print(min([]))
   |       ^^^^^^^
   |
-   = info: rad explain RAD20018
+   = info: rad docs RAD20018
 
 
 ### EXIT ###
@@ -97,7 +97,7 @@ error[RAD20018]: Cannot find min of empty list
 1 | print(min())
   |       ^^^^^
   |
-   = info: rad explain RAD20018
+   = info: rad docs RAD20018
 
 
 ### EXIT ###
@@ -113,7 +113,7 @@ error[RAD20012]: min() with multiple arguments requires numbers, not lists. Use 
 1 | print(min([1, 2], [3, 4]))
   |       ^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20012
+   = info: rad docs RAD20012
 
 
 ### EXIT ###

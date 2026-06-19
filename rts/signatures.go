@@ -16,15 +16,21 @@ import (
 // edits a per-function .md and skips Make.
 //go:generate go run ../tools/gen-funcs-page -source ../docs/funcs -out ../docs-web/docs/reference/functions.md
 // gen-errors-page does the same for the errors reference, derived
-// from core/error_docs/ (the `rad explain` sources).
+// from core/error_docs/ (the `rad docs <code>` / `rad explain` sources).
 //go:generate go run ../tools/gen-errors-page -source ../core/error_docs -out ../docs-web/docs/reference/errors.md
+// gen-docs-embed mirrors the canonical docs pages (driven by the
+// mkdocs.yml nav) into core/embedded_docs/ so the binary can serve
+// them via `rad docs`. It runs LAST in this batch because it reads
+// the just-generated functions.md / errors.md reference pages.
+//go:generate go run ../tools/gen-docs-embed -nav ../docs-web/mkdocs.yml -docs ../docs-web/docs -out ../core/embedded_docs
 
 type FnSignature struct {
 	Name      string
 	Signature string
 	Typing    *rl.TypingFnT
 	// IsInternal marks signatures that exist for the runtime's own use
-	// (e.g. _rad_explain wiring up the CLI's `rad explain` flow). They
+	// (e.g. _rad_docs_* / _rad_explain wiring up the CLI's `rad docs`
+	// flow). They
 	// remain callable from a script - that's how the runtime invokes
 	// them - but completion, hover, and other user-facing surfaces
 	// should filter them out so the public API stays focused.
@@ -65,6 +71,11 @@ var internalSignatures = []FnSignature{
 	newInternalFnSignature(`_rad_check_from_logs(_duration: str, _verbose: bool, _strict: bool) -> void`),
 	newInternalFnSignature(`_rad_explain(_code: str) -> str?`),
 	newInternalFnSignature(`_rad_explain_list() -> str[]`),
+	newInternalFnSignature(`_rad_docs_toc() -> str`),
+	newInternalFnSignature(`_rad_docs_get(_slug: str) -> str?`),
+	newInternalFnSignature(`_rad_docs_full() -> str`),
+	newInternalFnSignature(`_rad_docs_slugs() -> str[]`),
+	newInternalFnSignature(`_rad_render(_md: str, _mode: str) -> str`),
 }
 
 func init() {

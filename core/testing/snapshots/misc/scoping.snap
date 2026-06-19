@@ -91,7 +91,7 @@ error[RAD20028]: Undefined identifier 'i'
   |            ^
   |
    = help: did you mean 'dim', 'int', or 'min'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###

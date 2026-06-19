@@ -78,7 +78,7 @@ error[RAD20017]: Indent must be non-negative, got -1
 1 | to_json({"a": 1}, indent=-1)
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 
 ### EXIT ###

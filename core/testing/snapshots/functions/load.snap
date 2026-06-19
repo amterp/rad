@@ -71,7 +71,7 @@ error[RAD20014]: Cannot provide values for both "reload" and "override"
 3 | m.load("k", fn() exit(1), reload=true, override="overrode!")
   |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20014
+   = info: rad docs RAD20014
 
 
 ### EXIT ###

@@ -70,7 +70,7 @@ error[RAD20034]: No matching case found for switch
 3 | 	case "alice" -> print("ALICE")
 4 | 	case "bob" -> print("BOB")
   |
-   = info: rad explain RAD20034
+   = info: rad docs RAD20034
 
 
 ### EXIT ###
@@ -93,7 +93,7 @@ error[RAD20035]: Multiple matching cases found for switch
 3 | 	case "alice" -> print("ALICE")
 4 | 	case "bob" -> print("BOB")
   |
-   = info: rad explain RAD20035
+   = info: rad docs RAD20035
 
 
 ### EXIT ###

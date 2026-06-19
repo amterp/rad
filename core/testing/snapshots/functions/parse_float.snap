@@ -20,7 +20,7 @@ error[RAD20002]: parse_float() failed to parse "asd"
 1 | a = parse_float("asd")
   |     ^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20002
+   = info: rad docs RAD20002
 
 
 ### EXIT ###

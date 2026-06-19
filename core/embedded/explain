@@ -1,19 +1,16 @@
 #!/usr/bin/env rad
 ---
-Explains Rad error codes with detailed documentation.
+Explains Rad error codes. Deprecated - use 'rad docs' instead.
 
-Example:
-> rad explain RAD10001
-Shows documentation for error code RAD10001.
-
-> rad explain 10001
-Also works without the RAD prefix.
-
-> rad explain list
-Lists all available error codes.
+This command still works but will be removed in a future version.
+Prefer:
+> rad docs RAD10001          # explain a specific error code
+> rad docs reference/errors  # the full error reference
 ---
 args:
     code str  # The error code to explain (e.g., RAD10001, 10001, or 'list').
+
+print_err("Note: 'rad explain' is deprecated; use 'rad docs' instead (e.g. 'rad docs RAD10001'). It will be removed in a future version.")
 
 // Handle "list" subcommand
 if code == "list":
@@ -31,7 +28,7 @@ if code.starts_with("RAD"):
 doc = _rad_explain(normalized)
 if doc == null:
     print_err("Unknown error code: {code}")
-    print_err("Run 'rad explain list' to see all available error codes.")
+    print_err("Run 'rad docs reference/errors' to see all available error codes.")
     exit(1)
 
 print(doc)

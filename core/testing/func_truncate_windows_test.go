@@ -65,7 +65,7 @@ print(truncate("hello", 2))
   |       ^^^^^^^^^^^^^^^^^^^^
 3 |
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 `
 	assertError(t, 1, expected)
@@ -84,7 +84,7 @@ print(truncate("hello", 0))
   |       ^^^^^^^^^^^^^^^^^^^^
 3 |
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 `
 	assertError(t, 1, expected)
@@ -103,7 +103,7 @@ print(truncate("hello", -5))
   |       ^^^^^^^^^^^^^^^^^^^^^
 3 |
   |
-   = info: rad explain RAD20017
+   = info: rad docs RAD20017
 
 `
 	assertError(t, 1, expected)

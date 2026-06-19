@@ -118,7 +118,7 @@ error[RAD20010]: Error reading input: input canceled
 1 | print(input("> "))
   |       ^^^^^^^^^^^
   |
-   = info: rad explain RAD20010
+   = info: rad docs RAD20010
 
 
 ### FRAMES ###

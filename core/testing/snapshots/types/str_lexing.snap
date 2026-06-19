@@ -226,7 +226,7 @@ error[RAD10009]: Unexpected 'r"\""'
 1 | print(r"\"")
   |       ^^^^^
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 
 ### EXIT ###
@@ -376,7 +376,7 @@ error[RAD10009]: Unexpected '"""'
 2 |  Hi Alice
 3 |   How are you?
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 error[RAD10009]: Unexpected '"'
   --> <script>:1:8
@@ -386,7 +386,7 @@ error[RAD10009]: Unexpected '"'
 2 |  Hi Alice
 3 |   How are you?
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 error[RAD10009]: Unexpected 'Hi'
   --> <script>:2:2
@@ -397,7 +397,7 @@ error[RAD10009]: Unexpected 'Hi'
 3 |   How are you?
 4 |  """
   |
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 error[RAD10001]: Invalid syntax
   --> <script>:3:3
@@ -408,7 +408,7 @@ error[RAD10001]: Invalid syntax
 4 |  """
 5 | print(text)
   |
-   = info: rad explain RAD10001
+   = info: rad docs RAD10001
 
 error[RAD10020]: Unterminated string literal (missing closing double quote)
   --> <script>:4:2
@@ -419,7 +419,7 @@ error[RAD10020]: Unterminated string literal (missing closing double quote)
 5 | print(text)
   |
    = help: add closing " at end of string
-   = info: rad explain RAD10020
+   = info: rad docs RAD10020
 
 
 ### EXIT ###
@@ -466,7 +466,7 @@ error[RAD10020]: Unterminated string literal (missing closing double quote)
 3 |   How are you?
   |
    = help: add closing " at end of string
-   = info: rad explain RAD10020
+   = info: rad docs RAD10020
 
 error[RAD20028]: Undefined identifier 'text'
   --> <script>:5:7
@@ -476,7 +476,7 @@ error[RAD20028]: Undefined identifier 'text'
   |       ^^^^
   |
    = help: did you mean 'exit', 'ceil', or 'int'?
-   = info: rad explain RAD20028
+   = info: rad docs RAD20028
 
 
 ### EXIT ###
@@ -502,7 +502,7 @@ error[RAD10009]: Multi-line string content is indented less than its closing """
 4 | print(text)
   |
    = help: indent every content line at least as much as the closing """ (or move the closing """ to column 0)
-   = info: rad explain RAD10009
+   = info: rad docs RAD10009
 
 
 ### EXIT ###

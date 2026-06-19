@@ -1167,13 +1167,13 @@ error[RAD20029]: Index out of bounds: 5 (length 2)
 11 | print(names[5])
    |             ^
    |
-   = info: rad explain RAD20029
+   = info: rad docs RAD20029
 ```
 
-Every error includes a code (like `RAD20029`) that identifies the type of error. To learn more about any error, use the `rad explain` command:
+Every error includes a code (like `RAD20029`) that identifies the type of error. To learn more about any error, use the `rad docs` command:
 
 ```shell
-rad explain RAD20029
+rad docs RAD20029
 ```
 
 This displays detailed documentation about the error, including common causes and how to fix it.
@@ -1195,7 +1195,7 @@ This displays detailed documentation about the error, including common causes an
 - Rad offers truthy/falsy logic for more concise conditional expressions.
 - Rad has switch statements and expressions. The latter uses `yield` as a keyword to return values from cases.
 - Rad has functions for casting `str`, `int`, `float` and for parsing `parse_int`, `parse_float` values.
-- When errors occur, use `rad explain <code>` to get detailed help.
+- When errors occur, use `rad docs <code>` to get detailed help.
 
 ## Next
 

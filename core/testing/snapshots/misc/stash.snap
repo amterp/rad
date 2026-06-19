@@ -19,7 +19,7 @@ error[RAD20022]: Script ID is not set. Set the 'stash_id' macro in the file head
 2 | get_stash_path()
   | ^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20022
+   = info: rad docs RAD20022
 
 
 ### EXIT ###

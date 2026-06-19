@@ -22,7 +22,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'map'
 1 | values("foo")
   |        ^^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 
 ### EXIT ###
@@ -38,7 +38,7 @@ error[RAD30007]: Missing required argument '_map'
 1 | values()
   | ^^^^^^^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 
 ### EXIT ###
@@ -54,7 +54,7 @@ error[RAD30007]: Expected at most 1 args, but was invoked with 2
 1 | values({}, {})
   | ^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 
 ### EXIT ###

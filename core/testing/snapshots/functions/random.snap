@@ -65,7 +65,7 @@ error[RAD30007]: Expected at most 0 args, but was invoked with 1
 1 | rand(1)
   | ^^^^^^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 
 ### EXIT ###
@@ -89,7 +89,7 @@ error[RAD30007]: Missing required argument '_seed'
 1 | seed_random()
   | ^^^^^^^^^^^^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 
 ### EXIT ###
@@ -107,7 +107,7 @@ error[RAD20019]: min (2) must be less than max (2).
   | ^^^^^^^^^^^^^^
 2 |
   |
-   = info: rad explain RAD20019
+   = info: rad docs RAD20019
 
 
 ### EXIT ###

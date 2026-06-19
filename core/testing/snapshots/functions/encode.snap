@@ -39,7 +39,7 @@ error[RAD20021]: Error decoding base64: illegal base64 data at input byte 0
 1 | decode_base64(";;;< those are not part of base64")
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20021
+   = info: rad docs RAD20021
 
 
 ### EXIT ###

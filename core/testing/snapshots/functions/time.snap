@@ -75,7 +75,7 @@ error[RAD20009]: Invalid time zone 'another bad one'
 3 | a = now(tz="another bad one")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20009
+   = info: rad docs RAD20009
 
 
 ### EXIT ###
@@ -129,7 +129,7 @@ error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
 3 | a = parse_epoch(17123456781)
   |     ^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20007
+   = info: rad docs RAD20007
 
 
 ### EXIT ###
@@ -194,7 +194,7 @@ error[RAD20008]: parse_epoch unit "milliseconds" is no longer valid
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = help: Unit names were shortened in v0.9. Use "millis" instead. See: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad explain RAD20008
+   = info: rad docs RAD20008
 
 
 ### EXIT ###
@@ -288,7 +288,7 @@ error[RAD20044]: Failed to parse date "not-a-date". Supported formats: YYYY-MM-D
 3 | a = parse_date("not-a-date")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20044
+   = info: rad docs RAD20044
 
 
 ### EXIT ###
@@ -374,7 +374,7 @@ error[RAD20009]: Invalid time zone 'another bad one'
 3 | a = parse_date("2026-03-22", tz="another bad one")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20009
+   = info: rad docs RAD20009
 
 
 ### EXIT ###

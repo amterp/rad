@@ -74,7 +74,7 @@ func TestSleep_ErrorsIfNoArg(t *testing.T) {
 1 | sleep()
   | ^^^^^^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 `
 	assertError(t, 1, expected)
@@ -89,7 +89,7 @@ func TestSleep_ErrorsIfNegArg(t *testing.T) {
 1 | sleep(-10)
   | ^^^^^^^^^^
   |
-   = info: rad explain RAD20000
+   = info: rad docs RAD20000
 
 `
 	assertError(t, 1, expected)
@@ -104,7 +104,7 @@ func TestSleep_ErrorsIfTooManyPositionalArgs(t *testing.T) {
 1 | sleep(10, 20)
   |           ^^
   |
-   = info: rad explain RAD30007
+   = info: rad docs RAD30007
 
 `
 	assertError(t, 1, expected)
@@ -119,7 +119,7 @@ func TestSleep_ErrorsIfIncorrectArgType(t *testing.T) {
 1 | sleep(true)
   |       ^^^^
   |
-   = info: rad explain RAD30001
+   = info: rad docs RAD30001
 
 `
 	assertError(t, 1, expected)
@@ -134,7 +134,7 @@ func TestSleep_ErrorsIfInvalidString(t *testing.T) {
 1 | sleep("Invalid!")
   | ^^^^^^^^^^^^^^^^^
   |
-   = info: rad explain RAD20023
+   = info: rad docs RAD20023
 
 `
 	assertError(t, 1, expected)

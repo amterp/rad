@@ -116,7 +116,7 @@ error[RAD20042]: Bug: Field "values2" has 3 rows but expected 4. All fields must
 5 |     values1, values2:
 6 |         filter fn(v) v % 2 == 0
   |
-   = info: rad explain RAD20042
+   = info: rad docs RAD20042
 
 
 ### EXIT ###

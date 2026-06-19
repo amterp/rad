@@ -40,7 +40,7 @@ error[RAD20016]: Cannot cast "map" to float
 1 | float({})
   | ^^^^^^^^^
   |
-   = info: rad explain RAD20016
+   = info: rad docs RAD20016
 
 
 ### EXIT ###
@@ -56,7 +56,7 @@ error[RAD20016]: Cannot cast string to float. Did you mean to use 'parse_float' 
 1 | float("10")
   | ^^^^^^^^^^^
   |
-   = info: rad explain RAD20016
+   = info: rad docs RAD20016
 
 
 ### EXIT ###
