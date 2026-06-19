@@ -83,17 +83,24 @@ func run(source, target string, dryRun bool) error {
 		}
 	}
 
+	// The embedded copy self-announces as generated so opening it
+	// locally points the reader back at docs/funcs/. The runtime loader
+	// (rts.StripGeneratedBanner) and the drift gate strip it, so the
+	// tree stays a byte-for-byte mirror of source modulo this line.
+	banner := []byte(rts.GeneratedBanner("tools/gen-funcs-go", "docs/funcs/") + "\n")
+
 	wrote := 0
 	for _, src := range sourceFiles {
 		dst := filepath.Join(target, src.stem+".md")
+		body := append(append([]byte{}, banner...), src.body...)
 		if dryRun {
 			fmt.Printf("would write %s\n", dst)
 			continue
 		}
-		if existing, err := os.ReadFile(dst); err == nil && string(existing) == string(src.body) {
+		if existing, err := os.ReadFile(dst); err == nil && string(existing) == string(body) {
 			continue // already in sync, don't bump mtime
 		}
-		if err := os.WriteFile(dst, src.body, 0o644); err != nil {
+		if err := os.WriteFile(dst, body, 0o644); err != nil {
 			return fmt.Errorf("write %s: %w", dst, err)
 		}
 		wrote++

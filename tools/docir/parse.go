@@ -11,6 +11,13 @@ var (
 	// but leaks verbatim through a plain terminal renderer.
 	commentRe = regexp.MustCompile(`^\s*\[//\]:`)
 
+	// htmlCommentOpenRe matches the start of a block-level HTML comment
+	// (`<!-- ... -->`). These are web-only authoring notes and the
+	// "GENERATED ... DO NOT EDIT" banners the doc generators prepend to
+	// their source pages - invisible on the web, literal noise in a
+	// terminal. Dropped like commentRe.
+	htmlCommentOpenRe = regexp.MustCompile(`^\s*<!--`)
+
 	// fenceRe matches an opening (or closing) code fence: 3+ backticks
 	// or tildes, optionally indented, with an optional info string.
 	fenceRe = regexp.MustCompile("^(\\s*)(`{3,}|~{3,})(.*)$")
@@ -58,6 +65,17 @@ func parseLines(lines []string) []Block {
 		case commentRe.MatchString(line):
 			// Drop authoring comments entirely (along with the line).
 			i++
+
+		case htmlCommentOpenRe.MatchString(line):
+			// Drop HTML comments (single- or multi-line). A malformed
+			// comment with no closing `-->` falls back to plain text so
+			// it can't swallow the rest of the doc.
+			if next, ok := skipHTMLComment(lines, i); ok {
+				i = next
+			} else {
+				text = append(text, line)
+				i++
+			}
 
 		case fenceRe.MatchString(line):
 			flush()
@@ -181,6 +199,20 @@ func isTableStart(lines []string, i int) bool {
 	}
 	next := lines[i+1]
 	return strings.Contains(next, "|") && tableSepRe.MatchString(next)
+}
+
+// skipHTMLComment returns the index just past a block-level HTML
+// comment starting at start, and ok=true. The comment may close on the
+// same line or several lines down. If no closing `-->` is found, returns
+// ok=false so the caller can treat the line as plain text rather than
+// dropping the rest of the document.
+func skipHTMLComment(lines []string, start int) (next int, ok bool) {
+	for i := start; i < len(lines); i++ {
+		if strings.Contains(lines[i], "-->") {
+			return i + 1, true
+		}
+	}
+	return start, false
 }
 
 // collectDiv gathers the lines between a block-level <div ...> and its

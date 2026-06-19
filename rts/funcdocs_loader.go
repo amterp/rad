@@ -14,8 +14,9 @@ var embeddedFuncDocs embed.FS
 // FuncDoc. Populated on first access from the embedded
 // `embedded_funcs/` directory.
 //
-// The embedded_funcs/ tree is the byte-for-byte mirror of
-// docs/funcs/ that the runtime embeds at compile time.
+// The embedded_funcs/ tree mirrors docs/funcs/ (modulo a leading
+// generated-banner line, stripped on load) and the runtime embeds it
+// at compile time.
 // `tools/gen-funcs-go` keeps the two trees in sync; run
 // `go generate ./rts` after editing under docs/funcs/.
 // TestFuncDocsSourceMatchesEmbedded is the drift gate that catches
@@ -69,7 +70,7 @@ func loadFuncDocs() {
 		if err != nil {
 			continue
 		}
-		doc, err := ParseFuncDoc(stem, string(src))
+		doc, err := ParseFuncDoc(stem, StripGeneratedBanner(string(src)))
 		if err != nil {
 			// Malformed doc - skip so a bad file doesn't break
 			// the runtime. The codegen test catches these at

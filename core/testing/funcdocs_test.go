@@ -197,7 +197,9 @@ func TestFuncDocsSourceMatchesEmbedded(t *testing.T) {
 			t.Errorf("%s exists in docs/funcs/ but not in rts/embedded_funcs/", name)
 			continue
 		}
-		if string(content) != string(emb) {
+		// The embedded copy carries a leading generated banner; strip it
+		// to confirm the rest is a byte-for-byte mirror of source.
+		if string(content) != rts.StripGeneratedBanner(string(emb)) {
 			t.Errorf("%s differs between docs/funcs/ and rts/embedded_funcs/", name)
 		}
 	}

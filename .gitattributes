@@ -1,0 +1,12 @@
+# Generated, committed artifacts. They must stay in the tree (//go:embed
+# resolves them at compile time and `go install` has no generate step),
+# but they're derived from a source of truth - never hand-edit them, run
+# `make generate`. linguist-generated folds them in GitHub diffs and drops
+# them from language stats so a derived-file diff isn't mistaken for a
+# source change.
+core/embedded_docs/**                 linguist-generated=true
+rts/embedded_funcs/**                 linguist-generated=true
+rts/embedded/functions.txt            linguist-generated=true
+rts/signatures_gen.go                 linguist-generated=true
+docs-web/docs/reference/functions.md  linguist-generated=true
+docs-web/docs/reference/errors.md     linguist-generated=true

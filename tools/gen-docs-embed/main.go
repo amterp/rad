@@ -224,9 +224,14 @@ func run(navFile, docsDir, funcsDir, target string, dryRun bool) error {
 		}
 	}
 
+	// Every emitted .md self-announces as generated (stripped at serve
+	// time by core's GetDocPage/GetFuncDoc and the llms.txt hook).
+	banner := []byte(rts.GeneratedBanner("tools/gen-docs-embed", "docs-web/docs/ + docs/funcs/") + "\n")
+
 	wrote := 0
 	want := make(map[string]struct{}, len(stagedPages)+len(stagedFuncs)+1)
 	writeFile := func(rel string, body []byte) error {
+		body = append(append([]byte{}, banner...), body...)
 		want[rel] = struct{}{}
 		dst := filepath.Join(target, rel)
 		if dryRun {
