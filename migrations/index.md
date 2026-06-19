@@ -79,13 +79,13 @@ error[RAD40008]: 'request' blocks have been removed. Use 'rad' instead.
    | ^^
    |
    = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad explain RAD40008
+   = info: rad docs RAD40008
 ```
 
-The inline error gives you the gist, but if you want more detail, run `rad explain` with the error code:
+The inline error gives you the gist, but if you want more detail, run `rad docs` with the error code:
 
 ```shell
-rad explain RAD40008
+rad docs RAD40008
 ```
 
 ```
@@ -108,7 +108,7 @@ Replace request and display with rad:
         fields Name, Age
 ```
 
-Between the inline hint and `rad explain`, you should have enough context to update your script and move on to the next one.
+Between the inline hint and `rad docs`, you should have enough context to update your script and move on to the next one.
 
 ### 6. Test
 

@@ -15,7 +15,7 @@
 - [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Which Shell Runs My Command?, Capturing Output, Error Handling, String Interpolation, Modifiers, Practical Examples
 - [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Command Callbacks, Shared Logic, Getting Help, Practical Example
 - [Resources](https://amterp.dev/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`
-- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `interactive`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`
+- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `interactive`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`, `rad docs`
 - [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks
 - [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes
 - [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging

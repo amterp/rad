@@ -822,6 +822,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#rad-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rad docs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1630,6 +1641,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#rad-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rad docs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1809,12 +1831,30 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 <p>It's common for scripts to perform just one API query, in which case the regex filter doesn't need to be specific.
 Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</p>
 </div>
+<h2 id="rad-docs"><code>rad docs</code><a class="headerlink" href="#rad-docs" title="Permanent link">&para;</a></h2>
+<p><code>rad docs</code> is Rad's built-in documentation browser. It serves docs embedded directly in the binary,
+so it always reflects the version you have installed - no browser, no network required.</p>
+<div class="highlight"><pre><span></span><code>rad docs                     # list all topics grouped by section
+rad docs guide/basics        # read the Basics guide page
+rad docs len                 # look up a single built-in function
+rad docs reference/functions # read the functions reference
+rad docs all                 # dump the full doc corpus
+</code></pre></div>
+<p>Error codes are also accessible this way:</p>
+<div class="highlight"><pre><span></span><code>rad docs RAD20003           # explain a specific error code
+rad docs 20003              # shorthand (no RAD prefix needed)
+</code></pre></div>
+<p>By default, <code>rad docs</code> renders markdown with color and formatting on a TTY,
+and outputs raw markdown when piped. Use <code>--raw</code> to force raw output, or <code>--render</code>
+to force rendered output regardless of destination. Pass <code>--web</code> / <code>-w</code> to open the
+corresponding page on the documentation website instead.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Rad provides several global flags that can be used across all Rad scripts.</li>
 <li>Use <code>--src</code>, <code>--cst-tree</code>, and <code>--ast-tree</code> to inspect scripts without running them.</li>
 <li>Use <code>--tls-insecure</code> for development against self-signed certs.</li>
 <li>Use <code>--mock-response</code> to test your scripts against canned API responses.</li>
+<li>Use <code>rad docs</code> to browse the full documentation from the terminal.</li>
 </ul>
 <div class="admonition info">
 <p class="admonition-title">Script args can shadow global flags</p>

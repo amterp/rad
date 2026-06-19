@@ -7543,8 +7543,8 @@
 
 <h1 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">&para;</a></h1>
 <p>This page lists every diagnostic code Rad can emit, with examples and fixes.
-You can also read any entry from the terminal with <code>rad explain &lt;code&gt;</code>,
-e.g. <code>rad explain RAD10001</code>.</p>
+You can also read any entry from the terminal with <code>rad docs &lt;code&gt;</code>,
+e.g. <code>rad docs RAD10001</code>.</p>
 <p>Codes are grouped into bands by the phase that emits them. Retired codes
 stay listed: numbers are never reused, so old logs remain greppable.</p>
 <h2 id="syntax-errors-rad1xxxx">Syntax Errors (RAD1xxxx)<a class="headerlink" href="#syntax-errors-rad1xxxx" title="Permanent link">&para;</a></h2>
@@ -7588,7 +7588,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10003 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10004-retired">RAD10004: Retired<a class="headerlink" href="#rad10004-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7597,7 +7597,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10004 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10005-retired">RAD10005: Retired<a class="headerlink" href="#rad10005-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7606,7 +7606,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10005 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10006-retired">RAD10006: Retired<a class="headerlink" href="#rad10006-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7615,7 +7615,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10006 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10007-retired">RAD10007: Retired<a class="headerlink" href="#rad10007-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7624,7 +7624,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10007 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10008-reserved-keyword">RAD10008: Reserved Keyword<a class="headerlink" href="#rad10008-reserved-keyword" title="Permanent link">&para;</a></h3>
 <p>A reserved keyword was used where an identifier was expected.</p>
@@ -7655,7 +7655,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10010 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10011-retired">RAD10011: Retired<a class="headerlink" href="#rad10011-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7664,7 +7664,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10011 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10012-retired">RAD10012: Retired<a class="headerlink" href="#rad10012-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7673,7 +7673,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10012 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10013-retired">RAD10013: Retired<a class="headerlink" href="#rad10013-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7682,7 +7682,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10013 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10014-retired">RAD10014: Retired<a class="headerlink" href="#rad10014-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7691,7 +7691,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10014 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10015-retired">RAD10015: Retired<a class="headerlink" href="#rad10015-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7700,7 +7700,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10015 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10016-retired">RAD10016: Retired<a class="headerlink" href="#rad10016-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7709,7 +7709,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10016 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10017-retired">RAD10017: Retired<a class="headerlink" href="#rad10017-retired" title="Permanent link">&para;</a></h3>
 <p>This error code is no longer in use. Tree-sitter's error recovery
@@ -7718,7 +7718,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10017 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10018-missing-indent">RAD10018: Missing Indent<a class="headerlink" href="#rad10018-missing-indent" title="Permanent link">&para;</a></h3>
 <p>A block-opening header (<code>if x:</code>, <code>for ... :</code>, <code>fn name(...):</code>)
@@ -7744,7 +7744,7 @@ so the dispatch in error_messages.go now falls back to <strong>RAD10001</strong>
 ("Invalid syntax") or <strong>RAD10009</strong> ("Unexpected token") instead.</p>
 <p>The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10019 remain greppable.</p>
-<p>See <code>rad explain RAD10001</code> or <code>rad explain RAD10009</code> for the
+<p>See <code>rad docs RAD10001</code> or <code>rad docs RAD10009</code> for the
 modern equivalents.</p>
 <h3 id="rad10020-unterminated-string">RAD10020: Unterminated String<a class="headerlink" href="#rad10020-unterminated-string" title="Permanent link">&para;</a></h3>
 <p>A string literal opened with a quote but reached end-of-line (or
@@ -8864,7 +8864,7 @@ add(5)        // Error: missing argument &#39;b&#39;
 add(1, 2, 3)  // Error: too many arguments
 </code></pre></div>
 <h4 id="how-to-fix_33">How to Fix<a class="headerlink" href="#how-to-fix_33" title="Permanent link">&para;</a></h4>
-<p>Check the function signature. Use <code>rad docs functions &lt;name&gt;</code> to see the
+<p>Check the function signature. Use <code>rad docs reference/functions</code> to see the
 expected arguments for built-in functions.</p>
 <div class="highlight"><pre><span></span><code>fn add(a, b):
     return a + b

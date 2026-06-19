@@ -1627,10 +1627,10 @@ Checked 38 scripts: 37 passed, 1 failed (1 warn, 1 hint, 5 skipped).
    | ^^
    |
    = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad explain RAD40008
+   = info: rad docs RAD40008
 </code></pre></div>
-<p>The inline error gives you the gist, but if you want more detail, run <code>rad explain</code> with the error code:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>explain<span class="w"> </span>RAD40008
+<p>The inline error gives you the gist, but if you want more detail, run <code>rad docs</code> with the error code:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>docs<span class="w"> </span>RAD40008
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>RAD40008: Deprecated Block Keyword
 
@@ -1650,7 +1650,7 @@ Replace request and display with rad:
         noprint
         fields Name, Age
 </code></pre></div>
-<p>Between the inline hint and <code>rad explain</code>, you should have enough context to update your script and move on to the next one.</p>
+<p>Between the inline hint and <code>rad docs</code>, you should have enough context to update your script and move on to the next one.</p>
 <h3 id="6-test">6. Test<a class="headerlink" href="#6-test" title="Permanent link">&para;</a></h3>
 <p>Run your scripts and verify they behave as expected. Static checks (<code>rad check</code>) catch syntax and naming issues, but some changes are behavioral - like an operator producing a different result for the same input. The migration guides call these out, so you'll know what to watch for.</p>
 

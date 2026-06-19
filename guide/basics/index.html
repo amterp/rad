@@ -3170,10 +3170,10 @@ print(parse_float(&quot;bob&quot;))  // error
 11 | print(names[5])
    |             ^
    |
-   = info: rad explain RAD20029
+   = info: rad docs RAD20029
 </code></pre></div>
-<p>Every error includes a code (like <code>RAD20029</code>) that identifies the type of error. To learn more about any error, use the <code>rad explain</code> command:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>explain<span class="w"> </span>RAD20029
+<p>Every error includes a code (like <code>RAD20029</code>) that identifies the type of error. To learn more about any error, use the <code>rad docs</code> command:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>docs<span class="w"> </span>RAD20029
 </code></pre></div>
 <p>This displays detailed documentation about the error, including common causes and how to fix it.</p>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
@@ -3197,7 +3197,7 @@ print(parse_float(&quot;bob&quot;))  // error
 <li>Rad offers truthy/falsy logic for more concise conditional expressions.</li>
 <li>Rad has switch statements and expressions. The latter uses <code>yield</code> as a keyword to return values from cases.</li>
 <li>Rad has functions for casting <code>str</code>, <code>int</code>, <code>float</code> and for parsing <code>parse_int</code>, <code>parse_float</code> values.</li>
-<li>When errors occur, use <code>rad explain &lt;code&gt;</code> to get detailed help.</li>
+<li>When errors occur, use <code>rad docs &lt;code&gt;</code> to get detailed help.</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <p>Good job on getting through the basics of the language! </p>

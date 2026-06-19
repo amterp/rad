@@ -3,8 +3,8 @@
 # Errors
 
 This page lists every diagnostic code Rad can emit, with examples and fixes.
-You can also read any entry from the terminal with `rad explain <code>`,
-e.g. `rad explain RAD10001`.
+You can also read any entry from the terminal with `rad docs <code>`,
+e.g. `rad docs RAD10001`.
 
 Codes are grouped into bands by the phase that emits them. Retired codes
 stay listed: numbers are never reused, so old logs remain greppable.
@@ -72,7 +72,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10003 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10004: Retired
@@ -85,7 +85,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10004 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10005: Retired
@@ -98,7 +98,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10005 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10006: Retired
@@ -111,7 +111,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10006 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10007: Retired
@@ -124,7 +124,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10007 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10008: Reserved Keyword
@@ -171,7 +171,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10010 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10011: Retired
@@ -184,7 +184,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10011 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10012: Retired
@@ -197,7 +197,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10012 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10013: Retired
@@ -210,7 +210,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10013 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10014: Retired
@@ -223,7 +223,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10014 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10015: Retired
@@ -236,7 +236,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10015 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10016: Retired
@@ -249,7 +249,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10016 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10017: Retired
@@ -262,7 +262,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10017 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10018: Missing Indent
@@ -302,7 +302,7 @@ so the dispatch in error_messages.go now falls back to **RAD10001**
 The number stays reserved per the tombstone rule - we never reuse
 retired codes, so old logs that mention RAD10019 remain greppable.
 
-See `rad explain RAD10001` or `rad explain RAD10009` for the
+See `rad docs RAD10001` or `rad docs RAD10009` for the
 modern equivalents.
 
 ### RAD10020: Unterminated String
@@ -1668,7 +1668,7 @@ add(1, 2, 3)  // Error: too many arguments
 
 #### How to Fix
 
-Check the function signature. Use `rad docs functions <name>` to see the
+Check the function signature. Use `rad docs reference/functions` to see the
 expected arguments for built-in functions.
 
 ```rad
