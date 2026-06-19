@@ -22,14 +22,16 @@ The installed `rad` ships its own documentation, always matching its version.
 ```sh
 rad docs                      # list every topic
 rad docs all                  # the entire corpus (guides + reference + examples)
+rad docs len                  # look up a single built-in function (fast, targeted)
 rad docs reference/functions  # every built-in function and signature
 rad docs reference/syntax     # the full language reference
 rad docs guide/<topic>        # e.g. guide/args, guide/shell-commands, guide/rad-blocks
 rad docs RAD20001             # explain an error code
 ```
 
-Do NOT guess function names or signatures - `rad docs reference/functions` is
-authoritative for the installed version. When in doubt about syntax, `rad docs
+Do NOT guess function names or signatures - prefer `rad docs <function>` (e.g.
+`rad docs len`) to look up a single built-in quickly, or `rad docs
+reference/functions` for the full list. When in doubt about syntax, `rad docs
 all` loads everything in one shot (pipe it - output is raw markdown when not a
 TTY).
 

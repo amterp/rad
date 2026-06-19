@@ -40,6 +40,16 @@ def on_post_build(config):
     site_url = config.get("site_url", "").rstrip("/") + "/"
     nav = config["nav"]
 
+    # The full-content bodies inlined below come from the cleaned
+    # embedded corpus (core/embedded_docs/, produced by gen-docs-embed)
+    # rather than the raw docs sources. That tree has mkdocs-only markup
+    # and authoring comments already stripped via tools/docir, so
+    # llms-full.txt matches `rad docs all` and we don't duplicate that
+    # cleanup here. The committed tree is kept fresh by make
+    # verify-generated. docs_dir is .../docs-web/docs, so its grandparent
+    # is the repo root.
+    embedded_dir = docs_dir.parent.parent / "core" / "embedded_docs"
+
     pages = _parse_nav(nav)
     pages = [(s, f, t) for s, f, t in pages if f not in SKIP_PAGES]
 
@@ -69,12 +79,18 @@ def on_post_build(config):
     llms_txt = f"{HEADER}\n\n{toc}\n"
     (site_dir / "llms.txt").write_text(llms_txt, encoding="utf-8")
 
-    # llms-full.txt - TOC + full reference content
+    # llms-full.txt - TOC + full reference content (cleaned bodies)
     full_sections = []
     for p in page_data:
         if p["section"] not in FULL_CONTENT_SECTIONS:
             continue
-        body = p["content"].strip()
+        body = _embedded_body(embedded_dir, p["filepath"])
+        if body is None:
+            # Defensive: a FULL_CONTENT page with no embedded copy (the
+            # tree is stale). Fall back to the raw stripped source.
+            log.warning("llms-txt: no embedded copy for %s, using raw source", p["filepath"])
+            body = p["content"]
+        body = body.strip()
         # Avoid duplicating H1 if content already starts with one
         if body.startswith("# "):
             full_sections.append(body)
@@ -155,6 +171,19 @@ def _extract_front_matter(raw_content):
     if end == -1:
         return None
     return raw_content[3:end].strip()
+
+
+def _embedded_body(embedded_dir, filepath):
+    """Return the cleaned embedded body for a nav filepath, or None.
+
+    The embedded slug mirrors the nav path without the .md suffix
+    (e.g. guide/basics.md -> core/embedded_docs/guide/basics.md).
+    """
+    slug = filepath[:-3] if filepath.endswith(".md") else filepath
+    path = embedded_dir / (slug + ".md")
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return None
 
 
 def _strip_front_matter(raw_content):

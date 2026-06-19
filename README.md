@@ -165,6 +165,7 @@ Once installed, `rad docs` gives you the full documentation right in your termin
 ```
 rad docs                 # list all topics
 rad docs guide/basics    # read a specific page
+rad docs len             # look up a built-in function
 rad docs RAD20003        # explain an error code
 ```
 
