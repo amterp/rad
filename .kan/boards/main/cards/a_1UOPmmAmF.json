@@ -2,17 +2,18 @@
   "_v": 3,
   "alias": "interactive-arg",
   "alias_explicit": false,
-  "column": "in-progress",
+  "column": "done",
   "created_at_millis": 1780878019095,
   "creator": "Alexander Terp",
   "description": "Add a global --interactive / -i flag that walks the user through the args of a script interactively, then prints the equivalent non-interactive invocation (to stderr) and runs it. One safe, user-initiated entry point that subsumes the \"pick an enum value\" and \"pick a command\" ideas, and doubles as an invocation-builder.\n\nSTATUS: design-only. BLOCKED on replacing huh.\n\n== Dependency / blocker ==\nAll prompting (pick/multipick/confirm/input) calls charmbracelet/huh directly and is effectively untestable today: snapshot tests only hit the single-match early-return, and huh reads the OS TTY directly, bypassing the injectable RIo.StdIn seam. This feature must be snapshot-testable, so it is gated on replacing huh behind a small injectable Prompter interface (Select / MultiSelect / Confirm / Input), wired like the existing RShell / RReq / RClock injection in core/global.go + core/testing/test_helpers.go. Retrofitting the existing pick/input/confirm builtins onto Prompter closes their test gap too.\n\n== Architecture (decided) ==\nInteractive mode is a pre-pass that synthesizes the missing argv, then hands off to the existing Ra parse. Ra stays the single source of truth for validation, and the equivalent-invocation output is just the argv we built. Hook point: core/runner.go parseAndExecute, after the first parse (where -i, which-args-supplied, and which-command-matched are known) and before ResetParseState / the final parse.\n\n== Behavior (decided) ==\n- TTY required; clear error if not a terminal.\n- If command: blocks exist and none given, Select the command first, then prompt that command args + shared script args.\n- Prompt for every arg NOT already supplied on the CLI (so -i composes with partial CLI args); optional args skippable (Enter = default/null).\n- Type mapping: enum str -\u003e Select; bool -\u003e Confirm; int/float -\u003e Input (+ range check); free str -\u003e Input (regex can validate). Lists / variadic NEED DESIGN.\n- Show each arg # comment as the prompt; show default as placeholder.\n- Print equivalent invocation (external/hyphenated names, quoted as needed) to stderr, then run.\n\n== Hard part (open) ==\nRelational constraints. Prompt-for-all collides with requires/excludes (and mutual). Leading approach: constraint-aware reactive prompting (track chosen/excluded as we walk; A excludes B -\u003e skip B; A requires C -\u003e force C), plus a \"which of these do you want to supply?\" Select for mutually-exclusive groups. Final Ra parse is the backstop. Exact UX TBD at implementation.\n\n== Implementation sketch ==\n1. (prereq, separate card) Replace huh + add Prompter seam.\n2. Add FLAG_INTERACTIVE / FLAG_I + FlagInteractive in core/flags_global.go; register in CreateAndRegisterGlobalFlags; reset in ResetGlobals. (-i is free.)\n3. Interactive pre-pass in parseAndExecute, likely a new core/interactive.go (testable in isolation: metadata + scripted Prompter -\u003e synthesized argv).\n4. Confirm Ra API for per-flag was-set introspection (usedPtr covers commands); may need a small upstream ra addition.\n5. Snapshot tests via a new scripted-prompt section: enum/bool/int/free-str, command pick + cascade, partial args + -i, non-TTY error, equivalent-invocation stderr.\n\n== Out of scope (future cards) ==\n- Enum auto-pick when omitted WITHOUT -i (changes default contract; foot-gun).\n- Per-arg author opt-in syntax (touches args syntax; needs its own RED doc).\n- @enable_interactive script-level macro (mirrors @enable_args_block).\n- Build-only variant (print invocation, do not run).\n\nPromote this design to a docs/red/ RED doc when we commit to building.",
   "id": "a_1UOPmmAmF",
-  "position": "U",
+  "position": "!!!U",
   "title": "Interactive arg-entry mode (--interactive / -i)",
   "type": "feature",
-  "updated_at_millis": 1781145911738,
+  "updated_at_millis": 1781190151222,
   "history": [
     {"field":"column","value":"next","at":1780878019095},
-    {"field":"column","value":"in-progress","at":1781145911738}
+    {"field":"column","value":"in-progress","at":1781145911738},
+    {"field":"column","value":"done","at":1781190151222}
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "_v": 3,
+  "alias": "pure-go-tree-sitter",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1781195024490,
+  "creator": "Alexander Terp",
+  "description": "CGo (via tree-sitter) is a recurring source of distribution pain: no 'go install', cross-compilation needs C cross-compilers, release pipeline is the only practical source of interpreters (relevant to RED-D's compile feature).\n\nIdea: eliminate CGo by replacing the tree-sitter C runtime with a Go-native one. Scope is smaller than it sounds:\n- Port only the *runtime* (GLR stack, error recovery, incremental reparse; libtree-sitter ~15-20K LOC of C). The generator and grammar.js workflow stay as-is; tree-sitter-rad keeps serving editors unchanged.\n- parser.c (217K lines) is almost entirely generated tables - mechanically transpilable to Go data.\n- scanner.c is 866 hand-written lines we own - port by hand.\n- Frozen-by-choice is fine: we don't need upstream feature velocity, just ABI pinning.\n\nVerification: C implementation remains a perfect differential oracle forever. Keep both runtimes behind a build flag; require byte-identical CSTs across the full snapshot corpus + fuzzed inputs + fuzzed edit sequences (error recovery and incremental reparse are where snapshots alone are thinnest). Strong fit for AI-agent-driven porting given the tight verification loop.\n\nCheaper alternative to evaluate first: compile grammar+runtime to WASM, run via wazero (pure-Go). ~Week-long spike vs months-long port; ~2-3x parse slowdown (likely irrelevant at script sizes, measure for radls). Cuts against own-your-deps ethos but de-risks and could serve as interim step.\n\nNext step when picked up: wazero spike + parse benchmarks on real rad scripts, then write a RED ('eliminate CGo') with port-vs-wasm-vs-status-quo as alternatives.\n\nNot a prerequisite for RED-D (appending payloads to CGo binaries works fine) - it softens RED-D's compile costs but sequences independently.",
+  "id": "a_1WXQXodjy",
+  "labels": [
+    "ai-think"
+  ],
+  "position": "xRUUUUUUU",
+  "title": "Pure-Go tree-sitter runtime (eliminate CGo)",
+  "type": "epic",
+  "updated_at_millis": 1781195037938,
+  "history": [
+    {"field":"column","value":"low","at":1781195024490}
+  ]
+}

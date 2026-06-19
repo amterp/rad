@@ -1,6 +1,6 @@
 default_column = "uncommitted"
 id = "3d0a0ABE"
-kan_schema = "board/11"
+kan_schema = "board/12"
 name = "main"
 
 [card_display]
