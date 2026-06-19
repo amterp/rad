@@ -259,6 +259,50 @@ Code: `printer.go` `verbatim`
 
 ---
 
+## Argument block
+
+### F37 - Args block header and body `implemented`
+The `args:` header colon is tight; the body is indented four spaces with blank
+lines stripped at the block edges.
+`args  :` → `args:`
+Code: `print_arg.go` `formatArgBlock`
+
+### F38 - Declaration spacing `implemented`
+Single spaces separate name, rename, shorthand, type, and default. The variadic
+`*` binds tight to the name and the optional `?` to the type.
+`name  "n"  s  str ?` → `name "n" s str?`
+Code: `print_arg.go` `argDeclCells`
+
+### F39 - Argument comment marker spacing `implemented`
+A `#` description comment gets exactly one space after the marker; its content is
+otherwise preserved (Rad derives the arg's help text from it). `#` is arg-comment
+syntax; `//` code comments are unaffected.
+`#note` → `# note`
+Code: `print_arg.go` `normalizeArgComment`
+
+### F40 - Declaration column alignment `implemented`
+Within a contiguous declaration group, the shorthand, type, default, and comment
+columns align (the rename stays glued to its name), with the comment two spaces
+past the widest row. A column no row in the group uses is omitted, so a group of
+positional-only args gains no empty columns. A declaration far wider than its
+neighbors is excluded from the alignment so it cannot balloon the columns. A
+group breaks at a blank line, a constraint, or a standalone comment.
+Code: `print_arg.go` `alignDeclGroups`
+
+### F41 - Blank line between declarations and constraints `implemented`
+Exactly one blank line separates the declaration group from the constraints
+(inserted if absent, collapsed if doubled).
+Code: `print_arg.go` `argBody`
+
+### F42 - Constraint spacing `implemented`
+enum/regex/range/requires/excludes are rebuilt with single spaces and `", "`
+separators; a range omits a missing bound (`[0,]`) and `mutually` precedes the
+keyword.
+`a  mutually  excludes  b` → `a mutually excludes b`
+Code: `print_arg.go` `argConstraintStr`
+
+---
+
 ## Roadmap
 
 The destination is **full convergence**: any valid script, any layout, formats to
@@ -277,10 +321,11 @@ map, not a contract - reorder as reality demands.
   (long comments / strings). Lower priority - only specific rules need it.
 
 ### Tier 1 - Block constructs (the biggest coverage gap)
-Each shares the `:`-header skeleton but has a bespoke body grammar; all are
-verbatim today. Rough priority by how common they are in real scripts:
-- **`args:`** - arg declarations, types, defaults, constraints, trailing comments.
-  (Natural home for the future optional column alignment in Tier 4.)
+Each shares the `:`-header skeleton but has a bespoke body grammar; all but
+`args:` are verbatim today. Rough priority by how common they are in real scripts:
+- **`args:`** - done (F37-F42): declarations, types, defaults, constraints,
+  trailing comments, and column alignment. Follow-ups: canonicalize default-value
+  and enum-value list spacing, and align trailing comments on constraint rows.
 - **`rad` / `request` / `display`** - additionally carries a **fields-first
   ordering** rule: `fields` first, then options (`transpose`/`noprint`/`quiet`/
   `sort`), then field modifiers, then `rad_if`.
@@ -302,8 +347,8 @@ normalization)** is deferred. Also here: **type-union `|` spacing** (the F31
 follow-up), if/when it normalizes the declared type text.
 
 ### Tier 4 - Optional polish
-- **Arg-block column alignment** - optional gofmt-style alignment of arg types and
-  comments.
+- **Arg-block column alignment** - done (F40): type, default, and comment columns
+  align, with an outlier-exclusion guard.
 - **Slice spacing for complex operands** - spacing slice colons when operands are
   non-trivial, `x[a + 1 : b]` (F26 follow-up).
 - **Redundant-paren removal (decision, not a given)** - today `F23` preserves

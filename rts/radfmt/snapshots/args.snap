@@ -1,0 +1,117 @@
+### TITLE ###
+[F37] args block header colon is tight
+### INPUT ###
+args  :
+    name str
+### STDOUT ###
+args:
+    name str
+### TITLE ###
+[F38] declaration spacing: rename, shorthand, type, default
+### INPUT ###
+args:
+    name   "the-name"   n   str  =  "bob"
+### STDOUT ###
+args:
+    name "the-name" n str = "bob"
+### TITLE ###
+[F38] variadic marker binds tight
+### INPUT ###
+args:
+    *paths  str
+### STDOUT ###
+args:
+    *paths str
+### TITLE ###
+[F38] optional marker binds tight
+### INPUT ###
+args:
+    count   int ?
+### STDOUT ###
+args:
+    count int?
+### TITLE ###
+[F39] comment marker gets a single space
+### INPUT ###
+args:
+    name str #no space
+### STDOUT ###
+args:
+    name str  # no space
+### TITLE ###
+[F40] declaration column alignment: type, default, comment
+### INPUT ###
+args:
+    host str = "localhost" # Server host.
+    port int = 8080 # Server port.
+    tls bool = false # Use TLS.
+    name str # Display name.
+### STDOUT ###
+args:
+    host str  = "localhost"  # Server host.
+    port int  = 8080         # Server port.
+    tls  bool = false        # Use TLS.
+    name str                 # Display name.
+### TITLE ###
+[F40] shorthand flags align in their own column
+### INPUT ###
+args:
+    release r int?
+    docs d bool
+    validate v bool
+    bump bool
+### STDOUT ###
+args:
+    release  r int?
+    docs     d bool
+    validate v bool
+    bump       bool
+### TITLE ###
+[F40] an outlier declaration is excluded from alignment
+### INPUT ###
+args:
+    a str # one
+    b str # two
+    super_long_argument_name str = "x" # three
+### STDOUT ###
+args:
+    a str  # one
+    b str  # two
+    super_long_argument_name str = "x"  # three
+### TITLE ###
+[F41] one blank line between declarations and constraints
+### INPUT ###
+args:
+    runs int = 0
+    runs range [0, 10]
+### STDOUT ###
+args:
+    runs int = 0
+
+    runs range [0, 10]
+### TITLE ###
+[F42] constraint spacing: enum, range, requires, excludes
+### INPUT ###
+args:
+    color str
+    size int
+    a str
+    b str
+    c str
+
+    color enum [ "red","green","blue" ]
+    size range ( 0 , 100 ]
+    a requires b
+    b mutually excludes c
+### STDOUT ###
+args:
+    color str
+    size  int
+    a     str
+    b     str
+    c     str
+
+    color enum ["red", "green", "blue"]
+    size range (0, 100]
+    a requires b
+    b mutually excludes c

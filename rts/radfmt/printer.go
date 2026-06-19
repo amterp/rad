@@ -20,7 +20,7 @@ type printer struct {
 // Deliberately not yet formatted (they fall through to verbatim and are emitted
 // unchanged - structurally safe, just not canonicalized):
 //   - strings: quote-style normalization and interpolation reflow
-//   - arg_block, cmd_block, rad_block
+//   - cmd_block, rad_block
 //   - fn_named / fn_lambda
 //   - switch_stmt, defer_block, shell_stmt
 //   - list_comprehension
@@ -32,6 +32,9 @@ func (p *printer) format(node *ts.Node) Doc {
 	switch node.Kind() {
 	case rl.K_SOURCE_FILE:
 		return p.formatSourceFile(node)
+
+	case rl.K_ARG_BLOCK:
+		return p.formatArgBlock(node)
 
 	// Statements.
 	case rl.K_EXPR_STMT:
