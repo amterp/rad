@@ -3,14 +3,14 @@ package radfmt
 import "testing"
 
 // Stability guarantee: already-canonical source must round-trip byte-for-byte
-// unchanged (changed=false, ok=true). These cases mix formatted constructs with
-// still-verbatim ones (the args block), so they double as a regression net that
-// formatting an idiomatic script is a no-op.
+// unchanged (changed=false, ok=true), so formatting an idiomatic script is a
+// no-op. The args-block case exercises a canonical (column-aligned) declaration
+// block.
 func TestFormat_SpineRoundTrips(t *testing.T) {
 	cases := []string{
 		"a = 1\n",
 		"#!/usr/bin/env rad\nprint(\"hi\")\n",
-		"args:\n    name str\n    age int = 30 # An age.\n\nprint(name)\n",
+		"args:\n    name str\n    age  int = 30  # An age.\n\nprint(name)\n",
 		"// leading comment\nx = 1 // trailing\n",
 		"a = { \"x\": 1, y: 2 }\nb = [1, 2, 3]\n",
 	}

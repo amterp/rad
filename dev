@@ -3,15 +3,15 @@
 Facilitates developing rad.
 ---
 args:
-    release r int?    # 1 to bump patch, 2 for minor and 3 for major.
-    docs d bool       # Enable to deploy docs.
-    amend a bool      # Enable to amend the last commit with the version bump instead of creating a new commit.
-    push p bool       # Enable to push local commits.
-    build b bool      # Enable to build.
-    validate v bool   # Enable to build & test.
-    test t bool       # Enable to run tests once.
-    update u bool     # Enable to update ALL snapshot tests with current output. For a scoped update, run `go test <pkg> -update=<path-substr>` directly.
-    bump bool         # Enable to bump all dependency versions in go.mod.
+    release  r int?  # 1 to bump patch, 2 for minor and 3 for major.
+    docs     d bool  # Enable to deploy docs.
+    amend    a bool  # Enable to amend the last commit with the version bump instead of creating a new commit.
+    push     p bool  # Enable to push local commits.
+    build    b bool  # Enable to build.
+    validate v bool  # Enable to build & test.
+    test     t bool  # Enable to run tests once.
+    update   u bool  # Enable to update ALL snapshot tests with current output. For a scoped update, run `go test <pkg> -update=<path-substr>` directly.
+    bump       bool  # Enable to bump all dependency versions in go.mod.
 
     release range [1, 3]
 
