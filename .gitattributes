@@ -3,10 +3,12 @@
 # but they're derived from a source of truth - never hand-edit them, run
 # `make generate`. linguist-generated folds them in GitHub diffs and drops
 # them from language stats so a derived-file diff isn't mistaken for a
-# source change.
-core/embedded_docs/**                 linguist-generated=true
-rts/embedded_funcs/**                 linguist-generated=true
-rts/embedded/functions.txt            linguist-generated=true
+# source change. eol=lf keeps the go:embed'd corpora LF on every platform:
+# without it a Windows (autocrlf) checkout bakes CRLF into the binary, and the
+# `rad docs` snapshot tests then fail on the line-ending mismatch.
+core/embedded_docs/**                 linguist-generated=true text eol=lf
+rts/embedded_funcs/**                 linguist-generated=true text eol=lf
+rts/embedded/functions.txt            linguist-generated=true text eol=lf
 rts/signatures_gen.go                 linguist-generated=true
 docs-web/docs/reference/functions.md  linguist-generated=true
 docs-web/docs/reference/errors.md     linguist-generated=true
