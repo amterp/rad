@@ -144,9 +144,11 @@ func (p *printer) formatClause(prefix string, alt *ts.Node, leadingBreak bool) D
 	return clause
 }
 
-// formatFor formats `for x in expr:` (and `for i, x in expr:`).
+// formatFor formats `for x in expr:` (and `for i, x in expr:`), preserving the
+// optional `with <ctx>` loop-context clause.
 //
 // [F18] for loop: ", " between loop vars, " in ", header ends in `:`
+// [F43] for loop: keep the optional `with <ctx>` clause
 func (p *printer) formatFor(n *ts.Node) Doc {
 	lefts := childByField(n, rl.F_LEFTS)
 	right := childByField(n, rl.F_RIGHT)
@@ -154,6 +156,11 @@ func (p *printer) formatFor(n *ts.Node) Doc {
 		return p.verbatim(n)
 	}
 	header := concat(text("for "), p.formatForLefts(lefts), text(" in "), p.formatExpr(right))
+	// The context is a bare identifier token (not a named expr), so emit its
+	// source text directly - mirroring how formatForLefts handles loop vars.
+	if ctx := childByField(n, rl.F_CONTEXT); ctx != nil {
+		header = concat(header, text(" with "), text(p.nodeText(ctx)))
+	}
 	return concat(header, p.blockTail(n))
 }
 

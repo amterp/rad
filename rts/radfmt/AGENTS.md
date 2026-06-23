@@ -100,16 +100,23 @@ Three layers guarantee `rad fmt` can never corrupt code:
 1. **Parse-error no-op** - a tree with invalid nodes is returned unchanged
    (`ok=false`).
 2. **Panic recovery** - a panic during formatting degrades to a safe no-op.
-3. **Structural-equivalence guard** - the output is re-parsed and its
-   named-node + comment structure compared to the input; a mismatch discards the
-   formatting and returns the original.
+3. **Structural-equivalence guard** - the output is re-parsed and its structure
+   (named-node kinds + field-bearing anonymous tokens + comment count) compared
+   to the input; a mismatch discards the formatting and returns the original.
 
 A construct with no dedicated formatter falls through to `verbatim`, which
 re-emits its exact source span - always safe, just not canonicalized. This is
 what lets us grow rules incrementally. **The structural guard compares node
-kinds, not text**, so a rule that rewrites token *content* (e.g. string quote
-normalization, F30) needs its own value-preservation check and tests - that's
-why F30 is deferred.
+kinds (and field-attached token kinds), not arbitrary text**, so a rule that
+rewrites token *content* (e.g. string quote normalization, F30) needs its own
+value-preservation check and tests - that's why F30 is deferred.
+
+The guard records a *field-bearing* anonymous token (`field=kind`) - the
+for-loop `with <ctx>` identifier, `?`/`*` markers, keyword choices like
+defer/errdefer, operators - so a formatter can no longer silently drop an
+optional clause realized as a bare token (that was issue #144). It still ignores
+*fieldless* punctuation (commas, colons, brackets), preserving the freedom to
+canonicalize a trailing comma.
 
 ## Layout
 

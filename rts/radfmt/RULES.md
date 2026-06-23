@@ -142,6 +142,16 @@ Code: `print_stmt.go` `formatIf`
 `for i,x in items:` → `for i, x in items:`
 Code: `print_stmt.go` `formatFor`
 
+### F43 - For-loop with-context clause `implemented`
+The optional `with <ctx>` loop-context clause is preserved, single-spaced before
+`with` and after it. The clause names the variable a loop body reads (`ctx.idx`,
+`ctx.src`), so dropping it silently breaks the script - the bug behind #144. The
+context is a bare identifier token, invisible to the named-node structural guard,
+which is why it needs an explicit rule (and why the guard now records
+field-bearing tokens; see `AGENTS.md`).
+`for x in xs  with  loop:` → `for x in xs with loop:`
+Code: `print_stmt.go` `formatFor`
+
 ### F19 - While loop `implemented`
 `while <cond>:`, body indented.
 Code: `print_stmt.go` `formatWhile`

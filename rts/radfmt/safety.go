@@ -8,12 +8,23 @@ import (
 )
 
 // structuralSig builds a fingerprint of a tree's *code* structure: the kinds and
-// field names of every named node, in pre-order. It deliberately ignores
-// anonymous punctuation tokens (so a canonical trailing comma is allowed),
-// string quote characters (a string node is a string node regardless of quote),
-// whitespace, and positions. Comments are excluded here and counted separately,
-// since formatting may legitimately move a comment but must never drop one or
-// change what the code parses to.
+// field names of every named node, plus every anonymous token that carries a
+// field name, in pre-order. It deliberately ignores *fieldless* anonymous
+// punctuation tokens (so a canonical trailing comma is allowed), string quote
+// characters (a string node is a string node regardless of quote), whitespace,
+// and positions. Comments are excluded here and counted separately, since
+// formatting may legitimately move a comment but must never drop one or change
+// what the code parses to.
+//
+// A field-bearing anonymous token is semantically load-bearing - the for-loop
+// `with <ctx>` identifier, `?`/`*` arg markers, keyword choices like
+// defer/errdefer or quiet/confirm, and operators - so its presence and kind are
+// recorded (`field=kind`). This is what stops a construct formatter from
+// silently dropping such a clause: doing so changes the signature and trips the
+// equivalence guard. Recording the kind (the literal, for keyword tokens) also
+// catches a swap where the choice rides on the token rather than the node kind:
+// `defer` and `errdefer` are one `defer_block` kind distinguished only by their
+// `keyword` token, so without this the named-node path alone can't tell them apart.
 func structuralSig(n *ts.Node) (sig string, comments int) {
 	var sb strings.Builder
 	var walk func(field string, n *ts.Node)
@@ -22,7 +33,13 @@ func structuralSig(n *ts.Node) (sig string, comments int) {
 			comments++
 			return
 		}
-		if n.IsNamed() {
+		// Record named nodes and field-bearing anonymous tokens alike, each
+		// opening a `(...)` group so its children nest under it (a flat encoding
+		// would let a child of an anonymous token masquerade as its sibling).
+		// Fieldless anonymous punctuation is skipped but still recursed through,
+		// keeping trailing-comma-style canonicalization invisible to the guard.
+		record := n.IsNamed() || field != ""
+		if record {
 			if field != "" {
 				sb.WriteString(field)
 				sb.WriteByte('=')
@@ -35,7 +52,7 @@ func structuralSig(n *ts.Node) (sig string, comments int) {
 		for i, ch := range n.Children(cursor) {
 			walk(n.FieldNameForChild(uint32(i)), &ch)
 		}
-		if n.IsNamed() {
+		if record {
 			sb.WriteByte(')')
 		}
 	}
@@ -44,10 +61,12 @@ func structuralSig(n *ts.Node) (sig string, comments int) {
 }
 
 // structuralDump renders a readable, position-free tree of named node kinds and
-// their field names (comments shown as a normalized marker). It's the
-// human-friendly twin of structuralSig: tests diff the dump of the input against
+// their field names, plus field-bearing anonymous tokens (comments shown as a
+// normalized marker). It's the human-friendly twin of structuralSig - it records
+// exactly what the signature does - so tests diff the dump of the input against
 // the dump of the formatted output to prove formatting never changed the code's
-// structure, with a clear side-by-side failure.
+// structure (including dropped optional clauses), with a clear side-by-side
+// failure.
 func structuralDump(n *ts.Node) string {
 	var sb strings.Builder
 	var walk func(depth int, field string, n *ts.Node)
@@ -57,13 +76,20 @@ func structuralDump(n *ts.Node) string {
 			sb.WriteString("<comment>\n")
 			return
 		}
-		if n.IsNamed() {
+		// Mirror structuralSig: named nodes and field-bearing anonymous tokens
+		// both print a line and indent their children; fieldless punctuation is
+		// skipped. Anonymous tokens get a `(token)` marker so the dump reads
+		// clearly.
+		if n.IsNamed() || field != "" {
 			sb.WriteString(strings.Repeat("  ", depth))
 			if field != "" {
 				sb.WriteString(field)
 				sb.WriteString(": ")
 			}
 			sb.WriteString(n.Kind())
+			if !n.IsNamed() {
+				sb.WriteString(" (token)")
+			}
 			sb.WriteByte('\n')
 			depth++
 		}
