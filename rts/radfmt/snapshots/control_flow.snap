@@ -31,6 +31,22 @@ for i,x in items:
 for i, x in items:
     print(x)
 ### TITLE ###
+[F43] For loop with context clause
+### INPUT ###
+for x in [1,2,3]  with  loop:
+    print(loop.idx)
+### STDOUT ###
+for x in [1, 2, 3] with loop:
+    print(loop.idx)
+### TITLE ###
+[F43] Keyed for loop with context clause
+### INPUT ###
+for k,v in m with loop:
+    print(loop.idx, k, v)
+### STDOUT ###
+for k, v in m with loop:
+    print(loop.idx, k, v)
+### TITLE ###
 [F19] While loop
 ### INPUT ###
 while x:
