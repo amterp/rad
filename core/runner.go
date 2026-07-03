@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -210,6 +211,15 @@ func (r *RadRunner) setupRootCommand() {
 	RRootCmd.SetHelpEnabled(false) // Disable help initially, enable after script registration
 	RRootCmd.SetAutoHelpOnNoArgs(true)
 
+	// Under --shell, stdout is reserved for eval-able output, so usage must go to
+	// stderr, followed by an `exit 0` on stdout so an eval'ing wrapper stops after
+	// showing help. Routing through RunUsage gives us that (via printHelpFromBuffer)
+	// instead of Ra's unconditional print-to-stdout.
+	RRootCmd.SetCustomUsage(func(isLongHelp bool) {
+		r.RunUsage(!isLongHelp, false)
+		emitShellExit(0)
+	})
+
 	// Set up PostParse hook to apply color settings after parsing but before output
 	RRootCmd.SetParseHooks(&ra.ParseHooks{
 		PostParse: func(cmd *ra.Cmd, err error) {
@@ -219,6 +229,16 @@ func (r *RadRunner) setupRootCommand() {
 				color.NoColor = true
 			case COLOR_ALWAYS:
 				color.NoColor = false
+			}
+
+			// Parse failures are printed and exited inside Ra, bypassing our
+			// printer, so shell mode emits its eval-able exit here. Help, dump,
+			// and completion are non-failure exits handled by their own paths.
+			if err != nil &&
+				!errors.Is(err, ra.HelpInvokedErr) &&
+				!errors.Is(err, ra.DumpInvokedErr) &&
+				!errors.Is(err, ra.CompletionInvokedErr) {
+				emitShellExit(1)
 			}
 		},
 	})
@@ -324,6 +344,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 		// For global-only invocations without args, show help and exit
 		// Ra will handle the help generation properly
 		r.printScriptlessUsage(false)
+		emitShellExit(0)
 		RExit.Exit(0)
 	}
 

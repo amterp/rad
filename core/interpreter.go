@@ -864,6 +864,7 @@ func (i *Interpreter) emitDiagnostic(d Diagnostic) {
 	}
 	renderer := NewDiagnosticRenderer(RIo.StdErr)
 	renderer.Render(d)
+	emitShellExit(1)
 	RExit.Exit(1)
 }
 

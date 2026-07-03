@@ -201,7 +201,7 @@ func (p *stdPrinter) ErrorExitCode(msg string, errorCode int) {
 	if !com.IsBlank(msg) && (!p.isQuiet || p.isScriptDebug) {
 		fmt.Fprint(p.stdErr, msg)
 	}
-	p.printShellExitIfEnabled()
+	emitShellExit(errorCode)
 	p.errorExit(errorCode)
 }
 
@@ -249,7 +249,7 @@ func (p *stdPrinter) CtxErrorCodeExit(ctx ErrorCtx, errorCode int) {
 			fmt.Fprintf(p.stdErr, "\n  Try: %s\n", *ctx.Suggestion)
 		}
 	}
-	p.printShellExitIfEnabled()
+	emitShellExit(errorCode)
 	p.errorExit(errorCode)
 }
 
@@ -260,20 +260,20 @@ func (p *stdPrinter) ErrorCodeExitf(errorCode int, msgFmt string, args ...interf
 		}
 		fmt.Fprintf(p.stdErr, msgFmt, args...)
 	}
-	p.printShellExitIfEnabled()
+	emitShellExit(errorCode)
 	p.errorExit(errorCode)
 }
 
 func (p *stdPrinter) RadErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg)
-	p.printShellExitIfEnabled()
+	emitShellExit(1)
 	p.errorExit(1)
 }
 
 func (p *stdPrinter) UsageErrorExit(msg string) {
 	fmt.Fprint(p.stdErr, msg+"\n\n")
 	p.runner.RunUsage(false, true)
-	p.printShellExitIfEnabled()
+	emitShellExit(1)
 	p.errorExit(1)
 }
 
@@ -287,9 +287,12 @@ func (p *stdPrinter) GetStdWriter() io.Writer {
 	return p.stdOut
 }
 
-func (p *stdPrinter) printShellExitIfEnabled() {
-	if p.isShellMode {
-		fmt.Println("exit 1")
+// Under --shell, stdout is reserved for eval-able output, so exits emit an
+// `exit <code>` line there for the eval'ing wrapper to run - otherwise the
+// wrapper would continue with unset variables.
+func emitShellExit(code int) {
+	if FlagShell.Value {
+		fmt.Fprintf(RIo.StdOut, "exit %d\n", code)
 	}
 }
 
