@@ -10,10 +10,10 @@ Start with [RED-1](0001-red-process.md), which defines the process itself. New R
 > This index is maintained by hand for now. The frontmatter is structured so it can later be
 > generated automatically.
 >
-> Letter IDs (RED-A, RED-B, RED-C) are **provisional**: their chronological integer slot isn't
-> settled yet. RED-A and RED-B are backfilled records pending the backfill of earlier decisions;
-> RED-C is a current decision parked on a provisional ID until the one-time integer renumber.
-> They'll be renumbered into their proper slots later.
+> Letter IDs (RED-A, RED-B, RED-C, RED-D) are **provisional**: their chronological integer slot
+> isn't settled yet. RED-A and RED-B are backfilled records pending the backfill of earlier
+> decisions; RED-C and RED-D are current decisions parked on provisional IDs until the one-time
+> integer renumber. They'll be renumbered into their proper slots later.
 
 ## Index
 
@@ -30,3 +30,4 @@ Start with [RED-1](0001-red-process.md), which defines the process itself. New R
 | [RED-A](A-request-display-split.md) | Separate request and display blocks | Language | Superseded  |
 | [RED-B](B-rad-block-unification.md) | Unify the rad block keywords        | Language | Implemented |
 | [RED-C](C-radish.md)                | Own our interactivity layer (radish) | Architecture | Draft       |
+| [RED-D](D-bundle-and-compile.md)    | One artifact for bundling and standalone executables | Tooling | Draft |

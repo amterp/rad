@@ -1,450 +1,229 @@
-- Where the syntax of the Rad language itself becomes relevant, see SYNTAX.md for reference.
+# AGENTS.md
 
-- You have the following subagents to request input from:
-  - Code Reviewer (for when you make large changes)
-  - Rad Docs Maintainer (for when you make user-facing changes)
+This file provides guidance for AI agents when working with code in this
+repository.
 
-- You have the following useful commands available to you:
-  - `make format` 
-  - `make build`: builds the project into a local test binary `./bin/radd`
-  - `make test`
-  - `./dev --validate`: Runs `go mod tidy`, formats, builds, and runs tests.
+## What This Is
 
-- Please do not leave task-specific messages to the user via comments in the code base when making changes.
+Rad is a CLI-first scripting language (Python-like syntax) with declarative arg
+parsing and built-in JSON, HTTP, and interactive-prompt support. This repo is a
+single Go module containing the `rad` interpreter, the `radls` language server,
+and supporting tooling.
 
-- Never commit `replace` directives in `go.mod`. These are used locally during development to point at local
-  copies of dependencies, but must be removed before committing.
+Key orientation docs:
 
----
+- `SYNTAX.md` (repo root) - comprehensive Rad language reference, written for
+  dev sessions. Read it before writing or modifying any Rad code (`.rad`
+  files, embedded scripts, snapshot test inputs), and update it when changing
+  language syntax or semantics.
+- `NAVIGATE.md` - maps this repo and sibling repos (tree-sitter-rad grammar,
+  go-tbl, homebrew-rad).
+- `docs/red/` - Rad Evolution Documents (REDs): decision records for
+  significant design choices. Check them before revisiting a settled design;
+  significant new decisions should get one.
+- Directory-specific agent guides take precedence in their subtrees:
+  `core/error_docs/AGENTS.md`, `rts/radfmt/AGENTS.md`,
+  `docs-web/docs/guide/AGENTS.md`, `docs-web/docs/reference/AGENTS.md`.
 
-## Pre-Commit Checklist
+## Commands
 
-A Claude Code hook will remind you of this checklist when you commit. Review every item; skip categories that
-don't apply to your change.
-
-### Always
-- Run `./dev --validate` (formats, builds, tests). All tests pass.
-- Commit messages follow conventional prefixes (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`).
-- Commit messages explain **why**, not just what. See `CONTRIBUTING.md` for full conventions.
-
-### When Adding or Modifying a Built-in Function
-- Function documented in `docs/funcs/<name>.md` (source of truth - see `docs/funcs/README.md` for the required format). The signature line in `## Signature` IS the type-checker's signature; there is no parallel definition in `rts/signatures.go` anymore.
-- Snapshot tests added/updated in `core/testing/snapshots/functions/<name>.snap`.
-- Run `make generate`. This regenerates `rts/signatures_gen.go`, mirrors `docs/funcs/` into `rts/embedded_funcs/`, regenerates the public reference at `docs-web/docs/reference/functions.md`, refreshes `rts/embedded/functions.txt`, and rebuilds the embedded docs tree at `core/embedded_docs/` (what `rad docs` serves). Commit the regenerated artifacts.
-
-### When Changing Language Syntax or Semantics
-- `SYNTAX.md` updated to reflect the change.
-- Snapshot tests added in the appropriate `core/testing/snapshots/` subdirectory.
-- If AST nodes were added/changed, parser snapshot tests in `rts/test/st_snapshots/` updated.
-- Guide docs updated if the feature has a section in `docs-web/docs/guide/`.
-
-### When Introducing a Breaking Change
-- Commit message uses `feat!:` or `fix!:` prefix.
-- Migration guide entry added to the current version's `docs-web/docs/migrations/` file.
-- Migration diagnostic added (see [Breaking Changes & Migration Diagnostics](#breaking-changes--migration-diagnostics)).
-
-### When Adding or Modifying Error Codes
-- Error doc file created/updated in `core/error_docs/<code>.md`.
-- Error code defined in `rts/rl/errors.go` if new.
-
-### When Touching Platform-Specific Behavior
-- Logic centralized in `core/common/platform.go`, not scattered via `runtime.GOOS` checks.
-- Paths returned to user code are normalized via `NormalizePath()`.
-- Platform-specific tests in `core/testing/platform_test.go` if applicable.
-
----
-
-# Rad Language - LLM Quick Reference
-
-**Rad is a modern CLI scripting language designed to replace Bash for most scripting needs.**
-
-## Project Overview
-
-Rad (🤙 Rad) is a lightweight CLI scripting language that makes shell scripting easier, more readable, and more
-maintainable than Bash. It combines familiar Python-like syntax with powerful scripting-specific features.
-
-### Key Features
-
-- **Declarative argument parsing** with automatic help generation
-- **Built-in JSON processing** with path expressions
-- **HTTP request syntax** (`rad url`) for API interactions
-- **Table formatting** and data display
-- **String interpolation** with `{variable}` syntax
-- **Shell command integration** while avoiding Bash pitfalls
-- **Type system** with runtime type checking
-- **Interactive prompts** via `pick()` function
-
-## Project Structure
-
-```
-├── main.go                    # Entry point - creates RadRunner
-├── go.mod                     # Go module definition
-├── Makefile                   # Build system (generate, format, build, test)
-├── README.md                  # User documentation
-├── core/                      # Interpreter (evaluates AST, no tree-sitter)
-│   ├── runner.go              # Main runner logic
-│   ├── interpreter.go         # AST evaluation via Go type switch
-│   ├── funcs.go              # Built-in functions
-│   ├── docs.go               # `rad docs` command implementation
-│   ├── rad_block.go          # Rad block syntax (HTTP requests)
-│   ├── args.go               # Argument parsing
-│   ├── json_*.go             # JSON processing algorithms
-│   ├── type_*.go             # Type system implementation
-│   ├── embedded_docs/        # Generated: mkdocs nav pages embedded in binary (for `rad docs`)
-│   └── testing/              # Comprehensive test suite
-├── rts/                      # Parsing, conversion, and static analysis
-│   ├── parse.go              # Tree-sitter parser wrapper
-│   ├── converter.go          # CST-to-AST single-pass converter
-│   ├── nodes.go              # CST node types and traversal
-│   ├── signatures.go         # Built-in function signatures
-│   ├── check/                # Static checker (AST-based, CST fallback)
-│   └── rl/                   # AST node types, spans, typing, node kinds
-├── radls/                    # Language Server Protocol implementation
-├── vsc-extension/            # VS Code extension
-├── docs-web/                 # Documentation website (MkDocs)
-├── tools/                    # Code generators (run via `make generate` / `go generate ./rts`)
-│   ├── gen-funcs-sigs/       # Derives rts/signatures_gen.go from docs/funcs/
-│   ├── gen-funcs-go/         # Mirrors docs/funcs/ into rts/embedded_funcs/ for LSP hover
-│   ├── gen-funcs-page/       # Renders docs-web/docs/reference/functions.md
-│   ├── gen-errors-page/      # Renders docs-web/docs/reference/errors.md
-│   └── gen-docs-embed/       # Mirrors mkdocs nav pages into core/embedded_docs/ for `rad docs`
-├── benchmark/                # Performance benchmarks
-└── examples/                 # Example Rad scripts
+```sh
+make all              # generate + format + build + test (the full local loop)
+make build            # build dev binary to bin/radd
+make test             # go test ./core/testing/... ./rts/... ./radls/lstesting/...
+make format           # gofmt + goimports (run before committing)
+make generate         # run all codegen (see Generated Code below)
+./dev --validate      # go mod tidy + make all, via the dev Rad script
 ```
 
-## Architecture Overview
+The dev binary is `bin/radd`, not `rad` - a bare `rad` invokes the installed
+release. Test local changes with `./bin/radd script.rad`. Useful debugging
+flags: `--src`, `--cst-tree`, `--ast-tree`, `--rad-debug`,
+`--mock-response pattern:file.json`.
 
-### 1. Entry Point (`main.go`)
+Run a single test the standard Go way:
 
-- Simple entry: creates `core.RadRunner` and calls `Run()`
-- All logic delegated to core package
-
-### 2. Core Package (`core/`)
-
-The heart of the interpreter, organized by functionality. `core/` has **no tree-sitter dependency** - it works
-entirely with Go-native AST nodes from `rts/rl/`.
-
-#### Key Files:
-
-- **`runner.go`**: Main execution flow, argument parsing, script loading
-- **`interpreter.go`**: AST evaluation via Go type switch with `EvalResult` system
-- **`funcs.go`**: 50+ built-in functions (print, len, join, etc.)
-- **`args.go`**: Declarative argument parsing with constraints
-- **`rad_block.go`**: Special `rad url:` syntax for HTTP requests
-- **`json_*.go`**: JSON path expressions and field extraction
-- **`type_*.go`**: Type system (RadValue, lists, maps, strings, etc.)
-
-#### Built-in Functions (`funcs.go`):
-
-Common functions include:
-
-- **I/O**: `print`, `print_err`, `debug`, `pprint`
-- **Data**: `len`, `keys`, `values`, `join`, `sort`, `unique`
-- **Strings**: `upper`, `lower`, `split`, `replace`, `trim`
-- **Math**: `sum`, `max`, `min`, `round`, `floor`, `ceil`
-- **System**: `exit`, `sleep`, `now`, `get_env`
-- **Interactive**: `pick`, `pick_kv` (user selection prompts)
-- **Files**: `read_file`, `write_file`, `find_paths`
-- **HTTP**: `http_get`, `http_post`
-
-### 3. Parsing & AST (`rts/`)
-
-Tree-sitter is the **only place CGo runs**. The rest of the system works with Go-native AST nodes.
-
-**Pipeline**: Source code -> tree-sitter CST -> `converter.go` -> Go-native AST -> `core/` evaluates AST
-
-- **`parse.go`**: Parser wrapper around tree-sitter-rad grammar
-- **`converter.go`**: Single-pass CST-to-AST transformation. Key work: delegate chain collapsing, leaf value
-  pre-parsing, operator resolution to enum, compound assign/incr-decr desugaring, string escape resolution,
-  eager function body conversion.
-- **`nodes.go`**: CST node types and traversal (reduced post-migration)
-- **`signatures.go`**: Built-in function type signatures. Defaults are pre-converted to AST at init time.
-- **`check/`**: Static checker. Walks AST for structural validation (scope checks, shadowing, assignment LHS).
-  Falls back to CST for tree-sitter-specific checks (invalid nodes, scientific notation).
-- **`rl/`**: The leaf package imported by everything. Contains:
-  - AST node types (~36 node kinds) with `Node` interface (`Kind()`, `Span()`, `Children()`)
-  - `Span` type for source location tracking
-  - Typing system (type definitions, resolution, compatibility)
-  - Constants, error types, utilities
-
-### 4. Language Server (`radls/`)
-
-- Implements LSP for VS Code integration
-- Provides syntax errors, diagnostics, etc.
-- Currently macOS/Linux only
-
-## Language Syntax Quick Reference
-
-### Script Structure
-
-```rad
-#!/usr/bin/env rad
----
-Script description goes here
----
-args:
-    name str              # Required string argument
-    count int = 5         # Optional with default
-    verbose v bool        # Boolean flag (can use short form)
-    
-    count range (0, 100]  // Constraints
-    name enum ["alice", "bob"]
-
-// Script body - comments use //
-for i in range(count):
-    print("Hello {name}!")
+```sh
+go test ./core/testing/ -run TestName
 ```
 
-### Key Syntax Features
+### Snapshot tests
 
-#### Arguments
+Snapshot suites are the dominant test style - prefer adding a snapshot case
+over bespoke Go assertions when either would do. Five suites:
+`core/testing/snapshots/` (end-to-end script runs), `rts/test/st_snapshots/`
+(syntax trees), `rts/check/snapshots/` (checker diagnostics),
+`rts/radfmt/snapshots/` (formatter), `radls/lstesting/snapshots/` (LSP).
 
-- Automatic help generation from `#` comments (help text only)
-- Type checking (str, int, float, bool)
-- Constraints (range, enum, regex)
-- Optional vs required args
-- Short form flags
+`.snap` files hold multiple cases delimited by `### TITLE ###` /
+`### INPUT ###` (Rad source) / `### ARGS ###` / `### STDOUT ###` /
+`### STDERR ###` / `### EXIT ###`, plus `### KEYS ###` / `### FRAMES ###` for
+scripted interactive prompts.
 
-#### Data Types
+When you intentionally change behavior, update snapshots scoped to what you
+changed:
 
-- **Primitives**: `str`, `int`, `float`, `bool`, `null`
-- **Collections**: `list[T]`, `map[K,V]`
-- **Functions**: First-class functions
+```sh
+# Rewrite only snapshot files whose path contains the substring(s):
+go test ./core/testing/ -run TestSnapshots -update=types/str_lexing
+go test ./core/testing/ -run TestSnapshots -update=errors/validation,control_flow
 
-#### Control Flow
-
-```rad
-// If statements
-if condition:
-    // do something
-
-// For loops
-for item in items:
-    print(item)
-
-// While loops  
-while condition:
-    // do something
-
-// Switch expressions
-result = switch value:
-    case "a": "Apple"
-    case "b": "Banana" 
-    default: "Unknown"
+# Blanket rewrite (use sparingly): ./dev --update, or per-package -update-all
 ```
 
-#### Rad Blocks (HTTP Requests)
+Under `-update=...`, mismatches in non-targeted files still fail, so unrelated
+regressions can't be silently baked in. Write the value with `=`: a bare
+`-update -run X` swallows `-run` as the update value. Always review the `.snap`
+diff afterward. Only packages that own snapshot suites register these flags
+(e.g. `./rts/...` fails because `rts/rl` doesn't define them; see `./dev` for
+the exact package list).
 
-```rad
-// Define JSON field mappings
-Name = json[].name
-Email = json[].email
+### CI
 
-// Execute HTTP request and display as table
-rad "https://api.example.com/users":
-    fields Name, Email
-    sort Name
-```
+PR checks run `make verify-generated` (fails on stale codegen output) and the
+test suite on Linux, macOS, and Windows. For faster platform-specific
+feedback: `gh workflow run "Quick Platform Tests" --ref <branch>
+[-f platforms=windows]`.
 
-#### String Interpolation
+## Architecture
 
-```rad
-name = "world"
-message = "Hello {name}!"  // Result: "Hello world!"
-```
+Subsystems within the one Go module:
 
-## Development Workflow
+- `core/` - interpreter and CLI. One big package for historical reasons; new
+  code should be packaged appropriately where possible.
+- `rts/` - "Rad Tree Sitter": wraps the tree-sitter-rad grammar. Owns the AST
+  (`rts/rl/`), the static checker (`rts/check/`), and the formatter
+  (`rts/radfmt/`). Consumed by both `core` and `radls`; **rts must not import
+  core** (it sits upstream).
+- `radls/` - LSP server; `radls/analysis/` is the feature layer, built on rts.
+- `docs-web/` - MkDocs site; `tools/` - codegen generators; `vsc-extension/` -
+  VS Code extension; `ci/` - Rad scripts run by GitHub Actions.
 
-### Build Commands
+### Execution pipeline
 
-```bash
-make all          # generate + format + build + test
-make generate     # Regenerate all derived files (signatures, embedded docs, reference pages)
-make format       # gofmt + goimports  
-make build        # Build to ./bin/radd
-make test         # Run tests in core/testing
-```
+`main.go` → `core.RadRunner` (`core/runner.go`): reads the script, parses via
+rts to a tree-sitter CST, converts it to the AST (`rts.ConvertCST` →
+`rl.SourceFile`), runs the static checker (`rts/check`) and exits on errors,
+registers script args and command blocks as CLI flags via the `ra` library,
+then hands off to `core.Interpreter` (`core/interpreter.go`), a tree-walking
+evaluator. `eval(node)` returns `EvalResult{RadValue, Ctrl}`, carrying both
+value and control flow (break/continue/return).
 
-### Testing
+Runtime values are `RadValue` (`core/type_rad_value.go`), a tagged union over
+Go types (`int64`, `float64`, `RadString`, `*RadList`, `*RadMap`, `RadFn`,
+`*RadError`, ...). Per-type dispatch uses the visitor in
+`core/type_visitor.go`. Adding a runtime type means touching `Type()`,
+`newRadValue`, the visitor, equality/hash, and the `rl.RadType` enum - the
+`panic("Bug! ...")` defaults surface missed spots loudly.
 
-- Comprehensive test suite in `core/testing/`
-- Tests organized by feature (args, functions, syntax, etc.)
-- Test resources in `core/testing/resources/`
-- Syntax tree snapshot tests in `rts/test/` - each case captures both CST and AST dumps side-by-side
-- Converter unit tests in `rts/converter_test.go`
-- Regenerate snapshots with a **targeted** `-update`, e.g. `go test ./core/testing/ -run TestSnapshots -update=types/str_lexing` (path-substring match; comma-separate multiple). A mismatch in a non-targeted file still fails, so regressions aren't silently absorbed. `-update-all` rewrites everything (avoid). Write the value with `=`; a bare `-update` errors.
+### Testability seams (core/global.go)
 
-### Key Dependencies
+All IO and environment access goes through injectable globals (`RIo`,
+`RClock`, `RShell`, `RReq` for HTTP, `RSleep`, `RSignal`, `RInteractive`,
+`RExit`, ...), wired from `RunnerInput`. The tests in `core/testing/` inject
+fakes for all of them and run the real runner end to end, asserting on
+captured stdout/stderr/exit code (`setupAndRunCode`, `assertOnlyOutput`,
+`assertError`, `NewTestParams(...).Keys(...)` for interactive prompts, ...).
+Don't bypass these seams with direct `os.*` / `time.*` / `exec.*` calls in
+interpreter code paths - it breaks both testability and determinism.
 
-- **Tree-sitter**: For parsing only (`github.com/tree-sitter/go-tree-sitter`) - confined to `rts/`
-- **pflag**: Command-line flag parsing
-- **go-tbl**: Table formatting
-- **samber/lo**: Utility functions
-- **Various amterp/***: Author's utility packages
+### Built-in functions: docs are the source of truth
 
-## Common Development Tasks
+Function signatures are generated from Markdown, not written in Go. To add a
+built-in:
 
-### Adding Built-in Functions
+1. Write `docs/funcs/<name>.md` following the format contract in
+   `docs/funcs/README.md`. The `## Signature` line IS the type-checker's
+   signature - there is no parallel definition in Go.
+2. Run `make generate` to regenerate signatures and doc mirrors.
+3. Add the `FUNC_X` const and `BuiltInFunc{Name, Execute}` registration in
+   `core/funcs.go` (larger ones get their own `core/func_<name>.go`). The
+   `Execute` body pulls pre-bound args via `f.GetStr(...)` etc. and returns
+   via `f.Return(...)` / `f.ReturnErrf(...)`.
+4. Add snapshot cases under `core/testing/snapshots/functions/`.
 
-**Complete TDD workflow for adding a new built-in function:**
+`function-metadata/extract.go` exists because rts can't import core: it dumps
+the runtime function registry to `rts/embedded/functions.txt` for the checker's
+did-you-mean suggestions. `make generate` handles it.
 
-1. **Add function signature** to `rts/signatures.go`:
-    - Add `newFnSignature()` call with proper type signature
-    - Place alphabetically or near related functions
+Code snippets in the user docs are themselves executed by tests
+(`core/testing/docs_snippets_test.go`), so docs edits can fail the suite.
 
-2. **Write comprehensive tests first** in `core/testing/func_[name]_test.go`:
-    - **Test-Driven Development**: Write tests before implementation
-    - Test basic functionality with different input types
-    - Test edge cases (zero, negative numbers, boundary conditions, etc.)
-    - Test error conditions (wrong types, invalid inputs)
-    - Use Rad testing patterns:
-        - `setupAndRunCode(t, script, "--color=never")` to run Rad scripts
-        - `assertOnlyOutput(t, stdOutBuffer, "expected\n")` for success cases
-        - `assertError(t, 1, expected)` for error cases with exact error message
-        - `assertNoErrors(t)` to ensure no stderr output
-    - Follow naming: `Test_Func_[Name]_[Scenario]`
-    - **Run tests to see them fail** before implementing
+### Error codes
 
-3. **Add function constant** in `core/funcs.go`:
-    - Add `FUNC_[NAME] = "[name]"` constant with other function constants
+Codes live in `rts/rl/errors.go`, banded: 1xxxx syntax, 2xxxx runtime, 3xxxx
+types, 4xxxx validation/lint. Numbers are never reused (tombstone rule:
+retired codes keep their number with a `_retired` suffix). Each code gets
+user-facing docs at `core/error_docs/<code>.md` (style guide in that dir's
+AGENTS.md), surfaced by `rad docs RADxxxxx`. The interpreter has two failure
+mechanisms: `RadPanic` for catchable, data-driven errors user code can
+`catch`, and `emitError*` for hard exits on programming errors.
 
-4. **Implement function** in `core/funcs.go`:
-    - Add to `GetBuiltInFuncs()` slice with `Name` and `Execute` fields
-    - Use `f.GetArg()`, `f.GetFloat()`, `f.GetStr()` etc. to extract arguments
-    - Return using `f.Return()` or `f.ReturnErrf()` for errors
-    - Place near related functions (e.g., math functions together)
+### Embedded commands are Rad scripts
 
-5. **Run tests to verify implementation**:
-   ```bash
-   go test ./core/testing -run Test_Func_[Name]  # Test specific function
-   go test ./core/testing                        # Run all tests
-   ```
+`rad`'s own subcommands (`new`, `check`, `docs`, `fmt`, `stash`, `explain`,
+...) are Rad scripts in `core/embedded/`, compiled into the binary and backed
+by internal `_rad_*` functions (`core/funcs_internal.go`; their signatures are
+hand-listed in `rts/signatures.go`). Dogfooding: language changes can affect
+the CLI itself.
 
-6. **Document the function** in `docs/funcs/<name>.md`. This is the single source of truth: the codegen pipeline derives the type-checker signature (`rts/signatures_gen.go`), the embedded LSP hover docs (`rts/embedded_funcs/<name>.md`), and the aggregate public reference page (`docs-web/docs/reference/functions.md`) from it. See `docs/funcs/README.md` for required sections and format. Do NOT edit any of those derived artifacts directly - they're regenerated by `make generate`.
+## Generated Code - Never Hand-Edit
 
-7. **Regenerate derived files**: Run `make generate`. This invokes all generators (function-metadata extractor for `rts/embedded/functions.txt`, plus `go generate ./rts` which runs the four generators: the three docs/funcs/ generators, and `gen-docs-embed` which mirrors the full mkdocs nav corpus into `core/embedded_docs/` for `rad docs`). `make verify-generated` is the CI gate that fails if any of these are stale.
+`rts/signatures_gen.go`, `rts/embedded_funcs/`, `rts/embedded/functions.txt`,
+`docs-web/docs/reference/functions.md`, `docs-web/docs/reference/errors.md`,
+`core/embedded_docs/`. Edit the sources instead (`docs/funcs/*.md`,
+`core/error_docs/*.md`, docs-web pages) and run `make generate`. CI's
+`verify-generated` blocks stale output; when adding a generator, append its
+output path to `GENERATED_PATHS` in the Makefile.
 
-**Rad Testing Style Guide:**
+## Breaking Changes
 
-- Each test function focuses on one specific scenario
-- Use descriptive test names: `Test_Func_[Name]_[Scenario]`
-- Scripts use multi-line strings with proper indentation
-- Always use `--color=never` flag to avoid terminal codes in output
-- For error tests, include the exact expected error message with proper formatting
-- Test both positive and negative cases thoroughly
+Rad is pre-1.0 and breaks compatibility in minor versions, but every breaking
+change ships with migration help on three layers:
 
-### Documentation
+1. A **migration diagnostic** that detects the old pattern and emits a hint
+   linking to `https://amterp.dev/rad/migrations/v0.X/` (e.g. a renamed
+   function's old name gets an `emitErrorWithHint` case). Prefer static
+   detection in `rts/check/` where possible, so editors surface it too.
+2. An **error doc** in `core/error_docs/<code>.md` with a before/after example
+   and fix steps.
+3. A **migration guide entry** in `docs-web/docs/migrations/v0.X.md` with the
+   full context and rationale.
 
-If code changes are made, invoke the Rad Docs Maintainer agent to assess whether doc updates are needed.
+Use `feat!:` / `fix!:` commit prefixes for breaking changes.
 
-#### Documentation Maintenance
+## Conventions
 
-Keep documentation in sync with code changes. Key mappings:
-
-| Code Change | Documentation to Update |
-|-------------|------------------------|
-| New/modified built-in function in `core/funcs.go` | `docs/funcs/<name>.md` (source of truth; `make generate` propagates to the embedded docs and the aggregate reference page) |
-| New/modified error code in `rts/rl/errors.go` | `core/error_docs/` (surfaced via `rad docs`) |
-| Language syntax changes | `SYNTAX.md` (symlinked to Language Reference) |
-| New user-facing feature | Consider adding to relevant guide in `docs-web/docs/guide/` |
-| Major user-facing features, project overview | `README.md` |
-| Project structure, dev workflow, new patterns | `AGENTS.md` |
-| Guide or reference docs updated in `docs-web/docs/` | Run `make generate` - `gen-docs-embed` re-mirrors the nav into `core/embedded_docs/` so `rad docs` stays in sync |
-
-**Principles:**
-- **Reference docs** should be authoritative and complete — if it exists in code, it should be documented
-- **Guide docs** teach concepts with examples — not every feature needs a guide section
-- Avoid creating reference pages that duplicate guide content; prefer one source of truth
-- When in doubt, check if existing docs already cover the topic before creating new pages
-
-When adding or updating function documentation, edit (or create) `docs/funcs/<name>.md`. The full format contract - required sections, ordering, what hover renders vs. what only the public docs page renders, optional `## Notes` and `## See also` blocks, category conventions - lives at `docs/funcs/README.md`. Run `make generate` to propagate edits to the embedded LSP docs and the aggregate reference page.
-
-A few principles worth keeping in mind while authoring:
-
-- **Match the signature to runtime behavior.** Check `core/funcs.go` for mutually exclusive parameters, argument interactions, and error conditions that aren't obvious from the signature alone.
-- **Examples earn their keep.** Use inline comments showing results (`pow(2, 3)  // -> 8`). The first example block is what hover renders; later blocks are public-docs-only.
-- **Keep prose scannable.** Reference docs are for skimming, not tutorials. Tutorials belong in `docs-web/docs/guide/`.
-
-### Breaking Changes & Migration Diagnostics
-
-Rad is young and we advertise that breaking changes happen in minor versions. But we still want migrations to be
-as easy as possible for our users. When introducing a breaking change, provide **migration diagnostics** that detect
-old usage patterns and guide users to the fix.
-
-The goal is a three-layer help system: a concise inline hint at point-of-error, a deeper `rad docs` doc, and
-a comprehensive migration guide page.
-
-#### What to do when making a breaking change
-
-1. **Add a migration diagnostic** that detects the old pattern and emits a helpful error (or warning, depending on
-   context - usually error). The diagnostic should:
-   - Clearly state what changed
-   - Suggest the fix concisely
-   - Link to the migration doc: `https://amterp.dev/rad/migrations/v0.X/`
-
-2. **Add/update an error doc** in `core/error_docs/<code>.md` with a before/after example and fix steps.
-
-3. **Add a migration guide entry** in `docs-web/docs/migrations/v0.X.md` with full context and rationale.
-
-#### Diagnostic patterns by change type
-
-**Renamed function** - detect the old name at runtime and emit a hint:
-```go
-// In the function dispatch (e.g. core/func_helpers.go or similar)
-case "old_name":
-    i.emitErrorWithHint(rl.ErrUnknownFunction, funcExpr,
-        "Cannot invoke unknown function: old_name",
-        "old_name was renamed to new_name. See: https://amterp.dev/rad/migrations/v0.X/")
-```
-
-**Removed function** - same pattern, different hint:
-```go
-case "get_default":
-    i.emitErrorWithHint(rl.ErrUnknownFunction, funcExpr,
-        "Cannot invoke unknown function: get_default",
-        "get_default was removed. Use: map[\"key\"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/")
-```
-
-**Changed operator/syntax behavior** - the type checker or interpreter naturally catches the new error; ensure the
-error message is clear and add a hint pointing to the migration docs. If the old usage now triggers an existing error
-code, update that error doc with a migration note.
-
-**Static detection** - for patterns detectable before execution, add checks in `rts/check/` using
-`NewDiagnosticError()` or `NewDiagnosticErrorWithSuggestion()`. This also benefits the LSP (editor diagnostics).
-
-#### What users see
-
-The diagnostic renderer produces Rust-style output:
-```
-error[RAD40003]: Cannot invoke unknown function: get_stash_dir
-  --> script.rad:5:1
-    |
-  5 | get_stash_dir()
-    | ^^^^^^^^^^^^^^^ Cannot invoke unknown function: get_stash_dir
-    |
-   = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad docs RAD40003
-```
-
-Users can then run `rad docs RAD40003` for the full error doc, or visit the migration page for broader context.
-
-### Debugging Tips
-
-- Use `debug()` function in Rad scripts for debugging
-- `--cst-tree`: Dump the tree-sitter CST for a script
-- `--ast-tree`: Dump the Go-native AST for a script (runs converter)
-- Both flags bypass arg validation, so they work on scripts with missing required args
-- Check `core/testing/` for examples of every language feature
-
-## File Extensions and Conventions
-
-- **`.rad`**: Rad script files
-- **`#!/usr/bin/env rad`**: Shebang for executable scripts
-- Scripts typically have no extension when installed as CLI tools
-
-## Status: Early Development
-
-- Major breaking changes expected
-- Core functionality working
-- Missing some planned features
-- Active development on language features and LSP
+- Conventional commit prefixes (`feat:`, `fix:`, `docs:`, `refactor:`,
+  `test:`). Commit messages explain the why; `git blame` is treated as
+  documentation here.
+- Keep this file current: if a change alters the dev workflow, project
+  structure, or invalidates anything stated here, update AGENTS.md in the
+  same commit. Stale agent guidance is worse than none - it gets followed.
+- Cross-platform: rad targets Linux, macOS, and Windows. Paths returned to
+  user code are normalized to forward slashes via `NormalizePath`; all
+  platform-specific behavior is centralized in `core/common/platform.go` - no
+  scattered `runtime.GOOS` checks. `NormalizeLineEndings` applies only to Rad
+  source, never to user data (round-trip safety).
+- Dependencies under `github.com/amterp/` are first-party - `ra` (CLI arg
+  parsing), `radish` (interactive prompts), `tree-sitter-rad` (grammar),
+  `go-tbl` (tables), and smaller utils. Treat them as extensions of this
+  codebase, not immutable third-party code: they exist largely to serve Rad,
+  and a workaround in Rad is debt filed in the wrong repo. If a change is
+  fighting one of them - wrapping an awkward API, duplicating logic the lib
+  should own, patching around a bug traced into the lib - the right fix is
+  usually upstream. Say so and make it properly in the lib (checkouts live at
+  `~/src/<lib>`; iterate via a replace directive) instead of working around
+  it in Rad. Tagging and releasing lib versions stays with the user.
+- Never commit `replace` directives in go.mod. They're for local development
+  only (e.g. a temporary `replace github.com/amterp/tree-sitter-rad => <local
+  path>` while iterating on the grammar, or a gitignored go.work); remove them
+  before committing. `./dev --release` also refuses to release with them
+  present.
+- Don't leave task-specific messages to the user as comments in the code -
+  put them in your response instead.
+- After user-facing changes (new/changed functions, syntax, errors, CLI
+  behavior), invoke the Rad Docs Maintainer subagent to assess whether docs
+  need updating.
+- `AI_POLICY.md` governs AI-assisted external contributions (maintainers are
+  exempt).
