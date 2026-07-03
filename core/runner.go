@@ -27,6 +27,7 @@ const (
 
 type RadRunner struct {
 	scriptData     *ScriptData
+	invocationType InvocationType
 	globalFlags    []RadArg
 	scriptArgs     []RadArg
 	cmdInvocations []cmdInvocation
@@ -171,6 +172,7 @@ func (r *RadRunner) detectAndSetup(args []string) (InvocationType, error) {
 
 	// Set up globals
 	HasScript = invocationType != NoScript
+	r.invocationType = invocationType
 	SetScriptPath(scriptPath)
 
 	if HasScript {
@@ -184,7 +186,12 @@ func (r *RadRunner) detectAndSetup(args []string) (InvocationType, error) {
 func (r *RadRunner) setupRootCommand() {
 	// Use script name as the command name if we have a script, otherwise use the binary name
 	cmdName := os.Args[0]
-	if r.scriptData != nil && ScriptName != "" {
+	if r.invocationType == EmbeddedCommand {
+		// Embedded commands present as rad subcommands ("rad fmt"), not as
+		// standalone scripts. ScriptPath rather than ScriptName: tests override
+		// ScriptName, but the command's name is fixed.
+		cmdName = "rad " + ScriptPath
+	} else if r.scriptData != nil && ScriptName != "" {
 		cmdName = ScriptName
 	}
 
@@ -192,16 +199,21 @@ func (r *RadRunner) setupRootCommand() {
 
 	RRootCmd = ra.NewCmd(cmdName)
 
+	argsHeader := "Script args:"
+	if r.invocationType == EmbeddedCommand {
+		// "Script args:" would leak that built-in commands are scripts under the hood.
+		argsHeader = "Arguments:"
+	}
 	RRootCmd.SetUsageHeaders(ra.UsageHeaders{
 		Usage:                 "Usage:",
 		Commands:              "Commands:",
-		Arguments:             "Script args:",
+		Arguments:             argsHeader,
 		GlobalOptions:         "Global options:",
 		SubcommandPlaceholder: "command",
 	})
 
 	if r.scriptData == nil || !r.scriptData.DisableGlobalOpts {
-		r.globalFlags = CreateAndRegisterGlobalFlags()
+		r.globalFlags = CreateAndRegisterGlobalFlags(r.invocationType)
 	}
 
 	if r.scriptData != nil && r.scriptData.Description != nil {
@@ -307,6 +319,13 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	}
 
 	RRootCmd.ParseOrExit(argsToRead, parseOpts...)
+
+	// Reject before anything acts on the parsed flags (printer routing,
+	// --version, --repl, inspection flags) - silently honoring an
+	// inapplicable flag is how `rad fmt --check --shell` lost its output.
+	if invocationType == EmbeddedCommand {
+		r.rejectOutOfScopeGlobalFlags()
+	}
 
 	// Set up printer with global flags from first parse
 	RP = NewPrinter(r, FlagShell.Value, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
@@ -513,6 +532,31 @@ func (r *RadRunner) registerCommands() error {
 	}
 
 	return nil
+}
+
+// rejectOutOfScopeGlobalFlags exits with a usage error if an embedded command
+// invocation set a global flag outside its scope, e.g. `rad fmt --shell`.
+// The flags stay registered and are rejected *after* parsing: an unregistered
+// flag would be consumed as a value by variadic positionals (e.g. fmt's
+// *paths) instead of erroring.
+func (r *RadRunner) rejectOutOfScopeGlobalFlags() {
+	for _, scoped := range GlobalFlagScopes {
+		if scoped.Scope == ScopeUniversal {
+			continue
+		}
+		name := scoped.Arg.GetExternalName()
+		if !RRootCmd.Configured(name) {
+			continue
+		}
+		if scoped.Scope == ScopeRootOnly {
+			RP.UsageErrorExit(fmt.Sprintf("--%s applies to rad itself. Run 'rad --%s' instead.", name, name))
+		} else {
+			RP.UsageErrorExit(
+				fmt.Sprintf("--%s only applies when running a Rad script; %q is a built-in rad command.", name, ScriptPath),
+			)
+		}
+		return
+	}
 }
 
 func readSource(scriptPath string) (string, error) {

@@ -1,0 +1,295 @@
+### TITLE ###
+Fmt_RejectsShellFlag
+### INPUT ###
+
+### ARGS ###
+fmt
+--check
+--shell
+### STDOUT ###
+exit 1
+
+### STDERR ###
+--shell only applies when running a Rad script; "fmt" is a built-in rad command.
+
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+
+Usage:
+  rad fmt [paths...] [OPTIONS]
+
+Arguments:
+      --paths [strs...]   Paths of Rad scripts to format.
+      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
+      --check             Don't write; exit non-zero if any file isn't formatted.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Fmt_RejectsSrcFlag
+### INPUT ###
+
+### ARGS ###
+fmt
+--src
+### STDERR ###
+--src only applies when running a Rad script; "fmt" is a built-in rad command.
+
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+
+Usage:
+  rad fmt [paths...] [OPTIONS]
+
+Arguments:
+      --paths [strs...]   Paths of Rad scripts to format.
+      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
+      --check             Don't write; exit non-zero if any file isn't formatted.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Fmt_RejectsVersionFlag
+### INPUT ###
+
+### ARGS ###
+fmt
+--version
+### STDERR ###
+--version applies to rad itself. Run 'rad --version' instead.
+
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+
+Usage:
+  rad fmt [paths...] [OPTIONS]
+
+Arguments:
+      --paths [strs...]   Paths of Rad scripts to format.
+      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
+      --check             Don't write; exit non-zero if any file isn't formatted.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Fmt_RejectsVersionShorthand
+### INPUT ###
+
+### ARGS ###
+fmt
+-v
+### STDERR ###
+--version applies to rad itself. Run 'rad --version' instead.
+
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+
+Usage:
+  rad fmt [paths...] [OPTIONS]
+
+Arguments:
+      --paths [strs...]   Paths of Rad scripts to format.
+      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
+      --check             Don't write; exit non-zero if any file isn't formatted.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Fmt_RejectsReplFlag
+### INPUT ###
+
+### ARGS ###
+fmt
+--repl
+### STDERR ###
+--repl applies to rad itself. Run 'rad --repl' instead.
+
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+
+Usage:
+  rad fmt [paths...] [OPTIONS]
+
+Arguments:
+      --paths [strs...]   Paths of Rad scripts to format.
+      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
+      --check             Don't write; exit non-zero if any file isn't formatted.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Docs_RejectsMockResponse
+### INPUT ###
+
+### ARGS ###
+docs
+--mock-response
+x:y
+### STDERR ###
+--mock-response only applies when running a Rad script; "docs" is a built-in rad command.
+
+Prints Rad's documentation - a page, the full corpus, or an error code.
+
+Examples:
+> rad docs
+Lists every documentation topic.
+
+> rad docs guide/basics
+Prints the 'basics' guide page.
+
+> rad docs reference/functions
+Prints the function reference.
+
+> rad docs len
+Prints the doc for the 'len' built-in function.
+
+> rad docs all
+Prints the entire documentation corpus (the same set as llms-full.txt).
+
+> rad docs RAD10001
+Explains error code RAD10001.
+
+> rad docs guide/basics --web
+Opens the page on the documentation website instead of printing.
+
+Usage:
+  rad docs [topic] [OPTIONS]
+
+Arguments:
+      --topic str   The topic to print: a page slug (e.g. 'guide/basics'), an error code (e.g. 'RAD10001'), or 'all'.
+  -w, --web         Open the documentation website in a browser instead of printing.
+      --raw         Force raw markdown output (no terminal rendering). Excludes: render
+      --render      Force terminal-rendered output, even when piped.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Docs_RejectsConfirmShell
+### INPUT ###
+
+### ARGS ###
+docs
+--confirm-shell
+### STDERR ###
+--confirm-shell only applies when running a Rad script; "docs" is a built-in rad command.
+
+Prints Rad's documentation - a page, the full corpus, or an error code.
+
+Examples:
+> rad docs
+Lists every documentation topic.
+
+> rad docs guide/basics
+Prints the 'basics' guide page.
+
+> rad docs reference/functions
+Prints the function reference.
+
+> rad docs len
+Prints the doc for the 'len' built-in function.
+
+> rad docs all
+Prints the entire documentation corpus (the same set as llms-full.txt).
+
+> rad docs RAD10001
+Explains error code RAD10001.
+
+> rad docs guide/basics --web
+Opens the page on the documentation website instead of printing.
+
+Usage:
+  rad docs [topic] [OPTIONS]
+
+Arguments:
+      --topic str   The topic to print: a page slug (e.g. 'guide/basics'), an error code (e.g. 'RAD10001'), or 'all'.
+  -w, --web         Open the documentation website in a browser instead of printing.
+      --raw         Force raw markdown output (no terminal rendering). Excludes: render
+      --render      Force terminal-rendered output, even when piped.
+
+Global options:
+  -h, --help          Print usage string.
+  -i, --interactive   Interactively prompt for script args not already provided, then run.
+      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet         Suppresses some output.
+
+### EXIT ###
+1
+### TITLE ###
+Fmt_HelpHidesScriptOnlyFlags
+### INPUT ###
+
+### ARGS ###
+fmt
+-h
+### STDOUT ###
+Formats Rad scripts.
+
+Rewrites each script in place into Rad's canonical style. Use --stdout to
+preview without writing, or --check to verify formatting (e.g. in CI).
+
+Usage:
+  rad fmt [paths...] [OPTIONS]
+
+Arguments:
+      --paths [strs...]   Paths of Rad scripts to format.
+      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
+      --check             Don't write; exit non-zero if any file isn't formatted.
+
+### TITLE ###
+Fmt_AcceptsUniversalQuietFlag
+### INPUT ###
+
+### ARGS ###
+fmt
+--quiet
+### STDERR ###
+Error: provide at least one path to format (or pipe a script via stdin).
+
+### EXIT ###
+1

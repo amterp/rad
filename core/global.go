@@ -133,6 +133,7 @@ func ResetGlobals() {
 	FlagRepl = BoolRadArg{}
 	FlagTlsInsecure = BoolRadArg{}
 	FlagInteractive = BoolRadArg{}
+	GlobalFlagScopes = nil
 
 	StartEpochMillis = 0
 

@@ -29,6 +29,23 @@ const (
 	FLAG_I             = "i"
 )
 
+// GlobalFlagScope classifies which invocations a global flag applies to.
+// Script-execution flags (e.g. --shell) and rad-level flags (e.g. --version)
+// make no sense on embedded commands like `rad fmt`; those invocations reject
+// them rather than silently changing behavior (issue #149).
+type GlobalFlagScope int
+
+const (
+	ScopeUniversal  GlobalFlagScope = iota // any invocation, including embedded commands
+	ScopeScriptOnly                        // configures Rad script execution
+	ScopeRootOnly                          // rad itself, e.g. `rad --version`
+)
+
+type ScopedGlobalFlag struct {
+	Arg   RadArg
+	Scope GlobalFlagScope
+}
+
 var (
 	MODES          = []string{COLOR_AUTO, COLOR_ALWAYS, COLOR_NEVER}
 	NO_CONSTRAINTS []string
@@ -49,13 +66,14 @@ var (
 	FlagRepl                 BoolRadArg
 	FlagTlsInsecure          BoolRadArg
 	FlagInteractive          BoolRadArg
-	// ^ when adding more, update ResetGlobals function
+	// ^ when adding more, update ResetGlobals and the GlobalFlagScopes table below
+
+	// GlobalFlagScopes is the single source of truth for global flag ordering
+	// (as printed in usage) and scope. Rebuilt by CreateAndRegisterGlobalFlags.
+	GlobalFlagScopes []ScopedGlobalFlag
 )
 
-func CreateAndRegisterGlobalFlags() []RadArg {
-	// ordering of this list matters -- it's the order in which they are printed in the usage string
-	flags := make([]RadArg, 0)
-
+func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 	FlagHelp = NewBoolRadArg(
 		FLAG_HELP,
 		FLAG_H,
@@ -65,7 +83,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagHelp)
 
 	FlagRepl = NewBoolRadArg(
 		FLAG_REPL,
@@ -76,7 +93,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagRepl)
 
 	FlagInteractive = NewBoolRadArg(
 		FLAG_INTERACTIVE,
@@ -91,7 +107,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	// get the chance to prompt for them. The pre-pass strips -i from the argv it
 	// synthesizes, so the final parse still enforces everything.
 	FlagInteractive.SetBypassValidation(true)
-	flags = append(flags, &FlagInteractive)
 
 	FlagDebug = NewBoolRadArg(
 		FLAG_DEBUG,
@@ -102,7 +117,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagDebug)
 
 	FlagRadDebug = NewBoolRadArg(
 		FLAG_RAD_DEBUG,
@@ -114,7 +128,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	hideFromUsageIfHaveScript(&FlagRadDebug.hidden)
-	flags = append(flags, &FlagRadDebug)
 
 	FlagColor = NewStringRadArg(
 		FLAG_COLOR,
@@ -128,7 +141,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagColor)
 
 	FlagQuiet = NewBoolRadArg(
 		FLAG_QUIET,
@@ -139,7 +151,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagQuiet)
 
 	FlagShell = NewBoolRadArg(
 		FLAG_SHELL,
@@ -151,7 +162,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	hideFromUsageIfHaveScript(&FlagShell.hidden)
-	flags = append(flags, &FlagShell)
 
 	FlagVersion = NewBoolRadArg(
 		FLAG_VERSION,
@@ -164,7 +174,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	)
 	FlagVersion.SetBypassValidation(true)
 	hideFromUsageIfHaveScript(&FlagVersion.hidden)
-	flags = append(flags, &FlagVersion)
 
 	FlagConfirmShellCommands = NewBoolRadArg(
 		FLAG_CONFIRM_SHELL,
@@ -175,7 +184,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagConfirmShellCommands)
 
 	FlagTlsInsecure = NewBoolRadArg(
 		FLAG_TLS_INSECURE,
@@ -186,7 +194,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
-	flags = append(flags, &FlagTlsInsecure)
 
 	FlagSrc = NewBoolRadArg(
 		FLAG_SRC,
@@ -198,7 +205,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	FlagSrc.SetBypassValidation(true)
-	flags = append(flags, &FlagSrc)
 
 	FlagCstTree = NewBoolRadArg(
 		FLAG_CST_TREE,
@@ -211,7 +217,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	)
 	FlagCstTree.SetBypassValidation(true)
 	hideFromUsageIfHaveScript(&FlagCstTree.hidden)
-	flags = append(flags, &FlagCstTree)
 
 	FlagAstTree = NewBoolRadArg(
 		FLAG_AST_TREE,
@@ -224,7 +229,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	)
 	FlagAstTree.SetBypassValidation(true)
 	hideFromUsageIfHaveScript(&FlagAstTree.hidden)
-	flags = append(flags, &FlagAstTree)
 
 	FlagRadArgsDump = NewBoolRadArg(
 		FLAG_RAD_ARGS_DUMP,
@@ -237,7 +241,6 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 	)
 	FlagRadArgsDump.SetBypassValidation(true)
 	hideFromUsageIfHaveScript(&FlagRadArgsDump.hidden)
-	flags = append(flags, &FlagRadArgsDump)
 
 	FlagMockResponse = NewStringRadArg(
 		FLAG_MOCK_RESPONSE,
@@ -253,7 +256,35 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 		NO_CONSTRAINTS,
 	)
 	hideFromUsageIfHaveScript(&FlagMockResponse.hidden)
-	flags = append(flags, &FlagMockResponse)
+
+	// ordering of this table matters -- it's the order in which flags are printed in the usage string
+	GlobalFlagScopes = []ScopedGlobalFlag{
+		{&FlagHelp, ScopeUniversal},
+		{&FlagRepl, ScopeRootOnly},
+		{&FlagInteractive, ScopeUniversal},
+		{&FlagDebug, ScopeUniversal},
+		{&FlagRadDebug, ScopeUniversal},
+		{&FlagColor, ScopeUniversal},
+		{&FlagQuiet, ScopeUniversal},
+		{&FlagShell, ScopeScriptOnly},
+		{&FlagVersion, ScopeRootOnly},
+		{&FlagConfirmShellCommands, ScopeScriptOnly},
+		{&FlagTlsInsecure, ScopeScriptOnly},
+		{&FlagSrc, ScopeScriptOnly},
+		{&FlagCstTree, ScopeScriptOnly},
+		{&FlagAstTree, ScopeScriptOnly},
+		{&FlagRadArgsDump, ScopeUniversal},
+		{&FlagMockResponse, ScopeScriptOnly},
+	}
+
+	flags := make([]RadArg, 0, len(GlobalFlagScopes))
+	for _, scoped := range GlobalFlagScopes {
+		flags = append(flags, scoped.Arg)
+	}
+
+	if invocationType == EmbeddedCommand {
+		hideInapplicableFlagsForEmbedded()
+	}
 
 	registerGlobalFlags(flags)
 	return flags
@@ -261,6 +292,24 @@ func CreateAndRegisterGlobalFlags() []RadArg {
 
 func hideFromUsageIfHaveScript(hidden *bool) {
 	*hidden = HasScript
+}
+
+// Embedded commands keep every global flag registered - an unregistered flag
+// would be consumed by variadic positionals (e.g. fmt's *paths) instead of
+// erroring - but only the applicable ones belong in their help output.
+// Out-of-scope flags are rejected post-parse; see rejectOutOfScopeGlobalFlags.
+func hideInapplicableFlagsForEmbedded() {
+	visible := map[string]bool{
+		FLAG_HELP:        true,
+		FLAG_INTERACTIVE: true,
+		FLAG_COLOR:       true,
+		FLAG_QUIET:       true,
+	}
+	for _, scoped := range GlobalFlagScopes {
+		if !visible[scoped.Arg.GetExternalName()] {
+			scoped.Arg.Hidden(true)
+		}
+	}
 }
 
 func registerGlobalFlags(flags []RadArg) {
