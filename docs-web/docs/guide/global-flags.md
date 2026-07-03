@@ -11,27 +11,29 @@ The most basic global flag is `--help` or `-h`. *All* Rad scripts automatically 
 `--help` also prints available *global* flags:
 
 ```
-Global flags:
-  -h, --help                   Print usage string.
-  -i, --interactive            Interactively prompt for script args not already provided, then run.
-  -d, --debug                  Enables debug output. Intended for Rad script developers.
-      --rad-debug              Enables Rad debug output. Intended for Rad developers.
-      --color mode             Control output colorization. Valid values: [auto, always, never]. (default auto)
-  -q, --quiet                  Suppresses some output.
-      --shell                  Outputs shell/bash exports of variables, so they can be eval'd
-  -v, --version                Print rad version information.
-      --stdin script-name      Enables reading Rad from stdin, and takes a string arg to be treated as the 'script name'.
-      --confirm-shell          Confirm all shell commands before running them.
-      --src                    Instead of running the target script, just print it out.
-      --cst-tree               Instead of running the target script, print out its concrete syntax tree.
-      --ast-tree               Instead of running the target script, print out its abstract syntax tree.
-      --tls-insecure           Skip TLS certificate verification for HTTPS requests.
-      --mock-response string   Add mock response for json requests (pattern:filePath)
+Global options:
+  -h, --help                Print usage string.
+  -r, --repl                Start interactive REPL mode.
+  -i, --interactive         Interactively prompt for script args not already provided, then run.
+  -d, --debug               Enables debug output. Intended for Rad script developers.
+      --rad-debug           Enables Rad debug output. Intended for Rad developers.
+      --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet               Suppresses some output.
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
+  -v, --version             Print rad version information.
+      --confirm-shell       Confirm all shell commands before running them.
+      --tls-insecure        Skip TLS certificate verification for all HTTP requests.
+      --src                 Instead of running the target script, just print it out.
+      --cst-tree            Instead of running the target script, print out its CST (concrete syntax tree).
+      --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
+      --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
+      --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
 ```
 
 [//]: # (todo script something to keep the above blob in check)
 
-Note that, outside of `help`, all the global flags are ALL CAPS.
+Note that when `--shell` is enabled, help output goes to stderr instead of stdout, and stdout gets an `exit 0` statement.
+This keeps stdout safe to `eval`: wrappers using `eval "$(rad - --shell "$@" <<< "$script")"` won't execute usage text as shell code, and stop cleanly after showing help.
 
 ## `interactive`
 
