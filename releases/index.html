@@ -1384,6 +1384,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v0110-2026-07-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.11.0 - 2026-07-04
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v0101-2026-05-07" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1814,6 +1825,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#v0110-2026-07-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.11.0 - 2026-07-04
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#v0101-2026-05-07" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2231,6 +2253,171 @@
 
 <h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link">&para;</a></h1>
 <p>All Rad releases. Newest first.</p>
+<hr />
+<h2 id="v0110-2026-07-04"><a href="https://github.com/amterp/rad/releases/tag/v0.11.0">v0.11.0</a> - 2026-07-04<a class="headerlink" href="#v0110-2026-07-04" title="Permanent link">&para;</a></h2>
+<ul>
+<li>chore(check): tighten resolve types and binder issue plumbing (<a href="https://github.com/amterp/rad/commit/176e3e91">176e3e91</a>)</li>
+<li>docs(check): fix stale Hint note in typed_local snapshot (<a href="https://github.com/amterp/rad/commit/7649595b">7649595b</a>)</li>
+<li>docs(errors): sweep error_docs comments + add validation test (<a href="https://github.com/amterp/rad/commit/62581d9d">62581d9d</a>)</li>
+<li>docs(fmt): document full-convergence vision and roadmap (<a href="https://github.com/amterp/rad/commit/e9409a0b">e9409a0b</a>)</li>
+<li>docs(type-system): document scoping and name resolution (<a href="https://github.com/amterp/rad/commit/956b6197">956b6197</a>)</li>
+<li>feat!: reject inapplicable global flags on built-in commands (<a href="https://github.com/amterp/rad/commit/613e2b82">613e2b82</a>)</li>
+<li>feat(check): T? suggestion in every nullable type position (<a href="https://github.com/amterp/rad/commit/d9a8608e">d9a8608e</a>)</li>
+<li>feat(check): add Scope/Symbol/Resolved name-resolution layer (<a href="https://github.com/amterp/rad/commit/9c788fe9">9c788fe9</a>)</li>
+<li>feat(check): add bidirectional type-checker skeleton (<a href="https://github.com/amterp/rad/commit/11b67a5a">11b67a5a</a>)</li>
+<li>feat(check): add binder-emitted issues + duplicate-param diagnostic (<a href="https://github.com/amterp/rad/commit/af4d5e17">af4d5e17</a>)</li>
+<li>feat(check): add narrowing primitives + null predicate (<a href="https://github.com/amterp/rad/commit/38187694">38187694</a>)</li>
+<li>feat(check): bind for / while / list-comp scopes (<a href="https://github.com/amterp/rad/commit/aa0e16f3">aa0e16f3</a>)</li>
+<li>feat(check): bind function and lambda parameter scopes (<a href="https://github.com/amterp/rad/commit/d324dc98">d324dc98</a>)</li>
+<li>feat(check): bind switch / defer / cmd_block scopes (<a href="https://github.com/amterp/rad/commit/b7ce7aeb">b7ce7aeb</a>)</li>
+<li>feat(check): catch block narrows target to error (<a href="https://github.com/amterp/rad/commit/d437dfe5">d437dfe5</a>)</li>
+<li>feat(check): catch indexed assignment of wrong element type (<a href="https://github.com/amterp/rad/commit/a7bcfc82">a7bcfc82</a>)</li>
+<li>feat(check): closure rule drops narrowing on reassigned captures (<a href="https://github.com/amterp/rad/commit/f276968b">f276968b</a>)</li>
+<li>feat(check): collapse uninhabited tuples in union joins (<a href="https://github.com/amterp/rad/commit/876ce872">876ce872</a>)</li>
+<li>feat(check): detect unreachable switch cases (RAD40012) (<a href="https://github.com/amterp/rad/commit/a57904b9">a57904b9</a>)</li>
+<li>feat(check): diagnose lambda return body vs declared mismatch (<a href="https://github.com/amterp/rad/commit/de973052">de973052</a>)</li>
+<li>feat(check): enforce args-block and cmd-block types statically (<a href="https://github.com/amterp/rad/commit/6a0fe53d">6a0fe53d</a>)</li>
+<li>feat(check): faithful typing for fallible calls and literals (<a href="https://github.com/amterp/rad/commit/e33fd269">e33fd269</a>)</li>
+<li>feat(check): for/while loop narrowing (<a href="https://github.com/amterp/rad/commit/45e2a214">45e2a214</a>)</li>
+<li>feat(check): gate provable type mismatches as errors (<a href="https://github.com/amterp/rad/commit/e83aa78d">e83aa78d</a>)</li>
+<li>feat(check): infer hoisted fn return types with SCC ordering (<a href="https://github.com/amterp/rad/commit/d3cb2958">d3cb2958</a>)</li>
+<li>feat(check): infer lambda return type for structural matching (<a href="https://github.com/amterp/rad/commit/997def0e">997def0e</a>)</li>
+<li>feat(check): infer tuple return type for multi-value returns (<a href="https://github.com/amterp/rad/commit/451af1d3">451af1d3</a>)</li>
+<li>feat(check): not / and / or narrowing predicates (<a href="https://github.com/amterp/rad/commit/ebe52425">ebe52425</a>)</li>
+<li>feat(check): operator overload table for static expression types (<a href="https://github.com/amterp/rad/commit/684a7e4b">684a7e4b</a>)</li>
+<li>feat(check): per-arg type-check on builtin calls (<a href="https://github.com/amterp/rad/commit/2f95f536">2f95f536</a>)</li>
+<li>feat(check): plumb suggestions through static diagnostics (<a href="https://github.com/amterp/rad/commit/3e2537d1">3e2537d1</a>)</li>
+<li>feat(check): pre-plant lambda signature for recursive references (<a href="https://github.com/amterp/rad/commit/85b5d874">85b5d874</a>)</li>
+<li>feat(check): promote provable type diagnostics to Error (<a href="https://github.com/amterp/rad/commit/070e9176">070e9176</a>)</li>
+<li>feat(check): reassignment widening for while-loop bodies (<a href="https://github.com/amterp/rad/commit/9de2d1c2">9de2d1c2</a>)</li>
+<li>feat(check): refine catch/?? result types (<a href="https://github.com/amterp/rad/commit/b2b0d6e8">b2b0d6e8</a>)</li>
+<li>feat(check): reject typed re-declaration (RAD40011) (<a href="https://github.com/amterp/rad/commit/e04715e5">e04715e5</a>)</li>
+<li>feat(check): snapshot harness runs full Check() pipeline (<a href="https://github.com/amterp/rad/commit/68a78e18">68a78e18</a>)</li>
+<li>feat(check): static arity-check builtin calls (<a href="https://github.com/amterp/rad/commit/7f4231de">7f4231de</a>)</li>
+<li>feat(check): static call typing for user-defined functions (<a href="https://github.com/amterp/rad/commit/78dc8c9a">78dc8c9a</a>)</li>
+<li>feat(check): static synthesis for list and map literals (<a href="https://github.com/amterp/rad/commit/cddc15ef">cddc15ef</a>)</li>
+<li>feat(check): static undefined-identifier diagnostic with did-you-mean (<a href="https://github.com/amterp/rad/commit/ec36cf96">ec36cf96</a>)</li>
+<li>feat(check): structural matching for fn-value arguments (<a href="https://github.com/amterp/rad/commit/f1317156">f1317156</a>)</li>
+<li>feat(check): suggest '?' when 'null' appears in a type union (<a href="https://github.com/amterp/rad/commit/0d712643">0d712643</a>)</li>
+<li>feat(check): switch narrowing + exhaustiveness diagnostic (<a href="https://github.com/amterp/rad/commit/c5a3a701">c5a3a701</a>)</li>
+<li>feat(check): tighten ErrorType cascade prevention (<a href="https://github.com/amterp/rad/commit/ce1aca96">ce1aca96</a>)</li>
+<li>feat(check): truthy null-strip and in-literal-list narrowing (<a href="https://github.com/amterp/rad/commit/33067e64">33067e64</a>)</li>
+<li>feat(check): type for-loop vars from union iterables and map k/v pairs (<a href="https://github.com/amterp/rad/commit/068f1d0e">068f1d0e</a>)</li>
+<li>feat(check): type_of, string-enum, in/not-in predicates (<a href="https://github.com/amterp/rad/commit/c1ee6e97">c1ee6e97</a>)</li>
+<li>feat(check): typed local declarations end-to-end (<a href="https://github.com/amterp/rad/commit/41d317ba">41d317ba</a>)</li>
+<li>feat(check): walk lambda bodies under captured frame (<a href="https://github.com/amterp/rad/commit/af58a63c">af58a63c</a>)</li>
+<li>feat(check): wire narrowing through if/elif/else (<a href="https://github.com/amterp/rad/commit/53da9c01">53da9c01</a>)</li>
+<li>feat(check,radls): diagnose unknown typed-map keys + key completion (<a href="https://github.com/amterp/rad/commit/69b4a848">69b4a848</a>)</li>
+<li>feat(errors): retire dead parser codes + invest in three high-value ones (<a href="https://github.com/amterp/rad/commit/e7af68c3">e7af68c3</a>)</li>
+<li>feat(fmt): add 'rad fmt' canonical formatter (<a href="https://github.com/amterp/rad/commit/4ade0bd3">4ade0bd3</a>)</li>
+<li>feat(fmt): turn formatting rules into a documented catalog (<a href="https://github.com/amterp/rad/commit/a16e46ad">a16e46ad</a>)</li>
+<li>feat(lsp): resolve command callback references (<a href="https://github.com/amterp/rad/commit/60fdaa50">60fdaa50</a>)</li>
+<li>feat(radls): UFCS-aware completion ranking (<a href="https://github.com/amterp/rad/commit/bf1a4164">bf1a4164</a>)</li>
+<li>feat(radls): add textDocument/definition (<a href="https://github.com/amterp/rad/commit/3153632b">3153632b</a>)</li>
+<li>feat(radls): add textDocument/documentSymbol (<a href="https://github.com/amterp/rad/commit/b4108828">b4108828</a>)</li>
+<li>feat(radls): add textDocument/hover (<a href="https://github.com/amterp/rad/commit/6241558e">6241558e</a>)</li>
+<li>feat(radls): add textDocument/references (<a href="https://github.com/amterp/rad/commit/df4e1c15">df4e1c15</a>)</li>
+<li>feat(radls): add textDocument/semanticTokens/full (<a href="https://github.com/amterp/rad/commit/b977872f">b977872f</a>)</li>
+<li>feat(radls): code actions surface diagnostic quick fixes (<a href="https://github.com/amterp/rad/commit/8cb11d10">8cb11d10</a>)</li>
+<li>feat(radls): debounce diagnostics publishing per URI (<a href="https://github.com/amterp/rad/commit/29446ba5">29446ba5</a>)</li>
+<li>feat(radls): filter internal builtins + parameter token for args (<a href="https://github.com/amterp/rad/commit/8aaaeb91">8aaaeb91</a>)</li>
+<li>feat(radls): immutable DocumentVersion snapshots per document (<a href="https://github.com/amterp/rad/commit/cd70d467">cd70d467</a>)</li>
+<li>feat(radls): introduce FileID indirection for documents (<a href="https://github.com/amterp/rad/commit/492c0dd3">492c0dd3</a>)</li>
+<li>feat(radls): negotiate LSP position encoding via LineIndex (<a href="https://github.com/amterp/rad/commit/65a230eb">65a230eb</a>)</li>
+<li>feat(radls): plumb context.Context and wire $/cancelRequest (<a href="https://github.com/amterp/rad/commit/2e0b2326">2e0b2326</a>)</li>
+<li>feat(radls): real completion - scope-walk + type-aware (<a href="https://github.com/amterp/rad/commit/e4b20229">e4b20229</a>)</li>
+<li>feat(radls): semantic tokens for type annotations (<a href="https://github.com/amterp/rad/commit/f9ee5c2b">f9ee5c2b</a>)</li>
+<li>feat(radls): structured docs in builtin hover + funcs doc infrastructure (<a href="https://github.com/amterp/rad/commit/b2ce132d">b2ce132d</a>)</li>
+<li>feat(radls): textDocument/rename (<a href="https://github.com/amterp/rad/commit/73965325">73965325</a>)</li>
+<li>feat(types): add Dynamic (implicit any) distinct from explicit Any (<a href="https://github.com/amterp/rad/commit/4363b5c9">4363b5c9</a>)</li>
+<li>feat(types): add ErrorType poison for static-check cascade prevention (<a href="https://github.com/amterp/rad/commit/640f2137">640f2137</a>)</li>
+<li>feat(types): add IsAssignableFrom to TypingT interface (<a href="https://github.com/amterp/rad/commit/35208d96">35208d96</a>)</li>
+<li>feat(types): add Never bottom type for narrowing exhaustiveness (<a href="https://github.com/amterp/rad/commit/80cfc241">80cfc241</a>)</li>
+<li>feat(types): parens type groups + inline-colon lambdas + drop list[T] (<a href="https://github.com/amterp/rad/commit/b3dba6bd">b3dba6bd</a>)</li>
+<li>feat(typing): introduce TypingNullT for sound null literal handling (<a href="https://github.com/amterp/rad/commit/d4ade013">d4ade013</a>)</li>
+<li>feat: add get_pid() builtin (<a href="https://github.com/amterp/rad/commit/a446ae82">a446ae82</a>)</li>
+<li>feat: add signal_trap and signal_ignore builtins (<a href="https://github.com/amterp/rad/commit/dc047f60">dc047f60</a>)</li>
+<li>feat: add to_json() builtin (<a href="https://github.com/amterp/rad/commit/5f80b7a2">5f80b7a2</a>)</li>
+<li>feat: add weekday field to time maps (<a href="https://github.com/amterp/rad/commit/05a233e7">05a233e7</a>)</li>
+<li>feat: back pick() with radish instead of huh (<a href="https://github.com/amterp/rad/commit/1834da2f">1834da2f</a>)</li>
+<li>feat: clean and navigate the rad docs corpus (<a href="https://github.com/amterp/rad/commit/a2b47a3d">a2b47a3d</a>)</li>
+<li>feat: colorize the -i transcript and equivalent invocation (<a href="https://github.com/amterp/rad/commit/8be4d28e">8be4d28e</a>)</li>
+<li>feat: docs/funcs/ as source-of-truth for builtins + diagnostic sweep (<a href="https://github.com/amterp/rad/commit/4c74002f">4c74002f</a>)</li>
+<li>feat: format the args block in rad fmt (<a href="https://github.com/amterp/rad/commit/841d4e29">841d4e29</a>)</li>
+<li>feat: interactive arg-entry mode (--interactive / -i) (<a href="https://github.com/amterp/rad/commit/f3055f81">f3055f81</a>)</li>
+<li>feat: make signal force-exit testable and shutdown deterministic (<a href="https://github.com/amterp/rad/commit/8b35833f">8b35833f</a>)</li>
+<li>feat: parse_duration accepts 'w' (weeks) suffix (<a href="https://github.com/amterp/rad/commit/3a54604e">3a54604e</a>)</li>
+<li>feat: readable -i transcripts and grouped bool multi-pick (<a href="https://github.com/amterp/rad/commit/6c3040d9">6c3040d9</a>)</li>
+<li>feat: replace huh with radish for input/confirm/multipick (<a href="https://github.com/amterp/rad/commit/ed21d6ee">ed21d6ee</a>)</li>
+<li>feat: run defer blocks on SIGINT/SIGTERM exit (<a href="https://github.com/amterp/rad/commit/b4ad6b0f">b4ad6b0f</a>)</li>
+<li>feat: serve documentation from the binary via rad docs (<a href="https://github.com/amterp/rad/commit/475af15a">475af15a</a>)</li>
+<li>fix(benchmark): migrate off removed $! shell syntax (<a href="https://github.com/amterp/rad/commit/dae8dfa0">dae8dfa0</a>)</li>
+<li>fix(check): accept string literals matching a StrEnum param (<a href="https://github.com/amterp/rad/commit/126df537">126df537</a>)</li>
+<li>fix(check): bind scopes only at function boundaries (<a href="https://github.com/amterp/rad/commit/4b298120">4b298120</a>)</li>
+<li>fix(check): consult builtin set for cmd-callback resolution (<a href="https://github.com/amterp/rad/commit/8eadc6da">8eadc6da</a>)</li>
+<li>fix(check): deep divergence scan for branch joins (<a href="https://github.com/amterp/rad/commit/a928822b">a928822b</a>)</li>
+<li>fix(check): give dynamic union arms bare-dynamic leniency in operators (<a href="https://github.com/amterp/rad/commit/dc7bc20a">dc7bc20a</a>)</li>
+<li>fix(check): isolate nested function bodies from outer narrowing (<a href="https://github.com/amterp/rad/commit/35d6990a">35d6990a</a>)</li>
+<li>fix(check): keep uncertain type mismatches non-blocking (<a href="https://github.com/amterp/rad/commit/95890d84">95890d84</a>)</li>
+<li>fix(check): narrowByTypeOf preserves null arm of Optional (<a href="https://github.com/amterp/rad/commit/957271a0">957271a0</a>)</li>
+<li>fix(check): null soundness in unions + promote bare-null mismatch (<a href="https://github.com/amterp/rad/commit/fca8db56">fca8db56</a>)</li>
+<li>fix(check): stop false positives on valid scripts (#129-131, #133) (<a href="https://github.com/amterp/rad/commit/9d986d86">9d986d86</a>)</li>
+<li>fix(check): structural union subsumption in joinFrames (<a href="https://github.com/amterp/rad/commit/fa4872f2">fa4872f2</a>)</li>
+<li>fix(check): switchDiverges read ExprTypes, don't re-enter synth (<a href="https://github.com/amterp/rad/commit/57eb3212">57eb3212</a>)</li>
+<li>fix(check): while loop carries body frame mutations forward (<a href="https://github.com/amterp/rad/commit/cb769aca">cb769aca</a>)</li>
+<li>fix(check): widen while-loop narrowing on nested reassignments (<a href="https://github.com/amterp/rad/commit/7e9ca521">7e9ca521</a>)</li>
+<li>fix(check, radls): name-precision DeclSpans for params/loop vars (<a href="https://github.com/amterp/rad/commit/12a4c7bc">12a4c7bc</a>)</li>
+<li>fix(check, radls): point fn DeclSpan + SelectionRange at name (<a href="https://github.com/amterp/rad/commit/39c90b68">39c90b68</a>)</li>
+<li>fix(radls): Mux.Notify - drop dead branch, omit nil params (<a href="https://github.com/amterp/rad/commit/d85f6302">d85f6302</a>)</li>
+<li>fix(radls): correct inverted nil check in newError (<a href="https://github.com/amterp/rad/commit/d3233ff8">d3233ff8</a>)</li>
+<li>fix(radls): debouncer race - superseded callback no longer clobbers successor (<a href="https://github.com/amterp/rad/commit/b62b89d5">b62b89d5</a>)</li>
+<li>fix(radls): dispatch quick fixes on error code, not message text (<a href="https://github.com/amterp/rad/commit/5a0fac03">5a0fac03</a>)</li>
+<li>fix(radls): emit semantic token at fn name definition site (<a href="https://github.com/amterp/rad/commit/d90a3dee">d90a3dee</a>)</li>
+<li>fix(radls): file-scope completion respects cursor position (<a href="https://github.com/amterp/rad/commit/a0035300">a0035300</a>)</li>
+<li>fix(radls): find references / goto-def from fn / args decl sites (<a href="https://github.com/amterp/rad/commit/d174a1eb">d174a1eb</a>)</li>
+<li>fix(radls): hover - nil for unresolved, drop redundant builtin tag (<a href="https://github.com/amterp/rad/commit/9c587ee1">9c587ee1</a>)</li>
+<li>fix(radls): refcount DocumentVersion to free tree-sitter C memory (<a href="https://github.com/amterp/rad/commit/f7edd7ef">f7edd7ef</a>)</li>
+<li>fix(radls): release per-request context cancel funcs (<a href="https://github.com/amterp/rad/commit/be4c7da0">be4c7da0</a>)</li>
+<li>fix(radls): scope-proximity completion order via SortText (<a href="https://github.com/amterp/rad/commit/5d0f42b4">5d0f42b4</a>)</li>
+<li>fix(radls): sort document symbols in source order (<a href="https://github.com/amterp/rad/commit/4747f1fd">4747f1fd</a>)</li>
+<li>fix(radls): suppress info-only code actions from the lightbulb (<a href="https://github.com/amterp/rad/commit/3be5ad76">3be5ad76</a>)</li>
+<li>fix(shell): don't crash when a confirm prompt is aborted (<a href="https://github.com/amterp/rad/commit/fb92f6f5">fb92f6f5</a>)</li>
+<li>fix(signatures): complete type_of return enum (<a href="https://github.com/amterp/rad/commit/990e9261">990e9261</a>)</li>
+<li>fix(types): close silent runtime enforcement gaps (<a href="https://github.com/amterp/rad/commit/991e30a7">991e30a7</a>)</li>
+<li>fix: catch handlers losing caller scope on nested error propagation (<a href="https://github.com/amterp/rad/commit/a60a9b7e">a60a9b7e</a>)</li>
+<li>fix: drop empty Examples markers from generated function docs (<a href="https://github.com/amterp/rad/commit/f607b008">f607b008</a>)</li>
+<li>fix: drop stray "=" artifact in multipick docs (<a href="https://github.com/amterp/rad/commit/200d43ba">200d43ba</a>)</li>
+<li>fix: expand leading ~ in path builtins (<a href="https://github.com/amterp/rad/commit/226277ff">226277ff</a>)</li>
+<li>fix: explain under-indented multi-line string errors (<a href="https://github.com/amterp/rad/commit/8416607d">8416607d</a>)</li>
+<li>fix: harden -i argv synthesis and align walk with ra semantics (<a href="https://github.com/amterp/rad/commit/5ae73437">5ae73437</a>)</li>
+<li>fix: keep go:embed'd doc corpora LF on Windows checkouts (<a href="https://github.com/amterp/rad/commit/2a83f61a">2a83f61a</a>)</li>
+<li>fix: make --shell reserve stdout for eval-able output on help (<a href="https://github.com/amterp/rad/commit/6f9e554f">6f9e554f</a>)</li>
+<li>fix: normalize docs/funcs source to LF to match its embedded copy (<a href="https://github.com/amterp/rad/commit/bd6b1925">bd6b1925</a>)</li>
+<li>fix: preserve for-loop with-clause in rad fmt (<a href="https://github.com/amterp/rad/commit/d2393a0d">d2393a0d</a>)</li>
+<li>fix: report out-of-range int literals instead of panicking (<a href="https://github.com/amterp/rad/commit/8b0f39ce">8b0f39ce</a>)</li>
+<li>fix: unify any[], dynamic[], and list into one type (<a href="https://github.com/amterp/rad/commit/686be9d4">686be9d4</a>)</li>
+<li>fix: write state and stash files atomically (<a href="https://github.com/amterp/rad/commit/c7ba354a">c7ba354a</a>)</li>
+<li>refactor(check): emit fn/arg shadowing from the binder (<a href="https://github.com/amterp/rad/commit/72160d0a">72160d0a</a>)</li>
+<li>refactor(check): route cmd-callback hint through resolved view (<a href="https://github.com/amterp/rad/commit/414f3e2d">414f3e2d</a>)</li>
+<li>refactor(radls): bind encoding into DocumentVersion (<a href="https://github.com/amterp/rad/commit/6fe1639d">6fe1639d</a>)</li>
+<li>refactor(radls): consolidate AST walk + span helpers (<a href="https://github.com/amterp/rad/commit/d460e822">d460e822</a>)</li>
+<li>refactor(radls): handlers grab snapshots at the request boundary (<a href="https://github.com/amterp/rad/commit/32d7f371">32d7f371</a>)</li>
+<li>refactor(rts): RadTree holds language not parser - close cgo trap (<a href="https://github.com/amterp/rad/commit/03dcc61b">03dcc61b</a>)</li>
+<li>refactor: adopt radish's cleaner pick result contract (<a href="https://github.com/amterp/rad/commit/8ae4efd5">8ae4efd5</a>)</li>
+<li>style(check): fix shell-escape artifacts in comments (<a href="https://github.com/amterp/rad/commit/fe92034f">fe92034f</a>)</li>
+<li>style: reformat code (<a href="https://github.com/amterp/rad/commit/3319e1e7">3319e1e7</a>)</li>
+<li>test(check): comprehensive snapshot coverage for narrowing (<a href="https://github.com/amterp/rad/commit/c6082908">c6082908</a>)</li>
+<li>test(check): snapshot harness for narrowing (<a href="https://github.com/amterp/rad/commit/677b79ac">677b79ac</a>)</li>
+<li>test(radls): differential harness for incremental vs from-scratch (<a href="https://github.com/amterp/rad/commit/535a5647">535a5647</a>)</li>
+<li>test(radls): extend lstesting harness with 5 new action types (<a href="https://github.com/amterp/rad/commit/816efe54">816efe54</a>)</li>
+<li>test(radls): port documentSymbol cases to wire-level snapshot (<a href="https://github.com/amterp/rad/commit/2952d3e8">2952d3e8</a>)</li>
+<li>test(radls): port findReferences cases to wire-level snapshot (<a href="https://github.com/amterp/rad/commit/ae57e989">ae57e989</a>)</li>
+<li>test(radls): port goto-definition cases to wire-level snapshot (<a href="https://github.com/amterp/rad/commit/ca0310e6">ca0310e6</a>)</li>
+<li>test(radls): port hover behavior cases to wire-level snapshot (<a href="https://github.com/amterp/rad/commit/27ad1b5c">27ad1b5c</a>)</li>
+<li>test(radls): port semanticTokens cases to wire-level snapshot (<a href="https://github.com/amterp/rad/commit/b3ee77c4">b3ee77c4</a>)</li>
+<li>test(radls): trim completion + code-action Go tests (<a href="https://github.com/amterp/rad/commit/e7b31a2d">e7b31a2d</a>)</li>
+<li>ux(radls, check): contextual rename errors + did-you-mean grammar + hover stutter (<a href="https://github.com/amterp/rad/commit/552f59dc">552f59dc</a>)</li>
+</ul>
 <hr />
 <h2 id="v0101-2026-05-07"><a href="https://github.com/amterp/rad/releases/tag/v0.10.1">v0.10.1</a> - 2026-05-07<a class="headerlink" href="#v0101-2026-05-07" title="Permanent link">&para;</a></h2>
 <ul>
