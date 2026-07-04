@@ -994,6 +994,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../built-in-commands/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Built-in Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1388,34 +1416,6 @@
     
   
     How to Migrate
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../migrations/v0.11.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    None
   
 
     
@@ -1994,11 +1994,8 @@ print(file_path)  // ~/.rad/stashes/&lt;stash_id&gt;/data/config.json
 </code></pre></div>
 <p>State and files are kept separate - <code>state.json</code> is managed by <code>load_state</code>/<code>save_state</code>, while the <code>files/</code> subdirectory is managed by <code>load_stash_file</code>/<code>write_stash_file</code>.</p>
 <h2 id="managing-stashes">Managing Stashes<a class="headerlink" href="#managing-stashes" title="Permanent link">&para;</a></h2>
-<p>Rad provides a built-in command to inspect and manage stashes for scripts on your PATH:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--state<span class="w">   </span><span class="c1"># View the script&#39;s state</span>
-rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--id<span class="w">      </span><span class="c1"># Show the stash ID</span>
-rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--delete<span class="w">  </span><span class="c1"># Delete the stash</span>
-</code></pre></div>
+<p>The built-in <a href="../built-in-commands/#rad-stash"><code>rad stash</code></a> command inspects and manages stashes
+for scripts on your PATH - viewing their state, printing their stash ID, or deleting them.</p>
 <div class="admonition info">
 <p class="admonition-title">Scripts Must Be on PATH</p>
 <p>The <code>rad stash</code> command looks up scripts on your PATH.

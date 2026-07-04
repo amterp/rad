@@ -266,13 +266,8 @@ State and files are kept separate - `state.json` is managed by `load_state`/`sav
 
 ## Managing Stashes
 
-Rad provides a built-in command to inspect and manage stashes for scripts on your PATH:
-
-```shell
-rad stash myscript --state   # View the script's state
-rad stash myscript --id      # Show the stash ID
-rad stash myscript --delete  # Delete the stash
-```
+The built-in [`rad stash`](./built-in-commands.md#rad-stash) command inspects and manages stashes
+for scripts on your PATH - viewing their state, printing their stash ID, or deleting them.
 
 !!! info "Scripts Must Be on PATH"
 
