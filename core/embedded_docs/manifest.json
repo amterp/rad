@@ -159,8 +159,7 @@
         "`cst-tree`",
         "`ast-tree`",
         "`tls-insecure`",
-        "`mock-response`",
-        "`rad docs`"
+        "`mock-response`"
       ]
     },
     {
@@ -191,6 +190,21 @@
       "title": "Configuration",
       "h2s": [
         "Invocation Logging"
+      ]
+    },
+    {
+      "slug": "guide/built-in-commands",
+      "section": "Guide",
+      "title": "Built-in Commands",
+      "h2s": [
+        "`rad new`",
+        "`rad check`",
+        "`rad fmt`",
+        "`rad docs`",
+        "`rad stash`",
+        "`rad gen-id`",
+        "`rad home`",
+        "`rad completion`"
       ]
     },
     {

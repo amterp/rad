@@ -288,7 +288,7 @@ then it will invoke said interpreter on the script (equivalent to `rad hello` li
 
 **Tip: rad new**
 
-    Rad has a command `rad new <script>` which saves you repeating these steps.
+    Rad has a command `rad new <script>` (rad docs guide/built-in-commands) which saves you repeating these steps.
     It creates a ready-to-edit executable file with a `rad` shebang on the top.
 
 **Tip: Tab completion**

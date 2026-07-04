@@ -62,6 +62,6 @@ keep_rolled_logs = 2    # Rotated log files to keep (default: 2)
 
 ## Next
 
-Now that you've configured Rad, there's one more setup step that can make your workflow smoother: shell tab completion for rad commands, script flags, and even enum values.
+`rad check --from-logs` is just one of several commands built into the `rad` binary. Let's take a tour of the rest.
 
-Continue to Shell Completion (rad docs guide/shell-completion).
+Continue to Built-in Commands (rad docs guide/built-in-commands).
