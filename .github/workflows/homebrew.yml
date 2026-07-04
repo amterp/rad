@@ -3,12 +3,25 @@ on:
   push:
     tags:
         - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to bump the formula to (e.g. v0.11.0)'
+        required: true
 jobs:
   homebrew:
     runs-on: macos-latest
     steps:
+      # Recent Homebrew refuses to load formulae from third-party taps
+      # unless the tap is explicitly trusted on the runner, so establish
+      # that before the bump action tries to load our formula.
+      - name: Trust the tap
+        run: |
+          brew tap amterp/rad
+          brew trust amterp/rad
       - uses: dawidd6/action-homebrew-bump-formula@v7
         with:
           token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
           formula: rad
           tap: amterp/rad
+          tag: ${{ inputs.tag }}
