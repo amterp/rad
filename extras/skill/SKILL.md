@@ -5,6 +5,9 @@ description: >
   modify existing Rad code, debug Rad syntax errors, write argument parsing
   with args blocks, use shell commands with dollar-backtick syntax, create
   display/rad blocks for JSON processing, or follow Rad style conventions.
+  Read this skill in its entirety - it is short and holds only gotchas and
+  style, so do not grep it. All reference material (function signatures,
+  syntax, guides) comes from running the `rad docs` CLI command.
 ---
 
 # Rad Scripting
@@ -16,7 +19,9 @@ data, or would otherwise grow into unreadable Bash.
 
 ## Read the docs from the binary
 
-The installed `rad` ships its own documentation, always matching its version.
+Read this file in its entirety rather than grepping it - it intentionally
+contains no reference material, only gotchas and style. The installed `rad`
+ships its own documentation, always matching its version.
 **Before writing or modifying Rad code, pull what you need with `rad docs`:**
 
 ```sh
