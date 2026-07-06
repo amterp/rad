@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>rts/check - Rad Go API Reference</title><meta name="description" content="github.com/amterp/rad/rts/check"/><meta name="generator" content="Sourcey 3.6.4"/><link rel="canonical" href="https://amterp.dev/rad/sourcey-go-api/go-api/pkg-rts-check/"/><meta property="og:title" content="rts/check - Rad Go API Reference"/><meta property="og:description" content="github.com/amterp/rad/rts/check"/><meta property="og:type" content="website"/><meta property="og:site_name" content="Rad Go API Reference"/><meta property="og:url" content="https://amterp.dev/rad/sourcey-go-api/go-api/pkg-rts-check/"/><meta property="og:image" content="https://amterp.dev/rad/sourcey-go-api/_og/go-api/pkg-rts-check/index.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:type" content="image/png"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="rts/check - Rad Go API Reference"/><meta name="twitter:description" content="github.com/amterp/rad/rts/check"/><meta name="twitter:image" content="https://amterp.dev/rad/sourcey-go-api/_og/go-api/pkg-rts-check/index.png"/><meta name="sourcey-search" content="../../search-index.json"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"/><style>
+    :root {
+      --color-primary: 99 102 241;
+      --color-primary-light: 129 140 248;
+      --color-primary-dark: 79 70 229;
+      --color-primary-ink: 79 70 229;
+      --color-background-light: 255 255 255;
+      --color-background-dark: 11 12 16;
+      --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, 'Liberation Mono', Menlo, monospace;
+      --sidebar-width: 18rem;
+      --toc-width: 19rem;
+      --content-max-width: 44rem;
+      --header-height: 7.5rem;
+    }
+    html { scroll-padding-top: var(--header-height); }
+    @media (min-width: 1024px) {
+      :root { --header-height: 4rem; }
+    }
+    body { margin: 0; background: rgb(var(--color-background-light)); }
+    .dark body { background: rgb(var(--color-background-dark)); }
+  </style><script>(function(){var t=localStorage.getItem('sourcey-theme');if(t==='dark')document.documentElement.classList.add('dark')})()</script><link rel="stylesheet" href="../../sourcey.css"/></head><body id="sourcey"><div id="page" class="relative antialiased text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><div id="navbar" class="z-30 fixed lg:sticky top-0 w-full"><div class="absolute w-full h-full flex-none border-b border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-300)/0.06)] bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))]"></div><div class="max-w-[92rem] mx-auto relative"><div class="relative"><div class="flex items-center lg:px-12 h-16 min-w-0 mx-4 lg:mx-0"><div class="h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-[rgb(var(--color-gray-500)/0.08)] dark:border-[rgb(var(--color-gray-300)/0.08)]"><div class="flex-1 flex items-center gap-x-4"><a href="../../go-api/" class="select-none inline-block"><span class="text-sm font-semibold text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-200))]">Rad Go API Reference</span></a></div><div class="relative hidden lg:flex items-center flex-1 z-20 gap-2"><button id="search-open" type="button" class="group flex pointer-events-auto rounded-lg w-full items-center text-sm leading-6 h-9 pl-3.5 pr-3 text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))] ring-1 ring-[rgb(var(--color-gray-400)/0.3)] hover:ring-[rgb(var(--color-gray-600)/0.3)] dark:ring-[rgb(var(--color-gray-600)/0.3)] dark:hover:ring-[rgb(var(--color-gray-500)/0.3)] justify-between truncate gap-2 min-w-[43px] cursor-pointer bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))] dark:brightness-110 dark:hover:brightness-125"><div class="flex items-center gap-2 min-w-[42px]"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="min-w-4 flex-none"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><div class="truncate min-w-0">Type <kbd>/</kbd> to search</div></div></button></div><div class="flex-1 relative hidden lg:flex items-center ml-auto justify-end space-x-4"><nav class="text-sm"><ul class="flex space-x-6 items-center"></ul></nav><button id="theme-toggle" type="button" aria-label="Toggle theme" class="p-2 flex items-center justify-center cursor-pointer text-[rgb(var(--color-gray-400))] hover:text-[rgb(var(--color-gray-600))] dark:text-[rgb(var(--color-gray-500))] dark:hover:text-[rgb(var(--color-gray-300))]"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" class="h-4 w-4 block dark:hidden"><g stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.11V2"></path><path d="M12.87 3.13L12.24 3.76"></path><path d="M14.89 8H14"></path><path d="M12.87 12.87L12.24 12.24"></path><path d="M8 14.89V14"></path><path d="M3.13 12.87L3.76 12.24"></path><path d="M1.11 8H2"></path><path d="M3.13 3.13L3.76 3.76"></path><circle cx="8" cy="8" r="3.78"></circle></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="h-4 w-4 hidden dark:block"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></button></div><div class="flex lg:hidden items-center gap-3"><button id="search-open-mobile" type="button" aria-label="Search" class="text-[rgb(var(--color-gray-500))] w-8 h-8 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="min-w-4 flex-none"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button><button type="button" data-drawer-slide="right" aria-label="Open menu" class="text-[rgb(var(--color-gray-500))] w-8 h-8 flex items-center justify-center hover:text-[rgb(var(--color-gray-600))]"><svg class="h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"></path></svg></button></div></div></div></div><div class="flex lg:hidden items-center h-14 px-5 text-sm overflow-hidden"><div class="flex items-center min-w-0 space-x-3 leading-6 whitespace-nowrap"><span class="font-semibold text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-200))] truncate min-w-0">rts/check</span></div></div></div></div><span class="fixed inset-0 bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))] -z-10 pointer-events-none"></span><div class="max-w-[92rem] mx-auto relative px-4 lg:px-8"><div id="sidebar" class="z-20 hidden lg:block fixed bottom-0 right-auto w-[18rem]" style="top: var(--header-height)"><div class="absolute inset-0 z-10 overflow-auto pr-8 pb-10" data-sourcey-sidebar-scroll="true" data-sourcey-sidebar-tab="go-api"><div class="relative text-sm leading-6"><div class="sticky top-0 h-8 z-10 bg-gradient-to-b from-[rgb(var(--color-background-light))] dark:from-[rgb(var(--color-background-dark))]"></div><nav id="nav" role="navigation"><div class><h5 class="nav-group-label">Go API</h5><ul class="space-y-px"><li><a href="../../go-api/" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">Overview</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Core</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-core.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core</span></a></li><li><a href="../../go-api/pkg-core-common.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/common</span></a></li><li><a href="../../go-api/pkg-core-testing.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/testing</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Function-metadata</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-function-metadata.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">function-metadata</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Radls</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-radls.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls</span></a></li><li><a href="../../go-api/pkg-radls-analysis.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/analysis</span></a></li><li><a href="../../go-api/pkg-radls-com.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/com</span></a></li><li><a href="../../go-api/pkg-radls-log.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/log</span></a></li><li><a href="../../go-api/pkg-radls-lsp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lsp</span></a></li><li><a href="../../go-api/pkg-radls-lstesting.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lstesting</span></a></li><li><a href="../../go-api/pkg-radls-rpc.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/rpc</span></a></li><li><a href="../../go-api/pkg-radls-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/server</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Root</h5><ul class="space-y-px"><li><a href="../../go-api/package-root.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">main</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Rts</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-rts.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts</span></a></li><li><a href="../../go-api/pkg-rts-check.html" class="nav-link active"><span class="flex-1 break-words [word-break:break-word]">rts/check</span></a></li><li><a href="../../go-api/pkg-rts-radfmt.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/radfmt</span></a></li><li><a href="../../go-api/pkg-rts-rl.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/rl</span></a></li></ul></div></nav></div></div></div><dialog id="mobile-nav" class="mobile-nav-dialog"><nav class="pt-5 pb-3 px-4 flex-1 overflow-y-auto"><div class><h5 class="nav-group-label">Go API</h5><ul class="space-y-px"><li><a href="../../go-api/" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">Overview</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Core</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-core.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core</span></a></li><li><a href="../../go-api/pkg-core-common.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/common</span></a></li><li><a href="../../go-api/pkg-core-testing.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/testing</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Function-metadata</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-function-metadata.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">function-metadata</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Radls</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-radls.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls</span></a></li><li><a href="../../go-api/pkg-radls-analysis.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/analysis</span></a></li><li><a href="../../go-api/pkg-radls-com.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/com</span></a></li><li><a href="../../go-api/pkg-radls-log.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/log</span></a></li><li><a href="../../go-api/pkg-radls-lsp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lsp</span></a></li><li><a href="../../go-api/pkg-radls-lstesting.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lstesting</span></a></li><li><a href="../../go-api/pkg-radls-rpc.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/rpc</span></a></li><li><a href="../../go-api/pkg-radls-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/server</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Root</h5><ul class="space-y-px"><li><a href="../../go-api/package-root.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">main</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Rts</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-rts.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts</span></a></li><li><a href="../../go-api/pkg-rts-check.html" class="nav-link active"><span class="flex-1 break-words [word-break:break-word]">rts/check</span></a></li><li><a href="../../go-api/pkg-rts-radfmt.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/radfmt</span></a></li><li><a href="../../go-api/pkg-rts-rl.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/rl</span></a></li></ul></div></nav></dialog><main id="docs" class="pt-[8.5rem] lg:pt-10"><div class="flex flex-row-reverse gap-12 box-border w-full"><aside id="toc" class="hidden xl:flex self-start sticky xl:flex-col max-w-[28rem] z-[21]" style="height: calc(100vh - var(--header-height) - 2.5rem); top: calc(var(--header-height) + 2.5rem)"><div class="z-10 hidden xl:flex box-border max-h-full pl-10 w-[19rem]"><div class="text-[rgb(var(--color-gray-600))] text-sm leading-6 w-[16.5rem] overflow-y-auto space-y-2 pb-4 -mt-10 pt-10"><h5 class="font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] flex items-center gap-2"><svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>On this page</h5><nav><ul><li><a href="#constants" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Constants</a></li><li><a href="#functions" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Functions</a><ul class="mb-2"><li><a href="#func-DumpForSnapshot" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">DumpForSnapshot</a></li><li><a href="#func-EmptyRefinement" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">EmptyRefinement</a></li><li><a href="#func-GenerateErrorMessage" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">GenerateErrorMessage</a></li><li><a href="#func-NewChecker" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewChecker</a></li><li><a href="#func-NewCheckerWithTree" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewCheckerWithTree</a></li><li><a href="#func-NewDiagnosticError" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticError</a></li><li><a href="#func-NewDiagnosticErrorFromSpan" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticErrorFromSpan</a></li><li><a href="#func-NewDiagnosticErrorWithSuggestion" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticErrorWithSuggestion</a></li><li><a href="#func-NewDiagnosticFromNode" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticFromNode</a></li><li><a href="#func-NewDiagnosticFromSpan" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticFromSpan</a></li><li><a href="#func-NewDiagnosticHint" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticHint</a></li><li><a href="#func-NewDiagnosticHintFromSpan" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticHintFromSpan</a></li><li><a href="#func-NewDiagnosticWarn" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticWarn</a></li><li><a href="#func-NewDiagnosticWarnFromSpan" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewDiagnosticWarnFromSpan</a></li><li><a href="#func-NewFrame" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewFrame</a></li><li><a href="#func-Resolve" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Resolve</a></li><li><a href="#func-TypeCheck" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">TypeCheck</a></li><li><a href="#func-UnionJoinForTest" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">UnionJoinForTest</a></li></ul></li><li><a href="#types" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Types</a><ul class="mb-2"><li><a href="#type-BindIssue" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">BindIssue</a></li><li><a href="#type-Diagnostic" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Diagnostic</a></li><li><a href="#type-Frame" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Frame</a></li><li><a href="#type-IssueSeverity" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">IssueSeverity</a></li><li><a href="#type-Pos" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Pos</a></li><li><a href="#type-RadChecker" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">RadChecker</a></li><li><a href="#type-RadCheckerImpl" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">RadCheckerImpl</a></li><li><a href="#type-Range" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Range</a></li><li><a href="#type-Refinement" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Refinement</a></li><li><a href="#type-Resolved" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Resolved</a></li><li><a href="#type-Result" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Result</a></li><li><a href="#type-Scope" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Scope</a></li><li><a href="#type-ScopeKind" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">ScopeKind</a></li><li><a href="#type-Severity" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Severity</a></li><li><a href="#type-Symbol" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Symbol</a></li><li><a href="#type-SymbolKind" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SymbolKind</a></li><li><a href="#type-TypeInfo" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">TypeInfo</a></li></ul></li></ul></nav></div></div></aside><div class="relative grow box-border flex-col w-full mx-auto px-1 min-w-0 lg:pl-[23.7rem] lg:-ml-12 xl:w-[calc(100%-28rem)]" id="content-area"><header class="relative leading-none"><div class="mt-0.5 space-y-2.5"><div class="h-5 text-[rgb(var(--color-primary-ink))] dark:text-[rgb(var(--color-primary-light))] text-sm font-semibold">Rts</div><div class="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0"><h1 class="text-2xl sm:text-3xl text-[rgb(var(--color-gray-900))] tracking-tight dark:text-[rgb(var(--color-gray-200))] font-bold" style="overflow-wrap: anywhere">rts/check</h1></div></div><div class="page-description mt-2 text-lg prose prose-gray dark:prose-invert" style="overflow-wrap: anywhere"><span>github.com/amterp/rad/rts/check</span></div></header><div class="prose prose-gray dark:prose-invert relative mt-8 mb-14 max-w-none"><p class="godoc-import"><code>import "github.com/amterp/rad/rts/check"</code></p>
+<nav class="godoc-toc not-prose"><h4>Index</h4><ul><li><a href="#constants">Constants</a></li><li><a href="#functions">Functions</a></li><li class="godoc-toc-sub"><a href="#func-DumpForSnapshot">func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved, diagnostics []Diagnostic) string</a></li><li class="godoc-toc-sub"><a href="#func-EmptyRefinement">func EmptyRefinement() Refinement</a></li><li class="godoc-toc-sub"><a href="#func-GenerateErrorMessage">func GenerateErrorMessage(node *ts.Node, src string) (msg string, code rl.Error, suggestion *string)</a></li><li class="godoc-toc-sub"><a href="#func-NewChecker">func NewChecker() (RadChecker, error)</a></li><li class="godoc-toc-sub"><a href="#func-NewCheckerWithTree">func NewCheckerWithTree(tree *rts.RadTree, parser *rts.RadParser, src string, ast *rl.SourceFile) RadChecker</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticError">func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticErrorFromSpan">func NewDiagnosticErrorFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticErrorWithSuggestion">func NewDiagnosticErrorWithSuggestion(node *ts.Node, originalSrc string, msg string, code rl.Error, suggestion *string) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticFromNode">func NewDiagnosticFromNode(
+	node *ts.Node,
+	originalSrc string,
+	severity Severity,
+	msg string,
+	code *rl.Error,
+) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticFromSpan">func NewDiagnosticFromSpan(
+	span rl.Span,
+	originalSrc string,
+	severity Severity,
+	msg string,
+	code *rl.Error,
+) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticHint">func NewDiagnosticHint(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticHintFromSpan">func NewDiagnosticHintFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticWarn">func NewDiagnosticWarn(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewDiagnosticWarnFromSpan">func NewDiagnosticWarnFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic</a></li><li class="godoc-toc-sub"><a href="#func-NewFrame">func NewFrame() *Frame</a></li><li class="godoc-toc-sub"><a href="#func-Resolve">func Resolve(file *rl.SourceFile) *Resolved</a></li><li class="godoc-toc-sub"><a href="#func-TypeCheck">func TypeCheck(file *rl.SourceFile, resolved *Resolved) *TypeInfo</a></li><li class="godoc-toc-sub"><a href="#func-UnionJoinForTest">func UnionJoinForTest(types []rl.TypingT) rl.TypingT</a></li><li><a href="#types">Types</a></li><li class="godoc-toc-sub"><a href="#type-BindIssue">type BindIssue</a></li><li class="godoc-toc-sub"><a href="#type-Diagnostic">type Diagnostic</a></li><li class="godoc-toc-sub"><a href="#type-Frame">type Frame</a></li><li class="godoc-toc-sub"><a href="#type-IssueSeverity">type IssueSeverity</a></li><li class="godoc-toc-sub"><a href="#type-Pos">type Pos</a></li><li class="godoc-toc-sub"><a href="#type-RadChecker">type RadChecker</a></li><li class="godoc-toc-sub"><a href="#type-RadCheckerImpl">type RadCheckerImpl</a></li><li class="godoc-toc-sub"><a href="#type-Range">type Range</a></li><li class="godoc-toc-sub"><a href="#type-Refinement">type Refinement</a></li><li class="godoc-toc-sub"><a href="#type-Resolved">type Resolved</a></li><li class="godoc-toc-sub"><a href="#type-Result">type Result</a></li><li class="godoc-toc-sub"><a href="#type-Scope">type Scope</a></li><li class="godoc-toc-sub"><a href="#type-ScopeKind">type ScopeKind</a></li><li class="godoc-toc-sub"><a href="#type-Severity">type Severity</a></li><li class="godoc-toc-sub"><a href="#type-Symbol">type Symbol</a></li><li class="godoc-toc-sub"><a href="#type-SymbolKind">type SymbolKind</a></li><li class="godoc-toc-sub"><a href="#type-TypeInfo">type TypeInfo</a></li></ul></nav>
+<h2 id="constants">Constants</h2>
+<section class="godoc-value" id="const-IssueError"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L167" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:167</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	IssueError</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> IssueSeverity</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0550AE;--shiki-dark:#569CD6"> iota</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	IssueWarning</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	IssueHint</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-IssueWarning" class="godoc-anchor"></a>
+<a id="const-IssueHint" class="godoc-anchor"></a>
+<section class="godoc-value" id="const-ScopeBuiltin"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L48" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:48</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ScopeBuiltin</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">  ScopeKind</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0550AE;--shiki-dark:#569CD6"> iota</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // ambient runtime names</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ScopeFile</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">                      // script body</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ScopeFunction</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">                  // named function body</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	ScopeLambda</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">                    // anonymous function body</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-ScopeFile" class="godoc-anchor"></a>
+<a id="const-ScopeFunction" class="godoc-anchor"></a>
+<a id="const-ScopeLambda" class="godoc-anchor"></a>
+<section class="godoc-value" id="const-Hint"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L13" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:13</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	Hint</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Severity</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0550AE;--shiki-dark:#569CD6"> iota</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	Warning</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	Info</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	Error</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-Warning" class="godoc-anchor"></a>
+<a id="const-Info" class="godoc-anchor"></a>
+<a id="const-Error" class="godoc-anchor"></a>
+<section class="godoc-value" id="const-SymBuiltin"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L12" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:12</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymBuiltin is an ambient name supplied by the runtime (e.g. `print`).</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// These symbols are synthesized on first reference; they have no decl</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// span in the user's source.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymBuiltin</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> SymbolKind</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0550AE;--shiki-dark:#569CD6"> iota</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> +</span><span style="--shiki-light:#0550AE;--shiki-dark:#B5CEA8"> 1</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymHoistedFn is a top-level named function. Visible across the file</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// regardless of textual order; this is how callers reference a function</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// defined further down.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymHoistedFn</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymArg is declared in the script-level `args:` block. These act as</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// ambient locals in the file scope: the runtime populates them from</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// CLI flags before the body executes.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymArg</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymCmdArg is declared inside a `cmd_block` args section. The</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// binding lives in the enclosing (file) scope because the runtime</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// populates it as a global before the command's callback runs;</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// the kind distinguishes it from SymLocal so LSP hover and</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// goto-def can point users at the cmd block's decl.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymCmdArg</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymParam is a function/lambda parameter.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymParam</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymLocal is anything else assigned in normal statement flow.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymLocal</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymLoopVar is the binding introduced by `for x in ...`.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymLoopVar</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymWith is the `with` context binding on a `for` loop.</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	SymWith</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-SymHoistedFn" class="godoc-anchor"></a>
+<a id="const-SymArg" class="godoc-anchor"></a>
+<a id="const-SymCmdArg" class="godoc-anchor"></a>
+<a id="const-SymParam" class="godoc-anchor"></a>
+<a id="const-SymLocal" class="godoc-anchor"></a>
+<a id="const-SymLoopVar" class="godoc-anchor"></a>
+<a id="const-SymWith" class="godoc-anchor"></a>
+<h2 id="functions">Functions</h2>
+<section class="godoc-func" id="func-DumpForSnapshot">
+<h3 class="godoc-symbol">func DumpForSnapshot(file *rl.SourceFile, info *TypeInfo, resolved *Resolved, diagnostics []Diagnostic) string</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/snapshot_dump.go#L33" target="_blank" rel="noopener noreferrer">Source: rts/check/snapshot_dump.go:33</a></p>
+<div class="godoc-doc"><p>DumpForSnapshot produces a deterministic textual summary of the
+checker's output suitable for snapshot testing. It records, in
+source order:</p>
+<ul>
+<li><p>Each Identifier reference, its source position, and the type
+the checker synthesized for it at that point. This is the
+load-bearing signal for narrowing: the same identifier name
+can have different types at different positions, and the
+dump captures that explicitly so a regression in narrowing
+surfaces immediately.</p>
+</li>
+<li><p>Each declared Symbol with its final SymbolTypes entry. This
+covers symbols that may not have a use site (cleanly-declared
+locals, params).</p>
+</li>
+<li><p>Each diagnostic (severity, code, message). Sorted by source
+position so the order is stable across runs.</p>
+</li>
+</ul>
+<p>The format is plain text - no JSON - because the goal is for a
+human to diff snapshot changes and confirm they reflect intentional
+behavior changes. Each section is prefixed with a header so a
+future reader can read top-to-bottom without context.</p></div>
+</section>
+<section class="godoc-func" id="func-EmptyRefinement">
+<h3 class="godoc-symbol">func EmptyRefinement() Refinement</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L90" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:90</a></p>
+<div class="godoc-doc"><p>EmptyRefinement is the no-op refinement used for conditions the
+narrower doesn't know how to interpret. Returned in preference to a
+zero-value Refinement so call sites can rely on the maps being
+non-nil if needed without re-checking.</p></div>
+</section>
+<section class="godoc-func" id="func-GenerateErrorMessage">
+<h3 class="godoc-symbol">func GenerateErrorMessage(node *ts.Node, src string) (msg string, code rl.Error, suggestion *string)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/error_messages.go#L152" target="_blank" rel="noopener noreferrer">Source: rts/check/error_messages.go:152</a></p>
+<div class="godoc-doc"><p>GenerateErrorMessage creates a specific error message for an invalid node.
+Returns the message, error code, and optional suggestion.</p></div>
+</section>
+<section class="godoc-func" id="func-NewChecker">
+<h3 class="godoc-symbol">func NewChecker() (RadChecker, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L29" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:29</a></p>
+</section>
+<section class="godoc-func" id="func-NewCheckerWithTree">
+<h3 class="godoc-symbol">func NewCheckerWithTree(tree *rts.RadTree, parser *rts.RadParser, src string, ast *rl.SourceFile) RadChecker</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L38" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:38</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticError">
+<h3 class="godoc-symbol">func NewDiagnosticError(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L79" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:79</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticErrorFromSpan">
+<h3 class="godoc-symbol">func NewDiagnosticErrorFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L146" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:146</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticErrorWithSuggestion">
+<h3 class="godoc-symbol">func NewDiagnosticErrorWithSuggestion(node *ts.Node, originalSrc string, msg string, code rl.Error, suggestion *string) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L83" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:83</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticFromNode">
+<h3 class="godoc-symbol">func NewDiagnosticFromNode(
+	node *ts.Node,
+	originalSrc string,
+	severity Severity,
+	msg string,
+	code *rl.Error,
+) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L49" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:49</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticFromSpan">
+<h3 class="godoc-symbol">func NewDiagnosticFromSpan(
+	span rl.Span,
+	originalSrc string,
+	severity Severity,
+	msg string,
+	code *rl.Error,
+) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L98" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:98</a></p>
+<div class="godoc-doc"><p>NewDiagnosticFromSpan creates a Diagnostic from an AST span instead of a CST node.</p></div>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticHint">
+<h3 class="godoc-symbol">func NewDiagnosticHint(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L89" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:89</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticHintFromSpan">
+<h3 class="godoc-symbol">func NewDiagnosticHintFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L150" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:150</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticWarn">
+<h3 class="godoc-symbol">func NewDiagnosticWarn(node *ts.Node, originalSrc string, msg string, code rl.Error) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L93" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:93</a></p>
+</section>
+<section class="godoc-func" id="func-NewDiagnosticWarnFromSpan">
+<h3 class="godoc-symbol">func NewDiagnosticWarnFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L154" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:154</a></p>
+</section>
+<section class="godoc-func" id="func-NewFrame">
+<h3 class="godoc-symbol">func NewFrame() *Frame</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L24" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:24</a></p>
+<div class="godoc-doc"><p>NewFrame returns a root frame with no narrowings. Used at the entry
+of every scope (file body, function body, lambda body) where no
+outer narrowings are in effect.</p></div>
+</section>
+<section class="godoc-func" id="func-Resolve">
+<h3 class="godoc-symbol">func Resolve(file *rl.SourceFile) *Resolved</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/binder.go#L26" target="_blank" rel="noopener noreferrer">Source: rts/check/binder.go:26</a></p>
+<div class="godoc-doc"><p>Resolve performs name resolution on a parsed script and returns a
+Resolved view: a scope tree plus per-node maps from uses to symbols
+and from declarations to symbols.</p>
+<p>The result is a pure value over the input AST. It holds no references
+to source text and never mutates the AST, so callers can share it
+freely (the LSP relies on this for snapshot-based reads).</p>
+<p>This is the <em>binder</em> phase in the Pyright sense: eager, single-pass,
+no type information. The type checker (Phase 2) consumes Resolved and
+populates Declared/Inferred on each Symbol.</p>
+<p>NOTE: Phase 1a establishes the data structures and the file-level
+binding pass (hoisted functions, args block, top-level assignments,
+identifier resolution). Per-construct scoping for function bodies,
+lambdas, loops, switch, and defer lands in Phase 1b.</p></div>
+</section>
+<section class="godoc-func" id="func-TypeCheck">
+<h3 class="godoc-symbol">func TypeCheck(file *rl.SourceFile, resolved *Resolved) *TypeInfo</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/type_check.go#L53" target="_blank" rel="noopener noreferrer">Source: rts/check/type_check.go:53</a></p>
+<div class="godoc-doc"><p>TypeCheck runs bidirectional type checking over the file using the
+pre-computed Resolved view. Returns nil if either input is nil.</p>
+<p>The pass is single-pass and AST-order: when it sees <code>x = expr</code>, it
+synthesizes the type of <code>expr</code>, then records that as the type of
+the symbol for <code>x</code>. Later references to <code>x</code> synth to that recorded
+type. Forward references (e.g. inside a lambda that's stored before
+it's called) get Dynamic - that's the right answer for a gradual
+system, and Phase 2e will refine it with Tarjan SCC ordering for
+genuine mutual recursion.</p></div>
+</section>
+<section class="godoc-func" id="func-UnionJoinForTest">
+<h3 class="godoc-symbol">func UnionJoinForTest(types []rl.TypingT) rl.TypingT</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/type_check.go#L1973" target="_blank" rel="noopener noreferrer">Source: rts/check/type_check.go:1973</a></p>
+<div class="godoc-doc"><p>UnionJoinForTest exposes unionTypesForJoin for testing. Tests in
+the check_test package can'\”t reach the unexported helper; this
+thin wrapper keeps the test interface explicit (not "everything in
+the package is exported"). Not for production use.</p></div>
+</section>
+<h2 id="types">Types</h2>
+<section class="godoc-type" id="type-BindIssue">
+<h3 class="godoc-symbol">type BindIssue</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L184" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:184</a></p>
+<div class="godoc-doc"><p>BindIssue is a problem detected during name resolution. It carries
+just the bare information - span, severity, message, error code - so
+that the binder doesn't depend on the source text or the wider
+Diagnostic type. Callers turn each issue into their preferred
+diagnostic shape (e.g. check.Diagnostic with src-derived range info).</p>
+<p>Suggestion is an optional "= help: ..." line. When non-empty, the
+rendered diagnostic shows it after the source-context block, the
+same way the runtime renders its <code>emitErrorWithHint</code> calls. Used
+to give the static check parity with runtime diagnostics that
+already provide actionable follow-up (the v0.9 <code>+</code> migration hint
+is the canonical example).</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> BindIssue</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Span</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">       rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Span</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Severity</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">   IssueSeverity</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Code</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">       rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Error</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Message</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">    string</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Suggestion</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> string</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Span <span class="godoc-field-type">rl.Span</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Severity <span class="godoc-field-type">IssueSeverity</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Code <span class="godoc-field-type">rl.Error</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Message <span class="godoc-field-type">string</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Suggestion <span class="godoc-field-type">string</span></code> </li></ul></details>
+</section>
+<section class="godoc-type" id="type-Diagnostic">
+<h3 class="godoc-symbol">type Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L38" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:38</a></p>
+<div class="godoc-doc"><p>Diagnostic represents a static analysis diagnostic. This is the canonical
+diagnostic type for the check system; both lsp.Diagnostic and core.Diagnostic
+are derived from it. Severity levels align with the LSP protocol (4 levels);
+core collapses Hint/Info into Note for its 3-level Rust-style CLI output.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Diagnostic</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	OriginalSrc</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> string</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // Complete original src</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Range</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">       Range</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	RangedSrc</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">   string</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // Src for just the Range</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	LineSrc</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">     string</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // Src for the line at the start of Range</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Severity</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">    Severity</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Message</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">     string</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Code</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">        *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Error</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Suggestion</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  *</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">string</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // Optional suggestion for fixing the error (rendered as "Try: ...")</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">OriginalSrc <span class="godoc-field-type">string</span></code> <div class="godoc-field-doc"><p>Complete original src</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Range <span class="godoc-field-type">Range</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">RangedSrc <span class="godoc-field-type">string</span></code> <div class="godoc-field-doc"><p>Src for just the Range</p></div></li><li class="godoc-field"><code class="godoc-field-sig">LineSrc <span class="godoc-field-type">string</span></code> <div class="godoc-field-doc"><p>Src for the line at the start of Range</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Severity <span class="godoc-field-type">Severity</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Message <span class="godoc-field-type">string</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Code <span class="godoc-field-type">*rl.Error</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Suggestion <span class="godoc-field-type">*string</span></code> <div class="godoc-field-doc"><p>Optional suggestion for fixing the error (rendered as "Try: ...")</p></div></li></ul></details>
+</section>
+<section class="godoc-type" id="type-Frame">
+<h3 class="godoc-symbol">type Frame</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L16" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:16</a></p>
+<div class="godoc-doc"><p>Frame is an immutable overlay of flow-sensitive narrowings on top of
+the base symbol types tracked in TypeInfo.SymbolTypes. Frames chain
+to a parent so a child frame can shadow or extend without copying.</p>
+<p>Used by the narrowing pass: inside <code>if x != null:</code>, the frame in
+effect for the then-body binds x to its non-null component while
+leaving the surrounding frame untouched.</p>
+<p>Frames are immutable; "narrow this symbol" produces a new frame via
+With. That keeps branch-join trivial - each branch ends with its
+own frame, and the join walks both to produce a unioned overlay.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Frame</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-Frame-Lookup">
+<h3 class="godoc-symbol">func  Lookup(sym *Symbol) (rl.TypingT, bool)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L53" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:53</a></p>
+<div class="godoc-doc"><p>Lookup walks the frame chain looking for a narrowing on sym. Returns
+the narrowed type and true if found in this frame or any ancestor.
+Callers fall back to TypeInfo.SymbolTypes when no narrowing is
+recorded.</p></div>
+</section>
+<section class="godoc-func" id="method-Frame-Parent">
+<h3 class="godoc-symbol">func  Parent() *Frame</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L65" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:65</a></p>
+<div class="godoc-doc"><p>Parent returns the parent frame, or nil at the root. Exposed so the
+flow-sensitive logic can walk back to a known point (e.g. unwind a
+branch scope on early-exit).</p></div>
+</section>
+<section class="godoc-func" id="method-Frame-With">
+<h3 class="godoc-symbol">func  With(sym *Symbol, t rl.TypingT) *Frame</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L30" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:30</a></p>
+<div class="godoc-doc"><p>With returns a new frame that narrows sym to t. The receiver is
+unchanged. O(1) - no map copy.</p></div>
+</section>
+<section class="godoc-func" id="method-Frame-WithMany">
+<h3 class="godoc-symbol">func  WithMany(m map[*Symbol]rl.TypingT) *Frame</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L38" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:38</a></p>
+<div class="godoc-doc"><p>WithMany returns a new frame applying every entry in m as a
+narrowing. Useful when a single predicate refines multiple symbols
+at once (e.g. a compound condition or a switch peeling several
+variants in one go). Returns the receiver if m is empty.</p></div>
+</section>
+</section>
+<section class="godoc-type" id="type-IssueSeverity">
+<h3 class="godoc-symbol">type IssueSeverity</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L164" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:164</a></p>
+<div class="godoc-doc"><p>IssueSeverity is the binder's severity classification. Kept here
+rather than on Diagnostic so resolve.go stays src-free.</p>
+<p>Severity policy (followed across rts/check and surfaced to the
+CLI / LSP):</p>
+<ul>
+<li><p>IssueError - the static analyzer can prove the code is
+wrong. Gates runtime: <code>rad check</code> exits non-zero, <code>rad run</code>
+refuses to execute, the LSP marks the file as having errors.
+If you're tempted to add an IssueError that "might be wrong
+in edge cases," that's not Error - it's Warning.</p>
+</li>
+<li><p>IssueWarning - genuinely uncertain. The analyzer suspects a
+problem but can't prove it, or the issue is severity-
+dependent on context the analyzer doesn't have. Does NOT
+gate runtime. Today's binder doesn't emit any Warnings;
+reserved for future drift cases (e.g. "this looks like a
+dead branch but we can't be sure"). The check.Diagnostic
+layer has its own Warning emitter for rad-options-no-effect
+style stylistic hints.</p>
+</li>
+<li><p>IssueHint - style nudge, no behavior implication. "You
+could write this more idiomatically." Never gates anything.</p>
+</li>
+</ul>
+<p>When promoting a Hint to Error: update the call site, update any
+snapshots, and migrate downstream runtime tests that used the
+now-static error as a runtime trigger.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> IssueSeverity</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> int</span></span></code></pre></div>
+</div>
+</section>
+<section class="godoc-type" id="type-Pos">
+<h3 class="godoc-symbol">type Pos</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L170" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:170</a></p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Pos</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Line</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">      int</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> `json:"line"`</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">      // Zero-indexed</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Character</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> int</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> `json:"character"`</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // Zero-indexed</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Line <span class="godoc-field-type">int</span></code> <code class="godoc-tag">`json:&quot;line&quot;`</code><div class="godoc-field-doc"><p>Zero-indexed</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Character <span class="godoc-field-type">int</span></code> <code class="godoc-tag">`json:&quot;character&quot;`</code><div class="godoc-field-doc"><p>Zero-indexed</p></div></li></ul></details>
+</section>
+<section class="godoc-type" id="type-RadChecker">
+<h3 class="godoc-symbol">type RadChecker</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L12" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:12</a></p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> RadChecker</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> interface</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">	UpdateSrc</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">(</span><span style="--shiki-light:#953800;--shiki-dark:#9CDCFE">src</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> string</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span>
+<span class="line"><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">	Update</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">(</span><span style="--shiki-light:#953800;--shiki-dark:#9CDCFE">tree</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rts</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">RadTree</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">, </span><span style="--shiki-light:#953800;--shiki-dark:#9CDCFE">src</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> string</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">, </span><span style="--shiki-light:#953800;--shiki-dark:#9CDCFE">ast</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">SourceFile</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span>
+<span class="line"><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">	SetStrict</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">(</span><span style="--shiki-light:#953800;--shiki-dark:#9CDCFE">strict</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> bool</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span>
+<span class="line"><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">	Check</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">() (</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Result</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">, </span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">error</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Methods</summary><ul><li class="godoc-field"><code class="godoc-field-sig">UpdateSrc <span class="godoc-field-type">func(src string)</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Update <span class="godoc-field-type">func(tree *rts.RadTree, src string, ast *rl.SourceFile)</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">SetStrict <span class="godoc-field-type">func(strict bool)</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Check <span class="godoc-field-type">func() (Result, error)</span></code> </li></ul></details>
+</section>
+<section class="godoc-type" id="type-RadCheckerImpl">
+<h3 class="godoc-symbol">type RadCheckerImpl</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L19" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:19</a></p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> RadCheckerImpl</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-RadCheckerImpl-Check">
+<h3 class="godoc-symbol">func  CheckerImpl) Check() (Result, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L78" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:78</a></p>
+</section>
+<section class="godoc-func" id="method-RadCheckerImpl-SetStrict">
+<h3 class="godoc-symbol">func  SetStrict(strict bool)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L74" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:74</a></p>
+</section>
+<section class="godoc-func" id="method-RadCheckerImpl-Update">
+<h3 class="godoc-symbol">func  Update(tree *rts.RadTree, src string, ast *rl.SourceFile)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L68" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:68</a></p>
+</section>
+<section class="godoc-func" id="method-RadCheckerImpl-UpdateSrc">
+<h3 class="godoc-symbol">func  UpdateSrc(src string)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/check.go#L47" target="_blank" rel="noopener noreferrer">Source: rts/check/check.go:47</a></p>
+</section>
+</section>
+<section class="godoc-type" id="type-Range">
+<h3 class="godoc-symbol">type Range</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L175" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:175</a></p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Range</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Start</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Pos</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> `json:"start"`</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	End</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">   Pos</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> `json:"end"`</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Start <span class="godoc-field-type">Pos</span></code> <code class="godoc-tag">`json:&quot;start&quot;`</code></li><li class="godoc-field"><code class="godoc-field-sig">End <span class="godoc-field-type">Pos</span></code> <code class="godoc-tag">`json:&quot;end&quot;`</code></li></ul></details>
+</section>
+<section class="godoc-type" id="type-Refinement">
+<h3 class="godoc-symbol">type Refinement</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L81" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:81</a></p>
+<div class="godoc-doc"><p>Refinement is the truthy/falsy decomposition of a predicate: the
+narrowings that hold when the condition evaluates truthy live in
+WhenTrue, the ones that hold on the falsy branch live in WhenFalse.
+Either map may be empty/nil if the predicate doesn't refine that
+side.</p>
+<p>Built by interpretCondition when the type checker walks an
+if/while/ternary condition. Consumers layer the chosen side onto
+the current frame via Frame.WithMany.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Refinement</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	WhenTrue</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">  map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">TypingT</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	WhenFalse</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">TypingT</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">WhenTrue <span class="godoc-field-type">map[*Symbol]rl.TypingT</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">WhenFalse <span class="godoc-field-type">map[*Symbol]rl.TypingT</span></code> </li></ul></details>
+<section class="godoc-func" id="method-Refinement-Negate">
+<h3 class="godoc-symbol">func  Negate() Refinement</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/narrow.go#L100" target="_blank" rel="noopener noreferrer">Source: rts/check/narrow.go:100</a></p>
+<div class="godoc-doc"><p>Negate swaps WhenTrue and WhenFalse. Used for <code>not &lt;cond&gt;</code> where
+the truthy / falsy branches of the inner predicate are inverted
+relative to the surrounding flow.</p></div>
+</section>
+</section>
+<section class="godoc-type" id="type-Resolved">
+<h3 class="godoc-symbol">type Resolved</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L105" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:105</a></p>
+<div class="godoc-doc"><p>Resolved is the output of name resolution: a scope tree plus indexes
+from AST nodes to the symbols they refer to or declare.</p>
+<p>All maps key on AST node pointer identity, so a Resolved is safe to
+pass to readers that hold the same AST.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Resolved</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Builtin is the ambient scope holding lazily-synthesized symbols</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// for runtime-provided names.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Builtin</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Scope</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// File is the top-level script scope.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	File</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Scope</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Uses maps an identifier-reference node to the Symbol it resolves to.</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Identifiers that fail to resolve are absent from this map.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Uses</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Node</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Decls maps a declaring node to the Symbol it introduced. Useful for</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// goto-def (jump to decl span) and for hover (show declared type).</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Decls</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Node</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// ForLoopVars holds the per-variable Symbol list for each `for` loop,</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// in source order. The header `for k, v in xs:` produces two symbols</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// for the same ForLoop AST node; Decls can only key one of them, so</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// callers that want both (the type checker, for map iteration k/v</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// binding) read from here. ListComp uses the same Vars[]string shape</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// but is single-var in practice today, so we don't track it.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	ForLoopVars</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">ForLoop</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">][]</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// ParamSymbols maps a function-like owner (FnDef or Lambda) to its</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// parameter Symbols in source order. SymParam bindings live in the</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// function's body scope, so a name-only lookup needs the scope to</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// be in hand; this index lets LSP click-at-decl-site features</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// reach the symbol without re-walking scope chains.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	ParamSymbols</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Node</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">][]</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Issues are problems the binder detected during resolution</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// (undefined references, duplicate parameters, etc.). Callers</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// convert these to whatever diagnostic shape they need; the binder</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// stays src-free.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Issues</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> []</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">BindIssue</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Builtin <span class="godoc-field-type">*Scope</span></code> <div class="godoc-field-doc"><p>Builtin is the ambient scope holding lazily-synthesized symbols
+for runtime-provided names.</p></div></li><li class="godoc-field"><code class="godoc-field-sig">File <span class="godoc-field-type">*Scope</span></code> <div class="godoc-field-doc"><p>File is the top-level script scope.</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Uses <span class="godoc-field-type">map[rl.Node]*Symbol</span></code> <div class="godoc-field-doc"><p>Uses maps an identifier-reference node to the Symbol it resolves to.
+Identifiers that fail to resolve are absent from this map.</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Decls <span class="godoc-field-type">map[rl.Node]*Symbol</span></code> <div class="godoc-field-doc"><p>Decls maps a declaring node to the Symbol it introduced. Useful for
+goto-def (jump to decl span) and for hover (show declared type).</p></div></li><li class="godoc-field"><code class="godoc-field-sig">ForLoopVars <span class="godoc-field-type">map[*rl.ForLoop][]*Symbol</span></code> <div class="godoc-field-doc"><p>ForLoopVars holds the per-variable Symbol list for each <code>for</code> loop,
+in source order. The header <code>for k, v in xs:</code> produces two symbols
+for the same ForLoop AST node; Decls can only key one of them, so
+callers that want both (the type checker, for map iteration k/v
+binding) read from here. ListComp uses the same Vars[]string shape
+but is single-var in practice today, so we don't track it.</p></div></li><li class="godoc-field"><code class="godoc-field-sig">ParamSymbols <span class="godoc-field-type">map[rl.Node][]*Symbol</span></code> <div class="godoc-field-doc"><p>ParamSymbols maps a function-like owner (FnDef or Lambda) to its
+parameter Symbols in source order. SymParam bindings live in the
+function's body scope, so a name-only lookup needs the scope to
+be in hand; this index lets LSP click-at-decl-site features
+reach the symbol without re-walking scope chains.</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Issues <span class="godoc-field-type">[]BindIssue</span></code> <div class="godoc-field-doc"><p>Issues are problems the binder detected during resolution
+(undefined references, duplicate parameters, etc.). Callers
+convert these to whatever diagnostic shape they need; the binder
+stays src-free.</p></div></li></ul></details>
+</section>
+<section class="godoc-type" id="type-Result">
+<h3 class="godoc-symbol">type Result</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L164" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:164</a></p>
+<div class="godoc-doc"><p>Result is the output of a check pass. Diagnostics is the
+user-visible product; Resolved and Types are the supporting
+indexes the LSP layer leans on for hover, goto-def, find-refs,
+etc. They're nil when the source failed to convert to an AST
+(so the checker only ran the CST-based passes). Callers that
+only want diagnostics can ignore them.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Result</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Diagnostics</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> []</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Diagnostic</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Resolved</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Resolved</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Types</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">       *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">TypeInfo</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Diagnostics <span class="godoc-field-type">[]Diagnostic</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Resolved <span class="godoc-field-type">*Resolved</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Types <span class="godoc-field-type">*TypeInfo</span></code> </li></ul></details>
+</section>
+<section class="godoc-type" id="type-Scope">
+<h3 class="godoc-symbol">type Scope</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L82" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:82</a></p>
+<div class="godoc-doc"><p>Scope is a lexical name -&gt; Symbol table chained to its parent. Lookup
+walks the parent chain; declaration is local.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Scope</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Parent</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">  *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Scope</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Kind</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">    ScopeKind</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Owner</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">   rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Node</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // node that introduced the scope; nil for file/builtin</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Symbols</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">string</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Parent <span class="godoc-field-type">*Scope</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Kind <span class="godoc-field-type">ScopeKind</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Owner <span class="godoc-field-type">rl.Node</span></code> <div class="godoc-field-doc"><p>node that introduced the scope; nil for file/builtin</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Symbols <span class="godoc-field-type">map[string]*Symbol</span></code> </li></ul></details>
+<section class="godoc-func" id="method-Scope-Lookup">
+<h3 class="godoc-symbol">func  Lookup(name string) *Symbol</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L91" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:91</a></p>
+<div class="godoc-doc"><p>Lookup walks this scope and its parents for a symbol named <code>name</code>.
+Returns nil if the name is not in scope.</p></div>
+</section>
+</section>
+<section class="godoc-type" id="type-ScopeKind">
+<h3 class="godoc-symbol">type ScopeKind</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L45" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:45</a></p>
+<div class="godoc-doc"><p>ScopeKind tracks why a scope exists.</p>
+<p>Rad opens new scopes only at function-like boundaries - named
+functions, lambdas, and the implicit top-level file scope. Loops,
+switch cases, defer bodies, list comprehensions, and cmd blocks do
+NOT open a scope; they share the enclosing env (matching the
+runtime's runBlock behavior, where loop variables and body-locals
+persist after the construct ends).</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> ScopeKind</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> int</span></span></code></pre></div>
+</div>
+</section>
+<section class="godoc-type" id="type-Severity">
+<h3 class="godoc-symbol">type Severity</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L10" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:10</a></p>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Severity</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> int</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-Severity-String">
+<h3 class="godoc-symbol">func  String() string</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/structs.go#L19" target="_blank" rel="noopener noreferrer">Source: rts/check/structs.go:19</a></p>
+</section>
+</section>
+<section class="godoc-type" id="type-Symbol">
+<h3 class="godoc-symbol">type Symbol</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L66" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:66</a></p>
+<div class="godoc-doc"><p>Symbol is the declaration record for a name in some scope.</p>
+<p>Each <em>use</em> of a name resolves to exactly one Symbol via Resolved.Uses.
+The Symbol is shared across all uses so later passes (type checker,
+goto-def, find-refs) can route through one identity per binding.</p>
+<p>Parameter and loop-variable symbols carry name-precision DeclSpans:
+TypingFnParam.NameSpan and ForLoop.VarSpans (parallel to Vars) feed
+the binder, which plants those on the symbol. Goto-def, find-refs,
+and rename therefore land on the name token rather than the owner.
+(Synthesised params with no source token - e.g. fn_type entries -
+still fall back to the owner span; affects no real call site today.)</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Symbol</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Name</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0">     string</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Kind</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">     SymbolKind</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	DeclSpan</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Span</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // location of the declaration in source; zero for builtins</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	DefNode</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">  rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Node</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955"> // the AST node that declared the symbol; nil for builtins</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Scope</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">    *</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Scope</span><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">  // scope this symbol lives in; the builtin scope for SymBuiltin</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Declared is the user-written type annotation pinned to this</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// binding (e.g. the `int` in `x: int = 5`). Once set it never</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// changes; subsequent reassignments must remain assignable to it.</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// nil for unannotated locals - those carry only an Inferred type</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// that the type checker derives from the RHS.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Declared</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">TypingT</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">Name <span class="godoc-field-type">string</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">Kind <span class="godoc-field-type">SymbolKind</span></code> </li><li class="godoc-field"><code class="godoc-field-sig">DeclSpan <span class="godoc-field-type">rl.Span</span></code> <div class="godoc-field-doc"><p>location of the declaration in source; zero for builtins</p></div></li><li class="godoc-field"><code class="godoc-field-sig">DefNode <span class="godoc-field-type">rl.Node</span></code> <div class="godoc-field-doc"><p>the AST node that declared the symbol; nil for builtins</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Scope <span class="godoc-field-type">*Scope</span></code> <div class="godoc-field-doc"><p>scope this symbol lives in; the builtin scope for SymBuiltin</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Declared <span class="godoc-field-type">rl.TypingT</span></code> <div class="godoc-field-doc"><p>Declared is the user-written type annotation pinned to this
+binding (e.g. the <code>int</code> in <code>x: int = 5</code>). Once set it never
+changes; subsequent reassignments must remain assignable to it.
+nil for unannotated locals - those carry only an Inferred type
+that the type checker derives from the RHS.</p></div></li></ul></details>
+</section>
+<section class="godoc-type" id="type-SymbolKind">
+<h3 class="godoc-symbol">type SymbolKind</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/resolve.go#L6" target="_blank" rel="noopener noreferrer">Source: rts/check/resolve.go:6</a></p>
+<div class="godoc-doc"><p>SymbolKind classifies what introduced a symbol.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> SymbolKind</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> int</span></span></code></pre></div>
+</div>
+</section>
+<section class="godoc-type" id="type-TypeInfo">
+<h3 class="godoc-symbol">type TypeInfo</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/rts/check/type_check.go#L25" target="_blank" rel="noopener noreferrer">Source: rts/check/type_check.go:25</a></p>
+<div class="godoc-doc"><p>TypeInfo is the output of bidirectional type checking. It carries
+the type each symbol settled on, the type each expression node
+synthesized to, and any type-related diagnostics the checker
+recorded along the way.</p>
+<p>Like Resolved, it's a pure value over the (ast, resolved) inputs -
+no mutation of Symbol records, no dependence on source text. The
+LSP snapshot model can hold one alongside the matching Resolved
+and serve hover/goto-type queries lock-free.</p>
+<p>Phase 2a establishes the data model and handles literal + identifier
+synthesis only. Calls, operators, struct/list/map literals, and
+flow-sensitive narrowing come in subsequent commits.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> TypeInfo</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// SymbolTypes maps a symbol to the type the checker has decided</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// it currently holds. For an annotated binding this is the</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// declared type; for an unannotated binding it's the type</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// synthesized from the most-recent assignment. Absent entries</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// mean "no information yet" (callers should treat as Dynamic).</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	SymbolTypes</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4">*</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Symbol</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">TypingT</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// ExprTypes maps an expression AST node to its synthesized type.</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Useful for hover, and for narrowing passes that need to ask</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// "what was the static type of this sub-expression?"</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	ExprTypes</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> map</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">[</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">Node</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">]</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">rl</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">TypingT</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Issues are type-related findings: type mismatches, arg count</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// errors, and so on. The checker layer converts these to</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// Diagnostic. Empty in Phase 2a; populated as later sub-commits</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// add the real checks.</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE">	Issues</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> []</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">BindIssue</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<details class="godoc-fields" open><summary>Fields</summary><ul><li class="godoc-field"><code class="godoc-field-sig">SymbolTypes <span class="godoc-field-type">map[*Symbol]rl.TypingT</span></code> <div class="godoc-field-doc"><p>SymbolTypes maps a symbol to the type the checker has decided
+it currently holds. For an annotated binding this is the
+declared type; for an unannotated binding it's the type
+synthesized from the most-recent assignment. Absent entries
+mean "no information yet" (callers should treat as Dynamic).</p></div></li><li class="godoc-field"><code class="godoc-field-sig">ExprTypes <span class="godoc-field-type">map[rl.Node]rl.TypingT</span></code> <div class="godoc-field-doc"><p>ExprTypes maps an expression AST node to its synthesized type.
+Useful for hover, and for narrowing passes that need to ask
+"what was the static type of this sub-expression?"</p></div></li><li class="godoc-field"><code class="godoc-field-sig">Issues <span class="godoc-field-type">[]BindIssue</span></code> <div class="godoc-field-doc"><p>Issues are type-related findings: type mismatches, arg count
+errors, and so on. The checker layer converts these to
+Diagnostic. Empty in Phase 2a; populated as later sub-commits
+add the real checks.</p></div></li></ul></details>
+</section></div><nav class="mt-12 flex items-stretch justify-between gap-4"><a href="../../go-api/pkg-rts.html" class="group flex flex-col gap-1 px-4 py-3 rounded-lg border border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] hover:border-[rgb(var(--color-primary)/0.4)] dark:hover:border-[rgb(var(--color-primary-light)/0.3)] transition-colors no-underline"><span class="text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]">← Previous</span><span class="text-sm font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] group-hover:text-[rgb(var(--color-primary-ink))] dark:group-hover:text-[rgb(var(--color-primary-light))] transition-colors">rts</span></a><a href="../../go-api/pkg-rts-radfmt.html" class="group flex flex-col gap-1 px-4 py-3 rounded-lg border border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] hover:border-[rgb(var(--color-primary)/0.4)] dark:hover:border-[rgb(var(--color-primary-light)/0.3)] transition-colors no-underline text-right ml-auto"><span class="text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]">Next →</span><span class="text-sm font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] group-hover:text-[rgb(var(--color-primary-ink))] dark:group-hover:text-[rgb(var(--color-primary-light))] transition-colors">rts/radfmt</span></a></nav><div class="mt-16 mb-8 flex items-center justify-between border-t border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] pt-6 text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><a href="https://sourcey.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors">Built with<img src="https://sourcey.com/sourcey-logo.png" alt="Sourcey" class="h-4 w-4"/></a><div class="flex items-center gap-4"><a href="https://github.com/amterp/rad/edit/main/rts/check/ast_checks.go" target="_blank" rel="noopener noreferrer" class="hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"></path></svg>Edit this page</a></div></div></div></div></main></div><div id="search-dialog" role="dialog" aria-label="Search"><div class="search-dialog-inner"><div class="search-input-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="search-input-icon"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd"></path></svg><input id="search-input" type="text" placeholder="Search docs..." autocomplete="off" spellcheck="false"/></div><div id="search-results"></div><div class="search-footer"><span class="search-footer-hint"><kbd>↑↓</kbd> navigate</span><span class="search-footer-hint"><kbd>↵</kbd> select</span><span class="search-footer-hint"><kbd>esc</kbd> close</span></div></div></div></div><script src="../../sourcey.js" defer></script></body></html>

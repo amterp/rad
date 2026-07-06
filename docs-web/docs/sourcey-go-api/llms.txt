@@ -1,0 +1,24 @@
+# Rad Go API Reference
+
+> github.com/amterp/rad
+
+## Go API
+
+- [github.com/amterp/rad](/rad/sourcey-go-api/go-api/package-root/): github.com/amterp/rad
+- [core](/rad/sourcey-go-api/go-api/pkg-core/): github.com/amterp/rad/core
+- [core/common](/rad/sourcey-go-api/go-api/pkg-core-common/): github.com/amterp/rad/core/common
+- [core/testing](/rad/sourcey-go-api/go-api/pkg-core-testing/): github.com/amterp/rad/core/testing
+- [function-metadata](/rad/sourcey-go-api/go-api/pkg-function-metadata/): github.com/amterp/rad/function-metadata
+- [radls](/rad/sourcey-go-api/go-api/pkg-radls/): github.com/amterp/rad/radls
+- [radls/analysis](/rad/sourcey-go-api/go-api/pkg-radls-analysis/): github.com/amterp/rad/radls/analysis
+- [radls/com](/rad/sourcey-go-api/go-api/pkg-radls-com/): github.com/amterp/rad/radls/com
+- [radls/log](/rad/sourcey-go-api/go-api/pkg-radls-log/): github.com/amterp/rad/radls/log
+- [radls/lsp](/rad/sourcey-go-api/go-api/pkg-radls-lsp/): github.com/amterp/rad/radls/lsp
+- [radls/lstesting](/rad/sourcey-go-api/go-api/pkg-radls-lstesting/): github.com/amterp/rad/radls/lstesting
+- [radls/rpc](/rad/sourcey-go-api/go-api/pkg-radls-rpc/): github.com/amterp/rad/radls/rpc
+- [radls/server](/rad/sourcey-go-api/go-api/pkg-radls-server/): github.com/amterp/rad/radls/server
+- [rts](/rad/sourcey-go-api/go-api/pkg-rts/): github.com/amterp/rad/rts
+- [rts/check](/rad/sourcey-go-api/go-api/pkg-rts-check/): github.com/amterp/rad/rts/check
+- [rts/radfmt](/rad/sourcey-go-api/go-api/pkg-rts-radfmt/): Package radfmt implements `rad fmt`, a gofmt-style canonical re-printer for Rad scripts.
+- [rts/rl](/rad/sourcey-go-api/go-api/pkg-rts-rl/): github.com/amterp/rad/rts/rl
+- [Go API](/rad/sourcey-go-api/go-api/): github.com/amterp/rad

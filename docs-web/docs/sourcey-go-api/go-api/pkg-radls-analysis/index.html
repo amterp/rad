@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>radls/analysis - Rad Go API Reference</title><meta name="description" content="github.com/amterp/rad/radls/analysis"/><meta name="generator" content="Sourcey 3.6.4"/><link rel="canonical" href="https://amterp.dev/rad/sourcey-go-api/go-api/pkg-radls-analysis/"/><meta property="og:title" content="radls/analysis - Rad Go API Reference"/><meta property="og:description" content="github.com/amterp/rad/radls/analysis"/><meta property="og:type" content="website"/><meta property="og:site_name" content="Rad Go API Reference"/><meta property="og:url" content="https://amterp.dev/rad/sourcey-go-api/go-api/pkg-radls-analysis/"/><meta property="og:image" content="https://amterp.dev/rad/sourcey-go-api/_og/go-api/pkg-radls-analysis/index.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image:type" content="image/png"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="radls/analysis - Rad Go API Reference"/><meta name="twitter:description" content="github.com/amterp/rad/radls/analysis"/><meta name="twitter:image" content="https://amterp.dev/rad/sourcey-go-api/_og/go-api/pkg-radls-analysis/index.png"/><meta name="sourcey-search" content="../../search-index.json"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap"/><style>
+    :root {
+      --color-primary: 99 102 241;
+      --color-primary-light: 129 140 248;
+      --color-primary-dark: 79 70 229;
+      --color-primary-ink: 79 70 229;
+      --color-background-light: 255 255 255;
+      --color-background-dark: 11 12 16;
+      --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, 'Liberation Mono', Menlo, monospace;
+      --sidebar-width: 18rem;
+      --toc-width: 19rem;
+      --content-max-width: 44rem;
+      --header-height: 7.5rem;
+    }
+    html { scroll-padding-top: var(--header-height); }
+    @media (min-width: 1024px) {
+      :root { --header-height: 4rem; }
+    }
+    body { margin: 0; background: rgb(var(--color-background-light)); }
+    .dark body { background: rgb(var(--color-background-dark)); }
+  </style><script>(function(){var t=localStorage.getItem('sourcey-theme');if(t==='dark')document.documentElement.classList.add('dark')})()</script><link rel="stylesheet" href="../../sourcey.css"/></head><body id="sourcey"><div id="page" class="relative antialiased text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><div id="navbar" class="z-30 fixed lg:sticky top-0 w-full"><div class="absolute w-full h-full flex-none border-b border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-300)/0.06)] bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))]"></div><div class="max-w-[92rem] mx-auto relative"><div class="relative"><div class="flex items-center lg:px-12 h-16 min-w-0 mx-4 lg:mx-0"><div class="h-full relative flex-1 flex items-center gap-x-4 min-w-0 border-b border-[rgb(var(--color-gray-500)/0.08)] dark:border-[rgb(var(--color-gray-300)/0.08)]"><div class="flex-1 flex items-center gap-x-4"><a href="../../go-api/" class="select-none inline-block"><span class="text-sm font-semibold text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-200))]">Rad Go API Reference</span></a></div><div class="relative hidden lg:flex items-center flex-1 z-20 gap-2"><button id="search-open" type="button" class="group flex pointer-events-auto rounded-lg w-full items-center text-sm leading-6 h-9 pl-3.5 pr-3 text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))] ring-1 ring-[rgb(var(--color-gray-400)/0.3)] hover:ring-[rgb(var(--color-gray-600)/0.3)] dark:ring-[rgb(var(--color-gray-600)/0.3)] dark:hover:ring-[rgb(var(--color-gray-500)/0.3)] justify-between truncate gap-2 min-w-[43px] cursor-pointer bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))] dark:brightness-110 dark:hover:brightness-125"><div class="flex items-center gap-2 min-w-[42px]"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="min-w-4 flex-none"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><div class="truncate min-w-0">Type <kbd>/</kbd> to search</div></div></button></div><div class="flex-1 relative hidden lg:flex items-center ml-auto justify-end space-x-4"><nav class="text-sm"><ul class="flex space-x-6 items-center"></ul></nav><button id="theme-toggle" type="button" aria-label="Toggle theme" class="p-2 flex items-center justify-center cursor-pointer text-[rgb(var(--color-gray-400))] hover:text-[rgb(var(--color-gray-600))] dark:text-[rgb(var(--color-gray-500))] dark:hover:text-[rgb(var(--color-gray-300))]"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" class="h-4 w-4 block dark:hidden"><g stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.11V2"></path><path d="M12.87 3.13L12.24 3.76"></path><path d="M14.89 8H14"></path><path d="M12.87 12.87L12.24 12.24"></path><path d="M8 14.89V14"></path><path d="M3.13 12.87L3.76 12.24"></path><path d="M1.11 8H2"></path><path d="M3.13 3.13L3.76 3.76"></path><circle cx="8" cy="8" r="3.78"></circle></g></svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="h-4 w-4 hidden dark:block"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></button></div><div class="flex lg:hidden items-center gap-3"><button id="search-open-mobile" type="button" aria-label="Search" class="text-[rgb(var(--color-gray-500))] w-8 h-8 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="min-w-4 flex-none"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg></button><button type="button" data-drawer-slide="right" aria-label="Open menu" class="text-[rgb(var(--color-gray-500))] w-8 h-8 flex items-center justify-center hover:text-[rgb(var(--color-gray-600))]"><svg class="h-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"></path></svg></button></div></div></div></div><div class="flex lg:hidden items-center h-14 px-5 text-sm overflow-hidden"><div class="flex items-center min-w-0 space-x-3 leading-6 whitespace-nowrap"><span class="font-semibold text-[rgb(var(--color-gray-900))] dark:text-[rgb(var(--color-gray-200))] truncate min-w-0">radls/analysis</span></div></div></div></div><span class="fixed inset-0 bg-[rgb(var(--color-background-light))] dark:bg-[rgb(var(--color-background-dark))] -z-10 pointer-events-none"></span><div class="max-w-[92rem] mx-auto relative px-4 lg:px-8"><div id="sidebar" class="z-20 hidden lg:block fixed bottom-0 right-auto w-[18rem]" style="top: var(--header-height)"><div class="absolute inset-0 z-10 overflow-auto pr-8 pb-10" data-sourcey-sidebar-scroll="true" data-sourcey-sidebar-tab="go-api"><div class="relative text-sm leading-6"><div class="sticky top-0 h-8 z-10 bg-gradient-to-b from-[rgb(var(--color-background-light))] dark:from-[rgb(var(--color-background-dark))]"></div><nav id="nav" role="navigation"><div class><h5 class="nav-group-label">Go API</h5><ul class="space-y-px"><li><a href="../../go-api/" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">Overview</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Core</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-core.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core</span></a></li><li><a href="../../go-api/pkg-core-common.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/common</span></a></li><li><a href="../../go-api/pkg-core-testing.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/testing</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Function-metadata</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-function-metadata.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">function-metadata</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Radls</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-radls.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls</span></a></li><li><a href="../../go-api/pkg-radls-analysis.html" class="nav-link active"><span class="flex-1 break-words [word-break:break-word]">radls/analysis</span></a></li><li><a href="../../go-api/pkg-radls-com.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/com</span></a></li><li><a href="../../go-api/pkg-radls-log.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/log</span></a></li><li><a href="../../go-api/pkg-radls-lsp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lsp</span></a></li><li><a href="../../go-api/pkg-radls-lstesting.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lstesting</span></a></li><li><a href="../../go-api/pkg-radls-rpc.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/rpc</span></a></li><li><a href="../../go-api/pkg-radls-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/server</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Root</h5><ul class="space-y-px"><li><a href="../../go-api/package-root.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">main</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Rts</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-rts.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts</span></a></li><li><a href="../../go-api/pkg-rts-check.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/check</span></a></li><li><a href="../../go-api/pkg-rts-radfmt.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/radfmt</span></a></li><li><a href="../../go-api/pkg-rts-rl.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/rl</span></a></li></ul></div></nav></div></div></div><dialog id="mobile-nav" class="mobile-nav-dialog"><nav class="pt-5 pb-3 px-4 flex-1 overflow-y-auto"><div class><h5 class="nav-group-label">Go API</h5><ul class="space-y-px"><li><a href="../../go-api/" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">Overview</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Core</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-core.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core</span></a></li><li><a href="../../go-api/pkg-core-common.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/common</span></a></li><li><a href="../../go-api/pkg-core-testing.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">core/testing</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Function-metadata</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-function-metadata.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">function-metadata</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Radls</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-radls.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls</span></a></li><li><a href="../../go-api/pkg-radls-analysis.html" class="nav-link active"><span class="flex-1 break-words [word-break:break-word]">radls/analysis</span></a></li><li><a href="../../go-api/pkg-radls-com.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/com</span></a></li><li><a href="../../go-api/pkg-radls-log.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/log</span></a></li><li><a href="../../go-api/pkg-radls-lsp.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lsp</span></a></li><li><a href="../../go-api/pkg-radls-lstesting.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/lstesting</span></a></li><li><a href="../../go-api/pkg-radls-rpc.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/rpc</span></a></li><li><a href="../../go-api/pkg-radls-server.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">radls/server</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Root</h5><ul class="space-y-px"><li><a href="../../go-api/package-root.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">main</span></a></li></ul></div><div class="mt-6 lg:mt-8"><h5 class="nav-group-label">Rts</h5><ul class="space-y-px"><li><a href="../../go-api/pkg-rts.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts</span></a></li><li><a href="../../go-api/pkg-rts-check.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/check</span></a></li><li><a href="../../go-api/pkg-rts-radfmt.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/radfmt</span></a></li><li><a href="../../go-api/pkg-rts-rl.html" class="nav-link"><span class="flex-1 break-words [word-break:break-word]">rts/rl</span></a></li></ul></div></nav></dialog><main id="docs" class="pt-[8.5rem] lg:pt-10"><div class="flex flex-row-reverse gap-12 box-border w-full"><aside id="toc" class="hidden xl:flex self-start sticky xl:flex-col max-w-[28rem] z-[21]" style="height: calc(100vh - var(--header-height) - 2.5rem); top: calc(var(--header-height) + 2.5rem)"><div class="z-10 hidden xl:flex box-border max-h-full pl-10 w-[19rem]"><div class="text-[rgb(var(--color-gray-600))] text-sm leading-6 w-[16.5rem] overflow-y-auto space-y-2 pb-4 -mt-10 pt-10"><h5 class="font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] flex items-center gap-2"><svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>On this page</h5><nav><ul><li><a href="#constants" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Constants</a></li><li><a href="#variables" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Variables</a></li><li><a href="#functions" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Functions</a><ul class="mb-2"><li><a href="#func-NegotiatePositionEncoding" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NegotiatePositionEncoding</a></li><li><a href="#func-NewLineIndex" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewLineIndex</a></li><li><a href="#func-NewState" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">NewState</a></li><li><a href="#func-SemanticTokensLegend" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SemanticTokensLegend</a></li></ul></li><li><a href="#types" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors py-1 font-medium">Types</a><ul class="mb-2"><li><a href="#type-Document" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">Document</a></li><li><a href="#type-DocumentVersion" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">DocumentVersion</a></li><li><a href="#type-FileID" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">FileID</a></li><li><a href="#type-LineIndex" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">LineIndex</a></li><li><a href="#type-PositionEncoding" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">PositionEncoding</a></li><li><a href="#type-SemanticTokenType" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">SemanticTokenType</a></li><li><a href="#type-State" class="toc-item break-words block hover:text-[rgb(var(--color-gray-900))] dark:hover:text-[rgb(var(--color-gray-300))] dark:text-[rgb(var(--color-gray-400))] transition-colors pl-3 py-1 text-[rgb(var(--color-gray-500))]">State</a></li></ul></li></ul></nav></div></div></aside><div class="relative grow box-border flex-col w-full mx-auto px-1 min-w-0 lg:pl-[23.7rem] lg:-ml-12 xl:w-[calc(100%-28rem)]" id="content-area"><header class="relative leading-none"><div class="mt-0.5 space-y-2.5"><div class="h-5 text-[rgb(var(--color-primary-ink))] dark:text-[rgb(var(--color-primary-light))] text-sm font-semibold">Radls</div><div class="flex flex-col sm:flex-row items-start sm:items-center relative gap-2 min-w-0"><h1 class="text-2xl sm:text-3xl text-[rgb(var(--color-gray-900))] tracking-tight dark:text-[rgb(var(--color-gray-200))] font-bold" style="overflow-wrap: anywhere">radls/analysis</h1></div></div><div class="page-description mt-2 text-lg prose prose-gray dark:prose-invert" style="overflow-wrap: anywhere"><span>github.com/amterp/rad/radls/analysis</span></div></header><div class="prose prose-gray dark:prose-invert relative mt-8 mb-14 max-w-none"><p class="godoc-import"><code>import "github.com/amterp/rad/radls/analysis"</code></p>
+<nav class="godoc-toc not-prose"><h4>Index</h4><ul><li><a href="#constants">Constants</a></li><li><a href="#variables">Variables</a></li><li><a href="#functions">Functions</a></li><li class="godoc-toc-sub"><a href="#func-NegotiatePositionEncoding">func NegotiatePositionEncoding(clientOffered []PositionEncoding) PositionEncoding</a></li><li class="godoc-toc-sub"><a href="#func-NewLineIndex">func NewLineIndex(text string) *LineIndex</a></li><li class="godoc-toc-sub"><a href="#func-NewState">func NewState() *State</a></li><li class="godoc-toc-sub"><a href="#func-SemanticTokensLegend">func SemanticTokensLegend() lsp.SemanticTokensLegend</a></li><li><a href="#types">Types</a></li><li class="godoc-toc-sub"><a href="#type-Document">type Document</a></li><li class="godoc-toc-sub"><a href="#type-DocumentVersion">type DocumentVersion</a></li><li class="godoc-toc-sub"><a href="#type-FileID">type FileID</a></li><li class="godoc-toc-sub"><a href="#type-LineIndex">type LineIndex</a></li><li class="godoc-toc-sub"><a href="#type-PositionEncoding">type PositionEncoding</a></li><li class="godoc-toc-sub"><a href="#type-SemanticTokenType">type SemanticTokenType</a></li><li class="godoc-toc-sub"><a href="#type-State">type State</a></li></ul></nav>
+<h2 id="constants">Constants</h2>
+<section class="godoc-value" id="const-RadShebang"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/consts.go#L4" target="_blank" rel="noopener noreferrer">Source: radls/analysis/consts.go:4</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	RadShebang</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "#!/usr/bin/env rad"</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<section class="godoc-value" id="const-InvalidFileID"><div class="godoc-doc"><p>InvalidFileID is the sentinel returned when a lookup misses. Real
+FileIDs are always &gt;= 1 - we start the counter at 1 so zero stays
+meaningful as "no file" / "not assigned yet."</p></div><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/fileid.go#L28" target="_blank" rel="noopener noreferrer">Source: radls/analysis/fileid.go:28</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF"> InvalidFileID</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> FileID</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0550AE;--shiki-dark:#B5CEA8"> 0</span></span></code></pre></div>
+</div></section>
+<section class="godoc-value" id="const-EncodingUTF8"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L13" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:13</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	EncodingUTF8</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0">  PositionEncoding</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "utf-8"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	EncodingUTF16</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> PositionEncoding</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "utf-16"</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	EncodingUTF32</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> PositionEncoding</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178"> "utf-32"</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-EncodingUTF16" class="godoc-anchor"></a>
+<a id="const-EncodingUTF32" class="godoc-anchor"></a>
+<section class="godoc-value" id="const-TokenTypeFunction"><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/semantic_tokens.go#L20" target="_blank" rel="noopener noreferrer">Source: radls/analysis/semantic_tokens.go:20</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">const</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> (</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	TokenTypeFunction</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> SemanticTokenType</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#0550AE;--shiki-dark:#569CD6"> iota</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	TokenTypeParameter</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	TokenTypeVariable</span></span>
+<span class="line"><span style="--shiki-light:#0550AE;--shiki-dark:#4FC1FF">	TokenTypeType</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<a id="const-TokenTypeParameter" class="godoc-anchor"></a>
+<a id="const-TokenTypeVariable" class="godoc-anchor"></a>
+<a id="const-TokenTypeType" class="godoc-anchor"></a>
+<h2 id="variables">Variables</h2>
+<section class="godoc-value" id="var-ErrInvalidRenameName"><div class="godoc-doc"><p>ErrInvalidRenameName signals the requested new name isn't a
+legal Rad identifier. Wrapped by errInvalidRenameName(reason,
+name) at the call site so the LSP client surfaces <em>which</em> rule
+the input violated (digit start, bad character, reserved word).</p></div><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/rename.go#L44" target="_blank" rel="noopener noreferrer">Source: radls/analysis/rename.go:44</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">var</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> ErrInvalidRenameName</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> errors</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">New</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">(</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178">"not a valid Rad identifier"</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<section class="godoc-value" id="var-ErrInvalidRenameTarget"><div class="godoc-doc"><p>ErrInvalidRenameTarget signals the cursor isn't on a renameable
+symbol - e.g. on whitespace, on a builtin (no source decl), or
+on a literal. The LSP client renders this as "Cannot rename" in
+the rename popup. The message is generic because the cursor's
+"what's wrong" depends on context (whitespace vs builtin vs
+unresolved); callers that need precision should wrap.</p></div><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/rename.go#L38" target="_blank" rel="noopener noreferrer">Source: radls/analysis/rename.go:38</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">var</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> ErrInvalidRenameTarget</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> errors</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">New</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">(</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178">"the symbol under the cursor cannot be renamed"</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<section class="godoc-value" id="var-ErrRenameWouldCollide"><div class="godoc-doc"><p>ErrRenameWouldCollide signals the new name is already in scope.
+Wrapped by errRenameCollision(name, ownerHint) so the message
+tells the user what they'd be colliding with - a same-scope
+local, a parent-scope binding, or an unloaded builtin.</p></div><p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/rename.go#L50" target="_blank" rel="noopener noreferrer">Source: radls/analysis/rename.go:50</a></p><div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">var</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> ErrRenameWouldCollide</span><span style="--shiki-light:#CF222E;--shiki-dark:#D4D4D4"> =</span><span style="--shiki-light:#1F2328;--shiki-dark:#9CDCFE"> errors</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">.</span><span style="--shiki-light:#8250DF;--shiki-dark:#DCDCAA">New</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">(</span><span style="--shiki-light:#0A3069;--shiki-dark:#CE9178">"name is already in scope"</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">)</span></span></code></pre></div>
+</div></section>
+<h2 id="functions">Functions</h2>
+<section class="godoc-func" id="func-NegotiatePositionEncoding">
+<h3 class="godoc-symbol">func NegotiatePositionEncoding(clientOffered []PositionEncoding) PositionEncoding</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L32" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:32</a></p>
+<div class="godoc-doc"><p>NegotiatePositionEncoding picks the server-preferred encoding from the
+list a client advertised in its initialize params. Per LSP 3.17, if the
+client offers nothing we must use utf-16. If the client offers something
+but we share nothing in common we also fall back to utf-16 (the spec's
+universal mandatory).</p></div>
+</section>
+<section class="godoc-func" id="func-NewLineIndex">
+<h3 class="godoc-symbol">func NewLineIndex(text string) *LineIndex</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L62" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:62</a></p>
+<div class="godoc-doc"><p>NewLineIndex scans text once to record where each line begins.</p></div>
+</section>
+<section class="godoc-func" id="func-NewState">
+<h3 class="godoc-symbol">func NewState() *State</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L41" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:41</a></p>
+</section>
+<section class="godoc-func" id="func-SemanticTokensLegend">
+<h3 class="godoc-symbol">func SemanticTokensLegend() lsp.SemanticTokensLegend</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/semantic_tokens.go#L35" target="_blank" rel="noopener noreferrer">Source: radls/analysis/semantic_tokens.go:35</a></p>
+<div class="godoc-doc"><p>SemanticTokensLegend is the shared client/server vocabulary.
+Exposed via the initialize response so the editor knows how to
+decode the indices in our emitted token data.</p>
+<p>We deliberately keep this list small. The LSP standard names
+run to 22 token types and 10 modifiers; emitting only the
+distinctions Rad's analyzer actually understands keeps the
+theming honest. We can grow this list as the analyzer's view
+gets richer (e.g. constants, enum members, type names).</p></div>
+</section>
+<h2 id="types">Types</h2>
+<section class="godoc-type" id="type-Document">
+<h3 class="godoc-symbol">type Document</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L174" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:174</a></p>
+<div class="godoc-doc"><p>Document owns the current snapshot of one LSP document. The snapshot
+pointer is read lock-free; writers serialize through <code>mu</code> to ensure
+a coherent prev-&gt;next chain (tree-sitter parsing today is wholesale,
+but a future incremental-parse path would still want this invariant).</p>
+<p>The FileID is fixed at construction; it stays stable across every
+version of the document so internal code can hold a FileID and
+always reach the latest snapshot via the State's lookup tables.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> Document</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-Document-FileID">
+<h3 class="godoc-symbol">func  FileID() FileID</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L180" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:180</a></p>
+</section>
+<section class="godoc-func" id="method-Document-Snapshot">
+<h3 class="godoc-symbol">func  Snapshot() *DocumentVersion</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L184" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:184</a></p>
+<div class="godoc-doc"><p>Snapshot returns the current immutable version of this document.
+Lock-free; safe to call from any goroutine.</p></div>
+</section>
+<section class="godoc-func" id="method-Document-Update">
+<h3 class="godoc-symbol">func  Update(produce func(prev *DocumentVersion) *DocumentVersion) *DocumentVersion</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L194" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:194</a></p>
+<div class="godoc-doc"><p>Update runs <code>produce</code> under the writer lock to compute the next
+version from the previous (nil on first open), then atomically swaps
+it into place. The new version arrives with refs=1 (held by us);
+after the store we Release the previous version, dropping
+Document's reference to it. Any reader that had already Acquired
+the old version keeps it alive via the refcount.</p></div>
+</section>
+</section>
+<section class="godoc-type" id="type-DocumentVersion">
+<h3 class="godoc-symbol">type DocumentVersion</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L38" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:38</a></p>
+<div class="godoc-doc"><p>DocumentVersion is an immutable snapshot of a single parse of a
+document. Multiple readers can hold the same *DocumentVersion
+concurrently without coordination: the data inside is guaranteed
+not to mutate. The next didChange produces a NEW DocumentVersion
+(built off the old) and atomically swaps the owning Document's
+current pointer.</p>
+<p>This is the load-bearing piece of Phase 8: it lets LSP request
+handlers (hover, goto-def, completion, etc.) grab a snapshot once
+and reason about a frozen world for the duration of the request,
+rather than racing against the next keystroke.</p>
+<p>Lifetime: the underlying tree-sitter tree owns C-heap memory that
+the Go GC can't reclaim. We refcount accordingly: the Document
+holds one reference; each call to State.Snapshot bumps the count
+and returns the snapshot to the caller, who MUST call Release()
+when done. When the count reaches zero, the tree is Close()d.</p>
+<p>Why refcounting and not a finalizer: tree-sitter Nodes carry
+references into the C tree that the Go GC doesn't see. A
+finalizer can fire on a tree while another goroutine is walking
+nodes that point into it - the documented cgo hazard. Explicit
+release gives us deterministic free at the moment we know no
+reader is touching the tree.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> DocumentVersion</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-DocumentVersion-AST">
+<h3 class="godoc-symbol">func  AST() *rl.SourceFile</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L87" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:87</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Diagnostics">
+<h3 class="godoc-symbol">func  Diagnostics() []lsp.Diagnostic</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L90" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:90</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Encoding">
+<h3 class="godoc-symbol">func  Encoding() PositionEncoding</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L89" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:89</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-FileID">
+<h3 class="godoc-symbol">func  FileID() FileID</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L83" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:83</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-GetLine">
+<h3 class="godoc-symbol">func  GetLine(line int) string</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L158" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:158</a></p>
+<div class="godoc-doc"><p>GetLine returns the source of the line at the given index, or "" if
+out of range. Kept on DocumentVersion (not LineIndex) because callers
+usually want both the text and the index together.</p></div>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-LastGood">
+<h3 class="godoc-symbol">func  LastGood() *DocumentVersion</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L144" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:144</a></p>
+<div class="godoc-doc"><p>LastGood returns the most recent version of this document whose
+resolved/types are non-nil, or nil if no version has ever
+converted cleanly. Callers that want to fall back to last-good
+indexes (e.g. UFCS completion ranking mid-edit) should read from
+this when their primary snapshot's resolved/types are nil. The
+returned version shares this version's lifetime - do NOT Release
+it independently.</p></div>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-LineIndex">
+<h3 class="godoc-symbol">func  LineIndex() *LineIndex</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L88" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:88</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Release">
+<h3 class="godoc-symbol">func  Release()</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L118" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:118</a></p>
+<div class="godoc-doc"><p>Release drops one reference. When the count reaches zero the
+underlying tree-sitter tree is freed. Each call to State.Snapshot
+pairs with exactly one Release - callers typically <code>defer snap.Release()</code> right after the nil-check.</p></div>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Resolved">
+<h3 class="godoc-symbol">func  Resolved() *check.Resolved</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L91" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:91</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Text">
+<h3 class="godoc-symbol">func  Text() string</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L85" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:85</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Tree">
+<h3 class="godoc-symbol">func  Tree() *rts.RadTree</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L86" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:86</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Types">
+<h3 class="godoc-symbol">func  Types() *check.TypeInfo</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L92" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:92</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-URI">
+<h3 class="godoc-symbol">func  URI() string</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L82" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:82</a></p>
+</section>
+<section class="godoc-func" id="method-DocumentVersion-Version">
+<h3 class="godoc-symbol">func  Version) Version() int64</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/document.go#L84" target="_blank" rel="noopener noreferrer">Source: radls/analysis/document.go:84</a></p>
+</section>
+</section>
+<section class="godoc-type" id="type-FileID">
+<h3 class="godoc-symbol">type FileID</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/fileid.go#L23" target="_blank" rel="noopener noreferrer">Source: radls/analysis/fileid.go:23</a></p>
+<div class="godoc-doc"><p>FileID is an opaque identifier the analyzer uses to refer to one
+document. It's separate from the LSP URI on purpose:</p>
+<ul>
+<li>URIs are strings, expensive to hash and pass around in deep
+traversals (symbol lookups, cross-file references, etc.)</li>
+<li>URIs are externally controlled - any uniqueness invariant lives
+outside our type system, so the compiler can't help us when we
+accidentally hand the wrong string to a function expecting a
+"real" document handle</li>
+<li>URIs survive forever in client memory but a server-side close
+should be able to recycle/invalidate references; an opaque int
+ID gives us the seam to do that without changing the wire</li>
+</ul>
+<p>FileIDs are minted monotonically per State and never re-used within
+a session. Comparing FileIDs is O(1) and they fit in a register.
+The State maintains both URI -&gt; FileID and FileID -&gt; *Document
+maps so we can translate at the wire boundary and keep everything
+downstream typed.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> FileID</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> uint32</span></span></code></pre></div>
+</div>
+</section>
+<section class="godoc-type" id="type-LineIndex">
+<h3 class="godoc-symbol">type LineIndex</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L56" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:56</a></p>
+<div class="godoc-doc"><p>LineIndex translates positions on a fixed text snapshot. Tree-sitter
+reports positions in utf-8 byte columns; LSP clients want them in the
+encoding negotiated at initialize. LineIndex is the single conversion
+point so the rest of the analyzer can stay in byte units (matching
+tree-sitter) without ever caring about utf-16 surrogate pairs.</p>
+<p>Construction is O(n) over the text; per-position queries are O(byteCol)
+on the affected line because we have to walk the bytes to count code
+units. That's fine at our scale (Rad files are small and queries are
+per-diagnostic, not per-keystroke).</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> LineIndex</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-LineIndex-ByteColumnTo">
+<h3 class="godoc-symbol">func  ByteColumnTo(line, byteCol int, enc PositionEncoding) int</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L101" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:101</a></p>
+<div class="godoc-doc"><p>ByteColumnTo converts a utf-8 byte column on <code>line</code> into a column in
+the target encoding. Out-of-range or past-end-of-line inputs are
+clamped to the line's length in the target encoding so callers can't
+produce LSP positions that violate the spec.</p></div>
+</section>
+<section class="godoc-func" id="method-LineIndex-ColumnToByte">
+<h3 class="godoc-symbol">func  ColumnToByte(line, col int, enc PositionEncoding) int</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L131" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:131</a></p>
+<div class="godoc-doc"><p>ColumnToByte is the inverse of ByteColumnTo: given a column reported in
+the client's encoding, return the utf-8 byte column tree-sitter uses
+internally. Out-of-range inputs clamp to the line's byte length so we
+never index past the end of a line.</p></div>
+</section>
+<section class="godoc-func" id="method-LineIndex-LineCount">
+<h3 class="godoc-symbol">func  LineCount() int</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L74" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:74</a></p>
+<div class="godoc-doc"><p>LineCount returns the number of lines in the indexed text. A document
+with no trailing newline still counts the partial final line.</p></div>
+</section>
+</section>
+<section class="godoc-type" id="type-PositionEncoding">
+<h3 class="godoc-symbol">type PositionEncoding</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/lineindex.go#L10" target="_blank" rel="noopener noreferrer">Source: radls/analysis/lineindex.go:10</a></p>
+<div class="godoc-doc"><p>PositionEncoding identifies how LSP positions are measured. LSP 3.17
+lets a client/server negotiate one of these at the initialize handshake;
+utf-16 is the default when no negotiation occurs.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> PositionEncoding</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> string</span></span></code></pre></div>
+</div>
+</section>
+<section class="godoc-type" id="type-SemanticTokenType">
+<h3 class="godoc-symbol">type SemanticTokenType</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/semantic_tokens.go#L17" target="_blank" rel="noopener noreferrer">Source: radls/analysis/semantic_tokens.go:17</a></p>
+<div class="godoc-doc"><p>SemanticTokenType indexes into the legend below; the LSP wire
+format encodes token-type as the index, so the legend must stay
+in sync with these constants. Adding new types only appends to
+the end of the legend - never insert in the middle.</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> SemanticTokenType</span><span style="--shiki-light:#CF222E;--shiki-dark:#4EC9B0"> int</span></span></code></pre></div>
+</div>
+</section>
+<section class="godoc-type" id="type-State">
+<h3 class="godoc-symbol">type State</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L26" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:26</a></p>
+<div class="godoc-doc"><p>State is the per-server registry of open documents. It owns the
+shared tree-sitter parser and the negotiated position encoding. The
+docs map is guarded by a top-level mutex for membership changes
+(open/close); per-document write coordination lives on Document
+itself, and reads of any document's content are lock-free via its
+snapshot pointer.</p>
+<p>Documents are identified two ways: by URI (the LSP wire concern)
+and by FileID (the internal handle). The URI is stable from the
+client's perspective, but our internal code prefers FileID since
+it's cheaper to compare and clearly distinguishes "an opened
+document" from "an arbitrary string."</p></div>
+<div class="prose-code-block not-prose">
+<div class="prose-code-copy">
+<button aria-label="Copy code" class="copy-btn" type="button" data-copy-source="code"><svg fill="none" height="18" viewBox="0 0 18 18" width="18" xmlns="http://www.w3.org/2000/svg"><title>Copy</title><path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="prose-code-content"><pre class="shiki shiki-themes github-light-default dark-plus" style="--shiki-light:#1f2328;--shiki-dark:#D4D4D4;--shiki-light-bg:#ffffff;--shiki-dark-bg:#1E1E1E" tabindex="0"><code><span class="line"><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6">type</span><span style="--shiki-light:#953800;--shiki-dark:#4EC9B0"> State</span><span style="--shiki-light:#CF222E;--shiki-dark:#569CD6"> struct</span><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4"> {</span></span>
+<span class="line"><span style="--shiki-light:#6E7781;--shiki-dark:#6A9955">	// contains filtered or unexported fields</span></span>
+<span class="line"><span style="--shiki-light:#1F2328;--shiki-dark:#D4D4D4">}</span></span></code></pre></div>
+</div>
+<section class="godoc-func" id="method-State-AddDoc">
+<h3 class="godoc-symbol">func  AddDoc(uri, text string)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L144" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:144</a></p>
+<div class="godoc-doc"><p>AddDoc opens a document for the first time and produces its initial
+version. If the URI is already open the existing entry is replaced -
+LSP shouldn't send didOpen twice for the same URI, but be defensive.
+A fresh FileID is allocated per AddDoc; reopening a closed URI gets
+a new id (we don't reuse ids within a session).</p></div>
+</section>
+<section class="godoc-func" id="method-State-CodeAction">
+<h3 class="godoc-symbol">func  CodeAction(snap *DocumentVersion, r lsp.Range) (result []lsp.CodeAction, err error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state_actions.go#L48" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state_actions.go:48</a></p>
+<div class="godoc-doc"><p>CodeAction returns the available code actions for the given range
+against a fixed document snapshot. Same snapshot discipline as
+Complete: the caller's responsibility to grab a fresh one.</p>
+<p>Two sources of actions today:</p>
+<ol>
+<li>The always-available shebang insertion, when the file is
+missing one - this is whole-document, not range-scoped.</li>
+<li>Diagnostic quick fixes - per-diagnostic actions for issues
+whose range overlaps the request range. Structured fixes
+(machine-applicable edits) come out as quickfix-kinded
+CodeActions; suggestion-only diagnostics produce refactor-
+kinded info actions with no edit.</li>
+</ol></div>
+</section>
+<section class="godoc-func" id="method-State-Complete">
+<h3 class="godoc-symbol">func  Complete(snap *DocumentVersion, pos lsp.Pos) (result []lsp.CompletionItem, err error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state_actions.go#L19" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state_actions.go:19</a></p>
+<div class="godoc-doc"><p>Complete runs the completion logic against a fixed document
+snapshot. Callers (server handlers) grab the snapshot themselves
+and pass it explicitly: the snapshot pin-points which version of
+the document this completion is meant for, even if the user types
+more characters before the response is sent.</p>
+<p>The result is the union of the shebang stub (only meaningful on
+line 0) and a scope-aware identifier list built from the AST
+and the resolved/type indexes. The shebang stays first so users
+who started a new file still get the "Add #!" suggestion at the
+top of the list.</p></div>
+</section>
+<section class="godoc-func" id="method-State-Definition">
+<h3 class="godoc-symbol">func  Definition(snap *DocumentVersion, pos lsp.Pos) (*lsp.Location, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/definition.go#L31" target="_blank" rel="noopener noreferrer">Source: radls/analysis/definition.go:31</a></p>
+<div class="godoc-doc"><p>Definition answers textDocument/definition: given a cursor on an
+identifier, return the Location of its declaration. Returns nil
+when there's nothing to jump to: the cursor isn't on an
+identifier, the name didn't resolve, or the symbol is a builtin
+(no source decl span to point at).</p>
+<p>Single-file today, single Location: Rad has no imports, so we
+never need to return multiple Locations. The LSP spec allows
+Location | Location[] | LocationLink[] | null; staying on Location
+keeps the wire shape simple and trivially forward-compatible.</p>
+<p>Builtins return nil rather than e.g. a synthetic stdlib URL.
+"Go to definition" on <code>print</code> doing nothing is much better than
+dumping the user into a generated file they can't edit; hover
+already shows them the signature, which is the actually-useful
+information.</p></div>
+</section>
+<section class="godoc-func" id="method-State-DocumentSymbols">
+<h3 class="godoc-symbol">func  DocumentSymbols(snap *DocumentVersion) ([]lsp.DocumentSymbol, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/symbols.go#L33" target="_blank" rel="noopener noreferrer">Source: radls/analysis/symbols.go:33</a></p>
+<div class="godoc-doc"><p>DocumentSymbols answers textDocument/documentSymbol with the
+outline of a file: top-level functions, top-level variable
+declarations, the args block (with its declared args nested), and
+each cmd block (with its declared args nested). Returns an empty
+slice (NOT nil) when the file has no symbols - the LSP wire
+expects a JSON array.</p>
+<p>What counts as "top-level":</p>
+<ul>
+<li>FnDef in SourceFile.Stmts -&gt; Function.</li>
+<li>First-assignment of an identifier in SourceFile.Stmts -&gt;
+Variable. Only the first assignment per name is emitted; later
+re-assigns of the same name are not new outline entries.</li>
+<li>SourceFile.Args - the script's args: block - rendered as a
+Namespace "args" with each ArgDecl as a Variable child.</li>
+<li>Each SourceFile.Cmds entry - rendered as a Module child group
+named after the command, with its ArgDecls nested.</li>
+</ul>
+<p>We deliberately do NOT recurse into function bodies. Editors that
+want a deeper outline (per-statement, per-loop) can render local
+vars on demand via Hover/GotoDef; the outline is meant to be
+glanceable, not exhaustive.</p></div>
+</section>
+<section class="godoc-func" id="method-State-Encoding">
+<h3 class="godoc-symbol">func  Encoding() PositionEncoding</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L89" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:89</a></p>
+<div class="godoc-doc"><p>Encoding returns the LSP position encoding currently in use.</p></div>
+</section>
+<section class="godoc-func" id="method-State-FileIDFor">
+<h3 class="godoc-symbol">func  FileIDFor(uri string) FileID</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L58" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:58</a></p>
+<div class="godoc-doc"><p>FileIDFor returns the FileID assigned to the named URI, or
+InvalidFileID if the document isn't open. Internal callers that
+already have a *Document should just call doc.FileID() directly.</p></div>
+</section>
+<section class="godoc-func" id="method-State-Hover">
+<h3 class="godoc-symbol">func  Hover(snap *DocumentVersion, pos lsp.Pos) (*lsp.Hover, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/hover.go#L26" target="_blank" rel="noopener noreferrer">Source: radls/analysis/hover.go:26</a></p>
+<div class="godoc-doc"><p>Hover answers textDocument/hover against a fixed document snapshot.
+We find the smallest Identifier whose span covers the cursor, look
+up its Symbol in the resolved view, and format the symbol's type
+(declared annotation if any, else what the type checker inferred).
+Returns nil when the cursor isn't on a hoverable thing - the LSP
+spec lets us return null and the client will simply show nothing.</p>
+<p>Why identifier-only for v1: the value gradient is steep. Hovering a
+name is what users want 90% of the time; expression-result hover
+(e.g. on a binop or call) is nice-to-have and lights up trivially
+once we route through TypeInfo.ExprTypes here. We'll grow it as
+users notice it's missing.</p></div>
+</section>
+<section class="godoc-func" id="method-State-References">
+<h3 class="godoc-symbol">func  References(snap *DocumentVersion, pos lsp.Pos, includeDecl bool) ([]lsp.Location, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/references.go#L27" target="_blank" rel="noopener noreferrer">Source: radls/analysis/references.go:27</a></p>
+<div class="godoc-doc"><p>References answers textDocument/references: given a cursor on an
+identifier, return every Location where that symbol is used in
+the document. The LSP context flag IncludeDeclaration toggles
+whether the declaration site itself is included.</p>
+<p>We compute on-demand from resolved.Uses rather than maintaining a
+pre-built reverse index. References is a click-driven feature
+(not background-streaming like diagnostics), so the cost of
+walking the Uses map once per request is fine - and it avoids
+growing every snapshot with a map most snapshots will never use.
+If the access pattern changes, the snapshot can grow a cache
+later without breaking callers.</p>
+<p>Returns an empty slice (not nil) when there are no references -
+the LSP wire expects an array.</p></div>
+</section>
+<section class="godoc-func" id="method-State-Rename">
+<h3 class="godoc-symbol">func  Rename(snap *DocumentVersion, pos lsp.Pos, newName string) (*lsp.WorkspaceEdit, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/rename.go#L78" target="_blank" rel="noopener noreferrer">Source: radls/analysis/rename.go:78</a></p>
+<div class="godoc-doc"><p>Rename answers textDocument/rename: produce a WorkspaceEdit
+covering every site that needs to change so the symbol under
+the cursor becomes <code>newName</code>. Single-file scope - Rad has no
+imports today, so cross-file renames don't apply.</p>
+<p>Returns:</p>
+<ul>
+<li>ErrInvalidRenameTarget when the cursor isn't on a
+renameable symbol (whitespace, builtin, unresolved name).</li>
+<li>ErrInvalidRenameName when newName isn't a legal identifier.</li>
+<li>ErrRenameWouldCollide when the new name already binds
+something in the target symbol's scope.</li>
+<li>A WorkspaceEdit with one TextEdit per site otherwise.</li>
+</ul></div>
+</section>
+<section class="godoc-func" id="method-State-SemanticTokens">
+<h3 class="godoc-symbol">func  SemanticTokens(snap *DocumentVersion) (*lsp.SemanticTokens, error)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/semantic_tokens.go#L71" target="_blank" rel="noopener noreferrer">Source: radls/analysis/semantic_tokens.go:71</a></p>
+<div class="godoc-doc"><p>SemanticTokens answers textDocument/semanticTokens/full: walk
+the resolved view and tag each identifier with its kind
+(function vs parameter vs variable). The editor uses this for
+finer-grained syntax highlighting than tree-sitter's
+CST-level coloring alone provides - e.g. distinguishing a
+builtin call from a local-variable read.</p>
+<p>Returns an empty data slice (not nil) when there's nothing to
+emit. The LSP spec lets us return null, but always-array makes
+the client's decode path simpler.</p>
+<p>Encoding: per LSP 3.17, tokens are sorted by position then
+delta-encoded as quintuples of uint. We do the sort and encode
+in one pass at the end so the AST walk can stay shape-blind.</p></div>
+</section>
+<section class="godoc-func" id="method-State-SetEncoding">
+<h3 class="godoc-symbol">func  SetEncoding(enc PositionEncoding)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L97" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:97</a></p>
+<div class="godoc-doc"><p>SetEncoding installs the encoding negotiated at initialize. Must be
+called before any didOpen so the first document's diagnostics use
+the right encoding. Initialize happens exactly once per session, so
+we don't bother guarding against a second call.</p></div>
+</section>
+<section class="godoc-func" id="method-State-Snapshot">
+<h3 class="godoc-symbol">func  Snapshot(uri string) *DocumentVersion</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L111" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:111</a></p>
+<div class="godoc-doc"><p>Snapshot returns the current version of the named document with
+its refcount incremented. The caller MUST call Release() when
+done (typically <code>defer snap.Release()</code> right after the nil-check).
+Returns nil if the document isn't open.</p>
+<p>The acquire-after-load loop handles a small race window: between
+loading the atomic pointer and bumping the refcount, the writer
+could have Released the version we observed. In that case acquire
+returns false and we retry; the Document.snapshot pointer has
+already been updated to a newer version by the time we get here.</p></div>
+</section>
+<section class="godoc-func" id="method-State-SnapshotByID">
+<h3 class="godoc-symbol">func  SnapshotByID(id FileID) *DocumentVersion</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L70" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:70</a></p>
+<div class="godoc-doc"><p>SnapshotByID returns the current snapshot for a FileID, or nil if
+the id isn't known. Same Acquire/Release contract as Snapshot:
+caller MUST Release() what they get back.</p></div>
+</section>
+<section class="godoc-func" id="method-State-UpdateDoc">
+<h3 class="godoc-symbol">func  UpdateDoc(uri string, changes []lsp.TextDocumentContentChangeEvent)</h3>
+<p class="godoc-source"><a href="https://github.com/amterp/rad/blob/main/radls/analysis/state.go#L163" target="_blank" rel="noopener noreferrer">Source: radls/analysis/state.go:163</a></p>
+<div class="godoc-doc"><p>UpdateDoc applies a sequence of content changes and produces a fresh
+version for each. Today the protocol delivers full-document text
+(TextDocumentSync = 1), so each change spawns a wholesale reparse;
+the per-change loop is preserved so a future move to incremental
+edits is a one-spot change.</p></div>
+</section>
+</section></div><nav class="mt-12 flex items-stretch justify-between gap-4"><a href="../../go-api/pkg-radls.html" class="group flex flex-col gap-1 px-4 py-3 rounded-lg border border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] hover:border-[rgb(var(--color-primary)/0.4)] dark:hover:border-[rgb(var(--color-primary-light)/0.3)] transition-colors no-underline"><span class="text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]">← Previous</span><span class="text-sm font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] group-hover:text-[rgb(var(--color-primary-ink))] dark:group-hover:text-[rgb(var(--color-primary-light))] transition-colors">radls</span></a><a href="../../go-api/pkg-radls-com.html" class="group flex flex-col gap-1 px-4 py-3 rounded-lg border border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] hover:border-[rgb(var(--color-primary)/0.4)] dark:hover:border-[rgb(var(--color-primary-light)/0.3)] transition-colors no-underline text-right ml-auto"><span class="text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]">Next →</span><span class="text-sm font-medium text-[rgb(var(--color-gray-700))] dark:text-[rgb(var(--color-gray-300))] group-hover:text-[rgb(var(--color-primary-ink))] dark:group-hover:text-[rgb(var(--color-primary-light))] transition-colors">radls/com</span></a></nav><div class="mt-16 mb-8 flex items-center justify-between border-t border-[rgb(var(--color-gray-200)/0.7)] dark:border-[rgb(var(--color-gray-800)/0.5)] pt-6 text-xs text-[rgb(var(--color-gray-500))] dark:text-[rgb(var(--color-gray-400))]"><a href="https://sourcey.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors">Built with<img src="https://sourcey.com/sourcey-logo.png" alt="Sourcey" class="h-4 w-4"/></a><div class="flex items-center gap-4"><a href="https://github.com/amterp/rad/edit/main/radls/analysis/ast_helpers.go" target="_blank" rel="noopener noreferrer" class="hover:text-[rgb(var(--color-gray-600))] dark:hover:text-[rgb(var(--color-gray-300))] transition-colors flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"></path></svg>Edit this page</a></div></div></div></div></main></div><div id="search-dialog" role="dialog" aria-label="Search"><div class="search-dialog-inner"><div class="search-input-row"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="search-input-icon"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd"></path></svg><input id="search-input" type="text" placeholder="Search docs..." autocomplete="off" spellcheck="false"/></div><div id="search-results"></div><div class="search-footer"><span class="search-footer-hint"><kbd>↑↓</kbd> navigate</span><span class="search-footer-hint"><kbd>↵</kbd> select</span><span class="search-footer-hint"><kbd>esc</kbd> close</span></div></div></div></div><script src="../../sourcey.js" defer></script></body></html>
