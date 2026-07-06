@@ -1,7 +1,7 @@
 import { defineConfig, godoc } from "sourcey";
 
 export default defineConfig({
-  name: "Rad Go API Reference",
+  name: "Rad Internal Go Reference",
   siteUrl: "https://amterp.dev",
   baseUrl: "/rad/sourcey-go-api",
   prettyUrls: "slash",
@@ -10,7 +10,7 @@ export default defineConfig({
   navigation: {
     tabs: [
       {
-        tab: "Go API",
+        tab: "Internal Go Reference",
         slug: "go-api",
         source: godoc({
           module: "..",

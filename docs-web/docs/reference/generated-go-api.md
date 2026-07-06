@@ -1,9 +1,11 @@
-# Generated Go API Reference
+# Internal Go Reference
 
-The generated Go API reference is available at:
+The generated internal Go reference is available at:
 
-[Open the Sourcey-generated Go API reference](/rad/sourcey-go-api/)
+[Open the Sourcey-generated internal Go reference](/rad/sourcey-go-api/)
 
-This reference is generated from the Rad Go module with Sourcey. It complements the hand-written language and function references by exposing package-level navigation, exported functions, types, constants, variables, examples, and source links for Rad's runtime, language server, formatter, and supporting packages.
+This reference is generated from the Rad Go module with Sourcey. It is intended for Rad maintainers and contributors who need a searchable map of package-level implementation details across the runtime, language server, formatter, and supporting packages.
+
+This page does not mark Rad's Go packages as stable public extension APIs. The hand-written language, function, and error references remain the user-facing API documentation.
 
 The generated site is committed under `docs-web/docs/sourcey-go-api/` so the normal Rad documentation deployment publishes it with the rest of the project docs.
