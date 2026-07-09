@@ -202,11 +202,17 @@ func (r *RadRunner) registerEmbeddedCommandsForCompletion() {
 		}
 	}
 
-	// Register the 'completion' command (handled in Go, not an embedded script)
-	completionCmd := ra.NewCmd("completion")
-	completionCmd.SetDescription(completionDescription)
-	if _, err := RRootCmd.RegisterCmd(completionCmd); err != nil {
-		fmt.Fprintf(os.Stderr, "rad: warning: failed to register completion for command %q: %s\n", "completion", err)
+	// Register the Go-implemented commands (not embedded scripts)
+	goCmds := []struct{ name, desc string }{
+		{"completion", completionDescription},
+		{"repl", replDescription},
+	}
+	for _, c := range goCmds {
+		goCmd := ra.NewCmd(c.name)
+		goCmd.SetDescription(c.desc)
+		if _, err := RRootCmd.RegisterCmd(goCmd); err != nil {
+			fmt.Fprintf(os.Stderr, "rad: warning: failed to register completion for command %q: %s\n", c.name, err)
+		}
 	}
 }
 

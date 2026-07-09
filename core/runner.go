@@ -22,7 +22,6 @@ const (
 	ScriptFile                            // existing file
 	StdinScript                           // "rad -"
 	EmbeddedCommand                       // built-in commands
-	Repl                                  // interactive REPL mode
 )
 
 type RadRunner struct {
@@ -53,6 +52,13 @@ func (r *RadRunner) Run() error {
 	// block the completion command.
 	if len(os.Args) > 1 && os.Args[1] == "completion" && !(com.IsRegularFile("completion") && isRadScript("completion")) {
 		return r.handleCompletionCommand(os.Args[2:])
+	}
+
+	// Handle `rad repl` early too - the REPL is implemented in Go, not as an
+	// embedded script. A regular file named "repl" in CWD takes precedence,
+	// consistent with embedded command behavior.
+	if len(os.Args) > 1 && os.Args[1] == "repl" && !com.IsRegularFile("repl") {
+		return r.handleReplCommand(os.Args[2:])
 	}
 
 	// Phase 1: Detection & Setup
@@ -321,7 +327,7 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	RRootCmd.ParseOrExit(argsToRead, parseOpts...)
 
 	// Reject before anything acts on the parsed flags (printer routing,
-	// --version, --repl, inspection flags) - silently honoring an
+	// --version, inspection flags) - silently honoring an
 	// inapplicable flag is how `rad fmt --check --shell` lost its output.
 	if invocationType == EmbeddedCommand {
 		r.rejectOutOfScopeGlobalFlags()
@@ -347,11 +353,6 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	if FlagVersion.Value {
 		printVersion()
 		RExit.Exit(0)
-	}
-
-	// Handle REPL mode (but not if help is requested)
-	if FlagRepl.Value && !FlagHelp.Value {
-		return r.runRepl()
 	}
 
 	// Handle global-only invocations
@@ -565,8 +566,19 @@ func readSource(scriptPath string) (string, error) {
 	return NormalizeLineEndings(string(source)), err
 }
 
-// runRepl starts the interactive REPL mode
-func (r *RadRunner) runRepl() error {
+// handleReplCommand handles `rad repl`, starting an interactive REPL session.
+// Like `rad completion`, this is a Go-implemented command handled outside the
+// embedded-script path. Arg parsing and help output are delegated to Ra.
+func (r *RadRunner) handleReplCommand(args []string) error {
+	// The REPL and Rad's exit handler both need the printer, which the normal
+	// flow only sets up later in detectAndSetup.
+	RP = NewPrinter(r, false, false, false, false)
+
+	cmd := ra.NewCmd("rad repl")
+	cmd.SetDescription(replDescription)
+	cmd.SetHelpEnabled(true)
+	cmd.ParseOrExit(args) // handles -h/--help, rejects unknown args
+
 	return RunRepl()
 }
 

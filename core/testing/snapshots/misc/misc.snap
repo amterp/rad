@@ -138,13 +138,13 @@ Commands:
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.
   new           Sets up a new Rad script.
+  repl          Starts an interactive REPL session.
   stash         Interacts with script stashes.
 
 To see help for a specific command, run `rad <command> -h`.
 
 Global options:
   -h, --help                Print usage string.
-  -r, --repl                Start interactive REPL mode.
   -i, --interactive         Interactively prompt for script args not already provided, then run.
   -d, --debug               Enables debug output. Intended for Rad script developers.
       --rad-debug           Enables Rad debug output. Intended for Rad developers.
@@ -229,13 +229,13 @@ Commands:
   gen-id        Generates a unique string ID. Useful for e.g. rad stash IDs.
   home          Prints out rad's home directory.
   new           Sets up a new Rad script.
+  repl          Starts an interactive REPL session.
   stash         Interacts with script stashes.
 
 To see help for a specific command, run `rad <command> -h`.
 
 Global options:
   -h, --help                Print usage string.
-  -r, --repl                Start interactive REPL mode.
   -i, --interactive         Interactively prompt for script args not already provided, then run.
   -d, --debug               Enables debug output. Intended for Rad script developers.
       --rad-debug           Enables Rad debug output. Intended for Rad developers.
@@ -276,7 +276,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -301,7 +300,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d                    Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -327,7 +325,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -353,7 +350,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -426,7 +422,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -462,7 +457,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)

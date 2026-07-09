@@ -5,6 +5,9 @@ import (
 	"io"
 )
 
+// replDescription describes the `rad repl` command in usage/completion output.
+const replDescription = "Starts an interactive REPL session."
+
 // CreateReplSession creates a new REPL session with default configuration
 func CreateReplSession() (ReplSession, error) {
 	// Skeleton implementation

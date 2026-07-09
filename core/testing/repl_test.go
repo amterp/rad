@@ -29,10 +29,10 @@ func setupReplTest(t *testing.T, inputs []string) (*bytes.Buffer, *bytes.Buffer)
 	}
 
 	// Set up args to trigger REPL mode
-	args := []string{"--repl"}
+	args := []string{"repl"}
 	runner := setupRunner(t, args...)
 
-	// Run with REPL flag (will use our injected I/O)
+	// Run the repl command (will use our injected I/O)
 	err := runner.Run()
 	assert.NoError(t, err, "REPL should execute without error")
 

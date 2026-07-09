@@ -127,37 +127,6 @@ Global options:
 ### EXIT ###
 1
 ### TITLE ###
-Fmt_RejectsReplFlag
-### INPUT ###
-
-### ARGS ###
-fmt
---repl
-### STDERR ###
---repl applies to rad itself. Run 'rad --repl' instead.
-
-Formats Rad scripts.
-
-Rewrites each script in place into Rad's canonical style. Use --stdout to
-preview without writing, or --check to verify formatting (e.g. in CI).
-
-Usage:
-  rad fmt [paths...] [OPTIONS]
-
-Arguments:
-      --paths [strs...]   Paths of Rad scripts to format.
-      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
-      --check             Don't write; exit non-zero if any file isn't formatted.
-
-Global options:
-  -h, --help          Print usage string.
-  -i, --interactive   Interactively prompt for script args not already provided, then run.
-      --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet         Suppresses some output.
-
-### EXIT ###
-1
-### TITLE ###
 Docs_RejectsMockResponse
 ### INPUT ###
 
