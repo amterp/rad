@@ -52,3 +52,5 @@ time
 Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).
+
+For the inverse - epoch int to formatted string - see [`format_epoch`](#format_epoch).

@@ -17,6 +17,10 @@ print(res.created)  // -> true (false if it already existed)
 res = mkdir("output/reports")
 print(res.created)  // -> false
 
+// path is the input after ~ expansion, with forward slashes
+res = mkdir("~/backups")
+print(res.path)     // -> e.g. "/home/alice/backups"
+
 // Errors are catchable
 res = mkdir("/root/forbidden") catch:
     print("Could not create:", res)
@@ -36,6 +40,7 @@ Errors if the path exists but is a file, or if creation fails (e.g. missing
 permissions).
 
 A leading `~` in `_path` is expanded to your home directory. The returned
-`path` uses forward slashes on all platforms.
+`path` is the input after that expansion, normalized to forward slashes on
+all platforms - it is not resolved to an absolute path.
 
 Counterpart to [`delete_path`](#delete_path).

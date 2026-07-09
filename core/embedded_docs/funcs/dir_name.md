@@ -19,6 +19,7 @@ Pure string manipulation - the path does not need to exist.
 
 Edge cases follow Unix `dirname` conventions: `dir_name("/")` returns `"/"`,
 and `dir_name("")` returns `"."`. The result is lexically cleaned, e.g.
-`dir_name("a/b/../c")` returns `"a"` after resolving the `..`.
+`dir_name("a/b/../c")` returns `"a"` after resolving the `..`. The returned
+path uses forward slashes on all platforms.
 
 See also `base_name` and `join_paths`.

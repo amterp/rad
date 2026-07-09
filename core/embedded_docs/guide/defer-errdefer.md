@@ -52,9 +52,10 @@ Note that despite the `Moved back!` print statement appearing *earlier* in the s
     2. The `defer` block does **not** close over the enclosing function's
        local variables. By the time it runs, those locals are gone.
 
-    Together these make the Go-style cleanup pattern fail - and because the
-    failure is a runtime error on the *cleanup* path, it can hide until long
-    after the code was written:
+    Together these make the Go-style cleanup pattern fail - and because
+    `rad check` does not flag it, the failure only surfaces as a runtime
+    error on the *cleanup* path, where it can hide until long after the
+    code was written:
 
     ```rad
     fn run_remote(script):

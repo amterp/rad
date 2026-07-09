@@ -314,7 +314,7 @@ func checkHashComment(node *ts.Node, trimmed string) (string, rl.Error, *string)
 	if node.StartPosition().Row == 0 && strings.HasPrefix(trimmed, "#!") {
 		return "", "", nil
 	}
-	suggestion := "Rad comments use '//' ('#' only starts a comment inside args blocks)"
+	suggestion := "Rad comments use '//' ('#' only starts a comment in the shebang and inside args blocks)"
 	return "'#' does not start a comment here", rl.ErrHashComment, &suggestion
 }
 

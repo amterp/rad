@@ -49,6 +49,9 @@ All other characters in the format string are treated as literal separators.
 Avoid embedding prose text - tokens like `mm` and `ss` are matched inside
 words too.
 
+Note: `MM` (uppercase) is **month**, `mm` (lowercase) is **minute**. Mixing
+these up will silently produce wrong output.
+
 **Unit auto-detection** works like `parse_epoch()`: up to 10 digits is
 seconds, 13 is millis, 16 is micros, 19 is nanos. Other lengths are ambiguous
 and return an error - pass `unit` explicitly to disambiguate.
