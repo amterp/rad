@@ -16,7 +16,7 @@ print("hi")
 
 # Diagnostics
   [error] RAD10023 @ 1:1 - '#' does not start a comment here
-    help: Rad comments use '//' ('#' only starts a comment inside args blocks)
+    help: Rad comments use '//' ('#' only starts a comment in the shebang and inside args blocks)
 ### TITLE ###
 HashCommentAfterArgsBlock
 ### DESCRIPTION ###
@@ -37,7 +37,7 @@ print(name)
 
 # Diagnostics
   [error] RAD10023 @ 3:1 - '#' does not start a comment here
-    help: Rad comments use '//' ('#' only starts a comment inside args blocks)
+    help: Rad comments use '//' ('#' only starts a comment in the shebang and inside args blocks)
 ### TITLE ###
 ShebangIsNotAHashComment
 ### DESCRIPTION ###

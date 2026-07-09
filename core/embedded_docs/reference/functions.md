@@ -800,7 +800,8 @@ Pure string manipulation - the path does not need to exist.
 
 Edge cases follow Unix `dirname` conventions: `dir_name("/")` returns `"/"`,
 and `dir_name("")` returns `"."`. The result is lexically cleaned, e.g.
-`dir_name("a/b/../c")` returns `"a"` after resolving the `..`.
+`dir_name("a/b/../c")` returns `"a"` after resolving the `..`. The returned
+path uses forward slashes on all platforms.
 
 See also `base_name` and `join_paths`.
 
@@ -913,6 +914,10 @@ print(res.created)  // -> true (false if it already existed)
 res = mkdir("output/reports")
 print(res.created)  // -> false
 
+// path is the input after ~ expansion, with forward slashes
+res = mkdir("~/backups")
+print(res.path)     // -> e.g. "/home/alice/backups"
+
 // Errors are catchable
 res = mkdir("/root/forbidden") catch:
     print("Could not create:", res)
@@ -926,7 +931,8 @@ Errors if the path exists but is a file, or if creation fails (e.g. missing
 permissions).
 
 A leading `~` in `_path` is expanded to your home directory. The returned
-`path` uses forward slashes on all platforms.
+`path` is the input after that expansion, normalized to forward slashes on
+all platforms - it is not resolved to an absolute path.
 
 Counterpart to `delete_path`.
 
@@ -2633,6 +2639,9 @@ All other characters in the format string are treated as literal separators.
 Avoid embedding prose text - tokens like `mm` and `ss` are matched inside
 words too.
 
+Note: `MM` (uppercase) is **month**, `mm` (lowercase) is **minute**. Mixing
+these up will silently produce wrong output.
+
 **Unit auto-detection** works like `parse_epoch()`: up to 10 digits is
 seconds, 13 is millis, 16 is micros, 19 is nanos. Other lengths are ambiguous
 and return an error - pass `unit` explicitly to disambiguate.
@@ -2682,6 +2691,10 @@ Map values:
 | `.epoch.seconds` | Seconds since 1970-01-01 00:00:00 UTC | int    | 1576246516          |
 | `.epoch.millis`  | Millis since 1970-01-01 00:00:00 UTC  | int    | 1576246516123       |
 | `.epoch.nanos`   | Nanos since 1970-01-01 00:00:00 UTC   | int    | 1576246516123456789 |
+
+To render a timestamp as a custom string (e.g. for file names), pass
+`.epoch.seconds` to `format_epoch`, e.g.
+`format_epoch(now().epoch.seconds, "YYYYMMDD-HHmmss")`.
 
 ### parse_date
 
@@ -2799,3 +2812,5 @@ if err:
 Converts an epoch timestamp to the same format as `now()`. Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).
+
+For the inverse - epoch int to formatted string - see `format_epoch`.
