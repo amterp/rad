@@ -43,6 +43,29 @@ Moved back!
 
 Note that despite the `Moved back!` print statement appearing *earlier* in the script, it only gets run at the end due to being in a `defer` block.
 
+**Warning: Defer runs at *script* exit and does not capture function locals**
+
+    If you're coming from Go, two behaviors will surprise you:
+
+    1. A `defer` inside a function runs when the **script** exits - not when
+       the function returns.
+    2. The `defer` block does **not** close over the enclosing function's
+       local variables. By the time it runs, those locals are gone.
+
+    Together these make the Go-style cleanup pattern fail - and because the
+    failure is a runtime error on the *cleanup* path, it can hide until long
+    after the code was written:
+
+    ```rad
+    fn run_remote(script):
+        tmp = "/tmp/xyz"
+        defer:
+            $`rm -f {tmp}`  // RAD20028: Undefined variable: tmp
+    ```
+
+    Instead, reference only top-level variables from `defer` blocks, or do
+    function-local cleanup explicitly before returning.
+
 ## Errdefer
 
 Sometimes, you only want certain deferred statements to run in the event of a failure.

@@ -197,6 +197,7 @@ Multiline strings must follow some rules:
 1. The opening `"""` must not be followed by any non-comment tokens on the same line.
 2. The newline after the opening `"""` is *excluded* from the contents of the string. Contents begin on the next line.
 3. The closing `"""` must not be preceded by any non-whitespace characters on that same line.
+   The newline before the closing `"""` is likewise *excluded* - the string does **not** end with a newline (see the warning below).
 4. Whitespace preceding the closing `"""` will get removed from the front of each line in the string block.
     - In other words, you can use the indentation of the closing `"""` to control the desired indentation of your contents.
     - If the closing `"""` is preceded by more whitespace than exists on any line of string contents, that means we cannot remove that amount of whitespace from the line, leading to an error.
@@ -217,6 +218,43 @@ print(text)
 ...example of text
 that "may contain quotes"!
 ```
+
+**Warning: Multiline strings do not end with a newline**
+
+    The newline before the closing `"""` is stripped (rule 3). That reads
+    naturally when printing, but it's a footgun when *assembling* text, e.g.
+    building a shell script or config file by concatenation:
+
+    ```rad
+    BLOCK = """
+    echo "step done" >&2
+    """
+    script = BLOCK + "pwd"
+    print(script)
+    ```
+
+    ```
+    echo "step done" >&2pwd
+    ```
+
+    The two fragments run together on one line - and bash happily parses
+    `>&2pwd` as a redirect to a file named `2pwd`, so the assembled script
+    even *succeeds* silently. When concatenating multiline strings, add the
+    joining newline yourself (`BLOCK + "\n" + ...`), or leave an intentionally
+    blank last line in the block - only the single final newline is stripped:
+
+    ```rad
+    BLOCK = """
+    echo "step done" >&2
+
+    """
+    print(BLOCK + "pwd")
+    ```
+
+    ```
+    echo "step done" >&2
+    pwd
+    ```
 
 ## Raw Strings
 
