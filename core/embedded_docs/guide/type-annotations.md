@@ -246,6 +246,27 @@ print(missing)  // null
 
 The `map?` return type indicates the function might return a map or might return null if no user is found.
 
+### Narrowing Optionals
+
+An explicit null-check *narrows* an optional type: inside the check, the type
+checker treats the value as non-null, so operations that need the underlying
+type stop being flagged. This matters for functions like
+`index_of` (rad docs index_of), which return `int?`:
+
+```rad
+my_args = ["build", "-o", "out"]
+idx = my_args.index_of("-o")
+
+if idx != null:
+    // idx is narrowed from int? to int here
+    if idx + 1 < my_args.len():
+        print("output:", my_args[idx + 1])
+```
+
+Without the `idx != null` check, `idx + 1` reports a hint (`cannot do
+'int? + int'`) - the value really could be null. The null-check is both the
+fix for the hint and the correctness fix.
+
 ## Defaults
 
 Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with `?`:

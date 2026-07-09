@@ -119,6 +119,10 @@ text = """
 Hello world
 How are you?
 """
+// Contents: "Hello world\nHow are you?" - the newlines adjacent to the
+// opening and closing """ are excluded, so the string does NOT end with
+// a newline. Add a blank last line (or concatenate "\n") if you need one,
+// e.g. when assembling scripts or files from fragments.
 
 // Indentation control - closing """ position determines whitespace stripping
 indented = """
@@ -126,7 +130,7 @@ indented = """
    Line 2
      Line 4
  """
-// Result: " Line 1\n  Line 2\n    Line 4\n" (1 space stripped from each line)
+// Result: " Line 1\n  Line 2\n    Line 4" (1 space stripped from each line)
 
 // String interpolation works in multi-line strings
 name = "alice"

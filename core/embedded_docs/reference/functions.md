@@ -182,6 +182,9 @@ hash(_val: str, algo: ["sha1", "sha256", "sha512", "md5"] = "sha1") -> str
 hash("hello world")                    // -> "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed"
 hash("hello world", algo="sha256")     // -> "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
 hash("sensitive data", algo="sha512")  // -> Long SHA-512 hash
+
+// File checksums, e.g. change detection - no need to shell out to cksum/shasum
+checksum = hash(read_file("config.yaml").content, algo="sha256")
 ```
 
 **Parameters:**
@@ -192,6 +195,9 @@ hash("sensitive data", algo="sha512")  // -> Long SHA-512 hash
 | `algo`    | `["sha1", "sha256", "sha512", "md5"] = "sha1"` | Hashing algorithm to use |
 
 The default `sha1` is **not cryptographically secure**. Use `sha256` or `sha512` for security.
+
+For checksumming files, combine with `read_file` as shown above.
+This works for text files; hashing binary files is not yet supported.
 
 ### uuid_v4
 
@@ -2031,6 +2037,15 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 | `_target`  | `any`      | The value to search for                               |
 | `n`        | `int = 0`  | Which occurrence to find (0=first, 1=second, -1=last) |
 | `start`    | `int = 0`  | Position to start searching from                      |
+
+Since the return type is `int?`, check the result against `null` before using
+it as an `int` - the check narrows the type, satisfying `rad check`:
+
+```rad
+idx = ["a", "b"].index_of("b")
+if idx != null:
+    print(idx + 1)  // idx is int here, not int?
+```
 
 ### lower
 
