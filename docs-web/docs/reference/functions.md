@@ -709,6 +709,28 @@ if r.success:
 
 ## IO
 
+### base_name
+
+Returns the last element of a path.
+
+```rad
+base_name(_path: str) -> str
+```
+
+```rad
+print(base_name("/home/alice/notes.txt"))  // -> "notes.txt"
+print(base_name("src/core/"))              // -> "core" (trailing slashes are ignored)
+print(base_name("standalone"))             // -> "standalone"
+```
+
+Pure string manipulation - the path does not need to exist, unlike
+[`get_path`](#get_path), which only reports `base_name` for existing paths.
+
+Edge cases follow Unix `basename` conventions: `base_name("/")` returns `"/"`,
+and `base_name("")` returns `"."`.
+
+See also [`dir_name`](#dir_name) and [`join_paths`](#join_paths).
+
 ### confirm
 
 Gets a boolean confirmation from the user (y/n prompt). Accepts "y", "yes", or Enter (empty input) as
@@ -756,6 +778,28 @@ delete_path("directory/")       // -> true (if directory existed and was deleted
 Returns `true` if the path was successfully deleted, `false` if it didn't exist or couldn't be deleted.
 
 A leading `~` in `_path` is expanded to your home directory.
+
+### dir_name
+
+Returns a path with its last element removed, i.e. the containing directory.
+
+```rad
+dir_name(_path: str) -> str
+```
+
+```rad
+print(dir_name("/home/alice/notes.txt"))  // -> "/home/alice"
+print(dir_name("src/core/funcs.go"))      // -> "src/core"
+print(dir_name("standalone"))             // -> "."
+```
+
+Pure string manipulation - the path does not need to exist.
+
+Edge cases follow Unix `dirname` conventions: `dir_name("/")` returns `"/"`,
+and `dir_name("")` returns `"."`. The result is lexically cleaned, e.g.
+`dir_name("a/b/../c")` returns `"a"` after resolving the `..`.
+
+See also [`base_name`](#base_name) and [`join_paths`](#join_paths).
 
 ### find_paths
 
@@ -825,6 +869,63 @@ password = input("Password: ", secret=true)           // -> Hides typed characte
 
 If `secret` is true, input is hidden (useful for passwords). The `hint` parameter has no effect when `secret` is
 enabled.
+
+### join_paths
+
+Joins path segments into a single path.
+
+```rad
+join_paths(*_parts: str) -> str
+```
+
+```rad
+print(join_paths("home", "alice", "notes.txt"))  // -> "home/alice/notes.txt"
+print(join_paths("/etc", "nginx/", "conf.d"))    // -> "/etc/nginx/conf.d"
+print(join_paths("a", "", "b"))                  // -> "a/b" (empty segments are skipped)
+```
+
+Pure string manipulation - the paths do not need to exist.
+
+The result is lexically cleaned: redundant separators collapse, and `.` / `..`
+segments are resolved, e.g. `join_paths("a/b", "../c")` returns `"a/c"`.
+Joining nothing (or only empty strings) returns `""`.
+
+The returned path uses forward slashes on all platforms.
+
+See also [`base_name`](#base_name) and [`dir_name`](#dir_name).
+
+### mkdir
+
+Creates a directory, including any missing parent directories.
+
+```rad
+mkdir(_path: str) -> error|{ "path": str, "created": bool }
+```
+
+```rad
+res = mkdir("output/reports")
+print(res.created)  // -> true (false if it already existed)
+
+// Idempotent - safe to call when the directory already exists
+res = mkdir("output/reports")
+print(res.created)  // -> false
+
+// Errors are catchable
+res = mkdir("/root/forbidden") catch:
+    print("Could not create:", res)
+```
+
+Behaves like `mkdir -p`: creates all missing parents, and succeeds (with
+`created: false`) if the directory already exists. Directories are created
+with `0755` permissions.
+
+Errors if the path exists but is a file, or if creation fails (e.g. missing
+permissions).
+
+A leading `~` in `_path` is expanded to your home directory. The returned
+`path` uses forward slashes on all platforms.
+
+Counterpart to [`delete_path`](#delete_path).
 
 ### multipick
 
@@ -2223,6 +2324,30 @@ missing = get_env("NONEXISTENT")              // -> ""
 
 Returns the environment variable value, or empty string if not set.
 
+### get_os
+
+Returns the operating system the script is running on.
+
+```rad
+get_os() -> str
+```
+
+```rad
+os = get_os()
+print(os)  // e.g. -> "macos"
+
+config_dir = switch os:
+    case "macos" -> "~/Library/Application Support"
+    case "windows" -> get_env("APPDATA")
+    default -> "~/.config"
+```
+
+Returns `"macos"`, `"linux"`, or `"windows"` on the three major platforms.
+Other platforms return Go's [`runtime.GOOS`](https://pkg.go.dev/runtime#GOOS)
+value directly, e.g. `"freebsd"` or `"android"`.
+
+Prefer this over shelling out to `uname`, which doesn't exist on Windows.
+
 ### get_path
 
 Gets information about a file or directory path.
@@ -2454,6 +2579,58 @@ type_of(fn() 1)          // -> "function"
 ```
 
 ## Time
+
+### format_epoch
+
+Formats an epoch timestamp as a string. The inverse of [`parse_epoch()`](#parse_epoch).
+
+```rad
+format_epoch(_epoch: int, _format: str, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos"] = "auto") -> error|str
+```
+
+```rad
+ts = format_epoch(1735689600, "YYYY-MM-DD HH:mm:ss", tz="UTC")
+print(ts)  // -> "2025-01-01 00:00:00"
+
+// Timestamped file names from now()
+stamp = format_epoch(now().epoch.seconds, "YYYYMMDD-HHmmss")
+
+// Works directly with get_path's modified_millis (unit auto-detected)
+info = get_path("data.json")
+if info.exists:
+    print("Modified:", format_epoch(info.modified_millis, "YYYY-MM-DD"))
+
+// Timezone conversion
+print(format_epoch(1735689600, "HH:mm", tz="America/Chicago"))  // -> "18:00"
+```
+
+**Parameters:**
+
+| Parameter | Type            | Description                                             |
+|-----------|-----------------|---------------------------------------------------------|
+| `_epoch`  | `int`           | The epoch timestamp to format                           |
+| `_format` | `str`           | Format string using tokens (see below)                  |
+| `tz`      | `str = "local"` | Timezone (e.g., "UTC", "America/Chicago")               |
+| `unit`    | `str = "auto"`  | Unit of `_epoch`. Auto-detects by digit count if omitted |
+
+**Format tokens** (same vocabulary as [`parse_date()`](#parse_date)):
+
+| Token  | Meaning              | Example |
+|--------|----------------------|---------|
+| `YYYY` | 4-digit year         | `2026`  |
+| `MM`   | 2-digit month (01-12)| `03`    |
+| `DD`   | 2-digit day (01-31)  | `22`    |
+| `HH`   | 2-digit hour, 24h    | `14`    |
+| `mm`   | 2-digit minute       | `30`    |
+| `ss`   | 2-digit second       | `00`    |
+
+All other characters in the format string are treated as literal separators.
+Avoid embedding prose text - tokens like `mm` and `ss` are matched inside
+words too.
+
+**Unit auto-detection** works like `parse_epoch()`: up to 10 digits is
+seconds, 13 is millis, 16 is micros, 19 is nanos. Other lengths are ambiguous
+and return an error - pass `unit` explicitly to disambiguate.
 
 ### now
 

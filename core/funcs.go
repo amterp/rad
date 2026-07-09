@@ -13,7 +13,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -85,6 +84,12 @@ const (
 	FUNC_GET_PATH           = "get_path"
 	FUNC_FIND_PATHS         = "find_paths"
 	FUNC_DELETE_PATH        = "delete_path"
+	FUNC_MKDIR              = "mkdir"
+	FUNC_BASE_NAME          = "base_name"
+	FUNC_DIR_NAME           = "dir_name"
+	FUNC_JOIN_PATHS         = "join_paths"
+	FUNC_GET_OS             = "get_os"
+	FUNC_FORMAT_EPOCH       = "format_epoch"
 	FUNC_COUNT              = "count"
 	FUNC_ZIP                = "zip"
 	FUNC_STR                = "str"
@@ -319,6 +324,11 @@ func init() {
 		FuncToJson,
 		FuncConvertDuration,
 		FuncParseDate,
+		FuncFormatEpoch,
+		FuncMkdir,
+		FuncBaseName,
+		FuncDirName,
+		FuncJoinPaths,
 		FuncSeedRandom,
 		FuncRand,
 		FuncRandInt,
@@ -482,70 +492,9 @@ func init() {
 					absFracPart = -absFracPart
 				}
 
-				digitCount := len(strconv.FormatInt(absEpoch, 10))
-				var second int64
-				var nanoSecond int64
-				var fracMultiplier = 1e9 // default for seconds
-
-				if unit == constAuto {
-					switch digitCount {
-					case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10:
-						second = absEpoch
-						nanoSecond = 0
-						fracMultiplier = 1e9
-					case 13:
-						second = absEpoch / 1_000
-						nanoSecond = (absEpoch % 1_000) * 1_000_000
-						fracMultiplier = 1e6
-					case 16:
-						second = absEpoch / 1_000_000
-						nanoSecond = (absEpoch % 1_000_000) * 1_000
-						fracMultiplier = 1e3
-					case 19:
-						second = absEpoch / 1_000_000_000
-						nanoSecond = absEpoch % 1_000_000_000
-						fracMultiplier = 1
-					default:
-						errMsg := fmt.Sprintf(
-							"Ambiguous epoch length (%d digits). Use '%s' to disambiguate.",
-							digitCount,
-							namedArgUnit,
-						)
-						return f.Return(NewErrorStr(errMsg).SetCode(rl.ErrAmbiguousEpoch).SetSpan(nodeSpanPtr(f.callNode)))
-					}
-				} else {
-					switch unit {
-					case constSeconds:
-						second = absEpoch
-						nanoSecond = 0
-						fracMultiplier = 1e9
-					case constMillis:
-						second = absEpoch / 1_000
-						nanoSecond = (absEpoch % 1_000) * 1_000_000
-						fracMultiplier = 1e6
-					case constMicros:
-						second = absEpoch / 1_000_000
-						nanoSecond = (absEpoch % 1_000_000) * 1_000
-						fracMultiplier = 1e3
-					case constNanos:
-						second = absEpoch / 1_000_000_000
-						nanoSecond = absEpoch % 1_000_000_000
-						fracMultiplier = 1
-					case constMilliseconds, constMicroseconds, constNanoseconds:
-						replacements := map[string]string{
-							constMilliseconds: constMillis,
-							constMicroseconds: constMicros,
-							constNanoseconds:  constNanos,
-						}
-						f.i.emitErrorWithHint(rl.ErrInvalidTimeUnit, f.callNode,
-							fmt.Sprintf("parse_epoch unit %q is no longer valid", unit),
-							fmt.Sprintf("Unit names were shortened in v0.9. Use %q instead. See: https://amterp.dev/rad/migrations/v0.9/", replacements[unit]))
-						panic(UNREACHABLE)
-					default:
-						return f.ReturnErrf(rl.ErrInvalidTimeUnit,
-							"invalid units %q; expected one of %s, %s, %s, %s, %s",
-							unit, constAuto, constSeconds, constMillis, constMicros, constNanos)
-					}
+				second, nanoSecond, fracMultiplier, errVal := resolveEpochUnit(f, FUNC_PARSE_EPOCH, absEpoch, unit)
+				if errVal != nil {
+					return *errVal
 				}
 
 				if isFloat {
@@ -557,15 +506,9 @@ func init() {
 					nanoSecond = -nanoSecond
 				}
 
-				var location *time.Location
-				if tz == "local" {
-					location = RClock.Local()
-				} else {
-					var err error
-					location, err = time.LoadLocation(tz)
-					if err != nil {
-						return f.ReturnErrf(rl.ErrInvalidTimeZone, "invalid time zone %q", tz)
-					}
+				location, errVal := resolveTimeLocation(f, tz)
+				if errVal != nil {
+					return *errVal
 				}
 
 				goTime := time.Unix(second, nanoSecond).In(location)
@@ -835,6 +778,12 @@ func init() {
 			Name: FUNC_GET_PID,
 			Execute: func(f FuncInvocation) RadValue {
 				return f.Return(int64(os.Getpid()))
+			},
+		},
+		{
+			Name: FUNC_GET_OS,
+			Execute: func(f FuncInvocation) RadValue {
+				return f.Return(com.OSName())
 			},
 		},
 		{

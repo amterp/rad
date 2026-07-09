@@ -349,6 +349,12 @@ print(gp.exists)
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -391,6 +397,12 @@ print(gp.exists)
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -406,6 +418,12 @@ print(gp.exists)
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -523,6 +541,12 @@ print(gp.exists)
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
       "label": "load_stash_file",
@@ -556,6 +580,12 @@ print(gp.exists)
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -1170,6 +1200,12 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -1212,6 +1248,12 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -1227,6 +1269,12 @@ fn f():
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -1344,6 +1392,12 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
       "label": "load_stash_file",
@@ -1377,6 +1431,12 @@ fn f():
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -1986,6 +2046,12 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -2028,6 +2094,12 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -2043,6 +2115,12 @@ fn f():
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -2160,6 +2238,12 @@ fn f():
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "load_stash_file(_path: str, _default: str = \"\") -\u003e error|{ \"full_path\": str, \"created\": bool, \"content\"?: str }",
       "kind": 3,
       "label": "load_stash_file",
@@ -2193,6 +2277,12 @@ fn f():
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {

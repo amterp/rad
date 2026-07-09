@@ -1,0 +1,31 @@
+# get_os
+
+Returns the operating system the script is running on.
+
+## Signature
+
+`get_os() -> str`
+
+## Examples
+
+```rad
+os = get_os()
+print(os)  // e.g. -> "macos"
+
+config_dir = switch os:
+    case "macos" -> "~/Library/Application Support"
+    case "windows" -> get_env("APPDATA")
+    default -> "~/.config"
+```
+
+## Category
+
+system
+
+## Notes
+
+Returns `"macos"`, `"linux"`, or `"windows"` on the three major platforms.
+Other platforms return Go's [`runtime.GOOS`](https://pkg.go.dev/runtime#GOOS)
+value directly, e.g. `"freebsd"` or `"android"`.
+
+Prefer this over shelling out to `uname`, which doesn't exist on Windows.

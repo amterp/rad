@@ -1,0 +1,81 @@
+### TITLE ###
+base_name returns last path element
+### INPUT ###
+print(base_name("/home/alice/notes.txt"))
+### STDOUT ###
+notes.txt
+
+### TITLE ###
+base_name ignores trailing slash
+### INPUT ###
+print(base_name("src/core/"))
+### STDOUT ###
+core
+
+### TITLE ###
+base_name works on non-existent and bare paths
+### INPUT ###
+print(base_name("standalone"))
+print(base_name("/"))
+print(base_name(""))
+### STDOUT ###
+standalone
+/
+.
+
+### TITLE ###
+dir_name returns containing directory
+### INPUT ###
+print(dir_name("/home/alice/notes.txt"))
+print(dir_name("src/core/funcs.go"))
+print(dir_name("standalone"))
+print(dir_name("/"))
+### STDOUT ###
+/home/alice
+src/core
+.
+/
+
+### TITLE ###
+dir_name lexically cleans the path
+### INPUT ###
+print(dir_name("a/b/../c"))
+### STDOUT ###
+a
+
+### TITLE ###
+join_paths joins segments
+### INPUT ###
+print(join_paths("home", "alice", "notes.txt"))
+print(join_paths("/etc", "nginx/", "conf.d"))
+### STDOUT ###
+home/alice/notes.txt
+/etc/nginx/conf.d
+
+### TITLE ###
+join_paths skips empty segments and cleans result
+### INPUT ###
+print(join_paths("a", "", "b"))
+print(join_paths("a/b", "../c"))
+print(join_paths())
+### STDOUT ###
+a/b
+a/c
+
+
+### TITLE ###
+base_name errors on non-str
+### INPUT ###
+print(base_name(42))
+### STDERR ###
+error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
+  --> <script>:1:17
+  |
+1 | print(base_name(42))
+  |                 ^^
+  |
+   = info: rad docs RAD30001
+
+
+### EXIT ###
+1
