@@ -1875,7 +1875,8 @@ One plus one equals 2
 <ol>
 <li>The opening <code>"""</code> must not be followed by any non-comment tokens on the same line.</li>
 <li>The newline after the opening <code>"""</code> is <em>excluded</em> from the contents of the string. Contents begin on the next line.</li>
-<li>The closing <code>"""</code> must not be preceded by any non-whitespace characters on that same line.</li>
+<li>The closing <code>"""</code> must not be preceded by any non-whitespace characters on that same line.
+   The newline before the closing <code>"""</code> is likewise <em>excluded</em> - the string does <strong>not</strong> end with a newline (see the warning below).</li>
 <li>Whitespace preceding the closing <code>"""</code> will get removed from the front of each line in the string block.<ul>
 <li>In other words, you can use the indentation of the closing <code>"""</code> to control the desired indentation of your contents.</li>
 <li>If the closing <code>"""</code> is preceded by more whitespace than exists on any line of string contents, that means we cannot remove that amount of whitespace from the line, leading to an error.</li>
@@ -1897,6 +1898,38 @@ that &quot;may contain quotes&quot;!
 </code></pre></div>
 </div>
 
+<div class="admonition warning">
+<p class="admonition-title">Multiline strings do not end with a newline</p>
+<p>The newline before the closing <code>"""</code> is stripped (rule 3). That reads
+naturally when printing, but it's a footgun when <em>assembling</em> text, e.g.
+building a shell script or config file by concatenation:</p>
+<div class="highlight"><pre><span></span><code>BLOCK = &quot;&quot;&quot;
+echo &quot;step done&quot; &gt;&amp;2
+&quot;&quot;&quot;
+script = BLOCK + &quot;pwd&quot;
+print(script)
+</code></pre></div>
+<p><div class="result">
+<div class="highlight"><pre><span></span><code>echo &quot;step done&quot; &gt;&amp;2pwd
+</code></pre></div>
+</div></p>
+<p>The two fragments run together on one line - and bash happily parses
+<code>&gt;&amp;2pwd</code> as a redirect to a file named <code>2pwd</code>, so the assembled script
+even <em>succeeds</em> silently. When concatenating multiline strings, add the
+joining newline yourself (<code>BLOCK + "\n" + ...</code>), or leave an intentionally
+blank last line in the block - only the single final newline is stripped:</p>
+<div class="highlight"><pre><span></span><code>BLOCK = &quot;&quot;&quot;
+echo &quot;step done&quot; &gt;&amp;2
+
+&quot;&quot;&quot;
+print(BLOCK + &quot;pwd&quot;)
+</code></pre></div>
+<p><div class="result">
+<div class="highlight"><pre><span></span><code>echo &quot;step done&quot; &gt;&amp;2
+pwd
+</code></pre></div>
+</div></p>
+</div>
 <h2 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h2>
 <p>Rad also supports <strong>raw strings</strong>.
 Raw strings don't perform string interpolation and do not allow any escaping (including the delimiter used to create them).

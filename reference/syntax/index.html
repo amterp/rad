@@ -3986,6 +3986,10 @@ text = &quot;&quot;&quot;
 Hello world
 How are you?
 &quot;&quot;&quot;
+// Contents: &quot;Hello world\nHow are you?&quot; - the newlines adjacent to the
+// opening and closing &quot;&quot;&quot; are excluded, so the string does NOT end with
+// a newline. Add a blank last line (or concatenate &quot;\n&quot;) if you need one,
+// e.g. when assembling scripts or files from fragments.
 
 // Indentation control - closing &quot;&quot;&quot; position determines whitespace stripping
 indented = &quot;&quot;&quot;
@@ -3993,7 +3997,7 @@ indented = &quot;&quot;&quot;
    Line 2
      Line 4
  &quot;&quot;&quot;
-// Result: &quot; Line 1\n  Line 2\n    Line 4\n&quot; (1 space stripped from each line)
+// Result: &quot; Line 1\n  Line 2\n    Line 4&quot; (1 space stripped from each line)
 
 // String interpolation works in multi-line strings
 name = &quot;alice&quot;

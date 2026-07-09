@@ -1581,6 +1581,27 @@ Moved back!
 </div>
 
 <p>Note that despite the <code>Moved back!</code> print statement appearing <em>earlier</em> in the script, it only gets run at the end due to being in a <code>defer</code> block.</p>
+<div class="admonition warning">
+<p class="admonition-title">Defer runs at <em>script</em> exit and does not capture function locals</p>
+<p>If you're coming from Go, two behaviors will surprise you:</p>
+<ol>
+<li>A <code>defer</code> inside a function runs when the <strong>script</strong> exits - not when
+   the function returns.</li>
+<li>The <code>defer</code> block does <strong>not</strong> close over the enclosing function's
+   local variables. By the time it runs, those locals are gone.</li>
+</ol>
+<p>Together these make the Go-style cleanup pattern fail - and because
+<code>rad check</code> does not flag it, the failure only surfaces as a runtime
+error on the <em>cleanup</em> path, where it can hide until long after the
+code was written:</p>
+<div class="highlight"><pre><span></span><code>fn run_remote(script):
+    tmp = &quot;/tmp/xyz&quot;
+    defer:
+        $`rm -f {tmp}`  // RAD20028: Undefined variable: tmp
+</code></pre></div>
+<p>Instead, reference only top-level variables from <code>defer</code> blocks, or do
+function-local cleanup explicitly before returning.</p>
+</div>
 <h2 id="errdefer">Errdefer<a class="headerlink" href="#errdefer" title="Permanent link">&para;</a></h2>
 <p>Sometimes, you only want certain deferred statements to run in the event of a failure.
 This is useful when your script is working toward a critical step that, once executed, should not be rolled back.

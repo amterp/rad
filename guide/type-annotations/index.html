@@ -691,6 +691,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Optional Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#narrowing-optionals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Narrowing Optionals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1863,6 +1880,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Optional Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#narrowing-optionals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Narrowing Optionals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2289,6 +2323,22 @@ missing = find_user(999, users)
 print(missing)  // null
 </code></pre></div>
 <p>The <code>map?</code> return type indicates the function might return a map or might return null if no user is found.</p>
+<h3 id="narrowing-optionals">Narrowing Optionals<a class="headerlink" href="#narrowing-optionals" title="Permanent link">&para;</a></h3>
+<p>An explicit null-check <em>narrows</em> an optional type: inside the check, the type
+checker treats the value as non-null, so operations that need the underlying
+type stop being flagged. This matters for functions like
+<a href="../../reference/functions/#index_of"><code>index_of</code></a>, which return <code>int?</code>:</p>
+<div class="highlight"><pre><span></span><code>my_args = [&quot;build&quot;, &quot;-o&quot;, &quot;out&quot;]
+idx = my_args.index_of(&quot;-o&quot;)
+
+if idx != null:
+    // idx is narrowed from int? to int here
+    if idx + 1 &lt; my_args.len():
+        print(&quot;output:&quot;, my_args[idx + 1])
+</code></pre></div>
+<p>Without the <code>idx != null</code> check, <code>idx + 1</code> reports a hint (<code>cannot do
+'int? + int'</code>) - the value really could be null. The null-check is both the
+fix for the hint and the correctness fix.</p>
 <h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
 <p>Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with <code>?</code>:</p>
 <div class="highlight"><pre><span></span><code>fn greet(name: str, greeting: str = &quot;Hello&quot;) -&gt; str:

@@ -1593,6 +1593,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#base_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        base_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#confirm" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1626,6 +1637,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#dir_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dir_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#find_paths" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1641,6 +1663,28 @@
     <span class="md-ellipsis">
       
         input
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#join_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        join_paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mkdir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mkdir
       
     </span>
   </a>
@@ -2570,6 +2614,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get_os" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_os
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2673,6 +2728,17 @@
   
     <nav class="md-nav" aria-label="Time">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format_epoch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        format_epoch
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#now" class="md-nav__link">
@@ -3466,6 +3532,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#base_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        base_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#confirm" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3499,6 +3576,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#dir_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dir_name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#find_paths" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3514,6 +3602,28 @@
     <span class="md-ellipsis">
       
         input
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#join_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        join_paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mkdir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mkdir
       
     </span>
   </a>
@@ -4443,6 +4553,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#get_os" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_os
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#get_path" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4546,6 +4667,17 @@
   
     <nav class="md-nav" aria-label="Time">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format_epoch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        format_epoch
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#now" class="md-nav__link">
@@ -4784,6 +4916,9 @@ gen_fid(num_random_chars=3)                  // -&gt; &quot;1a2b3c&quot;
 <div class="highlight"><pre><span></span><code>hash(&quot;hello world&quot;)                    // -&gt; &quot;2aae6c35c94fcfb415dbe95f408b9ce91ee846ed&quot;
 hash(&quot;hello world&quot;, algo=&quot;sha256&quot;)     // -&gt; &quot;b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9&quot;
 hash(&quot;sensitive data&quot;, algo=&quot;sha512&quot;)  // -&gt; Long SHA-512 hash
+
+// File checksums, e.g. change detection - no need to shell out to cksum/shasum
+checksum = hash(read_file(&quot;config.yaml&quot;).content, algo=&quot;sha256&quot;)
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4808,6 +4943,8 @@ hash(&quot;sensitive data&quot;, algo=&quot;sha512&quot;)  // -&gt; Long SHA-512
 </tbody>
 </table>
 <p>The default <code>sha1</code> is <strong>not cryptographically secure</strong>. Use <code>sha256</code> or <code>sha512</code> for security.</p>
+<p>For checksumming files, combine with <a href="#read_file"><code>read_file</code></a> as shown above.
+This works for text files; hashing binary files is not yet supported.</p>
 <h3 id="uuid_v4">uuid_v4<a class="headerlink" href="#uuid_v4" title="Permanent link">&para;</a></h3>
 <p>Generates a random V4 UUID.</p>
 <div class="highlight"><pre><span></span><code>uuid_v4() -&gt; str
@@ -5122,6 +5259,19 @@ if r.success:
 <p><strong>Body vs JSON:</strong> <code>body</code> is sent as-is; <code>json</code> is JSON-serialised and sets <code>Content-Type: application/json</code> when no headers are supplied. The two are mutually exclusive.</p>
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h2 id="io">IO<a class="headerlink" href="#io" title="Permanent link">&para;</a></h2>
+<h3 id="base_name">base_name<a class="headerlink" href="#base_name" title="Permanent link">&para;</a></h3>
+<p>Returns the last element of a path.</p>
+<div class="highlight"><pre><span></span><code>base_name(_path: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>print(base_name(&quot;/home/alice/notes.txt&quot;))  // -&gt; &quot;notes.txt&quot;
+print(base_name(&quot;src/core/&quot;))              // -&gt; &quot;core&quot; (trailing slashes are ignored)
+print(base_name(&quot;standalone&quot;))             // -&gt; &quot;standalone&quot;
+</code></pre></div>
+<p>Pure string manipulation - the path does not need to exist, unlike
+<a href="#get_path"><code>get_path</code></a>, which only reports <code>base_name</code> for existing paths.</p>
+<p>Edge cases follow Unix <code>basename</code> conventions: <code>base_name("/")</code> returns <code>"/"</code>,
+and <code>base_name("")</code> returns <code>"."</code>.</p>
+<p>See also <a href="#dir_name"><code>dir_name</code></a> and <a href="#join_paths"><code>join_paths</code></a>.</p>
 <h3 id="confirm">confirm<a class="headerlink" href="#confirm" title="Permanent link">&para;</a></h3>
 <p>Gets a boolean confirmation from the user (y/n prompt). Accepts "y", "yes", or Enter (empty input) as
 confirmation.</p>
@@ -5150,6 +5300,20 @@ delete_path(&quot;directory/&quot;)       // -&gt; true (if directory existed an
 </code></pre></div>
 <p>Returns <code>true</code> if the path was successfully deleted, <code>false</code> if it didn't exist or couldn't be deleted.</p>
 <p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
+<h3 id="dir_name">dir_name<a class="headerlink" href="#dir_name" title="Permanent link">&para;</a></h3>
+<p>Returns a path with its last element removed, i.e. the containing directory.</p>
+<div class="highlight"><pre><span></span><code>dir_name(_path: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>print(dir_name(&quot;/home/alice/notes.txt&quot;))  // -&gt; &quot;/home/alice&quot;
+print(dir_name(&quot;src/core/funcs.go&quot;))      // -&gt; &quot;src/core&quot;
+print(dir_name(&quot;standalone&quot;))             // -&gt; &quot;.&quot;
+</code></pre></div>
+<p>Pure string manipulation - the path does not need to exist.</p>
+<p>Edge cases follow Unix <code>dirname</code> conventions: <code>dir_name("/")</code> returns <code>"/"</code>,
+and <code>dir_name("")</code> returns <code>"."</code>. The result is lexically cleaned, e.g.
+<code>dir_name("a/b/../c")</code> returns <code>"a"</code> after resolving the <code>..</code>. The returned
+path uses forward slashes on all platforms.</p>
+<p>See also <a href="#base_name"><code>base_name</code></a> and <a href="#join_paths"><code>join_paths</code></a>.</p>
 <h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
 <p>Returns a list of all paths under a directory.</p>
 <div class="highlight"><pre><span></span><code>find_paths(_path: str, *, depth: int = -1, relative: [&quot;target&quot;, &quot;cwd&quot;, &quot;absolute&quot;] = &quot;target&quot;) -&gt; error|str[]
@@ -5248,6 +5412,48 @@ password = input(&quot;Password: &quot;, secret=true)           // -&gt; Hides t
 </table>
 <p>If <code>secret</code> is true, input is hidden (useful for passwords). The <code>hint</code> parameter has no effect when <code>secret</code> is
 enabled.</p>
+<h3 id="join_paths">join_paths<a class="headerlink" href="#join_paths" title="Permanent link">&para;</a></h3>
+<p>Joins path segments into a single path.</p>
+<div class="highlight"><pre><span></span><code>join_paths(*_parts: str) -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>print(join_paths(&quot;home&quot;, &quot;alice&quot;, &quot;notes.txt&quot;))  // -&gt; &quot;home/alice/notes.txt&quot;
+print(join_paths(&quot;/etc&quot;, &quot;nginx/&quot;, &quot;conf.d&quot;))    // -&gt; &quot;/etc/nginx/conf.d&quot;
+print(join_paths(&quot;a&quot;, &quot;&quot;, &quot;b&quot;))                  // -&gt; &quot;a/b&quot; (empty segments are skipped)
+</code></pre></div>
+<p>Pure string manipulation - the paths do not need to exist.</p>
+<p>The result is lexically cleaned: redundant separators collapse, and <code>.</code> / <code>..</code>
+segments are resolved, e.g. <code>join_paths("a/b", "../c")</code> returns <code>"a/c"</code>.
+Joining nothing (or only empty strings) returns <code>""</code>.</p>
+<p>The returned path uses forward slashes on all platforms.</p>
+<p>See also <a href="#base_name"><code>base_name</code></a> and <a href="#dir_name"><code>dir_name</code></a>.</p>
+<h3 id="mkdir">mkdir<a class="headerlink" href="#mkdir" title="Permanent link">&para;</a></h3>
+<p>Creates a directory, including any missing parent directories.</p>
+<div class="highlight"><pre><span></span><code>mkdir(_path: str) -&gt; error|{ &quot;path&quot;: str, &quot;created&quot;: bool }
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>res = mkdir(&quot;output/reports&quot;)
+print(res.created)  // -&gt; true (false if it already existed)
+
+// Idempotent - safe to call when the directory already exists
+res = mkdir(&quot;output/reports&quot;)
+print(res.created)  // -&gt; false
+
+// path is the input after ~ expansion, with forward slashes
+res = mkdir(&quot;~/backups&quot;)
+print(res.path)     // -&gt; e.g. &quot;/home/alice/backups&quot;
+
+// Errors are catchable
+res = mkdir(&quot;/root/forbidden&quot;) catch:
+    print(&quot;Could not create:&quot;, res)
+</code></pre></div>
+<p>Behaves like <code>mkdir -p</code>: creates all missing parents, and succeeds (with
+<code>created: false</code>) if the directory already exists. Directories are created
+with <code>0755</code> permissions.</p>
+<p>Errors if the path exists but is a file, or if creation fails (e.g. missing
+permissions).</p>
+<p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory. The returned
+<code>path</code> is the input after that expansion, normalized to forward slashes on
+all platforms - it is not resolved to an absolute path.</p>
+<p>Counterpart to <a href="#delete_path"><code>delete_path</code></a>.</p>
 <h3 id="multipick">multipick<a class="headerlink" href="#multipick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting multiple options from a list.</p>
 <div class="highlight"><pre><span></span><code>multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -&gt; str[]
@@ -6198,6 +6404,12 @@ hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable 
 </tr>
 </tbody>
 </table>
+<p>Since the return type is <code>int?</code>, check the result against <code>null</code> before using
+it as an <code>int</code> - the check narrows the type, satisfying <code>rad check</code>:</p>
+<div class="highlight"><pre><span></span><code>idx = [&quot;a&quot;, &quot;b&quot;].index_of(&quot;b&quot;)
+if idx != null:
+    print(idx + 1)  // idx is int here, not int?
+</code></pre></div>
 <h3 id="lower">lower<a class="headerlink" href="#lower" title="Permanent link">&para;</a></h3>
 <p>Converts a string to lowercase. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>lower(_val: str) -&gt; str
@@ -6361,6 +6573,22 @@ api_key = get_env(&quot;API_KEY&quot;) or &quot;default&quot;     // -&gt; Uses 
 missing = get_env(&quot;NONEXISTENT&quot;)              // -&gt; &quot;&quot;
 </code></pre></div>
 <p>Returns the environment variable value, or empty string if not set.</p>
+<h3 id="get_os">get_os<a class="headerlink" href="#get_os" title="Permanent link">&para;</a></h3>
+<p>Returns the operating system the script is running on.</p>
+<div class="highlight"><pre><span></span><code>get_os() -&gt; str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>os = get_os()
+print(os)  // e.g. -&gt; &quot;macos&quot;
+
+config_dir = switch os:
+    case &quot;macos&quot; -&gt; &quot;~/Library/Application Support&quot;
+    case &quot;windows&quot; -&gt; get_env(&quot;APPDATA&quot;)
+    default -&gt; &quot;~/.config&quot;
+</code></pre></div>
+<p>Returns <code>"macos"</code>, <code>"linux"</code>, or <code>"windows"</code> on the three major platforms.
+Other platforms return Go's <a href="https://pkg.go.dev/runtime#GOOS"><code>runtime.GOOS</code></a>
+value directly, e.g. <code>"freebsd"</code> or <code>"android"</code>.</p>
+<p>Prefer this over shelling out to <code>uname</code>, which doesn't exist on Windows.</p>
 <h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
 <p>Gets information about a file or directory path.</p>
 <div class="highlight"><pre><span></span><code>get_path(_path: str) -&gt; { &quot;exists&quot;: bool, &quot;full_path&quot;: str, &quot;base_name&quot;?: str, &quot;permissions&quot;?: str, &quot;type&quot;?: str, &quot;size_bytes&quot;?: int, &quot;modified_millis&quot;?: int, &quot;accessed_millis&quot;?: int }
@@ -6616,6 +6844,106 @@ type_of(fn() 1)          // -&gt; &quot;function&quot;
 // type_of(parse_int(&quot;xx&quot;)) // -&gt; &quot;error&quot;
 </code></pre></div>
 <h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
+<h3 id="format_epoch">format_epoch<a class="headerlink" href="#format_epoch" title="Permanent link">&para;</a></h3>
+<p>Formats an epoch timestamp as a string. The inverse of <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
+<div class="highlight"><pre><span></span><code>format_epoch(_epoch: int, _format: str, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;] = &quot;auto&quot;) -&gt; error|str
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ts = format_epoch(1735689600, &quot;YYYY-MM-DD HH:mm:ss&quot;, tz=&quot;UTC&quot;)
+print(ts)  // -&gt; &quot;2025-01-01 00:00:00&quot;
+
+// Timestamped file names from now()
+stamp = format_epoch(now().epoch.seconds, &quot;YYYYMMDD-HHmmss&quot;)
+
+// Works directly with get_path&#39;s modified_millis (unit auto-detected)
+info = get_path(&quot;data.json&quot;)
+if info.exists:
+    print(&quot;Modified:&quot;, format_epoch(info.modified_millis, &quot;YYYY-MM-DD&quot;))
+
+// Timezone conversion
+print(format_epoch(1735689600, &quot;HH:mm&quot;, tz=&quot;America/Chicago&quot;))  // -&gt; &quot;18:00&quot;
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_epoch</code></td>
+<td><code>int</code></td>
+<td>The epoch timestamp to format</td>
+</tr>
+<tr>
+<td><code>_format</code></td>
+<td><code>str</code></td>
+<td>Format string using tokens (see below)</td>
+</tr>
+<tr>
+<td><code>tz</code></td>
+<td><code>str = "local"</code></td>
+<td>Timezone (e.g., "UTC", "America/Chicago")</td>
+</tr>
+<tr>
+<td><code>unit</code></td>
+<td><code>str = "auto"</code></td>
+<td>Unit of <code>_epoch</code>. Auto-detects by digit count if omitted</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Format tokens</strong> (same vocabulary as <a href="#parse_date"><code>parse_date()</code></a>):</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>YYYY</code></td>
+<td>4-digit year</td>
+<td><code>2026</code></td>
+</tr>
+<tr>
+<td><code>MM</code></td>
+<td>2-digit month (01-12)</td>
+<td><code>03</code></td>
+</tr>
+<tr>
+<td><code>DD</code></td>
+<td>2-digit day (01-31)</td>
+<td><code>22</code></td>
+</tr>
+<tr>
+<td><code>HH</code></td>
+<td>2-digit hour, 24h</td>
+<td><code>14</code></td>
+</tr>
+<tr>
+<td><code>mm</code></td>
+<td>2-digit minute</td>
+<td><code>30</code></td>
+</tr>
+<tr>
+<td><code>ss</code></td>
+<td>2-digit second</td>
+<td><code>00</code></td>
+</tr>
+</tbody>
+</table>
+<p>All other characters in the format string are treated as literal separators.
+Avoid embedding prose text - tokens like <code>mm</code> and <code>ss</code> are matched inside
+words too.</p>
+<p>Note: <code>MM</code> (uppercase) is <strong>month</strong>, <code>mm</code> (lowercase) is <strong>minute</strong>. Mixing
+these up will silently produce wrong output.</p>
+<p><strong>Unit auto-detection</strong> works like <code>parse_epoch()</code>: up to 10 digits is
+seconds, 13 is millis, 16 is micros, 19 is nanos. Other lengths are ambiguous
+and return an error - pass <code>unit</code> explicitly to disambiguate.</p>
 <h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
 <p>Returns the current time with various accessible formats.</p>
 <div class="highlight"><pre><span></span><code>now(*, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
@@ -6735,6 +7063,9 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 </tr>
 </tbody>
 </table>
+<p>To render a timestamp as a custom string (e.g. for file names), pass
+<code>.epoch.seconds</code> to <a href="#format_epoch"><code>format_epoch</code></a>, e.g.
+<code>format_epoch(now().epoch.seconds, "YYYYMMDD-HHmmss")</code>.</p>
 <h3 id="parse_date">parse_date<a class="headerlink" href="#parse_date" title="Permanent link">&para;</a></h3>
 <p>Parses a date string into the same time map format as <a href="#now"><code>now()</code></a> and <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
 <div class="highlight"><pre><span></span><code>parse_date(_date: str, *, format: str?, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
@@ -6905,6 +7236,7 @@ if err:
 <p>Converts an epoch timestamp to the same format as <a href="#now"><code>now()</code></a>. Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., <code>1712345678.5</code> seconds includes
 500 milliseconds).</p>
+<p>For the inverse - epoch int to formatted string - see <a href="#format_epoch"><code>format_epoch</code></a>.</p>
 
 
 
