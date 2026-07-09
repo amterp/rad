@@ -259,7 +259,38 @@ func (r *RadRunner) setupRootCommand() {
 				emitShellExit(1)
 			}
 		},
+		ErrorHint: func(cmd *ra.Cmd, err error) string {
+			return r.parseErrorHint(err)
+		},
 	})
+}
+
+// parseErrorHint attaches rad-specific guidance to ra parse errors, printed
+// between the error and the usage string.
+//
+// Covers one case today: excess positionals while the script declares a
+// non-variadic list-typed arg. `targets str[]` fills a single positional slot
+// (lists are built by repeating the flag), so `script a b c` errors in a way
+// that looks like a parser bug - and the fix, `*targets str`, is invisible
+// from the error alone (issue #153).
+func (r *RadRunner) parseErrorHint(err error) string {
+	var tooMany *ra.TooManyPositionalArgsError
+	if !errors.As(err, &tooMany) {
+		return ""
+	}
+	for _, arg := range r.scriptArgs {
+		if arg.IsVariadic() {
+			continue
+		}
+		switch arg.GetType() {
+		case ArgStrListT, ArgIntListT, ArgFloatListT, ArgBoolListT:
+			return fmt.Sprintf(
+				"Note: \"%s\" is a list arg, which takes a single positional value (lists are built by repeating the flag).\n"+
+					"      To accept multiple positional values, declare it variadic: '*%s'",
+				arg.GetIdentifier(), arg.GetIdentifier())
+		}
+	}
+	return ""
 }
 
 // registerScript registers the script as a subcommand with its flags
