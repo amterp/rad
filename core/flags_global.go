@@ -22,8 +22,6 @@ const (
 	FLAG_AST_TREE      = "ast-tree"
 	FLAG_RAD_ARGS_DUMP = "rad-args-dump"
 	FLAG_MOCK_RESPONSE = "mock-response"
-	FLAG_REPL          = "repl"
-	FLAG_R             = "r"
 	FLAG_TLS_INSECURE  = "tls-insecure"
 	FLAG_INTERACTIVE   = "interactive"
 	FLAG_I             = "i"
@@ -63,7 +61,6 @@ var (
 	FlagAstTree              BoolRadArg
 	FlagRadArgsDump          BoolRadArg
 	FlagMockResponse         StringRadArg
-	FlagRepl                 BoolRadArg
 	FlagTlsInsecure          BoolRadArg
 	FlagInteractive          BoolRadArg
 	// ^ when adding more, update ResetGlobals and the GlobalFlagScopes table below
@@ -78,16 +75,6 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 		FLAG_HELP,
 		FLAG_H,
 		"Print usage string.",
-		false,
-		false,
-		NO_CONSTRAINTS,
-		NO_CONSTRAINTS,
-	)
-
-	FlagRepl = NewBoolRadArg(
-		FLAG_REPL,
-		FLAG_R,
-		"Start interactive REPL mode.",
 		false,
 		false,
 		NO_CONSTRAINTS,
@@ -260,7 +247,6 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 	// ordering of this table matters -- it's the order in which flags are printed in the usage string
 	GlobalFlagScopes = []ScopedGlobalFlag{
 		{&FlagHelp, ScopeUniversal},
-		{&FlagRepl, ScopeRootOnly},
 		{&FlagInteractive, ScopeUniversal},
 		{&FlagDebug, ScopeUniversal},
 		{&FlagRadDebug, ScopeUniversal},

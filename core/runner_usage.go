@@ -57,11 +57,12 @@ func commandUsage(buf *bytes.Buffer, cmds []EmbeddedCmd, completionDesc string) 
 	}
 
 	// Collect all commands (embedded + Go-implemented) and sort alphabetically
-	entries := make([]cmdEntry, 0, len(cmds)+1)
+	entries := make([]cmdEntry, 0, len(cmds)+2)
 	for _, cmd := range cmds {
 		entries = append(entries, cmdEntry{cmd.Name, cmd.Description})
 	}
 	entries = append(entries, cmdEntry{"completion", completionDesc})
+	entries = append(entries, cmdEntry{"repl", replDescription})
 	sort.Slice(entries, func(i, j int) bool {
 		return entries[i].name < entries[j].name
 	})

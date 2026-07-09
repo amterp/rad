@@ -20,7 +20,6 @@ import (
 
 const scriptGlobalFlagHelp = `Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -32,7 +31,6 @@ const scriptGlobalFlagHelp = `Global options:
 
 const allGlobalFlagHelp = `Global options:
   -h, --help                Print usage string.
-  -r, --repl                Start interactive REPL mode.
   -i, --interactive         Interactively prompt for script args not already provided, then run.
   -d, --debug               Enables debug output. Intended for Rad script developers.
       --rad-debug           Enables Rad debug output. Intended for Rad developers.

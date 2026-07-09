@@ -130,7 +130,6 @@ func ResetGlobals() {
 	FlagAstTree = BoolRadArg{}
 	FlagRadArgsDump = BoolRadArg{}
 	FlagMockResponse = StringRadArg{}
-	FlagRepl = BoolRadArg{}
 	FlagTlsInsecure = BoolRadArg{}
 	FlagInteractive = BoolRadArg{}
 	GlobalFlagScopes = nil

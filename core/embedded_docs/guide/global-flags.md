@@ -10,7 +10,6 @@ The most basic global flag is `--help` or `-h`. *All* Rad scripts automatically 
 ```
 Global options:
   -h, --help                Print usage string.
-  -r, --repl                Start interactive REPL mode.
   -i, --interactive         Interactively prompt for script args not already provided, then run.
   -d, --debug               Enables debug output. Intended for Rad script developers.
       --rad-debug           Enables Rad debug output. Intended for Rad developers.

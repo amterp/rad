@@ -46,7 +46,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -259,7 +258,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -304,7 +302,6 @@ Usage:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -385,7 +382,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -418,7 +414,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
@@ -451,7 +446,6 @@ Script args:
 
 Global options:
   -h, --help            Print usage string.
-  -r, --repl            Start interactive REPL mode.
   -i, --interactive     Interactively prompt for script args not already provided, then run.
   -d, --debug           Enables debug output. Intended for Rad script developers.
       --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
