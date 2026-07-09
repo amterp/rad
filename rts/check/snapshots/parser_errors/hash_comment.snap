@@ -1,0 +1,76 @@
+### TITLE ###
+HashCommentAtStatementPosition
+### DESCRIPTION ###
+A Python-style `#` comment at statement position gets the dedicated
+RAD10023 with a suggestion pointing at `//`, instead of the generic
+RAD10009 "Unexpected '# ...'".
+### INPUT ###
+# helper for X
+print("hi")
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10023 @ 1:1 - '#' does not start a comment here
+    help: Rad comments use '//' ('#' only starts a comment inside args blocks)
+### TITLE ###
+HashCommentAfterArgsBlock
+### DESCRIPTION ###
+Regression for the exact shape from issue #148: `#` is valid arg-doc
+syntax inside args blocks, which reinforces the habit; the same `#`
+in the body must get the targeted error.
+### INPUT ###
+args:
+    name str # the name to greet
+# helper comment
+print(name)
+### STDOUT ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD10023 @ 3:1 - '#' does not start a comment here
+    help: Rad comments use '//' ('#' only starts a comment inside args blocks)
+### TITLE ###
+ShebangIsNotAHashComment
+### DESCRIPTION ###
+Line-one shebang is grammar-handled and must produce no diagnostics.
+### INPUT ###
+#!/usr/bin/env rad
+print("hi")
+### STDOUT ###
+# Identifier types
+  print @ 2:1 -> dynamic
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  (none)
+### TITLE ###
+TrailingHashCommentFallsBackToGeneric
+### DESCRIPTION ###
+When the ERROR node starts before the `#` (here at the expression
+after `=`), the heuristic must not fire - we fall back to the generic
+diagnostics rather than risk a wrong RAD10023 span.
+### INPUT ###
+x = 5 # trailing comment
+### STDOUT ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+  comment @ 1:18 -> dynamic
+
+# Symbol types
+  x (local): dynamic
+
+# Diagnostics
+  [error] RAD10009 @ 1:5 - Unexpected '5 # trailing'
+  [error] RAD20028 @ 1:18 - Undefined identifier 'comment'
+    help: did you mean 'count'?

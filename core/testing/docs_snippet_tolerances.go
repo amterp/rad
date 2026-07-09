@@ -93,6 +93,10 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD10009"},
 		Reason:        "demo: orphan `else:` clause. Parser fires generic RAD10009.",
 	},
+	"core/error_docs/10023.md#5ded8d5f": {
+		ExpectedCodes: []string{"RAD10023"},
+		Reason:        "demo: `#` used as a comment starter; the doc teaches RAD10023 by firing it.",
+	},
 	"core/error_docs/20028.md#6ae30c2a": {
 		ExpectedCodes: []string{"RAD20028"},
 		Reason:        "demo: scope leak - `config` defined inside setup() isn't visible after.",

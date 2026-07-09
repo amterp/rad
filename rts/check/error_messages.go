@@ -199,6 +199,14 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 	errorContent := src[startByte:endByte]
 	trimmedContent := strings.TrimSpace(errorContent)
 
+	// Heuristic: `#` used as a comment starter. `#` begins no valid
+	// token outside strings, shebangs, and args-block comments (all of
+	// which parse cleanly), so an ERROR node starting with `#` is
+	// reliably a Python-style comment attempt - surface RAD10023.
+	if msg, code, suggestion := checkHashComment(node, trimmedContent); msg != "" {
+		return msg, code, suggestion
+	}
+
 	// Heuristic: missing colon after a block-opening keyword. Fires
 	// before the generic "unexpected token" so users see RAD10002
 	// instead of RAD10009 for the very common shape.
@@ -288,6 +296,26 @@ func generateErrorNodeMessage(node *ts.Node, src string) (string, rl.Error, *str
 	}
 
 	return "Invalid syntax", rl.ErrInvalidSyntax, nil
+}
+
+// checkHashComment detects `#` used to start a comment, the Python
+// reflex. Rad's body comments are `//`; `#` is only a comment inside
+// args blocks (arg docs) and in the line-one shebang, both of which
+// parse fine and never reach here. When tree-sitter starts the ERROR
+// node before the `#` (the real break being an earlier token), the
+// trimmed content won't start with `#` and we fall through to other
+// heuristics - a missed hint, never a wrong one.
+func checkHashComment(node *ts.Node, trimmed string) (string, rl.Error, *string) {
+	if !strings.HasPrefix(trimmed, "#") {
+		return "", "", nil
+	}
+	// Defensive: a shebang is grammar-handled on line one, but if one
+	// ever lands in an ERROR node, don't misdiagnose it as a comment.
+	if node.StartPosition().Row == 0 && strings.HasPrefix(trimmed, "#!") {
+		return "", "", nil
+	}
+	suggestion := "Rad comments use '//' ('#' only starts a comment inside args blocks)"
+	return "'#' does not start a comment here", rl.ErrHashComment, &suggestion
 }
 
 // checkUnterminatedString detects unterminated string literals.

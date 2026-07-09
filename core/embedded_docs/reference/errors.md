@@ -366,6 +366,25 @@ else:
 Keywords like `else` and `elif` must follow an `if`, `case` and `default` must be
 inside a `switch`, and `break` and `continue` must be inside a loop.
 
+### RAD10023: '#' Comment
+
+A `#` was used to start a comment, but Rad comments use `//`.
+
+#### Example
+
+```rad
+// Wrong
+# compute the total
+
+// Correct
+// compute the total
+```
+
+The `#` habit usually comes from Python or shell. In Rad, `#` starts a comment
+in exactly two places: the shebang line (`#!/usr/bin/env rad`) and inside
+`args` blocks, where `# ...` after an argument declaration documents that
+argument. Everywhere else, use `//`.
+
 ## Runtime Errors (RAD2xxxx)
 
 ### RAD20000: Generic Runtime Error
