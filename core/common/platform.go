@@ -43,6 +43,19 @@ func IsWindows() bool {
 	return runtime.GOOS == "windows"
 }
 
+// OSName returns the host OS as exposed to Rad scripts: "macos", "linux", or
+// "windows". Other platforms pass through Go's runtime.GOOS value (e.g.
+// "freebsd", "android"). "macos" is deliberately preferred over Go's "darwin",
+// which script authors outside the Go ecosystem rarely recognize.
+func OSName() string {
+	switch runtime.GOOS {
+	case "darwin":
+		return "macos"
+	default:
+		return runtime.GOOS
+	}
+}
+
 // ToAbsoluteNormalizedPath expands ~ to home directory, resolves to absolute path,
 // and normalizes to forward slashes. This is the standard way to process user-provided
 // paths before returning them.

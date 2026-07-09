@@ -27,6 +27,12 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -123,6 +129,12 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -183,6 +195,12 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -198,6 +216,12 @@ ShebangCompletionLineZero
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -339,6 +363,12 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -402,6 +432,12 @@ ShebangCompletionLineZero
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -786,6 +822,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -882,6 +924,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -942,6 +990,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -957,6 +1011,12 @@ x = 1
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -1098,6 +1158,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -1161,6 +1227,12 @@ x = 1
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -1542,6 +1614,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -1638,6 +1716,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -1698,6 +1782,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -1713,6 +1803,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -1854,6 +1950,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -1917,6 +2019,12 @@ ShebangCompletionEmptyDocMiddleOfLine
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -2300,6 +2408,12 @@ y = 2
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -2396,6 +2510,12 @@ y = 2
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -2456,6 +2576,12 @@ y = 2
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -2471,6 +2597,12 @@ y = 2
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -2612,6 +2744,12 @@ y = 2
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -2675,6 +2813,12 @@ y = 2
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -3067,6 +3211,12 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -3163,6 +3313,12 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -3223,6 +3379,12 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -3238,6 +3400,12 @@ z = 3
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -3379,6 +3547,12 @@ z = 3
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -3442,6 +3616,12 @@ z = 3
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -3834,6 +4014,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -3930,6 +4116,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -3990,6 +4182,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -4005,6 +4203,12 @@ x = 1
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -4146,6 +4350,12 @@ x = 1
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -4209,6 +4419,12 @@ x = 1
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -4602,6 +4818,12 @@ args:
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -4698,6 +4920,12 @@ args:
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -4758,6 +4986,12 @@ args:
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -4773,6 +5007,12 @@ args:
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -4914,6 +5154,12 @@ args:
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -4977,6 +5223,12 @@ args:
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -5375,6 +5627,12 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -5471,6 +5729,12 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -5531,6 +5795,12 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -5546,6 +5816,12 @@ fn greet(who: str):
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -5687,6 +5963,12 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -5750,6 +6032,12 @@ fn greet(who: str):
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {
@@ -6137,6 +6425,12 @@ later = 2
       "sortText": "2"
     },
     {
+      "detail": "base_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "base_name",
+      "sortText": "2"
+    },
+    {
       "detail": "black(_item: any) -\u003e str",
       "kind": 3,
       "label": "black",
@@ -6233,6 +6527,12 @@ later = 2
       "sortText": "2"
     },
     {
+      "detail": "dir_name(_path: str) -\u003e str",
+      "kind": 3,
+      "label": "dir_name",
+      "sortText": "2"
+    },
+    {
       "detail": "encode_base16(_content: str) -\u003e str",
       "kind": 3,
       "label": "encode_base16",
@@ -6293,6 +6593,12 @@ later = 2
       "sortText": "2"
     },
     {
+      "detail": "format_epoch(_epoch: int, _format: str, *, tz: str = \"local\", unit: [\"auto\", \"seconds\", \"millis\", \"micros\", \"nanos\"] = \"auto\") -\u003e error|str",
+      "kind": 3,
+      "label": "format_epoch",
+      "sortText": "2"
+    },
+    {
       "detail": "gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -\u003e error|str",
       "kind": 3,
       "label": "gen_fid",
@@ -6308,6 +6614,12 @@ later = 2
       "detail": "get_env(_var: str) -\u003e str",
       "kind": 3,
       "label": "get_env",
+      "sortText": "2"
+    },
+    {
+      "detail": "get_os() -\u003e str",
+      "kind": 3,
+      "label": "get_os",
       "sortText": "2"
     },
     {
@@ -6449,6 +6761,12 @@ later = 2
       "sortText": "2"
     },
     {
+      "detail": "join_paths(*_parts: str) -\u003e str",
+      "kind": 3,
+      "label": "join_paths",
+      "sortText": "2"
+    },
+    {
       "detail": "keys(_map: map) -\u003e any[]",
       "kind": 3,
       "label": "keys",
@@ -6512,6 +6830,12 @@ later = 2
       "detail": "min(*_nums: float|float[]) -\u003e int|float|error",
       "kind": 3,
       "label": "min",
+      "sortText": "2"
+    },
+    {
+      "detail": "mkdir(_path: str) -\u003e error|{ \"path\": str, \"created\": bool }",
+      "kind": 3,
+      "label": "mkdir",
       "sortText": "2"
     },
     {

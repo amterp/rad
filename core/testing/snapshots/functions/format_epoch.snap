@@ -1,0 +1,115 @@
+### TITLE ###
+format_epoch formats seconds in UTC
+### INPUT ###
+print(format_epoch(1735689600, "YYYY-MM-DD HH:mm:ss", tz="UTC"))
+### STDOUT ###
+2025-01-01 00:00:00
+
+### TITLE ###
+format_epoch auto-detects millis
+### INPUT ###
+print(format_epoch(1735689600123, "YYYY-MM-DD HH:mm:ss", tz="UTC"))
+### STDOUT ###
+2025-01-01 00:00:00
+
+### TITLE ###
+format_epoch respects explicit unit
+### INPUT ###
+print(format_epoch(1735689600, "YYYY-MM-DD", unit="seconds", tz="UTC"))
+### STDOUT ###
+2025-01-01
+
+### TITLE ###
+format_epoch literal separators pass through
+### INPUT ###
+print(format_epoch(1735689600, "YYYYMMDD-HHmmss", tz="UTC"))
+### STDOUT ###
+20250101-000000
+
+### TITLE ###
+format_epoch converts timezones
+### INPUT ###
+print(format_epoch(1735689600, "YYYY-MM-DD HH:mm", tz="America/Chicago"))
+### STDOUT ###
+2024-12-31 18:00
+
+### TITLE ###
+format_epoch is the inverse of parse_date
+### INPUT ###
+t = parse_date("2026-03-22T14:30:00Z", tz="UTC")
+print(format_epoch(t.epoch.seconds, "DD/MM/YYYY HH:mm", tz="UTC"))
+### STDOUT ###
+22/03/2026 14:30
+
+### TITLE ###
+format_epoch errors on ambiguous digit count
+### INPUT ###
+print(format_epoch(17356896001, "YYYY-MM-DD", tz="UTC"))
+### STDERR ###
+error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
+  --> <script>:1:7
+  |
+1 | print(format_epoch(17356896001, "YYYY-MM-DD", tz="UTC"))
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad docs RAD20007
+
+
+### EXIT ###
+1
+### TITLE ###
+format_epoch errors on invalid unit
+### INPUT ###
+print(format_epoch(1735689600, "YYYY-MM-DD", unit="fortnights", tz="UTC"))
+### STDERR ###
+error[RAD30001]: Argument type 'str' is not assignable to expected type '["auto", "seconds", "millis", "micros", "nanos"]'
+  --> <script>:1:51
+  |
+1 | print(format_epoch(1735689600, "YYYY-MM-DD", unit="fortnights", tz="UTC"))
+  |                                                   ^^^^^^^^^^^^
+  |
+   = info: rad docs RAD30001
+
+
+### EXIT ###
+1
+### TITLE ###
+format_epoch errors on invalid timezone
+### INPUT ###
+print(format_epoch(1735689600, "YYYY-MM-DD", tz="Mars/Olympus"))
+### STDERR ###
+error[RAD20009]: invalid time zone "Mars/Olympus"
+  --> <script>:1:7
+  |
+1 | print(format_epoch(1735689600, "YYYY-MM-DD", tz="Mars/Olympus"))
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad docs RAD20009
+
+
+### EXIT ###
+1
+### TITLE ###
+format_epoch errors on empty format
+### INPUT ###
+print(format_epoch(1735689600, "", tz="UTC"))
+### STDERR ###
+error[RAD30003]: Cannot format epoch with an empty format string
+  --> <script>:1:7
+  |
+1 | print(format_epoch(1735689600, "", tz="UTC"))
+  |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad docs RAD30003
+
+
+### EXIT ###
+1
+### TITLE ###
+format_epoch errors are catchable
+### INPUT ###
+res = format_epoch(17356896001, "YYYY-MM-DD", tz="UTC") catch:
+    print("caught")
+### STDOUT ###
+caught
+

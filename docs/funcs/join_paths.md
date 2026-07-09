@@ -1,0 +1,31 @@
+# join_paths
+
+Joins path segments into a single path.
+
+## Signature
+
+`join_paths(*_parts: str) -> str`
+
+## Examples
+
+```rad
+print(join_paths("home", "alice", "notes.txt"))  // -> "home/alice/notes.txt"
+print(join_paths("/etc", "nginx/", "conf.d"))    // -> "/etc/nginx/conf.d"
+print(join_paths("a", "", "b"))                  // -> "a/b" (empty segments are skipped)
+```
+
+## Category
+
+io
+
+## Notes
+
+Pure string manipulation - the paths do not need to exist.
+
+The result is lexically cleaned: redundant separators collapse, and `.` / `..`
+segments are resolved, e.g. `join_paths("a/b", "../c")` returns `"a/c"`.
+Joining nothing (or only empty strings) returns `""`.
+
+The returned path uses forward slashes on all platforms.
+
+See also [`base_name`](#base_name) and [`dir_name`](#dir_name).
