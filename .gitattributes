@@ -17,3 +17,13 @@ docs-web/docs/reference/errors.md     linguist-generated=true
 # copy (rts/embedded_funcs/) with a test asserting they match - so the source
 # must share the embedded copy's LF endings on every platform.
 docs/funcs/**                         text eol=lf
+
+# More go:embed'd corpora that must stay LF for the same reason as above:
+# built-in command scripts (their header docs end up in usage strings, which
+# snapshot tests compare) and error-code docs.
+core/embedded/**                      text eol=lf
+core/error_docs/**                    text eol=lf
+
+# Test fixtures that `rad fmt --check` compares byte-for-byte against the
+# formatter's LF output - a CRLF checkout makes every file "unformatted".
+core/testing/rad_scripts/**           text eol=lf

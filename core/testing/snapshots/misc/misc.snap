@@ -495,7 +495,7 @@ error[RAD20028]: Undefined identifier 'usernme'
 3 | print(usernme)
   |       ^^^^^^^
   |
-   = help: did you mean 'username'?
+   = help: did you mean 'username' or 'base_name'?
    = info: rad docs RAD20028
 
 
@@ -516,7 +516,7 @@ error[RAD20028]: Undefined identifier 'usernme'
 4 | print(usernme)
   |       ^^^^^^^
   |
-   = help: did you mean 'username' or 'user_name'?
+   = help: did you mean 'username', 'user_name', or 'base_name'?
    = info: rad docs RAD20028
 
 
