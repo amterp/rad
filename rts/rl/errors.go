@@ -53,6 +53,7 @@ const (
 	ErrUnterminatedString          Error = "10020"
 	ErrMissingOperator             Error = "10021"
 	ErrKeywordMisuse               Error = "10022"
+	ErrHashComment                 Error = "10023"
 
 	// 2xxxx Runtime Errors
 	ErrGenericRuntime       Error = "20000"
