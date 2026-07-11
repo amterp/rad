@@ -1,0 +1,16 @@
+{
+  "_v": 3,
+  "alias": "move-repl-to-command",
+  "alias_explicit": false,
+  "column": "in-progress",
+  "created_at_millis": 1783561708820,
+  "creator": "Alexander Terp",
+  "id": "a_1mYSoUOUg",
+  "position": "UUUU",
+  "title": "move --repl to command (rad5)",
+  "type": "enhancement",
+  "updated_at_millis": 1783561722477,
+  "history": [
+    {"field":"column","value":"in-progress","at":1783561708820}
+  ]
+}
