@@ -38,6 +38,7 @@ x = 1
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 IntroduceSyntaxError
 ### DOCUMENT ###
@@ -78,6 +79,7 @@ x =
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 MultipleChanges
 ### DOCUMENT ###
@@ -129,6 +131,7 @@ y = 2
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ChangeToEmpty
 ### DOCUMENT ###
@@ -152,6 +155,7 @@ x = 1
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ChangeFromEmpty
 ### DOCUMENT ###
@@ -175,6 +179,7 @@ x = 1
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ChangePreservesComplexDiagnostics
 ### DOCUMENT ###

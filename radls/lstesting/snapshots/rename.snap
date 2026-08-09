@@ -64,6 +64,7 @@ print(x + 1)
     }
   }
 }
+
 ### TITLE ###
 RenameLocalFromUseSite
 ### DOCUMENT ###
@@ -130,6 +131,7 @@ print(x + 1)
     }
   }
 }
+
 ### TITLE ###
 RenameFnFromDefSite
 ### DOCUMENT ###
@@ -198,6 +200,7 @@ greet()
     }
   }
 }
+
 ### TITLE ###
 RenameToInvalidIdentifier
 ### DOCUMENT ###
@@ -222,6 +225,7 @@ x = 1
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 RenameToCollidingName
 ### DOCUMENT ###
@@ -247,6 +251,7 @@ y = 2
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 RenameFnParamFromUseSite
 ### DOCUMENT ###
@@ -301,6 +306,7 @@ greet("rad")
     }
   }
 }
+
 ### TITLE ###
 RenameFnParamFromDeclSite
 ### DOCUMENT ###
@@ -355,6 +361,7 @@ greet("rad")
     }
   }
 }
+
 ### TITLE ###
 RenameLoopVarFromUseSite
 ### DOCUMENT ###
@@ -407,6 +414,7 @@ for v in [1, 2, 3]:
     }
   }
 }
+
 ### TITLE ###
 RenameLoopVarFromDeclSite
 ### DOCUMENT ###
@@ -459,6 +467,7 @@ for v in [1, 2, 3]:
     }
   }
 }
+
 ### TITLE ###
 RenameToReservedKeywordRejected
 ### DOCUMENT ###
@@ -483,6 +492,7 @@ x = 1
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 RenameToUnloadedBuiltinRejected
 ### DOCUMENT ###
@@ -507,6 +517,7 @@ x = 1
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 RenameArgFromDeclSite
 ### DOCUMENT ###
@@ -561,6 +572,7 @@ print(name)
     }
   }
 }
+
 ### TITLE ###
 RenameArgFromUseSite
 ### DOCUMENT ###
@@ -615,6 +627,7 @@ print(name)
     }
   }
 }
+
 ### TITLE ###
 RenameFnFromCallsCallback
 ### DOCUMENT ###

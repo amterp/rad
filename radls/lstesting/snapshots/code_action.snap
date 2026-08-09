@@ -41,6 +41,7 @@ x = 1
     }
   ]
 }
+
 ### TITLE ###
 NoShebangInsertionWithShebang
 ### DOCUMENT ###
@@ -62,6 +63,7 @@ x = 1
   "jsonrpc": "2.0",
   "result": []
 }
+
 ### TITLE ###
 ShebangInsertionEmptyDoc
 ### DOCUMENT ###
@@ -104,6 +106,7 @@ ShebangInsertionEmptyDoc
     }
   ]
 }
+
 ### TITLE ###
 ShebangInsertionOnLaterRange
 ### DOCUMENT ###
@@ -148,6 +151,7 @@ y = 2
     }
   ]
 }
+
 ### TITLE ###
 CodeActionAfterChange
 ### DOCUMENT ###
@@ -203,6 +207,7 @@ x = 1
     }
   ]
 }
+
 ### TITLE ###
 NullUnionStructuredQuickFix
 ### DOCUMENT ###
@@ -285,6 +290,7 @@ x: int|null = 5
     }
   ]
 }
+
 ### TITLE ###
 DiagnosticOutsideRangeNotOffered
 ### DOCUMENT ###

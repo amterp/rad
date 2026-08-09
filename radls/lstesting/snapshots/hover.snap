@@ -33,6 +33,7 @@ x = 1
     }
   }
 }
+
 ### TITLE ###
 BuiltinShowsSignatureAndDocs
 ### DOCUMENT ###
@@ -68,6 +69,7 @@ print(1)
     }
   }
 }
+
 ### TITLE ###
 UnresolvedIdentifierReturnsNull
 ### DOCUMENT ###
@@ -104,6 +106,7 @@ print(undefined_thing)
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 OffIdentifierReturnsNull
 ### DOCUMENT ###
@@ -124,6 +127,7 @@ x = 1
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 RangeCoversIdentifierExactly
 ### DOCUMENT ###
@@ -159,6 +163,7 @@ RangeCoversIdentifierExactly
     }
   }
 }
+
 ### TITLE ###
 CursorAtIdentifierEnd
 ### DOCUMENT ###
@@ -194,6 +199,7 @@ x = 1
     }
   }
 }
+
 ### TITLE ###
 TypedLocalShowsAnnotatedType
 ### DOCUMENT ###
@@ -229,6 +235,7 @@ x: int = 5
     }
   }
 }
+
 ### TITLE ###
 BrokenSyntaxReturnsNullSafely
 ### DOCUMENT ###
@@ -265,6 +272,7 @@ x = (
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 CallsCallbackShowsFnType
 ### DOCUMENT ###

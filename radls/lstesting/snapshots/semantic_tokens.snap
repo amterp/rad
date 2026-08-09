@@ -19,6 +19,7 @@ EmptyDocument
     "data": []
   }
 }
+
 ### TITLE ###
 LocalAndBuiltinCall
 ### DOCUMENT ###
@@ -58,6 +59,7 @@ print(x)
     ]
   }
 }
+
 ### TITLE ###
 FnNameAtDefinitionSite
 ### DOCUMENT ###
@@ -92,6 +94,7 @@ fn greet():
     ]
   }
 }
+
 ### TITLE ###
 ParamReferencesTagged
 ### DOCUMENT ###
@@ -136,6 +139,7 @@ fn greet(who: str):
     ]
   }
 }
+
 ### TITLE ###
 TypeAnnotationsTaggedAsType
 ### DOCUMENT ###
@@ -191,6 +195,7 @@ zs: float[] = [1.0]
     ]
   }
 }
+
 ### TITLE ###
 FnSignatureTypesTaggedAsType
 ### DOCUMENT ###
@@ -235,6 +240,7 @@ fn greet(who: str, count: int) -> bool:
     ]
   }
 }
+
 ### TITLE ###
 ArgsBlockTypesTaggedAsType
 ### DOCUMENT ###
@@ -280,6 +286,7 @@ args:
     ]
   }
 }
+
 ### TITLE ###
 ArgsBlockDeclAndUseTaggedAsParameter
 ### DOCUMENT ###
@@ -325,6 +332,7 @@ print(name)
     ]
   }
 }
+
 ### TITLE ###
 UnresolvedIdentsSkipped
 ### DOCUMENT ###
@@ -369,6 +377,7 @@ print(undefined_name)
     ]
   }
 }
+
 ### TITLE ###
 CallsCallbackHighlightedAsFunction
 ### DOCUMENT ###

@@ -790,6 +790,7 @@ ShebangCompletionLineZero
     }
   ]
 }
+
 ### TITLE ###
 NoShebangCompletionLineOne
 ### DOCUMENT ###
@@ -1585,6 +1586,7 @@ x = 1
     }
   ]
 }
+
 ### TITLE ###
 ShebangCompletionEmptyDocMiddleOfLine
 ### DOCUMENT ###
@@ -2377,6 +2379,7 @@ ShebangCompletionEmptyDocMiddleOfLine
     }
   ]
 }
+
 ### TITLE ###
 ShebangCompletionWithExistingCode
 ### DOCUMENT ###
@@ -3171,6 +3174,7 @@ y = 2
     }
   ]
 }
+
 ### TITLE ###
 NoCompletionOnLineTwo
 ### DOCUMENT ###
@@ -3974,6 +3978,7 @@ z = 3
     }
   ]
 }
+
 ### TITLE ###
 CompletionAfterChange
 ### DOCUMENT ###
@@ -4777,13 +4782,13 @@ x = 1
     }
   ]
 }
+
 ### TITLE ###
 ArgsBlockDeclsAppearWithSortTextOne
 ### DOCUMENT ###
 args:
     name str
     age int = 30
-
 ### COMPLETION 3:0 ###
 ### STDOUT ###
 {
@@ -5581,6 +5586,7 @@ args:
     }
   ]
 }
+
 ### TITLE ###
 FnBodyOffersParamsAndEarlierLocals
 ### DOCUMENT ###
@@ -6390,6 +6396,7 @@ fn greet(who: str):
     }
   ]
 }
+
 ### TITLE ###
 ExcludesVarsDeclaredAfterCursor
 ### DOCUMENT ###
