@@ -31,6 +31,7 @@ print(x)
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 BuiltinReturnsNull
 ### DOCUMENT ###
@@ -51,6 +52,7 @@ print(1)
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 OffIdentifierReturnsNull
 ### DOCUMENT ###
@@ -71,6 +73,7 @@ x = 1
   "jsonrpc": "2.0",
   "result": null
 }
+
 ### TITLE ###
 FunctionCallJumpsToFnDef
 ### DOCUMENT ###
@@ -106,6 +109,7 @@ greet()
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 SelfReferenceFromFnDefSite
 ### DOCUMENT ###
@@ -139,6 +143,7 @@ fn greet():
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 CallsCallbackJumpsToFnDef
 ### DOCUMENT ###
@@ -175,6 +180,7 @@ fn do_deploy():
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 FilterArgRefJumpsToFnDef
 ### DOCUMENT ###
@@ -210,6 +216,7 @@ nums = filter([1, 2], is_active)
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 RadFieldModMapRefJumpsToFnDef
 ### DOCUMENT ###
@@ -248,6 +255,7 @@ rad "data":
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 SelfReferenceFromArgsDeclSite
 ### DOCUMENT ###
@@ -281,6 +289,7 @@ args:
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 SelfReferenceFromDeclSite
 ### DOCUMENT ###

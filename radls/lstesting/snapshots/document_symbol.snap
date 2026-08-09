@@ -17,6 +17,7 @@ EmptyDocument
   "jsonrpc": "2.0",
   "result": []
 }
+
 ### TITLE ###
 TopLevelAssignments
 ### DOCUMENT ###
@@ -87,6 +88,7 @@ y = 2
     }
   ]
 }
+
 ### TITLE ###
 ReassignmentDoesntDuplicate
 ### DOCUMENT ###
@@ -133,6 +135,7 @@ x = 2
     }
   ]
 }
+
 ### TITLE ###
 FunctionDef
 ### DOCUMENT ###
@@ -180,6 +183,7 @@ fn greet():
     }
   ]
 }
+
 ### TITLE ###
 ArgsBlock
 ### DOCUMENT ###
@@ -279,6 +283,7 @@ args:
     }
   ]
 }
+
 ### TITLE ###
 MixedSourceOrder
 ### DOCUMENT ###

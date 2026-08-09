@@ -26,6 +26,7 @@ require (
 )
 
 require (
+	github.com/amterp/go-snap v0.1.1
 	github.com/clipperhouse/stringish v0.1.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

@@ -10,6 +10,7 @@ EmptyDocument
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ValidCode
 ### DOCUMENT ###
@@ -23,6 +24,7 @@ x = 1
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 SyntaxError
 ### DOCUMENT ###
@@ -52,6 +54,7 @@ x =
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ValidMultiLine
 ### DOCUMENT ###
@@ -67,6 +70,7 @@ print(x, y)
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 MultipleSyntaxErrors
 ### DOCUMENT ###
@@ -97,6 +101,7 @@ y =
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 UnknownFunctionHint
 ### DOCUMENT ###
@@ -126,6 +131,7 @@ foo()
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 UnknownFunctionKnownBuiltin
 ### DOCUMENT ###
@@ -139,6 +145,7 @@ print("hello")
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 UnknownFunctionWithTopLevelDef
 ### DOCUMENT ###
@@ -154,6 +161,7 @@ fn bar():
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 BreakOutsideLoop
 ### DOCUMENT ###
@@ -183,6 +191,7 @@ break
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ContinueOutsideLoop
 ### DOCUMENT ###
@@ -212,6 +221,7 @@ continue
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ReturnOutsideFunction
 ### DOCUMENT ###
@@ -241,6 +251,7 @@ return 1
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 InvalidAssignmentToLiteral
 ### DOCUMENT ###
@@ -270,6 +281,7 @@ InvalidAssignmentToLiteral
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ShebangOnly
 ### DOCUMENT ###
@@ -283,6 +295,7 @@ ShebangOnly
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 CommentOnly
 ### DOCUMENT ###
@@ -296,6 +309,7 @@ CommentOnly
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 MixedSeverities
 ### DOCUMENT ###
@@ -326,6 +340,7 @@ foo()
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ValidForLoop
 ### DOCUMENT ###
@@ -340,6 +355,7 @@ for x in [1, 2, 3]:
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ValidIfElse
 ### DOCUMENT ###
@@ -357,6 +373,7 @@ else:
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 ValidFunctionDef
 ### DOCUMENT ###
@@ -372,6 +389,7 @@ greet("world")
     "uri": "file:///test.rad"
   }
 }
+
 ### TITLE ###
 NullInTypeUnion
 ### DOCUMENT ###

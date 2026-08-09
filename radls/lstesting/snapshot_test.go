@@ -2,14 +2,11 @@ package lstesting
 
 import (
 	"os"
-	"path/filepath"
-	"strings"
-	"sync"
 	"testing"
 
-	gd "github.com/amterp/go-delta"
-	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+
+	snap "github.com/amterp/go-snap"
 
 	"github.com/amterp/rad/radls/log"
 )
@@ -20,86 +17,19 @@ func TestMain(m *testing.M) {
 }
 
 func TestSnapshots(t *testing.T) {
-	snapshotDir := "snapshots"
-
-	if _, err := os.Stat(snapshotDir); os.IsNotExist(err) {
-		t.Skip("snapshots directory does not exist yet")
-		return
-	}
-
-	runSnapshotDirectory(t, snapshotDir)
+	suite := Suite
+	suite.Run = runCase
+	snap.Run(t, "snapshots", &suite)
 }
 
-func runSnapshotDirectory(t *testing.T, snapshotDir string) {
-	var snapFiles []string
-	err := filepath.Walk(snapshotDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() && strings.HasSuffix(path, ".snap") {
-			snapFiles = append(snapFiles, path)
-		}
-		return nil
-	})
-	require.NoError(t, err, "Failed to walk snapshot directory")
-
-	if len(snapFiles) == 0 {
-		t.Skip("No snapshot files found")
-		return
+func runCase(t *testing.T, c *snap.Case) {
+	tc, err := caseFrom(c)
+	if err != nil {
+		t.Fatalf("%v", err)
 	}
-
-	checkSnapshotUpdateFlags(t)
-
-	var updateMu sync.Mutex
-	filesToUpdate := make(map[string][]SnapshotCase)
-
-	for _, snapFile := range snapFiles {
-		snapFile := snapFile
-
-		cases, err := ParseSnapshotFile(snapFile)
-		require.NoError(t, err, "Failed to parse snapshot file: %s", snapFile)
-
-		for i := range cases {
-			tc := &cases[i]
-			testName := strings.TrimPrefix(snapFile, snapshotDir+"/")
-			testName = strings.TrimSuffix(testName, ".snap")
-			if tc.Title != "" {
-				testName = testName + "/" + tc.Title
-			}
-
-			t.Run(testName, func(t *testing.T) {
-				t.Parallel()
-
-				actual, err := Run(tc)
-				require.NoError(t, err, "Harness should run without error")
-
-				if actual != tc.Stdout {
-					if shouldUpdateSnapshotFile(snapFile) {
-						updateMu.Lock()
-						tc.Stdout = actual
-						filesToUpdate[snapFile] = cases
-						updateMu.Unlock()
-					} else {
-						t.Errorf("Output mismatch:\n%s",
-							gd.DiffWith(tc.Stdout, actual,
-								gd.WithColor(true),
-								gd.WithLayout(gd.LayoutPreferSideBySide),
-								gd.WithWidth(120)))
-					}
-				}
-			})
-		}
+	out, err := Run(tc)
+	if err != nil {
+		t.Fatalf("harness: %v", err)
 	}
-
-	// Write updates after all subtests complete. filesToUpdate only holds files
-	// selected by -update / -update-all.
-	t.Cleanup(func() {
-		for path, cases := range filesToUpdate {
-			if err := WriteSnapshotFile(path, cases); err != nil {
-				t.Errorf("Failed to update snapshot file %s: %v", path, err)
-			} else {
-				t.Logf("Updated snapshot file: %s", path)
-			}
-		}
-	})
+	c.Out("STDOUT", out)
 }
