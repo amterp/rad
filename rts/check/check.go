@@ -99,6 +99,7 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addInvalidAssignmentLHSErrorsAST(&diagnostics)
 	c.addDeprecatedBlockKeywordErrors(&diagnostics)
 	c.addRadOptionNoEffectWarnings(&diagnostics)
+	c.addShellInterpolationQuoteErrors(&diagnostics)
 	c.addRegexPatternWithoutRegexArgWarnings(resolved, &diagnostics)
 	c.addConstantInterpolationWarnings(&diagnostics)
 	return Result{

@@ -149,6 +149,14 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD40016"},
 		Reason:        "demo: the v0.11 escaping the migration guide tells you to drop.",
 	},
+	"docs-web/docs/migrations/v0.12.md#5e4fca5a": {
+		ExpectedCodes: []string{"RAD40023"},
+		Reason:        "demo: the before/after pair for hand-written quotes around an interpolation; the 'before' half is the point.",
+	},
+	"docs-web/docs/migrations/v0.12.md#8a043626": {
+		ExpectedCodes: []string{"RAD40023"},
+		Reason:        "demo: the before/after pair for a quoted literal-plus-value argument; the 'before' half is the point.",
+	},
 	"core/error_docs/40016.md#fc33b11a": {
 		ExpectedCodes: []string{"RAD40016"},
 		Reason:        "demo: the warning's own wrong-then-right pair; the wrong half has to warn.",
@@ -191,6 +199,15 @@ var docSnippetTolerances = map[string]Tolerance{
 	"core/error_docs/40017.md#ac15e0b4": {
 		ExpectedCodes: []string{"RAD40017"},
 		Reason:        "demo: `\"\\d{4}\"`, the regex quantifier that silently interpolates.",
+	},
+
+	"core/error_docs/40023.md#1b17eb05": {
+		ExpectedCodes: []string{"RAD40023"},
+		Reason:        "demo: hand-written quotes around an interpolated value in a shell command.",
+	},
+	"core/error_docs/40023.md#af0ac874": {
+		ExpectedCodes: []string{"RAD40023"},
+		Reason:        "demo: the wrong/right pair for a quoted literal-plus-value argument; the wrong half is the point.",
 	},
 
 	"docs-web/docs/reference/syntax.md#bbfe1bbd": {

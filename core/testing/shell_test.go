@@ -297,3 +297,234 @@ func Test_ShellCmd_ConfirmShellFlag_Abort(t *testing.T) {
 	assertShellNotInvoked(t)
 	assertErrorContains(t, 1, "RAD20010", "Shell command aborted")
 }
+
+// --- Interpolation quoting -------------------------------------------------
+//
+// The contract: literal text in a command is shell, interpolations are data.
+// These assert the exact string handed to the shell, because that string is
+// where the guarantee either holds or doesn't.
+
+func Test_ShellCmd_Interp_QuotesApostrophe(t *testing.T) {
+	script := "msg = \"it's fine\"\n$`git commit -m {msg}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `git commit -m 'it'\''s fine'`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_QuotesSpace(t *testing.T) {
+	script := "name = \"My Notes.txt\"\n$`cat {name}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `cat 'My Notes.txt'`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_NeutralizesInjection(t *testing.T) {
+	script := "payload = `a\"; echo INJECTED; echo \"b`\n$`echo {payload}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `echo 'a"; echo INJECTED; echo "b'`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_QuotesShellMetacharacters(t *testing.T) {
+	script := "vals = [\"$HOME\", \"*.txt\", \"a`b\", \"x;y\", \"p|q\"]\nfor v in vals:\n    $`echo {v}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t,
+		core.ShellInvocation{Command: `echo '$HOME'`},
+		core.ShellInvocation{Command: `echo '*.txt'`},
+		core.ShellInvocation{Command: "echo 'a`b'"},
+		core.ShellInvocation{Command: `echo 'x;y'`},
+		core.ShellInvocation{Command: `echo 'p|q'`},
+	)
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_QuotesNewline(t *testing.T) {
+	script := "msg = \"a\\nb\"\n$`echo {msg}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: "echo 'a\nb'"})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_QuotesEmptyString(t *testing.T) {
+	script := "msg = \"\"\n$`echo {msg}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	// Without quoting, an empty value would vanish rather than be an argument.
+	assertShellInvoked(t, core.ShellInvocation{Command: `echo ''`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_LeavesSafeValuesBare(t *testing.T) {
+	// The overwhelmingly common case must stay byte-identical to pre-quoting
+	// Rad, or every ⚡️ echo and every snapshot gets noisier for no gain.
+	script := "v = \"1.2.3\"\np = \"src/main.go\"\nn = 42\n$`git tag v{v} {p} {n}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `git tag v1.2.3 src/main.go 42`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_AdjacentSegmentsFormOneWord(t *testing.T) {
+	// The shell concatenates adjacent quoted fragments, so a value glues onto
+	// neighbouring literal text without the script quoting anything.
+	script := "n = \"My Notes.txt\"\nv = \"1.2\"\n$`cp --flag={n} {v}-{v}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `cp --flag='My Notes.txt' 1.2-1.2`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_AppliesFormatSpecBeforeQuoting(t *testing.T) {
+	script := "n = 7\n$`echo {n:03}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `echo 007`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_ListSplatsToOneWordPerElement(t *testing.T) {
+	script := "files = [\"My Notes.txt\", \"a'b.txt\", \"c.txt\"]\n$`rm {files}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `rm 'My Notes.txt' 'a'\''b.txt' c.txt`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_EmptyListContributesNoWords(t *testing.T) {
+	script := "flags = []\n$`rg {flags} -- needle`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `rg  -- needle`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_LiteralShellSyntaxSurvives(t *testing.T) {
+	script := "f = \"a b.txt\"\n$`cat {f} | grep x > out.txt && echo done`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `cat 'a b.txt' | grep x > out.txt && echo done`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_RawStringIsNotInterpolated(t *testing.T) {
+	script := "$r`echo {notavar}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `echo {notavar}`})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Interp_NullIsRejected(t *testing.T) {
+	script := "x = null\n$`echo {x}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "Cannot interpolate a null", "'??'")
+}
+
+func Test_ShellCmd_Interp_MapIsRejected(t *testing.T) {
+	script := "m = { \"a\": 1 }\n$`echo {m}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "Cannot interpolate a map")
+}
+
+func Test_ShellCmd_Interp_ListInsideAWordIsRejected(t *testing.T) {
+	script := "f = [\"a\", \"b\"]\n$`echo --files={f}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "must stand alone as its own argument")
+}
+
+func Test_ShellCmd_Interp_ListWithFormatSpecIsRejected(t *testing.T) {
+	script := "f = [\"a\", \"b\"]\n$`echo {f:5}`"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "format specifier")
+}
+
+// --- Argv form -------------------------------------------------------------
+
+func Test_ShellCmd_Argv_ListLiteralBypassesShell(t *testing.T) {
+	script := "msg = \"it's fine\"\n$[\"git\", \"commit\", \"-m\", msg]"
+	setupAndRunCode(t, script, "--color=never")
+
+	// No Command: the argv form never becomes shell text, so there is nothing
+	// for a shell to reinterpret.
+	assertShellInvoked(t, core.ShellInvocation{
+		Argv: []string{"git", "commit", "-m", "it's fine"},
+	})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Argv_ListVariable(t *testing.T) {
+	script := "cmd = [\"echo\", \"a b\"]\ncmd += [\"c\"]\n$cmd"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Argv: []string{"echo", "a b", "c"}})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Argv_CoercesScalars(t *testing.T) {
+	script := "$[\"seq\", 1, 2.5, true]"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Argv: []string{"seq", "1", "2.5", "true"}})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Argv_CapturesLikeTheStringForm(t *testing.T) {
+	script := "code, out = $[\"echo\", \"hi\"]"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Argv:          []string{"echo", "hi"},
+		CaptureStdout: true,
+	})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Argv_EmptyListIsRejected(t *testing.T) {
+	script := "cmd = []\n$cmd"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "no program to run")
+}
+
+func Test_ShellCmd_Argv_NestedListIsRejected(t *testing.T) {
+	script := "$[\"echo\", [\"a\"]]"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "Concatenate it into the command list")
+}
+
+func Test_ShellCmd_Argv_NonStringNonListCommandIsRejected(t *testing.T) {
+	script := "cmd = 5\n$cmd"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellNotInvoked(t)
+	assertErrorContains(t, 1, "RAD20045", "must be a string or a list of arguments")
+}
+
+// --- The raw form ----------------------------------------------------------
+
+func Test_ShellCmd_StringVariableStaysVerbatim(t *testing.T) {
+	// Interpolation happened when the string was built, so there is nothing
+	// left for `$` to quote. This is the documented escape hatch, and changing
+	// it would break every script that assembles a command by hand.
+	script := "d = \"a b\"\ncmd = `echo {d}`\n$cmd"
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{Command: `echo a b`})
+	assertNoErrors(t)
+}

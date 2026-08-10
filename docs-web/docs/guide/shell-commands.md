@@ -6,7 +6,9 @@ The shell offers a wide range of utilities and is essential for CLI scripting - 
 installed programs like git, make, or docker.
 
 Rad has rich built-in functionality (`http_get`, `read_file`, `write_file`, etc.), but sometimes you need to invoke
-system tools or installed programs. Rad makes this safe and ergonomic through first-class shell command support.
+system tools or installed programs. Rad makes this ergonomic through first-class shell command support, and quotes
+the values you interpolate so a filename with a space - or a string from somewhere you don't control - can't turn
+into shell syntax.
 
 ## Invoking Commands
 
@@ -160,24 +162,117 @@ This uses the same error model covered in [Error Handling](./error-handling.md) 
 
 ## String Interpolation
 
-You can build commands dynamically using string interpolation:
+The text you write in a shell command is shell - pipes, redirects, `&&`, all of it. Interpolations are data. Each
+one becomes exactly one argument, whatever it contains:
 
 ```rad linenums="1"
 args:
     version str
     message str
 
-// Interpolate variables into commands
 $`git tag v{version}` catch:
     print_err("Failed to create tag")
     exit(1)
 
-$`git commit -m "{message}"` catch:
+$`git commit -m {message}` catch:
     print_err("Commit failed")
     exit(1)
 ```
 
-This is particularly useful for constructing commands based on script arguments or other runtime values.
+Note that `{message}` has no quotes around it. Rad quotes it for you, at the point it knows what the value is.
+A message of `it's fine` reaches git as `it's fine`; one containing `$HOME`, `*` or `;` arrives with those
+characters intact rather than being expanded or run.
+
+!!! warning "Don't add your own quotes"
+
+    Writing `` $`git commit -m "{message}"` `` puts the quote characters *into* the message. Rad flags this as
+    [RAD40023](../reference/errors.md). If your argument is literal text plus a value, build the string first:
+
+    ```rad
+    version = "1.2.3"
+
+    message = "Bump to {version}"
+    $`git commit -m {message}`
+    ```
+
+Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:
+
+```rad
+name = "My Notes.txt"
+version = "1.2.3"
+
+$`cp {name} backup/{name}`      // two arguments, spaces and all
+$`docker build -t app:{version} .`
+```
+
+### Lists Become Several Arguments
+
+A list expands to one argument per element, each quoted separately. An empty list contributes nothing, which
+makes conditional flags straightforward:
+
+```rad
+args:
+    all bool
+
+flags = all ? ["--hidden", "--no-ignore"] : []
+needle = "two words"
+
+$`rg {flags} -- {needle}` catch:
+    pass
+```
+
+A list has to stand alone as its own argument - `--file={files}` is an error, because there is no obvious answer
+to which element gets the prefix. Join it yourself when you want a single argument:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`tar -czf out.tgz {files}`          // three arguments
+$`echo --files={files.join(",")}`    // one argument
+```
+
+## Commands As Lists
+
+When a command is a list rather than a string, Rad runs the program directly and skips the shell entirely. Each
+element is one argument:
+
+```rad
+message = "it's fine"
+
+$["git", "commit", "-m", message]
+```
+
+This is the form to reach for when you're assembling a command piece by piece. Nothing needs quoting, because
+nothing is ever parsed as shell:
+
+```rad
+args:
+    start str?
+    end str?
+
+path = "clip.mp4"
+
+cmd = ["ffmpeg", "-i", path]
+if start:
+    cmd += ["-ss", start]
+if end:
+    cmd += ["-to", end]
+cmd += ["-c", "copy", "out.mp4"]
+
+$cmd catch:
+    print_err("ffmpeg failed")
+    exit(1)
+```
+
+The trade-off is that you give up everything the shell provides: no pipes, no redirects, no globs, no `$VAR`
+expansion, and no shell builtins such as `cd`. Use a command string when you need those, and a list when you
+don't.
+
+!!! note "A command that is already a string runs verbatim"
+
+    `$cmd` where `cmd` is a *string* is the raw form: you assembled the text, so you own its quoting. Rad has no
+    interpolation to protect at that point - the interpolation already happened when the string was built. Prefer
+    a list.
 
 ## Modifiers
 
@@ -281,22 +376,23 @@ print("✅ Done!".green())
 
 ### Conditional Construction
 
-Building commands dynamically based on script arguments:
+Building commands dynamically based on script arguments. Collect the arguments in a list so each one stays a
+single argument no matter what it contains:
 
 ```rad
 args:
     verbose v bool
     output o str?
 
-cmd = "docker build ."
+cmd = ["docker", "build", "."]
 
 if verbose:
-    cmd += " --progress=plain"
+    cmd += ["--progress=plain"]
 
 if output:
-    cmd += " -t {output}"
+    cmd += ["-t", output]
 
-$`{cmd}` catch:
+$cmd catch:
     print_err("Docker build failed")
     exit(1)
 
@@ -332,7 +428,12 @@ print("All prerequisites installed ✅".green())
     - **Named** when ALL variables are `code`, `stdout`, or `stderr` (order-independent)
     - **Positional** otherwise (order matters)
 - **Output routing:** Captured values don't print to the terminal (they're redirected to variables)
-- String interpolation works in commands for dynamic construction
+- **Command forms:**
+    - `` $`text {value}` ``: the text is shell, each interpolation is one argument, quoted for you
+    - `$list`: an argument vector, run directly with no shell involved
+    - `$str`: a string you assembled yourself, run verbatim
+- Interpolate a list to get one argument per element; an empty list contributes none
+- Don't put your own quotes around an interpolation - Rad already quotes it
 - Backticks are preferred for shell command strings to avoid delimiter conflicts
 
 ## Next
