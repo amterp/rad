@@ -1,0 +1,135 @@
+### TITLE ###
+RegexQuantifierSilentlyInterpolates
+### DESCRIPTION ###
+The case RAD40017 exists for: `\d{4}` reads as a regex quantifier but
+parses as "a digit, then the number 4", producing `\d4` with no error
+anywhere. Multi-part quantifiers (`{2,3}`) are already a syntax error,
+so this single-number form is the only silent one.
+### INPUT ###
+pattern = "\d{4}"
+### STDOUT ###
+# Identifier types
+  pattern @ 1:1 -> <no-type>
+
+# Symbol types
+  pattern (local): str
+
+# Diagnostics
+  [warn] RAD40017 @ 1:14 - Interpolating the literal 4 has no effect
+    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+### TITLE ###
+EveryConstantLiteralKind
+### DESCRIPTION ###
+int, float, bool and simple-string literals all interpolate to exactly
+what the author typed, so all four warn.
+### INPUT ###
+a = "{0}"
+b = "{3.14}"
+c = "{true}"
+d = "{'s'}"
+### STDOUT ###
+# Identifier types
+  a @ 1:1 -> <no-type>
+  b @ 2:1 -> <no-type>
+  c @ 3:1 -> <no-type>
+  d @ 4:1 -> <no-type>
+
+# Symbol types
+  a (local): str
+  b (local): str
+  c (local): str
+  d (local): str
+
+# Diagnostics
+  [warn] RAD40017 @ 1:6 - Interpolating the literal 0 has no effect
+    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+  [warn] RAD40017 @ 2:6 - Interpolating the literal 3.14 has no effect
+    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+  [warn] RAD40017 @ 3:6 - Interpolating the literal true has no effect
+    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+  [warn] RAD40017 @ 4:6 - Interpolating the literal 's' has no effect
+    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+### TITLE ###
+NonLiteralExpressionsStayQuiet
+### DESCRIPTION ###
+The rule is syntactic, not const-folding: a variable holding a constant,
+an arithmetic expression over two literals, and a call all stay quiet.
+Widening past this buys false positives, which is the failure mode the
+checker is already being cleaned up for.
+### INPUT ###
+digits = 4
+fn four():
+    return 4
+x = "{digits}"
+y = "{2 + 2}"
+z = "{four()}"
+### STDOUT ###
+# Identifier types
+  digits @ 1:1 -> <no-type>
+  x @ 4:1 -> <no-type>
+  digits @ 4:7 -> <no-type>
+  y @ 5:1 -> <no-type>
+  z @ 6:1 -> <no-type>
+  four @ 6:7 -> <no-type>
+
+# Symbol types
+  digits (local): int
+  four (fn): fn() -> int
+  x (local): str
+  y (local): str
+  z (local): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+FormatSpecWidthsAreNotValues
+### DESCRIPTION ###
+Regression guard. Format padding and precision are int literals hanging
+off the same interpolation node, and LitString.Children() yields them
+alongside the value expression - so a check written over the generic
+child list fires on every padded format spec instead of on nothing.
+### INPUT ###
+name = "ana"
+pi = 3.14
+a = "{name:<12}|"
+b = "{pi:.2}"
+c = "{name:*>8}"
+### STDOUT ###
+# Identifier types
+  name @ 1:1 -> <no-type>
+  pi @ 2:1 -> <no-type>
+  a @ 3:1 -> <no-type>
+  name @ 3:7 -> <no-type>
+  b @ 4:1 -> <no-type>
+  pi @ 4:7 -> <no-type>
+  c @ 5:1 -> <no-type>
+  name @ 5:7 -> <no-type>
+
+# Symbol types
+  a (local): str
+  b (local): str
+  c (local): str
+  name (local): str
+  pi (local): float
+
+# Diagnostics
+  (none)
+### TITLE ###
+BothEscapeHatchesStayQuiet
+### DESCRIPTION ###
+The two exits the diagnostic points at must not themselves warn: `\{`
+escapes the brace, and a raw string suppresses interpolation entirely.
+### INPUT ###
+escaped = "\d\{4}"
+raw = r"\d{4}"
+### STDOUT ###
+# Identifier types
+  escaped @ 1:1 -> <no-type>
+  raw @ 2:1 -> <no-type>
+
+# Symbol types
+  escaped (local): str
+  raw (local): str
+
+# Diagnostics
+  (none)

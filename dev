@@ -47,14 +47,14 @@ if docs:
 if release:
     branch = get_branch()
     if branch != "main":
-        print("{"ERROR".red()}: You can only release from the {"main".green()} branch; you're on {branch.yellow()}")
+        print("{'ERROR'.red()}: You can only release from the {'main'.green()} branch; you're on {branch.yellow()}")
         exit(1)
 
     // check for replace directives in go.mod
     no_replace_directives = $`grep "^replace " go.mod` catch:
         pass
     if not no_replace_directives:
-        print("{"ERROR".red()}: go.mod contains replace directives which should not be present in releases:")
+        print("{'ERROR'.red()}: go.mod contains replace directives which should not be present in releases:")
         print("Please remove all replace directives before releasing.".yellow())
         exit(1)
 

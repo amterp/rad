@@ -25,3 +25,55 @@ print('\`hi\`')
 `hi`
 \`hi\`
 
+### TITLE ###
+Braces - a brace that cannot open an interpolation is literal
+### DESCRIPTION ###
+An interpolation must hold an expression. When the string ends right
+after the brace, or the pair holds only whitespace, there is no room
+for one - so the brace is content rather than a parse error.
+### INPUT ###
+print("{")
+print("{}")
+print("{ }")
+print("prefix {")
+print(`\.+*?()[]{}|^$`)
+### STDOUT ###
+{
+{}
+{ }
+prefix {
+\.+*?()[]{}|^$
+
+### TITLE ###
+Braces - both escapes, in every string flavor
+### DESCRIPTION ###
+\{ and \} are symmetric. A } with no interpolation open needs no
+escape, so the last two lines are the same string written two ways.
+### INPUT ###
+print("\{a\}")
+print('\{a\}')
+print(`\{a\}`)
+print("\{a}")
+print(r"\{a\}")
+### STDOUT ###
+{a}
+{a}
+{a}
+{a}
+\{a\}
+
+### TITLE ###
+Braces - interpolation still wins wherever one is possible
+### DESCRIPTION ###
+Rule 2 is narrow on purpose: anything that could be an interpolation
+stays one, including an expression that opens with a nested string.
+### INPUT ###
+name = "ana"
+print("{name}")
+print("{ "a" + "b" }")
+print("{name:<5}|")
+### STDOUT ###
+ana
+ab
+ana  |
+

@@ -38,12 +38,21 @@ String interpolation expressions can be as simple as just an identifier, or can 
 Note the use of single quote `'` strings inside the last line of the above example.
 You don't have to switch delimiters like that, though it can help readability:
 everything inside `{ }` is parsed as code, not text, so nested strings using the
-*same* delimiter as the outer string are guaranteed to work, no escaping needed.
+*same* delimiter as the outer string work, no escaping needed.
 
 ```rad
 tokens = ["Hello", "World"]
 print("{tokens.join(" ")}")
 print("Count: {tokens.len() > 1 ? "several" : "just one"}")
+```
+
+The one exception is a nested string *immediately* after the `{`, because
+`"{"` is also how you write a literal opening brace, and the two cannot be
+told apart. Switch delimiters there, or add a space:
+
+```rad
+print("{'ERROR'.red()}")     // fine
+print("{ "ERROR".red() }")   // also fine
 ```
 
 ```
@@ -325,7 +334,10 @@ She said "Hi!"
 - `\t` - tab
 - `\\` - literal backslash
 - `\"` `\'` `` \` `` - the delimiter itself (though prefer using a different delimiter)
-- `\{` - literal brace (prevents interpolation, but consider using raw strings)
+- `\{` `\}` - literal braces (prevents interpolation, but consider using raw strings)
+
+A brace that cannot open an interpolation needs no escape: `"{"`, `"{}"` and
+`"{ }"` are all literal, as is any `}` with no interpolation open.
 
 ## String Attributes
 

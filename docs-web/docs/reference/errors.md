@@ -1534,14 +1534,16 @@ An operator was used with types that don't support that operation.
 #### Example
 
 ```rad
+count = 5
+
 // Wrong: can't add int to string
-x = "count: " + 5
+x = "count: " + count
 
 // Correct: use interpolation (preferred)
-x = "count: {5}"
+x = "count: {count}"
 
 // Correct: explicit conversion
-x = "count: " + str(5)
+x = "count: " + str(count)
 ```
 
 #### Supported Type Combinations
@@ -2436,3 +2438,53 @@ not a verdict.
 See the [v0.12 migration guide](https://amterp.dev/rad/migrations/v0.12/) for the
 full picture, and `rad check --from-logs all` to sweep every script you've run
 recently.
+
+### RAD40017: Interpolating a Constant Literal
+
+An interpolation contains a literal value, so it produces exactly the text
+you already wrote. `"{4}"` and `"4"` are the same string.
+
+This is almost always a literal brace that got read as an interpolation.
+
+#### Example
+
+```rad
+// Wrong: {4} interpolates the number 4, so this is the regex \d4
+pattern = "\d{4}"
+
+// Correct: escape the brace
+pattern = "\d\{4}"
+
+// Correct: a raw string, where nothing interpolates
+pattern = r"\d{4}"
+```
+
+Regex quantifiers are where this bites. `\d{4}` looks like "four digits"
+and parses as "a digit, then the number 4". Wider quantifiers like
+`\d{2,3}` are a syntax error instead, so the single-number form is the only
+one that fails quietly.
+
+#### How to Fix
+
+1. **Escape the brace** with `\{` if you meant a literal `{`
+2. **Use a raw string** (`r"..."`) if the text is brace-heavy - regexes and
+   JSON templates usually are
+3. **Write the value directly** if you really did mean to interpolate a
+   constant
+
+Note that `r"..."` turns off *all* interpolation and escapes for that
+string, so it is the wrong tool if you also need `{name}` to expand.
+
+#### Why This Is a Warning
+
+The rule is syntactic: it fires only when the interpolated expression is
+itself a literal. Interpolating a variable that happens to hold a constant
+is fine and stays quiet.
+
+```rad
+digits = 4
+name = "ana"
+print("{digits}")      // no warning
+print("{2 + 2}")       // no warning
+print("{name:<12}|")   // no warning - 12 is a format width, not the value
+```

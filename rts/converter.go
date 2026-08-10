@@ -1337,6 +1337,8 @@ func (c *converter) resolveStringPart(node *ts.Node, delimiter byte) string {
 		return "\t"
 	case rl.K_ESC_OPEN_BRACKET:
 		return "{"
+	case rl.K_ESC_CLOSE_BRACKET:
+		return "}"
 	default:
 		panic(fmt.Sprintf("converter: unexpected string part kind: %s", node.Kind()))
 	}
