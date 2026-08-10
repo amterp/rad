@@ -136,6 +136,29 @@ The iterable expression of a for-loop or comprehension is visited
 in the enclosing scope before the loop var is introduced - that's
 the value being iterated, and it can't reference the loop var.
 
+### Mutating a collection while iterating it
+
+A for-loop over a **list** walks the live list by index, re-reading
+its length each iteration. Mutation during the loop is therefore
+visible to it: assigning an element the loop has not reached yet
+means the loop sees the new value, and deleting an element shifts
+everything after it down, so the traversal can skip entries and end
+early. It can never run past the list's end.
+
+    items = [1, 2, 3, 4, 5]
+    for item in items:
+        if item == 2:
+            del items[1]
+        print(item)   // 1, 2, 4, 5 - 3 is skipped
+
+A for-loop over a **map** iterates a snapshot of the keys taken
+before the first iteration, so deleting or adding entries during the
+loop does not change which keys it visits.
+
+The two differ deliberately. List order is positional, so a live
+traversal has somewhere well-defined to continue from after a
+deletion; map iteration order has no such anchor.
+
 ### Switch and defer
 
 Switch case bodies and defer/errdefer bodies share the enclosing
