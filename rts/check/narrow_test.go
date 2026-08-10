@@ -76,6 +76,68 @@ func TestFrame_WithManyBindsMultiple(t *testing.T) {
 	assert.Equal(t, rl.T_STR, gotY.Name())
 }
 
+func TestFrame_MembershipRecordedAndNotMutating(t *testing.T) {
+	xs := &check.Symbol{Name: "xs"}
+	f := &check.Symbol{Name: "f"}
+	fact := check.MembershipFact{Container: xs, Element: f}
+
+	base := check.NewFrame()
+	withFact := base.WithMembership(fact)
+
+	assert.True(t, withFact.HasMembership(fact))
+	assert.False(t, base.HasMembership(fact), "WithMembership must not mutate the receiver")
+}
+
+func TestFrame_MembershipIsKeyedOnBothSymbols(t *testing.T) {
+	xs := &check.Symbol{Name: "xs"}
+	ys := &check.Symbol{Name: "ys"}
+	f := &check.Symbol{Name: "f"}
+
+	frame := check.NewFrame().WithMembership(check.MembershipFact{Container: xs, Element: f})
+
+	assert.True(t, frame.HasMembership(check.MembershipFact{Container: xs, Element: f}))
+	assert.False(t, frame.HasMembership(check.MembershipFact{Container: ys, Element: f}),
+		"a guard on one container must not refine a lookup in another")
+	assert.False(t, frame.HasMembership(check.MembershipFact{Container: f, Element: xs}),
+		"container and element are not interchangeable")
+}
+
+func TestFrame_MembershipSurvivesNarrowing(t *testing.T) {
+	xs := &check.Symbol{Name: "xs"}
+	f := &check.Symbol{Name: "f"}
+	other := &check.Symbol{Name: "other"}
+	fact := check.MembershipFact{Container: xs, Element: f}
+
+	frame := check.NewFrame().WithMembership(fact)
+
+	assert.True(t, frame.With(other, rl.NewIntType()).HasMembership(fact),
+		"With must carry the membership set forward")
+	assert.True(t, frame.WithMany(map[*check.Symbol]rl.TypingT{other: rl.NewIntType()}).HasMembership(fact),
+		"WithMany must carry the membership set forward")
+}
+
+func TestFrame_MembershipReaddIsANoOp(t *testing.T) {
+	xs := &check.Symbol{Name: "xs"}
+	f := &check.Symbol{Name: "f"}
+	fact := check.MembershipFact{Container: xs, Element: f}
+
+	frame := check.NewFrame().WithMembership(fact)
+	assert.Same(t, frame, frame.WithMembership(fact), "re-proving a known fact should not allocate")
+}
+
+// A nil *Frame is passed around by interpretCondition's callers, so the whole
+// Frame API has to tolerate it rather than dereference the receiver.
+func TestFrame_NilReceiverIsSafe(t *testing.T) {
+	var nilFrame *check.Frame
+	xs := &check.Symbol{Name: "xs"}
+	f := &check.Symbol{Name: "f"}
+	fact := check.MembershipFact{Container: xs, Element: f}
+
+	assert.False(t, nilFrame.HasMembership(fact))
+	assert.True(t, nilFrame.WithMembership(fact).HasMembership(fact))
+	assert.False(t, nilFrame.With(xs, rl.NewIntType()).HasMembership(fact))
+}
+
 func TestRefinement_NegateSwapsSides(t *testing.T) {
 	x := &check.Symbol{Name: "x"}
 	r := check.Refinement{

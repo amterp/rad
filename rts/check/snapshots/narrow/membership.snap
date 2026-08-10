@@ -1,0 +1,363 @@
+### TITLE ###
+InGuardStripsIndexOfNull
+### DESCRIPTION ###
+The reported idiom. `index_of` returns int?, and an `in` guard proves
+the lookup can't miss - but narrowing is keyed on symbols and
+`xs.index_of(f)` isn't one, so the guard needs a membership fact to
+reach it. One real script took this hint ten times off a single
+flag-parsing loop.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        n = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  xs @ 3:13 -> str[]
+  index_of @ 3:16 -> dynamic
+  f @ 3:25 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): int
+  xs (param): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+InGuardNarrowsPlainCallForm
+### DESCRIPTION ###
+Same fact, non-UFCS spelling. The container is args[0] here and the
+receiver node for the UFCS form, so both paths have to resolve it.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        n = index_of(xs, f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  index_of @ 3:13 -> dynamic
+  xs @ 3:22 -> str[]
+  f @ 3:26 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): int
+  xs (param): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+InGuardNarrowsStrSubject
+### DESCRIPTION ###
+`in` and index_of agree on strings too. Accepted hole, no way to see
+it statically: `"" in s` is true for every s while `s.index_of("")`
+is null, so an empty search target loses this hint.
+### INPUT ###
+fn g(s: str, sub: str):
+    if sub in s:
+        n = s.index_of(sub) + 1
+### STDOUT ###
+# Identifier types
+  sub @ 2:8 -> str
+  s @ 2:15 -> str
+  n @ 3:9 -> <no-type>
+  s @ 3:13 -> str
+  index_of @ 3:15 -> dynamic
+  sub @ 3:24 -> str
+
+# Symbol types
+  g (fn): fn(str, str) -> void
+  n (local): int
+  s (param): str
+  sub (param): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+AndChainCarriesMembershipToRightOperand
+### DESCRIPTION ###
+The `and` right operand runs only when the left held, so it inherits
+the membership too. Safer than a branch body: no statement runs
+between the operands, so nothing can invalidate the fact.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs and xs.index_of(f) > 0:
+        n = 0
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  xs @ 2:20 -> str[]
+  index_of @ 2:23 -> dynamic
+  f @ 2:32 -> str
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): int
+  xs (param): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+NoGuardKeepsNull
+### DESCRIPTION ###
+Baseline: without a guard the null is real and the hint is correct.
+### INPUT ###
+fn g(xs: str[], f: str):
+    n = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  n @ 2:5 -> <no-type>
+  xs @ 2:9 -> str[]
+  index_of @ 2:12 -> dynamic
+  f @ 2:21 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): <error>
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+MembershipDoesNotEscapeTheBranch
+### DESCRIPTION ###
+Past the if, the guard says nothing - the fall-through path includes
+the case where f was absent.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        n = 0
+    m = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  m @ 4:5 -> <no-type>
+  xs @ 4:9 -> str[]
+  index_of @ 4:12 -> dynamic
+  f @ 4:21 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  m (local): <error>
+  n (local): int
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 4:9 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+MembershipRetiresWhenElseReturns
+### DESCRIPTION ###
+The else exits, so the guard really does hold on the fall-through -
+and the fact still has to retire there. Its validity depends on a
+reassignment scan that covered only the branch body; `xs = []` here
+is outside anything we checked. joinFrames resets memberships to the
+pre-if set for exactly this reason.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        n = 0
+    else:
+        return
+    xs = []
+    m = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  xs @ 6:5 -> <no-type>
+  m @ 7:5 -> <no-type>
+  xs @ 7:9 -> list
+  index_of @ 7:12 -> dynamic
+  f @ 7:21 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  m (local): <error>
+  n (local): int
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 7:9 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+ElseBranchHasNoMembership
+### DESCRIPTION ###
+The else runs when the guard was false, which is the opposite of
+proving membership.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        n = 0
+    else:
+        m = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  m @ 5:9 -> <no-type>
+  xs @ 5:13 -> str[]
+  index_of @ 5:16 -> dynamic
+  f @ 5:25 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  m (local): <error>
+  n (local): int
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 5:13 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+DifferentContainerDoesNotRefine
+### DESCRIPTION ###
+A guard on ys proves nothing about xs. The fact is keyed on the
+symbol pair, so this can't collide.
+### INPUT ###
+fn g(xs: str[], ys: str[], f: str):
+    if f in ys:
+        n = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  ys @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  xs @ 3:13 -> str[]
+  index_of @ 3:16 -> dynamic
+  f @ 3:25 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str[], str) -> void
+  n (local): <error>
+  xs (param): str[]
+  ys (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 3:13 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+ContainerReassignedInBodyDropsFact
+### DESCRIPTION ###
+Nothing rewrites a membership when the container is reassigned, the
+way bindAssignTarget rewrites a narrowed type. So the fact is refused
+up front when the body assigns either symbol.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        xs = []
+        n = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  xs @ 3:9 -> <no-type>
+  n @ 4:9 -> <no-type>
+  xs @ 4:13 -> list
+  index_of @ 4:16 -> dynamic
+  f @ 4:25 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): <error>
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 4:13 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+NamedArgDisablesRefinement
+### DESCRIPTION ###
+`n` picks the Nth occurrence and `start` skips a prefix; membership
+promises neither. Confirmed against the runtime - `f in xs` is true
+while `xs.index_of(f, n=1)` returns null.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f in xs:
+        n = xs.index_of(f, n=1) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  n @ 3:9 -> <no-type>
+  xs @ 3:13 -> str[]
+  index_of @ 3:16 -> dynamic
+  f @ 3:25 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): <error>
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 3:13 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+MembershipDoesNotEscapeIntoALambda
+### DESCRIPTION ###
+Narrowings survive capture but memberships don't: the lambda can run
+after an `xs.pop()`, or escape the guarded region entirely, and the
+closure rule keys off reassignment so it sees neither.
+### INPUT ###
+fn g(xs: str[], f: str) -> fn() -> int:
+    if f in xs:
+        return fn() xs.index_of(f) + 1
+    return fn() 0
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:13 -> str[]
+  xs @ 3:21 -> str[]
+  index_of @ 3:24 -> dynamic
+  f @ 3:33 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> fn() -> int
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 3:21 - Invalid operand types: cannot do 'int? + int'
+### TITLE ###
+NotInGuardDoesNotRefine
+### DESCRIPTION ###
+`not in` holding is proof of absence. The guard-clause form of it
+(`if f not in xs: return`) would prove presence on the fall-through,
+but that fact has no region boundary to retire at - deliberately out
+of scope.
+### INPUT ###
+fn g(xs: str[], f: str):
+    if f not in xs:
+        n = xs.index_of(f) + 1
+### STDOUT ###
+# Identifier types
+  f @ 2:8 -> str
+  xs @ 2:17 -> str[]
+  n @ 3:9 -> <no-type>
+  xs @ 3:13 -> str[]
+  index_of @ 3:16 -> dynamic
+  f @ 3:25 -> str
+
+# Symbol types
+  f (param): str
+  g (fn): fn(str[], str) -> void
+  n (local): <error>
+  xs (param): str[]
+
+# Diagnostics
+  [hint] RAD30002 @ 3:13 - Invalid operand types: cannot do 'int? + int'
