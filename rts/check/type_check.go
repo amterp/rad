@@ -2230,16 +2230,21 @@ func (tc *typeChecker) walkCmd(c *rl.CmdBlock) {
 			_ = tc.synth(c.Decls[i].Default)
 		}
 	}
-	if c.Callback.IsLambda {
-		if c.Callback.Lambda != nil {
-			for _, stmt := range c.Callback.Lambda.Body {
-				tc.walkStmt(stmt)
+	if cb := c.Callback; cb != nil {
+		if cb.IsLambda {
+			if cb.Lambda != nil {
+				for _, stmt := range cb.Lambda.Body {
+					tc.walkStmt(stmt)
+				}
 			}
+		} else if cb.Identifier != nil {
+			// A named callback is a function reference; synth it so the use
+			// node carries the function's type (hover on the `calls` site).
+			_ = tc.synth(cb.Identifier)
 		}
-	} else if c.Callback.Identifier != nil {
-		// A named callback is a function reference; synth it so the use
-		// node carries the function's type (hover on the `calls` site).
-		_ = tc.synth(c.Callback.Identifier)
+	}
+	for _, sub := range c.SubCmds {
+		tc.walkCmd(sub)
 	}
 }
 

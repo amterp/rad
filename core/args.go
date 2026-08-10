@@ -39,6 +39,21 @@ const (
 	// - Flag-only (flagOnly=true)
 	// - Ra global (asRaGlobal=true, inherits to all subcommands)
 	AsGlobalFlag
+
+	// AsSharedNamespaceArg: args declared on a namespace command, inherited by
+	// every descendant.
+	// - Flag-only (flagOnly=true) so they don't consume a sub-command's positional
+	// - Ra global (asRaGlobal=true) so Ra cascades them, and their configured
+	//   state, to descendants - which is what lets the flag appear either side
+	//   of the sub-command on the path
+	//
+	// Riding Ra's globals is a means, not an end: Ra files globals under
+	// "Global options" and hides them in short help, so a namespace's shared
+	// args currently render in the wrong section of its own help. The fix is
+	// upstream (render inherited flags as command args); once it lands, this
+	// mode and AsScriptFlagOnly collapse into one - they are the same idea,
+	// separated only because the root was never modeled as a tree node.
+	AsSharedNamespaceArg
 )
 
 type ConstraintCtx struct {
@@ -1319,7 +1334,7 @@ func regModeToBoolFlags(mode RegistrationMode) (bool, bool) {
 	case AsScriptFlagOnly:
 		flagOnly = true
 		asRaGlobal = false
-	case AsGlobalFlag:
+	case AsGlobalFlag, AsSharedNamespaceArg:
 		flagOnly = true
 		asRaGlobal = true
 	default:

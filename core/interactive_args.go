@@ -33,36 +33,57 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 	// must reproduce the run *without* prompting.
 	stripped := stripInteractiveFlags(argsToRead, r.flagTokenInfo())
 
-	cmdToken := ""
+	var cmdPath []string
 	walkArgs := r.scriptData.Args
 	if len(r.cmdInvocations) > 0 {
-		invoked := r.invokedCmd()
-		if invoked == nil {
-			names := make([]string, len(r.cmdInvocations))
-			for i, inv := range r.cmdInvocations {
-				names[i] = inv.cmd.ExternalName
+		invoked, _ := r.resolveInvokedCommand()
+		if invoked == nil || invoked.IsNamespace() {
+			// Prompt a level at a time. Choosing a namespace isn't an answer -
+			// it only narrows the question - so keep asking until a leaf.
+			level := r.scriptData.Commands
+			if invoked != nil {
+				cmdPath = invoked.pathNames()
+				level = invoked.SubCmds
 			}
-			choice, err := prompter.Select("Choose a command", names,
-				func(choice string) string { return com.BoldS("Command:") + " " + com.GreenS(choice) })
-			if err != nil {
-				r.interactiveErrorExit(err)
+			for len(level) > 0 {
+				names := make([]string, len(level))
+				for i, cmd := range level {
+					names[i] = cmd.ExternalName
+				}
+				choice, err := prompter.Select("Choose a command", names,
+					func(choice string) string { return com.BoldS("Command:") + " " + com.GreenS(choice) })
+				if err != nil {
+					r.interactiveErrorExit(err)
+				}
+				cmdPath = append(cmdPath, choice)
+				var chosen *ScriptCommand
+				for _, cmd := range level {
+					if cmd.ExternalName == choice {
+						chosen = cmd
+						break
+					}
+				}
+				if chosen == nil {
+					break
+				}
+				level = chosen.SubCmds
 			}
-			cmdToken = choice
-			// Re-parse with the command at the front: flags are registered on the
-			// subcommand, so without a matched command anything the user already
+			// Re-parse with the command path at the front: flags are registered on
+			// the subcommand, so without a matched command anything the user already
 			// typed sat in root's unknown args and Configured() would miss it. The
 			// original (unstripped) tokens keep -i's validation bypass in effect.
 			RRootCmd.ResetParseState()
 			RRootCmd.ParseOrExit(
-				append([]string{cmdToken}, argsToRead...),
+				append(append([]string{}, cmdPath...), argsToRead...),
 				ra.WithIgnoreUnknown(true), ra.WithVariadicUnknownFlags(true),
 			)
-			invoked = r.invokedCmd()
+			invoked, _ = r.resolveInvokedCommand()
 		}
 		if invoked != nil {
-			// Command args first: they're the context the user just chose; shared
-			// script args follow, matching the subcommand usage layout.
-			walkArgs = append(append([]*ScriptArg{}, invoked.cmd.Args...), r.scriptData.Args...)
+			// Args along the whole path, deepest first: the leaf is the context
+			// the user just chose, then inherited namespace args, then shared
+			// script args - matching the subcommand usage layout.
+			walkArgs = append(invoked.argChain(), r.scriptData.Args...)
 		}
 	}
 
@@ -74,11 +95,9 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 		r.interactiveErrorExit(err)
 	}
 
-	finalArgs := make([]string, 0, len(stripped)+len(tokens)+1)
-	if cmdToken != "" {
-		// Ra matches a subcommand on the first non-flag token, so it must lead.
-		finalArgs = append(finalArgs, cmdToken)
-	}
+	finalArgs := make([]string, 0, len(stripped)+len(tokens)+len(cmdPath))
+	// Ra matches a subcommand on the first non-flag token, so the path must lead.
+	finalArgs = append(finalArgs, cmdPath...)
 	finalArgs = append(finalArgs, stripped...)
 	finalArgs = append(finalArgs, tokens...)
 
@@ -86,22 +105,14 @@ func (r *RadRunner) runInteractivePrepass(argsToRead []string) []string {
 	return finalArgs
 }
 
-func (r *RadRunner) invokedCmd() *cmdInvocation {
-	for i := range r.cmdInvocations {
-		if *r.cmdInvocations[i].usedPtr {
-			return &r.cmdInvocations[i]
-		}
-	}
-	return nil
-}
-
 // cliBoolLookup returns the parsed value of a bool flag the CLI supplied, so
 // the walk knows whether --no-cache=false style input counts for exclusion.
-// Covers shared script args and, when a command was invoked, its args too.
+// Covers shared script args and, when a command was invoked, every arg along
+// the invoked path.
 func (r *RadRunner) cliBoolLookup() func(externalName string) bool {
 	radArgs := r.scriptArgs
-	if invoked := r.invokedCmd(); invoked != nil {
-		radArgs = append(append([]RadArg{}, invoked.args...), r.scriptArgs...)
+	if _, pathArgs := r.resolveInvokedCommand(); len(pathArgs) > 0 {
+		radArgs = append(append([]RadArg{}, pathArgs...), r.scriptArgs...)
 	}
 	return func(externalName string) bool {
 		for _, a := range radArgs {

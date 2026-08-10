@@ -218,11 +218,11 @@ func (r *RadRunner) registerEmbeddedCommandsForCompletion() {
 
 // registerArgsForCompletion registers a script's args and commands on a Ra Cmd
 // for completion purposes. Unlike the normal registration path, this doesn't
-// track command invocations or wire up interpreter state.
+// track command invocations or wire up interpreter state - but it must build
+// the same tree, or completion offers commands the parser will reject. Hence
+// the shared walk rather than a second copy of the registration rules.
 func registerArgsForCompletion(cmd *ra.Cmd, data *ScriptData) {
-	hasCommands := len(data.Commands) > 0
-
-	if !hasCommands {
+	if len(data.Commands) == 0 {
 		// No commands: register script args on root as positional+flag
 		for _, arg := range data.Args {
 			flag := CreateFlag(arg)
@@ -231,28 +231,18 @@ func registerArgsForCompletion(cmd *ra.Cmd, data *ScriptData) {
 		return
 	}
 
-	// Commands exist: register args on each subcommand
+	// Build the shared args once and reuse the instances across the tree, the
+	// way the runner does: Register is idempotent per Ra command, and one
+	// instance per arg is what lets a value set anywhere on the path be read
+	// back from a single place.
+	scriptArgs := make([]RadArg, 0, len(data.Args))
+	for _, arg := range data.Args {
+		scriptArgs = append(scriptArgs, CreateFlag(arg))
+	}
+
 	for _, scriptCmd := range data.Commands {
-		raSubCmd := ra.NewCmd(scriptCmd.ExternalName)
-		if scriptCmd.Description != nil {
-			raSubCmd.SetDescription(*scriptCmd.Description)
-		}
-		raSubCmd.SetHelpEnabled(true)
-
-		// Script-level args as flag-only on each subcommand
-		for _, arg := range data.Args {
-			flag := CreateFlag(arg)
-			flag.Register(raSubCmd, AsScriptFlagOnly)
-		}
-
-		// Command-specific args as positional+flag
-		for _, arg := range scriptCmd.Args {
-			flag := CreateFlag(arg)
-			flag.Register(raSubCmd, AsCommandArg)
-		}
-
-		if _, err := cmd.RegisterCmd(raSubCmd); err != nil {
-			fmt.Fprintf(os.Stderr, "rad: warning: failed to register completion for subcommand %q: %s\n", scriptCmd.ExternalName, err)
+		if err := buildRaCmdTree(cmd, scriptCmd, scriptArgs, nil); err != nil {
+			fmt.Fprintf(os.Stderr, "rad: warning: failed to register completion for command %q: %s\n", scriptCmd.ExternalName, err)
 		}
 	}
 }

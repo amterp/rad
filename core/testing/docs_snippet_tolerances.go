@@ -559,10 +559,11 @@ var docSnippetTolerances = map[string]Tolerance{
 	},
 
 	// ---- docs-web/docs/guide/script-commands.md ---------------------
-	"docs-web/docs/guide/script-commands.md#3e824696": {
-		ExpectedCodes: []string{"RAD10001"},
-		Reason:        "guide fragment: command block declaration shown standalone (without an enclosing script context).",
-	},
+	// The multi-line-description fragment (#3e824696) used to need a
+	// RAD10001 tolerance: a command block without `calls` was a syntax
+	// error. The grammar is now permissive so the checker can give that
+	// mistake a real message, and the fragment parses clean. It will need
+	// an entry again once RAD40020 (command missing a callback) lands.
 
 	// ---- docs-web/docs/guide/stashes.md -----------------------------
 	// load_state() snippets no longer need entries: load_state() strips

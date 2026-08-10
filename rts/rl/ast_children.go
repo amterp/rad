@@ -255,11 +255,16 @@ func (n *CmdBlock) Children() []Node {
 			c = append(c, n.Decls[i].Default)
 		}
 	}
-	if n.Callback.Identifier != nil {
-		c = append(c, n.Callback.Identifier)
+	if n.Callback != nil {
+		if n.Callback.Identifier != nil {
+			c = append(c, n.Callback.Identifier)
+		}
+		if n.Callback.Lambda != nil {
+			c = append(c, n.Callback.Lambda)
+		}
 	}
-	if n.Callback.Lambda != nil {
-		c = append(c, n.Callback.Lambda)
+	for _, sub := range n.SubCmds {
+		c = append(c, sub)
 	}
 	return c
 }

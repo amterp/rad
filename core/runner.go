@@ -30,12 +30,18 @@ type RadRunner struct {
 	globalFlags    []RadArg
 	scriptArgs     []RadArg
 	cmdInvocations []cmdInvocation
+	// usageCmd is the command whose usage a help or usage-error should render.
+	// Nil means the script root. It matters once commands nest: failing on
+	// `tool remote` and then printing the root's command list answers a
+	// question the user didn't ask.
+	usageCmd *ra.Cmd
 }
 
 type cmdInvocation struct {
 	cmd     *ScriptCommand
 	usedPtr *bool
 	args    []RadArg // Command-specific arguments
+	raCmd   *ra.Cmd
 }
 
 func NewRadRunner(runnerInput RunnerInput) *RadRunner {
@@ -444,22 +450,24 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 
 	RRootCmd.ParseOrExit(argsToRead, finalParseOpts...)
 
-	// Determine which command was invoked (if any)
-	var invokedCommand *ScriptCommand
-	var commandArgs []RadArg
-	for _, inv := range r.cmdInvocations {
-		if *inv.usedPtr {
-			invokedCommand = inv.cmd
-			commandArgs = inv.args
-			break
-		}
-	}
+	// Determine the terminal (deepest) invoked command, if any.
+	invokedCommand, commandArgs := r.resolveInvokedCommand()
 
-	// Check if command is required but none was invoked
-	// (Commands exist but none invoked and not help/version/inspection flags)
-	if len(r.cmdInvocations) > 0 && invokedCommand == nil {
-		if !FlagHelp.Value && !FlagVersion.Value && !FlagSrc.Value && !FlagCstTree.Value && !FlagAstTree.Value {
-			RP.UsageErrorExit("Must specify a command")
+	if len(r.cmdInvocations) > 0 {
+		inspecting := FlagHelp.Value || FlagVersion.Value || FlagSrc.Value || FlagCstTree.Value || FlagAstTree.Value
+		if invokedCommand == nil {
+			if !inspecting {
+				RP.UsageErrorExit("Must specify a command")
+			}
+		} else if invokedCommand.IsNamespace() {
+			// A namespace groups and shares args; it has nothing of its own to
+			// run, so stopping here means the user never named a leaf. Show
+			// that namespace's commands, not the root's.
+			if !inspecting {
+				r.usageCmd = r.raCmdFor(invokedCommand)
+				RP.UsageErrorExit(fmt.Sprintf("Must specify a command for '%s'", invokedCommand.ExternalName))
+			}
+			invokedCommand, commandArgs = nil, nil
 		}
 	}
 
@@ -519,48 +527,164 @@ func (r *RadRunner) registerCommands() error {
 	r.cmdInvocations = make([]cmdInvocation, 0, len(r.scriptData.Commands))
 
 	for _, scriptCmd := range r.scriptData.Commands {
-		// Create Ra subcommand
-		raSubCmd := ra.NewCmd(scriptCmd.ExternalName)
-		if scriptCmd.Description != nil {
-			raSubCmd.SetDescription(*scriptCmd.Description)
+		if err := r.registerCommandTree(RRootCmd, scriptCmd); err != nil {
+			return err
 		}
+	}
 
-		// Configure subcommand usage headers
-		raSubCmd.SetUsageHeaders(ra.UsageHeaders{
-			Usage:         "Usage:",
-			Arguments:     "Command args:",
-			GlobalOptions: "Global options:",
+	return nil
+}
+
+// raCmdFor returns the Ra command mirroring a script command, or nil if it was
+// never registered.
+func (r *RadRunner) raCmdFor(cmd *ScriptCommand) *ra.Cmd {
+	for _, inv := range r.cmdInvocations {
+		if inv.cmd == cmd {
+			return inv.raCmd
+		}
+	}
+	return nil
+}
+
+// resolveInvokedCommand finds the terminal (deepest) invoked command and the
+// args in scope for its callback: the shared args inherited from every
+// namespace on the path, then the command's own, with the deeper declaration
+// winning a name collision - matching how Ra shadows them.
+//
+// Ra marks every command along the invoked path as used, not just the leaf, so
+// this descends rather than taking the first match. A first-match loop compiles
+// and quietly dispatches the namespace instead of the command the user asked
+// for.
+func (r *RadRunner) resolveInvokedCommand() (*ScriptCommand, []RadArg) {
+	used := make(map[*ScriptCommand]bool, len(r.cmdInvocations))
+	argsByCmd := make(map[*ScriptCommand][]RadArg, len(r.cmdInvocations))
+	for _, inv := range r.cmdInvocations {
+		used[inv.cmd] = *inv.usedPtr
+		argsByCmd[inv.cmd] = inv.args
+	}
+
+	var descend func(cmd *ScriptCommand) *ScriptCommand
+	descend = func(cmd *ScriptCommand) *ScriptCommand {
+		for _, sub := range cmd.SubCmds {
+			if used[sub] {
+				return descend(sub)
+			}
+		}
+		return cmd
+	}
+
+	var terminal *ScriptCommand
+	for _, top := range r.scriptData.Commands {
+		if used[top] {
+			terminal = descend(top)
+			break
+		}
+	}
+	if terminal == nil {
+		return nil, nil
+	}
+
+	var chain []*ScriptCommand
+	for c := terminal; c != nil; c = c.Parent {
+		chain = append([]*ScriptCommand{c}, chain...)
+	}
+
+	var pathArgs []RadArg
+	idxByID := make(map[string]int)
+	for _, c := range chain {
+		for _, a := range argsByCmd[c] {
+			id := a.GetIdentifier()
+			if idx, ok := idxByID[id]; ok {
+				pathArgs[idx] = a
+			} else {
+				idxByID[id] = len(pathArgs)
+				pathArgs = append(pathArgs, a)
+			}
+		}
+	}
+
+	return terminal, pathArgs
+}
+
+func (r *RadRunner) registerCommandTree(parent *ra.Cmd, scriptCmd *ScriptCommand) error {
+	return buildRaCmdTree(parent, scriptCmd, r.scriptArgs,
+		func(cmd *ScriptCommand, raCmd *ra.Cmd, usedPtr *bool, cmdArgs []RadArg) {
+			r.cmdInvocations = append(r.cmdInvocations, cmdInvocation{
+				cmd:     cmd,
+				usedPtr: usedPtr,
+				args:    cmdArgs,
+				raCmd:   raCmd,
+			})
 		})
+}
 
-		// Enable help for the subcommand
-		raSubCmd.SetHelpEnabled(true)
+// buildRaCmdTree mirrors a ScriptCommand and its descendants onto Ra's command
+// tree, calling onNode for each once it is registered. Shell completion builds
+// the same tree without the invocation tracking, and the two must agree: a
+// completion that offers commands the parser won't accept is worse than one
+// that offers nothing.
+//
+// Ordering is load-bearing. RegisterCmd copies the parent's globals into the
+// child, so a namespace's shared args must be registered on it before its
+// children are, or they never reach them.
+func buildRaCmdTree(
+	parent *ra.Cmd,
+	scriptCmd *ScriptCommand,
+	scriptArgs []RadArg,
+	onNode func(cmd *ScriptCommand, raCmd *ra.Cmd, usedPtr *bool, cmdArgs []RadArg),
+) error {
+	raCmd := ra.NewCmd(scriptCmd.ExternalName)
+	if scriptCmd.Description != nil {
+		raCmd.SetDescription(*scriptCmd.Description)
+	}
 
-		// Register script args on this subcommand as flag-only
-		// (Script args are shared across all commands but only accept flag syntax)
-		for _, scriptArg := range r.scriptArgs {
-			scriptArg.Register(raSubCmd, AsScriptFlagOnly)
+	raCmd.SetUsageHeaders(ra.UsageHeaders{
+		Usage:                 "Usage:",
+		Commands:              "Commands:",
+		Arguments:             "Command args:",
+		GlobalOptions:         "Global options:",
+		SubcommandPlaceholder: "command",
+	})
+	raCmd.SetHelpEnabled(true)
+
+	// A bare namespace should behave like a bare script: show what can be run
+	// next, rather than complaining about args for a command nobody named.
+	if scriptCmd.IsNamespace() {
+		raCmd.SetAutoHelpOnNoArgs(true)
+	}
+
+	// Script args are shared across every command but flag-only, so register
+	// them at each level - they stay valid wherever you are on the path.
+	for _, scriptArg := range scriptArgs {
+		scriptArg.Register(raCmd, AsScriptFlagOnly)
+	}
+
+	// This command's own args. A namespace's are shared with its descendants;
+	// a leaf's are its own, and may be given positionally.
+	argMode := AsCommandArg
+	if scriptCmd.IsNamespace() {
+		argMode = AsSharedNamespaceArg
+	}
+	cmdArgs := make([]RadArg, 0, len(scriptCmd.Args))
+	for _, arg := range scriptCmd.Args {
+		flag := CreateFlag(arg)
+		flag.Register(raCmd, argMode)
+		cmdArgs = append(cmdArgs, flag)
+	}
+
+	usedPtr, err := parent.RegisterCmd(raCmd)
+	if err != nil {
+		return fmt.Errorf("failed to register command '%s': %w", scriptCmd.ExternalName, err)
+	}
+
+	if onNode != nil {
+		onNode(scriptCmd, raCmd, usedPtr, cmdArgs)
+	}
+
+	for _, sub := range scriptCmd.SubCmds {
+		if err := buildRaCmdTree(raCmd, sub, scriptArgs, onNode); err != nil {
+			return err
 		}
-
-		// Register command-specific args on the subcommand as positional+flag
-		cmdArgs := make([]RadArg, 0, len(scriptCmd.Args))
-		for _, arg := range scriptCmd.Args {
-			flag := CreateFlag(arg)
-			flag.Register(raSubCmd, AsCommandArg)
-			cmdArgs = append(cmdArgs, flag)
-		}
-
-		// Register the subcommand with the root command
-		usedPtr, err := RRootCmd.RegisterCmd(raSubCmd)
-		if err != nil {
-			return fmt.Errorf("failed to register command '%s': %w", scriptCmd.ExternalName, err)
-		}
-
-		// Store the invocation tracking
-		r.cmdInvocations = append(r.cmdInvocations, cmdInvocation{
-			cmd:     scriptCmd,
-			usedPtr: usedPtr,
-			args:    cmdArgs,
-		})
 	}
 
 	return nil
