@@ -1137,8 +1137,14 @@ func runForLoopList(
 		}
 	}
 
+	// Indexed rather than `range`: `range` captures the slice header once, so a
+	// `del` in the body shortens the list while the loop keeps walking to the
+	// original length, reading a slot the list no longer holds. Re-reading the
+	// length and element each iteration keeps the loop on the live list, so
+	// mutation can shorten the traversal but never run it off the end.
 Loop:
-	for idx, val := range list.Values {
+	for idx := 0; idx < len(list.Values); idx++ {
+		val := list.Values[idx]
 		i.setLoopContext(context, loopNode, int64(idx), srcCopy)
 
 		if len(vars) == 1 {

@@ -128,3 +128,49 @@ h
 l
 o
 
+### TITLE ###
+Deleting during list iteration shortens the traversal
+### INPUT ###
+
+items = [1, 2, 3, 4, 5]
+for item in items:
+	if item == 2:
+		del items[1]
+	print(item)
+print("left:", items)
+### STDOUT ###
+1
+2
+4
+5
+left: [ 1, 3, 4, 5 ]
+
+### TITLE ###
+Deleting the head each iteration halves the traversal
+### INPUT ###
+
+items = [1, 2, 3, 4, 5]
+for item in items:
+	del items[0]
+	print(item)
+print("left:", items)
+### STDOUT ###
+1
+3
+5
+left: [ 4, 5 ]
+
+### TITLE ###
+Assigning an element during iteration is visible to the loop
+### INPUT ###
+
+items = [1, 2, 3]
+for item in items:
+	if item == 1:
+		items[2] = 99
+	print(item)
+### STDOUT ###
+1
+2
+99
+
