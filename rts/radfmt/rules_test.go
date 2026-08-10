@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	radtesting "github.com/amterp/rad/core/testing"
+	snap "github.com/amterp/go-snap"
 	"github.com/stretchr/testify/require"
 )
 
@@ -117,10 +117,10 @@ func collectSnapshotTags(t *testing.T) map[string]bool {
 
 	out := map[string]bool{}
 	for _, f := range files {
-		cases, err := radtesting.ParseSnapshotFile(f)
+		cases, err := snap.ParseFile(&FmtSuite, f)
 		require.NoErrorf(t, err, "parse snapshot file %s", f)
 		for _, c := range cases {
-			for _, m := range ruleTagRe.FindAllStringSubmatch(c.Title, -1) {
+			for _, m := range ruleTagRe.FindAllStringSubmatch(c.Title(), -1) {
 				out[m[1]] = true
 			}
 		}

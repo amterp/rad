@@ -1,159 +1,104 @@
 package testing
 
 import (
-	"os"
-	"path/filepath"
+	"strconv"
 	"strings"
-	"sync"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	snap "github.com/amterp/go-snap"
+	"github.com/amterp/go-snap/prompt"
 )
 
-// TestSnapshots runs snapshot tests from the snapshots/ directory.
-// These tests support stdout, stderr, and exit code validation.
+// snapshotSuite declares rad's end-to-end script surface: a case is one
+// invocation of the CLI, described by the script it runs, the arguments it gets,
+// and the terminal it runs in.
+//
+// Cases run sequentially. The runner reports through the package-level
+// stdin/stdout/stderr buffers in test_helpers.go, which the whole package shares.
+var snapshotSuite = snap.Suite{
+	Run: runSnapshotCase,
+	Inputs: []snap.Input{
+		{Name: "INPUT"},
+		{Name: "ARGS", List: true},
+		// RAW_ARGS is ARGS with the --color=never injection suppressed. Its
+		// presence is the switch, so it is meaningful even with an empty body.
+		{Name: "RAW_ARGS", List: true},
+		{Name: "TERM_WIDTH"},
+		prompt.KeysSection,
+	},
+	// Declaration order is write order, and matches the order these files were
+	// already in: the run's output, then what it rendered, then how it ended.
+	Outputs: []snap.Output{
+		{Name: "STDOUT"},
+		{Name: "STDERR"},
+		prompt.FramesSection,
+		{Name: "EXIT", Int: true},
+	},
+}
+
 func TestSnapshots(t *testing.T) {
-	snapshotDir := "snapshots"
-
-	// Check if the directory exists
-	if _, err := os.Stat(snapshotDir); os.IsNotExist(err) {
-		t.Skip("snapshots directory does not exist yet")
-		return
-	}
-
-	runSnapshotDirectory(t, snapshotDir)
+	snap.Run(t, "snapshots", &snapshotSuite)
 }
 
-// runSnapshotDirectory runs all snapshot tests in the given directory.
-func runSnapshotDirectory(t *testing.T, snapshotDir string) {
-	// Find all .snap files
-	var snapFiles []string
-	err := filepath.Walk(snapshotDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
+func runSnapshotCase(t *testing.T, c *snap.Case) {
+	args, rawArgs := c.List("ARGS"), c.Has("RAW_ARGS")
+	if rawArgs {
+		if len(args) > 0 {
+			t.Fatalf("a case sets both ARGS and RAW_ARGS; they are the same channel, so use one")
 		}
-		if !info.IsDir() && strings.HasSuffix(path, ".snap") {
-			snapFiles = append(snapFiles, path)
-		}
-		return nil
-	})
-	require.NoError(t, err, "Failed to walk snapshot directory")
-
-	if len(snapFiles) == 0 {
-		t.Skip("No snapshot files found")
-		return
-	}
-
-	CheckSnapshotUpdateFlags(t)
-
-	// Track which files need updating (thread-safe for consistency,
-	// even though tests don't run in parallel due to shared global state)
-	var updateMu sync.Mutex
-	filesToUpdate := make(map[string][]SnapshotCase)
-
-	for _, snapFile := range snapFiles {
-		snapFile := snapFile // capture for closure
-
-		cases, err := ParseSnapshotFile(snapFile)
-		require.NoError(t, err, "Failed to parse snapshot file: %s", snapFile)
-
-		for i := range cases {
-			tc := &cases[i]
-			testName := strings.TrimPrefix(snapFile, snapshotDir+"/")
-			testName = strings.TrimSuffix(testName, ".snap")
-			if tc.Title != "" {
-				testName = testName + "/" + tc.Title
-			}
-
-			// Note: We don't use t.Parallel() here because we rely on global state
-			// (stdInBuffer, stdOutBuffer, stdErrBuffer) defined in test_helpers.go.
-			t.Run(testName, func(t *testing.T) {
-				if tc.SkipReason != "" {
-					t.Skip(tc.SkipReason)
-				}
-
-				runSnapshotTest(t, tc)
-
-				actual := SnapshotResult{
-					Stdout:   normalizeOutput(stdOutBuffer.String()),
-					Stderr:   normalizeOutput(stdErrBuffer.String()),
-					Frames:   normalizeOutput(captureFrames()),
-					ExitCode: getExitCode(),
-				}
-
-				updating := ShouldUpdateSnapshotFile(snapFile)
-				if CompareSnapshotResult(t, tc, actual, updating) && updating {
-					updateMu.Lock()
-					tc.Stdout = actual.Stdout
-					tc.Stderr = actual.Stderr
-					tc.Frames = actual.Frames
-					tc.ExitCode = actual.ExitCode
-					filesToUpdate[snapFile] = cases
-					updateMu.Unlock()
-				}
-			})
-		}
-	}
-
-	// Rewrite the snapshot files we targeted. filesToUpdate only holds files
-	// selected by -update / -update-all (it's empty otherwise), so there's no
-	// separate "are we updating?" guard here.
-	for path, cases := range filesToUpdate {
-		if err := WriteSnapshotFile(path, cases); err != nil {
-			t.Errorf("Failed to update snapshot file %s: %v", path, err)
-		} else {
-			t.Logf("Updated snapshot file: %s", path)
-		}
-	}
-}
-
-// runSnapshotTest runs a single snapshot test case.
-func runSnapshotTest(t *testing.T, tc *SnapshotCase) {
-	t.Helper()
-
-	// Build args, only adding --color=never if:
-	// - RawArgs is false (normal mode)
-	// - No --color flag is already specified
-	args := tc.Args
-	if !tc.RawArgs {
-		hasColorFlag := false
-		for _, arg := range args {
-			if strings.HasPrefix(arg, "--color") {
-				hasColorFlag = true
-				break
-			}
-		}
-		if !hasColorFlag {
+		args = c.List("RAW_ARGS")
+	} else {
+		// Snapshots assert on plain text, so color is off unless the case says
+		// otherwise. RAW_ARGS opts out for cases that assert on arg validation,
+		// where an injected flag would change what is being tested.
+		if !hasColorFlag(args) {
 			args = append(args, "--color=never")
 		}
 	}
 
-	tp := NewTestParams(tc.Input, args...)
-	if tc.TermWidth > 0 {
-		tp.TermWidth(tc.TermWidth)
-		// Force UTF-8 mode for deterministic ellipsis output in truncation tests
+	tp := NewTestParams(c.Text("INPUT"), args...)
+
+	if w := c.Text("TERM_WIDTH"); w != "" {
+		width, err := strconv.Atoi(w)
+		if err != nil {
+			t.Fatalf("TERM_WIDTH: %v", err)
+		}
+		tp.TermWidth(width)
+		// Force UTF-8 mode for deterministic ellipsis output in truncation tests.
 		setTerminalUtf8(t, true)
 	}
-	if len(tc.Keys) > 0 {
-		tp.Keys(tc.Keys...)
+	if keys := c.List(prompt.KeysSection.Name); len(keys) > 0 {
+		tp.Keys(keys...)
 	}
+
 	setupAndRun(t, tp)
+
+	c.Out("STDOUT", normalizeOutput(stdOutBuffer.String()))
+	c.Out("STDERR", normalizeOutput(stdErrBuffer.String()))
+	c.OutInt("EXIT", exitCode())
+	c.Out(prompt.FramesSection.Name, normalizeOutput(captureFrames()))
 }
 
-// getExitCode returns the exit code from the last test run.
-// Returns 0 if no exit occurred.
-func getExitCode() int {
+func hasColorFlag(args []string) bool {
+	for _, arg := range args {
+		if strings.HasPrefix(arg, "--color") {
+			return true
+		}
+	}
+	return false
+}
+
+// exitCode reports the exit code from the last run, or 0 if nothing exited.
+func exitCode() int {
 	if errorOrExit.exitCode != nil {
 		return *errorOrExit.exitCode
 	}
 	return 0
 }
 
-// normalizeOutput replaces test-specific file names with <script> for
-// consistent snapshot comparison across different test environments.
+// normalizeOutput replaces the harness's stand-in script name with a stable
+// placeholder. This is the only scrubbing the suite does; everything else that
+// could vary is pinned by the fakes in test_helpers.go instead.
 func normalizeOutput(output string) string {
-	// The test framework uses "TestCase" as the filename
-	// Replace it with <script> for portable snapshots
-	output = strings.ReplaceAll(output, "--> TestCase:", "--> <script>:")
-	return output
+	return strings.ReplaceAll(output, "--> TestCase:", "--> <script>:")
 }

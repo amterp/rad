@@ -70,7 +70,6 @@ B: [47, 51] PS: [1, 19] PE: [1, 23]                                             
 B: [47, 51] PS: [1, 19] PE: [1, 23]                                                     delegate: var_path
 B: [47, 51] PS: [1, 19] PE: [1, 23]                                                       root: identifier `item`
 B: [51, 52] PS: [1, 23] PE: [1, 24]                                 ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [2,  0] SourceFile
 PS: [0,  0] PE: [1, 24]   ForLoop vars=[item] with ctx
@@ -82,4 +81,3 @@ PS: [1, 10] PE: [1, 17]         VarPath
 PS: [1, 10] PE: [1, 13]           Identifier "ctx"
                                 .idx
 PS: [1, 19] PE: [1, 23]         Identifier "item"
-

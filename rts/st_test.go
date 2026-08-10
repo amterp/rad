@@ -1,117 +1,53 @@
 package rts_test
 
 import (
-	"os"
-	"path/filepath"
-	"strings"
-	"sync"
 	"testing"
 
-	radtesting "github.com/amterp/rad/core/testing"
+	snap "github.com/amterp/go-snap"
+
 	"github.com/amterp/rad/rts"
 	"github.com/amterp/rad/rts/rl"
-	"github.com/stretchr/testify/require"
 )
 
+// stSuite declares the syntax-tree surface: a Rad script in, the concrete tree
+// tree-sitter produced and the AST converted from it out.
+var stSuite = snap.Suite{
+	Run:      runSTCase,
+	Inputs:   []snap.Input{{Name: "INPUT"}},
+	Outputs:  []snap.Output{{Name: "STDOUT"}, {Name: "STDERR"}},
+	Parallel: true,
+}
+
 func TestSTSnapshots(t *testing.T) {
-	snapshotDir := "test/st_snapshots"
+	snap.Run(t, "test/st_snapshots", &stSuite)
+}
 
-	// Check if the directory exists
-	if _, err := os.Stat(snapshotDir); os.IsNotExist(err) {
-		t.Skip("st_snapshots directory does not exist yet")
-		return
+func runSTCase(t *testing.T, c *snap.Case) {
+	input := c.Text("INPUT")
+
+	parser, err := rts.NewRadParser()
+	if err != nil {
+		t.Fatalf("failed to create parser: %v", err)
 	}
+	defer parser.Close()
 
-	// Find all .snap files
-	var snapFiles []string
-	err := filepath.Walk(snapshotDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() && strings.HasSuffix(path, ".snap") {
-			snapFiles = append(snapFiles, path)
-		}
-		return nil
-	})
-	require.NoError(t, err, "Failed to walk snapshot directory")
+	tree := parser.Parse(input)
+	c.Out("STDOUT", tree.Dump())
 
-	if len(snapFiles) == 0 {
-		t.Skip("No snapshot files found")
-		return
+	// A tree with parse errors has no AST to dump, and conversion can panic on
+	// inputs the converter cannot represent (out-of-range numbers, say). Both
+	// leave the dump empty rather than failing the case: the CST is what a
+	// parser-error case exists to pin.
+	astDump := ""
+	if !tree.Root().HasError() {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Logf("AST conversion failed: %v", r)
+				}
+			}()
+			astDump = rl.AstDump(rts.ConvertCST(tree.Root(), input, "test.rad"))
+		}()
 	}
-
-	radtesting.CheckSnapshotUpdateFlags(t)
-
-	// Track which files need updating (thread-safe since tests run in parallel)
-	var updateMu sync.Mutex
-	filesToUpdate := make(map[string][]radtesting.SnapshotCase)
-
-	for _, snapFile := range snapFiles {
-		snapFile := snapFile // capture for closure
-
-		cases, err := radtesting.ParseSnapshotFile(snapFile)
-		require.NoError(t, err, "Failed to parse snapshot file: %s", snapFile)
-
-		for i := range cases {
-			tc := &cases[i]
-			testName := strings.TrimPrefix(snapFile, snapshotDir+"/")
-			testName = strings.TrimSuffix(testName, ".snap")
-			if tc.Title != "" {
-				testName = testName + "/" + tc.Title
-			}
-
-			t.Run(testName, func(t *testing.T) {
-				t.Parallel()
-
-				parser, err := rts.NewRadParser()
-				require.NoError(t, err, "Failed to create parser")
-				defer parser.Close()
-
-				tree := parser.Parse(tc.Input)
-				cstDump := tree.Dump()
-
-				// Only generate AST if there are no parse errors
-				// Recover from panics during conversion (e.g., out-of-range numbers)
-				astDump := ""
-				if !tree.Root().HasError() {
-					func() {
-						defer func() {
-							if r := recover(); r != nil {
-								// AST conversion failed, leave astDump empty
-								t.Logf("AST conversion failed: %v", r)
-							}
-						}()
-						ast := rts.ConvertCST(tree.Root(), tc.Input, "test.rad")
-						astDump = rl.AstDump(ast)
-					}()
-				}
-
-				actual := radtesting.SnapshotResult{
-					Stdout: cstDump,
-					Stderr: astDump,
-				}
-
-				updating := radtesting.ShouldUpdateSnapshotFile(snapFile)
-				if radtesting.CompareSnapshotResult(t, tc, actual, updating) && updating {
-					updateMu.Lock()
-					tc.Stdout = actual.Stdout
-					tc.Stderr = actual.Stderr
-					filesToUpdate[snapFile] = cases
-					updateMu.Unlock()
-				}
-			})
-		}
-	}
-
-	// Write updates after all subtests complete
-	t.Cleanup(func() {
-		// filesToUpdate only holds files selected by -update / -update-all.
-		for path, cases := range filesToUpdate {
-			if err := radtesting.WriteSnapshotFile(path, cases); err != nil {
-				t.Errorf("Failed to update snapshot file %s: %v", path, err)
-			} else {
-				t.Logf("Updated snapshot file: %s", path)
-			}
-		}
-	})
+	c.Out("STDERR", astDump)
 }
