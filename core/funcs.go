@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -18,7 +19,10 @@ import (
 
 	com "github.com/amterp/rad/core/common"
 
+	"github.com/amterp/rad/rts/prompts"
 	"github.com/amterp/rad/rts/rl"
+
+	"github.com/amterp/radish"
 
 	fid "github.com/amterp/flexid"
 
@@ -641,9 +645,22 @@ func init() {
 			Execute: func(f FuncInvocation) RadValue {
 				prompt := f.GetStr("prompt").Plain()
 
+				// Checked here rather than inside RConfirm: that seam is shared
+				// with the shell-command gate and carries no call position, so
+				// each caller has to look up its own answer.
+				if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
+					if outcome != prompts.Answered {
+						return f.Return(unansweredPromptErr(outcome, fmt.Sprintf("The confirm %q", prompt)))
+					}
+					return f.Return(answer.Bool)
+				}
+
 				response, err := RConfirm("", prompt)
 				if err != nil {
 					// Cancel (Esc/Ctrl-C) and not-a-TTY both surface here as errors.
+					if errors.Is(err, radish.ErrNotInteractive) {
+						return f.Return(unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The confirm %q", prompt)))
+					}
 					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 
@@ -726,8 +743,33 @@ func init() {
 				default_ := f.GetStr("default").Plain()
 				secret := f.GetBool("secret")
 
+				if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
+					if outcome != prompts.Answered {
+						return f.Return(unansweredPromptErr(outcome, fmt.Sprintf("The input %q", prompt)))
+					}
+					// Checked here as well as up front: the static walk only sees
+					// `secret=true` written literally, so a computed one would
+					// otherwise take a password straight off the command line.
+					if secret {
+						return f.Return(secretNeedsTerminalErr(prompt))
+					}
+					// Empty takes the default, exactly as submitting an empty
+					// field at a terminal does. An answer should produce what
+					// the person would have produced, not a second behavior.
+					if answer.Text == "" {
+						return f.Return(NewRadString(default_))
+					}
+					return f.Return(NewRadString(answer.Text))
+				}
+
 				response, err := InputText(prompt, hint, default_, secret)
 				if err != nil {
+					if errors.Is(err, radish.ErrNotInteractive) {
+						if secret {
+							return f.Return(secretNeedsTerminalErr(prompt))
+						}
+						return f.Return(unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The input %q", prompt)))
+					}
 					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
 				return f.Return(response)

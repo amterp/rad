@@ -146,12 +146,19 @@ Go types (`int64`, `float64`, `RadString`, `*RadList`, `*RadMap`, `RadFn`,
 
 All IO and environment access goes through injectable globals (`RIo`,
 `RClock`, `RShell`, `RReq` for HTTP, `RSleep`, `RSignal`, `RInteractive`,
-`RExit`, ...), wired from `RunnerInput`. The tests in `core/testing/` inject
-fakes for all of them and run the real runner end to end, asserting on
-captured stdout/stderr/exit code (`setupAndRunCode`, `assertOnlyOutput`,
-`assertError`, `NewTestParams(...).Keys(...)` for interactive prompts, ...).
-Don't bypass these seams with direct `os.*` / `time.*` / `exec.*` calls in
-interpreter code paths - it breaks both testability and determinism.
+`RTerminal`, `RExit`, ...), wired from `RunnerInput`. The tests in
+`core/testing/` inject fakes for all of them and run the real runner end to
+end, asserting on captured stdout/stderr/exit code (`setupAndRunCode`,
+`assertOnlyOutput`, `assertError`, `NewTestParams(...).Keys(...)` for
+interactive prompts, `NewTestParams(...).NoTerminal()` for the no-terminal
+paths, ...). Don't bypass these seams with direct `os.*` / `time.*` / `exec.*`
+calls in interpreter code paths - it breaks both testability and determinism.
+
+`RTerminal` is the single authority on whether rad can prompt at all: it
+probes stdin, then the controlling terminal (`/dev/tty`, `CONIN$` on Windows).
+Both the prompt driver and the pre-flight guard ask it, so they can never
+disagree. Note `com.IsTty` is NOT this - it inspects stdout and exists only for
+cosmetic rendering choices.
 
 ### Built-in functions: docs are the source of truth
 

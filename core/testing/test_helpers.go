@@ -21,14 +21,16 @@ import (
 )
 
 const scriptGlobalFlagHelp = `Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 `
 
 const allGlobalFlagHelp = `Global options:
@@ -47,6 +49,8 @@ const allGlobalFlagHelp = `Global options:
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+      --reply line:value    Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 `
 
 const radHelp = `rad: A tool for writing user-friendly command line scripts.
@@ -166,6 +170,11 @@ func newRunnerInput() core.RunnerInput {
 		RReq:         requester,
 		RadHome:      &radTestHome,
 		RInteractive: prompt.NoKeys{},
+		// Tests drive prompts through an injected driver, so terminal
+		// availability must not depend on how `go test` was launched (its stdin
+		// is never a terminal). Default to "a terminal exists"; cases that want
+		// the non-interactive path opt in explicitly.
+		RTerminal: core.NewFakeTerminalSource(true),
 	}
 }
 
@@ -192,6 +201,7 @@ type TestParams struct {
 	confirmResponder func(title, prompt string) (bool, error)
 	shellResponder   func(invocation core.ShellInvocation) (string, string, int)
 	keys             []string
+	noTerminal       bool
 }
 
 func NewTestParams(script string, args ...string) *TestParams {
@@ -243,6 +253,15 @@ func (tp *TestParams) ShellOutput(stdout, stderr string, exitCode int) *TestPara
 // runes are typed in order.
 func (tp *TestParams) Keys(keys ...string) *TestParams {
 	tp.keys = keys
+	return tp
+}
+
+// NoTerminal runs as if neither stdin nor /dev/tty were a terminal - a CI job,
+// a cron run, or an agent's tool call. This is what exercises the pre-flight
+// guard and the --reply paths; without it, tests inherit "a terminal exists" so
+// the rest of the suite can keep driving prompts with scripted keys.
+func (tp *TestParams) NoTerminal() *TestParams {
+	tp.noTerminal = true
 	return tp
 }
 
@@ -336,6 +355,10 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 		runnerInput.RInteractive = driver
 	}
 
+	if tp.noTerminal {
+		runnerInput.RTerminal = core.NewFakeTerminalSource(false)
+	}
+
 	runner := setupRunner(t, args...)
 	defer func() {
 		if r := recover(); r != nil {
@@ -387,6 +410,9 @@ func resetTestState() {
 	// Reset interactive prompt driver to the safe no-keys default.
 	lastInteractiveDriver = nil
 	runnerInput.RInteractive = prompt.NoKeys{}
+	// Reset terminal availability. Without this a NO_TERMINAL case would leak
+	// into every case after it, tripping the pre-flight guard on unrelated tests.
+	runnerInput.RTerminal = core.NewFakeTerminalSource(true)
 }
 
 func setTerminalUtf8(t *testing.T, utf8 bool) {

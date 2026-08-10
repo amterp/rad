@@ -3,9 +3,74 @@ package core
 import (
 	"errors"
 	"fmt"
+	"strings"
+
+	com "github.com/amterp/rad/core/common"
+	"github.com/amterp/rad/rts/prompts"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/radish"
 )
+
+// multipickFromReply applies a command-line selection, enforcing the same
+// bounds the interactive model would.
+//
+// radish blocks a bounds violation silently - Max refuses the toggle, Min
+// refuses to submit - which is right at a keyboard, where the user simply sees
+// nothing happen and tries again. A supplied answer has nobody to notice, so
+// here it has to be an error rather than a quietly truncated selection.
+func multipickFromReply(
+	selected, options []string,
+	min int64,
+	max *int64,
+	prompt string,
+) (*RadList, *RadError) {
+	seen := make(map[string]bool, len(selected))
+	for _, sel := range selected {
+		found := false
+		for _, opt := range options {
+			if opt == sel {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nil, NewErrorStrf(
+				"%q is not one of the options for the multipick %q. Options: %s. "+
+					"Answers must match exactly - rad won't guess which one you meant",
+				sel, prompt, strings.Join(options, ", "),
+			).SetCode(rl.ErrPromptUnanswerable)
+		}
+		// The model toggles, so it can't return an option twice. Left alone, a
+		// repeat would also satisfy `min` with fewer distinct choices than asked.
+		if seen[sel] {
+			return nil, NewErrorStrf(
+				"%q is selected twice for the multipick %q; list each option at most once",
+				sel, prompt,
+			).SetCode(rl.ErrPromptUnanswerable)
+		}
+		seen[sel] = true
+	}
+
+	if int64(len(selected)) < min {
+		return nil, NewErrorStrf(
+			"the multipick %q needs at least %s, but the answer gave %d",
+			prompt, com.Pluralize(int(min), "selection"), len(selected),
+		).SetCode(rl.ErrPromptUnanswerable)
+	}
+	if max != nil && int64(len(selected)) > *max {
+		return nil, NewErrorStrf(
+			"the multipick %q allows at most %s, but the answer gave %d",
+			prompt, com.Pluralize(int(*max), "selection"), len(selected),
+		).SetCode(rl.ErrPromptUnanswerable)
+	}
+
+	result := NewRadList()
+	for _, item := range selected {
+		result.Append(newRadValueStr(item))
+	}
+	return result, nil
+}
 
 var FuncMultipick = BuiltInFunc{
 	Name: FUNC_MULTIPICK,
@@ -68,6 +133,17 @@ var FuncMultipick = BuiltInFunc{
 			prompt = f.GetStr("prompt").Plain()
 		}
 
+		if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
+			if outcome != prompts.Answered {
+				return f.Return(unansweredPromptErr(outcome, fmt.Sprintf("The multipick %q", prompt)))
+			}
+			selected, radErr := multipickFromReply(answer.List, options, min, max, prompt)
+			if radErr != nil {
+				return f.Return(radErr)
+			}
+			return f.Return(selected)
+		}
+
 		// radish enforces the bounds directly: Max blocks toggling past the limit,
 		// Min gates submit until satisfied. No post-submit validation is needed - the
 		// returned selection is always within [min, max].
@@ -83,7 +159,7 @@ var FuncMultipick = BuiltInFunc{
 		res, _, err := RInteractive.Run(model)
 		if err != nil {
 			if errors.Is(err, radish.ErrNotInteractive) {
-				return f.Return(NewErrorStrf("multipick requires an interactive terminal"))
+				return f.Return(unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The multipick %q", prompt)))
 			}
 			return f.Return(NewErrorStrf("Error running multipick: %v", err))
 		}

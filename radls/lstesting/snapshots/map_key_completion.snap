@@ -589,7 +589,7 @@ print(gp.exists)
       "sortText": "2"
     },
     {
-      "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
+      "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e error|str[]",
       "kind": 3,
       "label": "multipick",
       "sortText": "2"
@@ -637,7 +637,7 @@ print(gp.exists)
       "sortText": "2"
     },
     {
-      "detail": "pick(_options: str[], _filter: (str|str[])?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
+      "detail": "pick(_options: str[], _filter: (str|str[])?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e error|str",
       "kind": 3,
       "label": "pick",
       "sortText": "2"
@@ -1441,7 +1441,7 @@ fn f():
       "sortText": "2"
     },
     {
-      "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
+      "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e error|str[]",
       "kind": 3,
       "label": "multipick",
       "sortText": "2"
@@ -1489,7 +1489,7 @@ fn f():
       "sortText": "2"
     },
     {
-      "detail": "pick(_options: str[], _filter: (str|str[])?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
+      "detail": "pick(_options: str[], _filter: (str|str[])?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e error|str",
       "kind": 3,
       "label": "pick",
       "sortText": "2"
@@ -2288,7 +2288,7 @@ fn f():
       "sortText": "2"
     },
     {
-      "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e str[]",
+      "detail": "multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -\u003e error|str[]",
       "kind": 3,
       "label": "multipick",
       "sortText": "2"
@@ -2336,7 +2336,7 @@ fn f():
       "sortText": "2"
     },
     {
-      "detail": "pick(_options: str[], _filter: (str|str[])?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e str",
+      "detail": "pick(_options: str[], _filter: (str|str[])?, *, prompt: str = \"Pick an option\", prefer_exact: bool = false) -\u003e error|str",
       "kind": 3,
       "label": "pick",
       "sortText": "2"

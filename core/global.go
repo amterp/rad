@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/amterp/rad/rts/prompts"
+
 	"github.com/amterp/color"
 	"github.com/amterp/ra"
 	"golang.org/x/term"
@@ -35,25 +37,33 @@ func GetTermWidth() int {
 }
 
 var (
-	RRootCmd                 *ra.Cmd
-	RConfig                  *RadConfig
-	RP                       Printer
-	RIo                      RadIo
-	RExit                    *RadExitHandler
-	RForceExit               func(int) // hard exit that skips defers; for double-Ctrl+C
-	RReq                     *Requester
-	RClock                   Clock
-	RSleep                   func(ctx context.Context, duration time.Duration)
-	RShell                   ShellExecutor
-	RConfirm                 func(title string, prompt string) (bool, error)
-	RSignal                  SignalSource
-	RInteractive             InteractiveDriver
-	RNG                      *rand.Rand
-	HasScript                bool
-	ScriptPath               string
-	ScriptDir                string
-	ScriptName               string
-	IsTest                   bool
+	RRootCmd     *ra.Cmd
+	RConfig      *RadConfig
+	RP           Printer
+	RIo          RadIo
+	RExit        *RadExitHandler
+	RForceExit   func(int) // hard exit that skips defers; for double-Ctrl+C
+	RReq         *Requester
+	RClock       Clock
+	RSleep       func(ctx context.Context, duration time.Duration)
+	RShell       ShellExecutor
+	RConfirm     func(title string, prompt string) (bool, error)
+	RSignal      SignalSource
+	RInteractive InteractiveDriver
+	RTerminal    TerminalSource
+	// RReplies holds the answers supplied via --reply / --reply-na, bound to the
+	// prompt sites they address. nil when the script has no prompts.
+	RReplies   *prompts.Replies
+	RNG        *rand.Rand
+	HasScript  bool
+	ScriptPath string
+	ScriptDir  string
+	ScriptName string
+	IsTest     bool
+	// RawArgs is the caller's argv after the rad binary, as they typed it. A
+	// stdin script has its `-` stripped from os.Args before the run proper, so
+	// os.Args can't be used to reproduce the original invocation.
+	RawArgs                  []string
 	AlreadyExportedShellVars bool
 	RTermWidth               *int // nil = use real terminal width; non-nil overrides for tests
 
@@ -78,6 +88,10 @@ type RunnerInput struct {
 	// RInteractive overrides the interactive-prompt driver. nil uses the real
 	// terminal; tests inject a scripted driver. See InteractiveDriver.
 	RInteractive InteractiveDriver
+	// RTerminal overrides how rad decides a terminal is reachable. nil probes
+	// stdin then the controlling terminal; tests inject a fixed answer so
+	// availability doesn't depend on how `go test` was launched.
+	RTerminal TerminalSource
 }
 
 func SetScriptPath(path string) {
@@ -108,12 +122,15 @@ func ResetGlobals() {
 	RConfirm = nil
 	RSignal = nil
 	RInteractive = nil
+	RTerminal = nil
+	RReplies = nil
 	RNG = nil
 	HasScript = false
 	ScriptPath = ""
 	ScriptDir = ""
 	ScriptName = ""
 	IsTest = false
+	RawArgs = nil
 	AlreadyExportedShellVars = false
 	RTermWidth = nil
 
@@ -132,6 +149,8 @@ func ResetGlobals() {
 	FlagMockResponse = StringRadArg{}
 	FlagTlsInsecure = BoolRadArg{}
 	FlagInteractive = BoolRadArg{}
+	FlagReply = StringListRadArg{}
+	FlagReplyNa = StringListRadArg{}
 	GlobalFlagScopes = nil
 
 	StartEpochMillis = 0
@@ -219,6 +238,12 @@ func setGlobals(runnerInput RunnerInput) {
 		RInteractive = terminalDriver{}
 	} else {
 		RInteractive = runnerInput.RInteractive
+	}
+
+	if runnerInput.RTerminal == nil {
+		RTerminal = osTerminalSource{}
+	} else {
+		RTerminal = runnerInput.RTerminal
 	}
 
 	RTermWidth = runnerInput.RTermWidth

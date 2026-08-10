@@ -1559,6 +1559,145 @@ asks you to say what you meant.
 
 - `rad docs guide/shell-commands` - the three command forms and when to use each
 
+### RAD20046: Interactive Input Required
+
+The script asks the user something - via `input()`, `confirm()`, `pick()`, `multipick()`, or a `confirm`-gated shell command - but there is no terminal to ask at. Rad stops before running any of the script and tells you what it would have asked.
+
+Rad looks for a terminal in two places: standard input, and `/dev/tty` (the terminal attached to your session, which works even when stdin is a pipe or a here-string). Both being unavailable means nothing interactive can happen: a CI job, a cron run, or an AI agent's tool call.
+
+Nothing in the script has executed at this point. That is deliberate - discovering a prompt halfway through would leave you reasoning about a half-finished run before you could retry.
+
+Rad exits `7` here, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.
+
+#### How to Fix
+
+Answer each prompt up front with `--reply`, keyed by the line it sits on. Rad prints a ready-to-run command with the keys already filled in, so this is usually copy-paste:
+
+```
+rad deploy.rad prod --reply 5:yes --reply 6:'shipped it' --reply 7:web-1
+```
+
+Answers are matched by kind, so nothing needs escaping except a `multipick`:
+
+| Prompt                                  | Answer                                                          |
+| --------------------------------------- | --------------------------------------------------------------- |
+| `confirm`, `confirm $\`...\``           | `yes` / `no` (also `y`, `n`, `true`, `false`)                   |
+| `input`                                 | the rest of the value, taken verbatim                           |
+| `pick`, `pick_kv`, `pick_from_resource` | one option, matched exactly                                     |
+| `multipick`                             | comma-separated; `\,` for a literal comma, `\\` for a backslash |
+
+Only the first colon separates the key from the value, so `--reply 6:https://example.com` needs no quoting. Any `<value>` in the suggested command is a placeholder - replace it, or rad answers with that literal text.
+
+A `multipick` answer must name each option at most once and satisfy the prompt's `min` and `max`. Give an empty value (`--reply 3:`) to select nothing.
+
+#### Repeating a Prompt
+
+A prompt inside a loop runs more than once. Repeat the key to answer each pass in order:
+
+```
+rad cleanup.rad --reply 12:yes --reply 12:no
+```
+
+Answers are queued per line rather than globally, so adding a prompt earlier in a script never silently re-targets a later answer. Running out mid-loop stops the script rather than reusing the last answer.
+
+#### Prompts You Don't Expect To Reach
+
+If a prompt sits on a branch this run won't take, say so instead of inventing a value:
+
+```
+rad deploy.rad --dry-run --reply-na 20
+```
+
+If the script reaches it anyway, rad fails cleanly (see RAD20047) rather than acting on a guess. Use this for a `pick` given a filter too - a filtered pick often narrows to a single option and never asks, which is why rad suggests `--reply-na` for those rather than a value.
+
+#### Secret Inputs
+
+A secret `input` cannot be answered this way at all. Command-line arguments are visible to other processes on the machine, so a password there would leak. Run the script where a terminal is available, or use `--reply-na` if this run won't reach it. Rad refuses the answer whether `secret` is a literal or computed while the script runs, though only a literal can be reported here rather than at the prompt.
+
+#### Interactive Functions Used As Values
+
+One shape takes no `--reply`: an interactive function passed around as a value rather than called.
+
+```rad
+ask = pick
+answer = ask(["dev", "prod"])
+```
+
+Answers are keyed by the position of the call, and rad can't see where such a value ends up or how often it runs, so there is nothing for a value to attach to. Use `--reply-na` on its line to assert this run never invokes it - which is the usual answer for a handler map whose interactive entry isn't the one selected. If that assertion is wrong, the script stops at the prompt (see RAD20047) rather than guessing.
+
+#### Scripts That Disable Global Options
+
+A script setting `@enable_global_options = 0` removes `--reply` along with every other global flag, so its prompts can't be answered from the command line. Rad says so rather than suggesting a command the script would reject. Run it where a terminal is available, or re-enable global options in the script.
+
+#### Related
+
+- **RAD20047** - a prompt was reached that couldn't be answered.
+- **RAD20010** - an interactive prompt failed or was canceled.
+
+### RAD20047: Prompt Reached Without A Usable Answer
+
+The script reached a prompt that `--reply` couldn't answer. Unlike RAD20046, this one fires mid-run, because it depends on something rad could not know before starting.
+
+There are four ways to get here.
+
+#### The Prompt Was Marked Unreachable
+
+You passed `--reply-na` for this line, asserting the run wouldn't reach it, and it did:
+
+```
+rad deploy.rad --reply-na 20
+```
+
+That assertion is a promise, not a fallback, so rad stops rather than guessing an answer. Either the branch you expected to skip was taken, or the assertion was aimed at the wrong line. Replace it with a real `--reply`, or work out why the branch ran.
+
+#### The Answers Ran Out
+
+A prompt inside a loop consumed every answer supplied for its line and was reached again:
+
+```
+rad cleanup.rad --reply 12:yes --reply 12:yes    # ran a third time
+```
+
+Rad does not reuse the last answer. One `yes` silently approving five hundred deletions is exactly the accident worth failing over. Supply as many answers as the loop has passes, or narrow what the loop iterates over.
+
+#### The Answer Matched No Option
+
+A `pick` or `multipick` over runtime data - a fetched list, a resource file, a computed set - got an answer that isn't in it:
+
+```rad
+fn fetch_servers():
+    return ["web-1", "web-2"]
+
+server = pick(fetch_servers())
+```
+
+Rad can't check that up front, because the options don't exist until the script builds them. The error lists the real options, so the next run can name one exactly. Matching is exact by design: a near-miss fails rather than quietly acting on the wrong choice.
+
+#### The Input Was Secret
+
+`input` with `secret` set can't be answered from the command line at all - other processes on the machine can read your arguments. Where `secret` is written literally, RAD20046 says so before the script runs. Where it's computed, rad only finds out on reaching the prompt:
+
+```rad
+env = input("Environment")
+needs_secret = env == "prod"
+token = input("Token", secret=needs_secret)
+```
+
+Run it where a terminal is available, or use `--reply-na` if this run shouldn't reach it.
+
+#### The Answer Broke A multipick's Rules
+
+A `multipick` answer named an option twice, or gave more or fewer selections than the prompt allows. Where the bounds are literal, RAD20046 catches this up front; where they're computed, it surfaces here.
+
+#### How to Fix
+
+Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job. Note that the script did execute up to this point - if it has side effects, check what already happened before retrying.
+
+#### Related
+
+- **RAD20046** - prompts need answers, raised before the script runs.
+- **RAD20010** - an interactive prompt failed or was canceled.
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch

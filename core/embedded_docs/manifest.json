@@ -163,7 +163,9 @@
         "`cst-tree`",
         "`ast-tree`",
         "`tls-insecure`",
-        "`mock-response`"
+        "`mock-response`",
+        "`reply`",
+        "`reply-na`"
       ]
     },
     {

@@ -102,6 +102,8 @@ const (
 	ErrParseDuration              = "20043"
 	ErrParseDate                  = "20044"
 	ErrShellCmdValue              = "20045"
+	ErrPromptsNeedAnswers         = "20046"
+	ErrPromptUnanswerable         = "20047"
 
 	// 3xxxx Type Errors
 	ErrTypeMismatch              Error = "30001"

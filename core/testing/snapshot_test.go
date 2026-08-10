@@ -24,6 +24,9 @@ var snapshotSuite = snap.Suite{
 		// presence is the switch, so it is meaningful even with an empty body.
 		{Name: "RAW_ARGS", List: true},
 		{Name: "TERM_WIDTH"},
+		// NO_TERMINAL runs the case as if no terminal were reachable. Its
+		// presence is the switch, so it is meaningful with an empty body.
+		{Name: "NO_TERMINAL"},
 		prompt.KeysSection,
 	},
 	// Declaration order is write order, and matches the order these files were
@@ -69,6 +72,9 @@ func runSnapshotCase(t *testing.T, c *snap.Case) {
 	}
 	if keys := c.List(prompt.KeysSection.Name); len(keys) > 0 {
 		tp.Keys(keys...)
+	}
+	if c.Has("NO_TERMINAL") {
+		tp.NoTerminal()
 	}
 
 	setupAndRun(t, tp)

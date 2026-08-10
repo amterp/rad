@@ -25,6 +25,8 @@ const (
 	FLAG_TLS_INSECURE  = "tls-insecure"
 	FLAG_INTERACTIVE   = "interactive"
 	FLAG_I             = "i"
+	FLAG_REPLY         = "reply"
+	FLAG_REPLY_NA      = "reply-na"
 )
 
 // GlobalFlagScope classifies which invocations a global flag applies to.
@@ -63,6 +65,8 @@ var (
 	FlagMockResponse         StringRadArg
 	FlagTlsInsecure          BoolRadArg
 	FlagInteractive          BoolRadArg
+	FlagReply                StringListRadArg
+	FlagReplyNa              StringListRadArg
 	// ^ when adding more, update ResetGlobals and the GlobalFlagScopes table below
 
 	// GlobalFlagScopes is the single source of truth for global flag ordering
@@ -244,6 +248,30 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 	)
 	hideFromUsageIfHaveScript(&FlagMockResponse.hidden)
 
+	FlagReply = NewStringListRadArg(
+		FLAG_REPLY,
+		"",
+		"line:value",
+		"Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.",
+		// A global flag has no scriptArg, so IsNullable() is always false and an
+		// empty default is what keeps it from being treated as required.
+		true,
+		[]string{},
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+
+	FlagReplyNa = NewStringListRadArg(
+		FLAG_REPLY_NA,
+		"",
+		"line",
+		"Assert a prompt won't be reached on this run; rad fails cleanly if it is.",
+		true,
+		[]string{},
+		NO_CONSTRAINTS,
+		NO_CONSTRAINTS,
+	)
+
 	// ordering of this table matters -- it's the order in which flags are printed in the usage string
 	GlobalFlagScopes = []ScopedGlobalFlag{
 		{&FlagHelp, ScopeUniversal},
@@ -261,6 +289,8 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 		{&FlagAstTree, ScopeScriptOnly},
 		{&FlagRadArgsDump, ScopeUniversal},
 		{&FlagMockResponse, ScopeScriptOnly},
+		{&FlagReply, ScopeScriptOnly},
+		{&FlagReplyNa, ScopeScriptOnly},
 	}
 
 	flags := make([]RadArg, 0, len(GlobalFlagScopes))

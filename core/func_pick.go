@@ -2,9 +2,12 @@ package core
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	com "github.com/amterp/rad/core/common"
+	"github.com/amterp/rad/rts/prompts"
+	"github.com/amterp/rad/rts/rl"
 
 	"github.com/amterp/radish"
 	"github.com/samber/lo"
@@ -184,13 +187,12 @@ func pickKv[T comparable](
 		)
 	}
 
-	// single match? return immediately
-	if len(orderedKeys) == 1 {
-		return matchedKeyValues[orderedKeys[0]], nil
-	}
-
-	// exact match priority: if enabled and exactly one entry has an exact key match, pick it immediately
-	if prioExact {
+	// A filter can settle the choice on its own, in which case nothing is asked.
+	settled, settledOn := "", len(orderedKeys) == 1
+	if settledOn {
+		settled = orderedKeys[0]
+	} else if prioExact {
+		// exact match priority: if exactly one entry matches a key exactly, pick it
 		var exactMatchLabels []string
 		for _, lbl := range orderedKeys {
 			if hasExactMatch[lbl] {
@@ -198,11 +200,46 @@ func pickKv[T comparable](
 			}
 		}
 		if len(exactMatchLabels) == 1 {
-			return matchedKeyValues[exactMatchLabels[0]], nil
-		}
-		if len(exactMatchLabels) > 1 {
+			settled, settledOn = exactMatchLabels[0], true
+		} else if len(exactMatchLabels) > 1 {
 			orderedKeys = exactMatchLabels // narrow picker to exact matches only
 		}
+	}
+
+	if settledOn {
+		// The script's own filter has decided; nothing is asked, so a caller who
+		// supplied no answer is fine. That is what keeps --reply-na valid here.
+		//
+		// An answer that *is* waiting gets consumed and then ignored. Consuming
+		// is what keeps a per-line queue in step with executions - a pass that
+		// quietly took nothing would hand every later answer to the wrong pass.
+		// Ignoring it is the other half: the caller answers prompts, and no
+		// prompt happened, so there is nothing here for their answer to override.
+		// Failing instead would break every pick whose list simply happens to
+		// hold one entry on this run.
+		if replyPending(f.callNode) {
+			takeReply(f.callNode)
+		}
+		return matchedKeyValues[settled], nil
+	}
+
+	// Only now is a prompt actually going to happen.
+	if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
+		if outcome != prompts.Answered {
+			return []T{}, unansweredPromptErr(outcome, fmt.Sprintf("The pick %q", prompt))
+		}
+		// Checked against the picker's own list rather than every match, so an
+		// answer can't name an option prefer_exact already narrowed away.
+		if !lo.Contains(orderedKeys, answer.Text) {
+			// Options here were computed at runtime, so this could not have been
+			// caught up front - name them now so one re-run can fix it.
+			return []T{}, NewErrorStrf(
+				"%q is not one of the options for the pick %q. Options: %s. "+
+					"Answers must match exactly - rad won't guess which one you meant",
+				answer.Text, prompt, strings.Join(orderedKeys, ", "),
+			).SetCode(rl.ErrPromptUnanswerable)
+		}
+		return matchedKeyValues[answer.Text], nil
 	}
 
 	model := radish.NewSelect().
@@ -214,7 +251,7 @@ func pickKv[T comparable](
 	res, _, err := RInteractive.Run(model)
 	if err != nil {
 		if errors.Is(err, radish.ErrNotInteractive) {
-			return []T{}, NewErrorStrf("pick requires an interactive terminal")
+			return []T{}, unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The pick %q", prompt))
 		}
 		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}

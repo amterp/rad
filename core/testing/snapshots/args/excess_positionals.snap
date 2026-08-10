@@ -17,14 +17,16 @@ Script args:
       --name str
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ### EXIT ###
 1
 
@@ -61,18 +63,20 @@ Usage:
   TestCase <targets...> [OPTIONS]
 
 Script args:
-      --targets strs
+      --targets string,string
   -v, --verbose
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ### EXIT ###
 1
 
@@ -97,13 +101,15 @@ Script args:
   -v, --verbose
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ### EXIT ###
 1
