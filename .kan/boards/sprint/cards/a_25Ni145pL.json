@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "passthrough-and-rest",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580905,
+  "creator": "Alexander Terp",
+  "description": "A greedy `**rest` arg kind collecting remaining tokens verbatim, flags included, plus argv-safe interpolation and child exit-code propagation. Designed already in `rest_args.md` and `makefile-use-case.md`.\n\nStrong evidence - the heaviest-used script class is wrappers and none can use the args block for its main job. `cct` (1103 runs) opts out entirely with `@enable_args_block = 0` and hand-parses with `index_of` plus slice surgery across 25 lines. `dev` uses `get_args()[1:].join(\" \")`, lossy on spaces and metacharacters, and that quoting bug comes from the author's own sketch at `makefile-use-case.md:109`.\n\nParked on size rather than merit: it's three features (collection, safe interpolation, exit-code propagation) and the middle one overlaps the shell-quoting decision in stretch. Worth being near the top of the next sprint.\n\nThe exit-code half is separable and smaller: an unhandled `$` failure exits 1 and never the child's code, because `core/shell.go:84-90` wraps it in a RadError carrying no code (`core/printer.go:197`). `cct:623-624` hand-rolls ``code = $`{cmd}` catch: exit(code)``; `dev` doesn't, so it reports 1 for every child failure.",
+  "effort": "xl",
+  "id": "a_25Ni145pL",
+  "position": "UUUUUUUUU",
+  "source": [
+    "takehome"
+  ],
+  "title": "Passthrough and rest args",
+  "type": "feature",
+  "updated_at_millis": 1786343580905,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580905}
+  ]
+}

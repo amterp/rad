@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "spawn-and-poll",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580794,
+  "creator": "Alexander Terp",
+  "description": "Background handles with `.wait()` and `.done`, plus a `poll(every=, timeout=, fn)` helper. The report proposing it rates it low-to-medium confidence and recommends landing the cheaper proposals first, calling it design-heavy.\n\nNow adjacent to a prioritized item: the parallelism card in big-rocks covers fan-out, and the main board's `RAD-329: Spawn a separate background process` covers detached processes. If the parallelism design ends up needing a handle type, revisit this rather than inventing a second one.",
+  "effort": "xl",
+  "id": "a_25Ni0tJ5g",
+  "position": "UUUUUUU",
+  "source": [
+    "takehome"
+  ],
+  "title": "spawn and poll process primitives",
+  "type": "feature",
+  "updated_at_millis": 1786353053206,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580794}
+  ]
+}

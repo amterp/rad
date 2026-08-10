@@ -1,0 +1,23 @@
+{
+  "_v": 3,
+  "alias": "write-the-imports",
+  "alias_explicit": false,
+  "column": "stretch",
+  "created_at_millis": 1786343580304,
+  "creator": "Alexander Terp",
+  "description": "Not the implementation, which VISION.md sizes at a quarter. The design document, and the two details the 2025-12-16 addendum reopened: alias syntax (`import u \"...\"` versus `as u`) and whether the `.rad` extension stays mandatory.\n\nDemand appears in five of six corpora at high confidence. The concrete duplication:\n\n- A catalog pagination loop copied and already drifted (`cata:50-62` vs `reg:22-33`), including the fake-response priming trick `resp = {\"body\": {\"next\": url}}`. The drift produces different error output.\n- Five mattermost scripts sharing five copy-pasted functions with two divergences, one a suspected bug: `mm-search:56` is missing an `int()` wrap that `mm-channel-posts:51` and `mm-thread:48` have.\n- Jira basic-auth triplicated: `work:255-264`, `raisejira:20-31,67-88`, `raiselog:106-118`.\n- Forked dev scripts that have since diverged (`argus/dev` and `pilot-brock/dev`), and `ssu` versus `ssu2` at ~85% identical, where the un-forked copy bit-rotted (`ssu:4` still uses the removed `string?`).\n- Four copies of a macOS TTS notifier across three repos, five hand-rolled git-cleanliness checks, three shell quoters, two `run_remote()`s, ten copies of a `pick_from_resource` preamble.\n\nThe bash siblings in the team repo share a `_common.sh`. The Rad scripts can't.\n\nOne design constraint the corpus contributes that `docs/thinking/imports.md` doesn't settle: **importing must not execute top-level code.** Every script in the team corpus has top-level side effects - HTTP calls, prompts - so execute-on-import makes today's files unimportable.\n\nMain board already carries RAD-117 and RAD-246 for this, both below the fold.",
+  "effort": "xl",
+  "id": "a_25Ni06X2R",
+  "position": "UUUU",
+  "source": [
+    "takehome",
+    "vision",
+    "main-board"
+  ],
+  "title": "Write the imports RED",
+  "type": "decision",
+  "updated_at_millis": 1786343580304,
+  "history": [
+    {"field":"column","value":"stretch","at":1786343580304}
+  ]
+}

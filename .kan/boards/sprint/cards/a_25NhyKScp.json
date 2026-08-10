@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "http-add-timeout",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786343579201,
+  "creator": "Alexander Terp",
+  "description": "`core/requester.go` sets no client timeout anywhere, so a hung endpoint hangs the script. `mm-search` has logged a 601-second invocation against an 80-run average of 31 seconds.\n\n`shell_cmds.md` contemplated timeouts and punted them (\"Maybe don't worry for now\"). The agent-facing scripts change the calculus: a stuck call there blocks a tool call rather than a human who can ctrl-C.\n\n---\n\n### Orientation\n- All nine `http_*` builtins share a single `Execute` closure, built in a loop by `createHttpFunctions()` in `core/funcs.go`. `timeout=` gets implemented once, not nine times.\n- Signatures are not written in Go. Each method has its own `docs/funcs/http_\u003cmethod\u003e.md`, and the `## Signature` line in it IS what the type checker enforces. Format contract: `docs/funcs/README.md`.\n- The request goes out through the `RReq` seam (`core/global.go:44`) - `Requester.Request` at `core/requester.go:161`.\n\n### Where to start\nThe premise holds: neither client has a `Timeout`. `getClient` (`core/requester.go:132-144`) returns either the process-global `http.DefaultClient` or a lazily-cached insecure client carrying only a `TLSClientConfig`.\n\n- `docs/funcs/http_get.md` and its eight siblings (`http_post`, `http_put`, `http_patch`, `http_delete`, `http_head`, `http_options`, `http_trace`, `http_connect`). Add the parameter to every `## Signature` line and to each file's `## Notes` table.\n- `core/funcs.go:164-181` - the `namedArg*` const block. Add `namedArgTimeout` next to `namedArgHeaders` / `namedArgInsecure`.\n- `core/funcs.go:1890-1966` - `createHttpFunctions()`. Line 1956 reads `insecure`; 1958-1960 build the `RequestDef` and call `RReq.Request`. Thread the timeout the same way.\n- `core/requester.go:30-37` - `RequestDef`. Note `Insecure` is set as a field after `NewRequestDef` rather than being a constructor parameter; follow that shape.\n- `core/requester.go:238-266` - `request()`, where `client.Do` actually blocks.\n\nNo new registration is needed in `core/funcs.go` - the loop already covers all nine names.\n\n### How to verify\n```sh\nmake build\ngo test ./core/testing/ -run TestSnapshots -update=functions/http\ngo test ./core/testing/\nmake generate \u0026\u0026 make verify-generated\n```\nSnapshot suite is `core/testing/snapshots/functions/` (`http_get.snap`, `http_post.snap`). HTTP in those tests is mocked via the `--mock-response` arg - see the `### ARGS ###` block in `core/testing/snapshots/functions/http_get.snap`.\n\n### Done when\n- All nine `docs/funcs/http_*.md` carry the parameter and `make verify-generated` is clean.\n- A fired timeout produces the existing failure shape - `success: false` with `error` populated - not a hard exit. That is what `core/requester.go:253-254` already does for transport errors.\n- Snapshot cases exist under `core/testing/snapshots/functions/`.\n- `docs-web/docs/reference/functions.md` regenerates with no hand edits.\n\n### Watch out for\n- Do not set `Timeout` on the client. `getClient` hands back the process-global `http.DefaultClient` on the normal path and a Requester-cached client on the insecure path - a per-request value written onto either leaks into every other request. Derive a context instead: `Request` already receives `f.i.signals.Ctx()` (`core/funcs.go:1960`) and passes it to `http.NewRequestWithContext` (`core/requester.go:171`), so a `context.WithTimeout` off that gives per-request expiry and preserves the existing SIGINT cancellation.\n- Everything stays behind `RReq`. `core/testing/` injects a Requester with mocked responses (`core/testing/test_helpers.go:135-156`); calling `net/http` directly from the func body bypasses the seam and breaks determinism.\n- `--mock-response` short-circuits at `core/requester.go:239-241`, before `client.Do`. A snapshot case can prove the argument parses and threads through, but it cannot make a real timeout fire - test the expiry itself at the Go level against `Requester`.",
+  "effort": "s",
+  "id": "a_25NhyKScp",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "U",
+  "source": [
+    "takehome"
+  ],
+  "title": "http: add timeout=",
+  "type": "feature",
+  "updated_at_millis": 1786353823507,
+  "history": [
+    {"field":"column","value":"p1","at":1786343579201}
+  ]
+}

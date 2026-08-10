@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "decide-how-http",
+  "alias_explicit": false,
+  "column": "stretch",
+  "created_at_millis": 1786343580196,
+  "creator": "Alexander Terp",
+  "description": "Three spellings from three reports: `.ok()`, `http_get!()`, `.or_raise()`. The bang form fights `principles.md`, and the report proposing it doesn't note the tension.\n\nThe pain is not in dispute. Thirteen or more hand-written success checks in the agent-facing corpus alone, in four different qualities of message - the catalog scripts discard `resp.error`, status and body entirely, and only `mm-thread:29-38` writes the good version. Eight near-identical \"check success, pprint, red line, exit(1)\" stanzas in one corpus half (`argus:70-73`, `argus2:26-29`, `argustemp:19-22`, `forex:13-16`, `fees:106-109`, `gkrelay:17-20`, `gkbsk:46-49`, `edit-liveconf:79-81`), and 12+ sites across 8 team scripts each formatting failure differently. `robodj:53` carries the author's own todo.\n\nThe periphery is consensus and already broken out into p1 cards - `timeout=`, `query=`, the Content-Type fix, `url_encode()`. Those ship regardless of how this lands.\n\nTwo more that need a home eventually: download-to-file (`upgrade:29,49` shells out to curl) and a shared client config `http_client(base=, headers=, timeout=)` - BASE_URL, TOKEN and HEADERS are duplicated across all five mattermost scripts and all seven catalog scripts.",
+  "effort": "m",
+  "id": "a_25NhzvsZM",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UU",
+  "source": [
+    "takehome"
+  ],
+  "title": "Decide how http_* failures enter the error model",
+  "type": "decision",
+  "updated_at_millis": 1786343580196,
+  "history": [
+    {"field":"column","value":"stretch","at":1786343580196}
+  ]
+}
