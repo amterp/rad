@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/amterp/color"
+	"github.com/amterp/go-snap/prompt"
 	"github.com/amterp/rad/core"
 	com "github.com/amterp/rad/core/common"
 	"github.com/amterp/radish"
@@ -155,7 +156,7 @@ func newRunnerInput() core.RunnerInput {
 		RSignal:      core.NewFakeSignalSource(),
 		RReq:         requester,
 		RadHome:      &radTestHome,
-		RInteractive: noKeysDriver{},
+		RInteractive: prompt.NoKeys{},
 	}
 }
 
@@ -164,63 +165,13 @@ func newRunnerInput() core.RunnerInput {
 // afterward. nil when the run scripted no keys.
 var lastInteractiveDriver *radish.ScriptDriver
 
-// noKeysDriver is the default interactive driver in tests. Reaching an interactive
-// prompt without scripting keys is a test-authoring error - and must never fall
-// through to the real terminal, which could hang the suite - so it fails loudly.
-type noKeysDriver struct{}
-
-func (noKeysDriver) Run(m radish.Model) (radish.Result, radish.Model, error) {
-	return radish.Result{}, m, fmt.Errorf(
-		"interactive prompt reached without scripted keys; provide ### KEYS ### / .Keys(...)")
-}
-
-// scriptKeysToEvents converts scripted key tokens into radish events. Each token
-// is a named key (via radish.ParseKeyName) or a "quoted literal" typed rune by rune.
-func scriptKeysToEvents(tokens []string) ([]radish.Event, error) {
-	var events []radish.Event
-	for _, raw := range tokens {
-		s := strings.TrimSpace(raw)
-		if s == "" {
-			continue
-		}
-		if len(s) >= 2 && strings.HasPrefix(s, `"`) && strings.HasSuffix(s, `"`) {
-			for _, r := range s[1 : len(s)-1] {
-				events = append(events, radish.RuneEvent(r))
-			}
-			continue
-		}
-		ev, ok := radish.ParseKeyName(s)
-		if !ok {
-			return nil, fmt.Errorf("unknown key token %q", s)
-		}
-		events = append(events, ev)
-	}
-	return events, nil
-}
-
-// captureFrames formats the frames recorded by the last scripted interactive run -
-// one block per keystroke (plus each prompt's initial render and final summary),
-// labelled by the key that produced it. A run may span several sequential prompts
-// (e.g. --interactive walks); FrameEventIdx keeps the labels aligned regardless.
+// captureFrames formats the frames recorded by the last scripted interactive run.
 // Returns "" when the run scripted no keys.
 func captureFrames() string {
 	if lastInteractiveDriver == nil {
 		return ""
 	}
-	frames := lastInteractiveDriver.Frames()
-	events := lastInteractiveDriver.Events()
-	eventIdx := lastInteractiveDriver.FrameEventIdx()
-	var b strings.Builder
-	for i, frame := range frames {
-		label := "initial"
-		if idx := eventIdx[i]; idx >= 0 && idx < len(events) {
-			label = events[idx].String()
-		}
-		fmt.Fprintf(&b, "--- frame %d (%s) ---\n", i, label)
-		b.WriteString(frame)
-		b.WriteString("\n")
-	}
-	return strings.TrimSuffix(b.String(), "\n")
+	return prompt.RenderFrames(lastInteractiveDriver)
 }
 
 type TestParams struct {
@@ -345,11 +296,10 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	// Scripted keys drive interactive prompts through a recording driver so the
 	// real prompt logic and rendering run without a terminal.
 	if len(tp.keys) > 0 {
-		events, err := scriptKeysToEvents(tp.keys)
+		driver, err := prompt.Driver(tp.keys)
 		if err != nil {
 			t.Fatalf("invalid scripted keys: %v", err)
 		}
-		driver := radish.NewScriptDriver(events)
 		lastInteractiveDriver = driver
 		runnerInput.RInteractive = driver
 	}
@@ -403,7 +353,7 @@ func resetTestState() {
 	runnerInput.RTermWidth = nil
 	// Reset interactive prompt driver to the safe no-keys default.
 	lastInteractiveDriver = nil
-	runnerInput.RInteractive = noKeysDriver{}
+	runnerInput.RInteractive = prompt.NoKeys{}
 }
 
 func setTerminalUtf8(t *testing.T, utf8 bool) {

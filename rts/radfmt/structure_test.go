@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	gd "github.com/amterp/go-delta"
+	snap "github.com/amterp/go-snap"
+
 	"github.com/amterp/rad/rts"
 )
 
@@ -62,33 +64,43 @@ type snapshotInput struct {
 	src  string
 }
 
-// collectSnapshotInputs reads the INPUT section of every .snap file under
-// snapshots/ by lightly parsing the snapshot format (### INPUT ### up to the
-// next ### delimiter). It avoids importing core/testing so this internal test
-// has no dependency cycle concerns.
+// inputSchema is the read-only view of the snapshot format this test needs. It
+// is a separate declaration from radfmt_test.FmtSuite because this is a
+// white-box test - it lives in package radfmt for access to formatRaw and
+// structuralDump, and so cannot see the external test package's variables.
+var inputSchema = snap.Suite{
+	Inputs:  []snap.Input{{Name: "INPUT"}},
+	Outputs: []snap.Output{{Name: "STDOUT"}},
+}
+
+// collectSnapshotInputs reads the INPUT section of every case under snapshots/.
+//
+// This used to hand-roll a minimal parser, because importing rad's own snapshot
+// format layer would have formed an import cycle (core/testing -> core ->
+// rts/radfmt). go-snap is a separate module that imports nothing from rad, so
+// the real parser is reachable now.
 func collectSnapshotInputs(t *testing.T) []snapshotInput {
 	t.Helper()
-	var out []snapshotInput
 	dir := "snapshots"
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		return nil
 	}
+	var out []snapshotInput
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil || info.IsDir() || !strings.HasSuffix(path, ".snap") {
 			return err
 		}
-		data, err := os.ReadFile(path)
+		cases, err := snap.ParseFile(&inputSchema, path)
 		if err != nil {
 			return err
 		}
 		base := strings.TrimSuffix(filepath.Base(path), ".snap")
-		inputs := parseSnapInputs(string(data))
-		for i, in := range inputs {
+		for i, c := range cases {
 			name := base
-			if len(inputs) > 1 {
+			if len(cases) > 1 {
 				name = base + "#" + strconv.Itoa(i)
 			}
-			out = append(out, snapshotInput{name: name, src: in})
+			out = append(out, snapshotInput{name: name, src: c.Text("INPUT")})
 		}
 		return nil
 	})
@@ -96,46 +108,4 @@ func collectSnapshotInputs(t *testing.T) []snapshotInput {
 		t.Fatalf("walk snapshots: %v", err)
 	}
 	return out
-}
-
-// parseSnapInputs extracts each ### INPUT ### block's contents from a snapshot
-// file body. This deliberately hand-rolls a minimal parser rather than reusing
-// core/testing.ParseSnapshotFile: this is a white-box (package radfmt) test that
-// needs internal access to formatRaw/structuralDump, and importing core/testing
-// here would form an import cycle (core/testing -> core -> rts/radfmt).
-func parseSnapInputs(body string) []string {
-	var inputs []string
-	lines := strings.Split(body, "\n")
-	title := ""
-	i := 0
-	for i < len(lines) {
-		trimmed := strings.TrimSpace(lines[i])
-		if trimmed == "### TITLE ###" && i+1 < len(lines) {
-			title = lines[i+1]
-			i += 2
-			continue
-		}
-		if trimmed == "### INPUT ###" {
-			i++
-			var b strings.Builder
-			for i < len(lines) && !strings.HasPrefix(strings.TrimSpace(lines[i]), "### ") {
-				b.WriteString(lines[i])
-				b.WriteByte('\n')
-				i++
-			}
-			// Skip [raw] cases: their INPUT is a Go-quoted string (decoded only by
-			// the snapshot harness), and byte-level whitespace rules don't change
-			// node structure anyway, so there's nothing to assert here.
-			if !strings.Contains(title, "[raw]") {
-				inputs = append(inputs, strings.TrimSuffix(b.String(), "\n"))
-			}
-			// Each case carries its own title; clear it so an INPUT block missing
-			// its TITLE header can't silently inherit a prior [raw] title and be
-			// dropped from the structure check.
-			title = ""
-			continue
-		}
-		i++
-	}
-	return inputs
 }
