@@ -64,7 +64,7 @@ fn f(x: int?):
 # Identifier types
   x @ 2:8 -> int?
   type_of @ 2:22 -> dynamic
-  x @ 2:30 -> int?
+  x @ 2:30 -> int
   y @ 3:9 -> <no-type>
   x @ 3:13 -> int
 
@@ -134,6 +134,176 @@ fn f(x: int?, y: str?):
   f (fn): fn(int?, str?) -> void
   x (param): int?
   y (param): str?
+
+# Diagnostics
+  (none)
+### TITLE ###
+AndRightOperandSeesLeftNullGuard
+### DESCRIPTION ###
+The canonical defensive idiom. `and` only reaches its right operand
+when the left was truthy, so `len(a)` sees a as str, not str?. Before
+shortCircuitRight was shared with the synthesis pass this reported a
+false positive on provably-safe code.
+### INPUT ###
+fn f(a: str?):
+    if a != null and len(a) > 3:
+        n = a
+### STDOUT ###
+# Identifier types
+  a @ 2:8 -> str?
+  len @ 2:22 -> dynamic
+  a @ 2:26 -> str
+  n @ 3:9 -> <no-type>
+  a @ 3:13 -> str
+
+# Symbol types
+  a (param): str?
+  f (fn): fn(str?) -> void
+  n (local): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+OrRightOperandSeesLeftNullCheckFalsy
+### DESCRIPTION ###
+Mirror of the `and` case: `or` reaches its right operand only when
+the left was falsy, so `b == null` being false makes b a str there.
+### INPUT ###
+fn f(b: str?):
+    if b == null or len(b) > 3:
+        n = 0
+### STDOUT ###
+# Identifier types
+  b @ 2:8 -> str?
+  len @ 2:21 -> dynamic
+  b @ 2:25 -> str
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  b (param): str?
+  f (fn): fn(str?) -> void
+  n (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+OrRightOperandSeesTypeOfFalsy
+### DESCRIPTION ###
+The falsy side of a type_of test narrows the right operand too. This
+was the single biggest source of checker noise on real scripts - one
+`or` chain in one script accounted for 9 of 11 remaining diagnostics.
+### INPUT ###
+fn f(c: str|int):
+    if type_of(c) != "str" or len(c) > 3:
+        n = 0
+### STDOUT ###
+# Identifier types
+  type_of @ 2:8 -> dynamic
+  c @ 2:16 -> str|int
+  len @ 2:31 -> dynamic
+  c @ 2:35 -> str
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  c (param): str|int
+  f (fn): fn(str|int) -> void
+  n (local): int
+
+# Diagnostics
+  (none)
+### TITLE ###
+AndLeftOperandNotNarrowedByRight
+### DESCRIPTION ###
+Guard written second: the use genuinely isn't protected, because the
+left operand is evaluated before anything is known. Must still report.
+### INPUT ###
+fn f(a: str?):
+    if len(a) > 3 and a != null:
+        n = 0
+### STDOUT ###
+# Identifier types
+  len @ 2:8 -> dynamic
+  a @ 2:12 -> str?
+  a @ 2:23 -> str?
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  a (param): str?
+  f (fn): fn(str?) -> void
+  n (local): int
+
+# Diagnostics
+  [hint] RAD30001 @ 2:12 - Argument type 'str?' is not assignable to expected type 'str|list|map'
+### TITLE ###
+AndRightOperandSeesTruthySideOnly
+### DESCRIPTION ###
+Pins the direction of the refinement. `a == null` being TRUE is what
+lets the right operand run, so there a is definitely null and len(a)
+still reports. Without this case a sign flip in shortCircuitRight
+would leave every positive case green.
+### INPUT ###
+fn f(a: str?):
+    if a == null and len(a) > 3:
+        n = 0
+### STDOUT ###
+# Identifier types
+  a @ 2:8 -> str?
+  len @ 2:22 -> dynamic
+  a @ 2:26 -> null
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  a (param): str?
+  f (fn): fn(str?) -> void
+  n (local): int
+
+# Diagnostics
+  [error] RAD30001 @ 2:26 - Argument type 'null' is not assignable to expected type 'str|list|map'
+### TITLE ###
+OrRightOperandSeesFalsySideOnly
+### DESCRIPTION ###
+The `or` mirror of the sign-flip guard: `a != null` being FALSE is
+what lets the right operand run, so a is definitely null there.
+### INPUT ###
+fn f(a: str?):
+    if a != null or len(a) > 3:
+        n = 0
+### STDOUT ###
+# Identifier types
+  a @ 2:8 -> str?
+  len @ 2:21 -> dynamic
+  a @ 2:25 -> null
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  a (param): str?
+  f (fn): fn(str?) -> void
+  n (local): int
+
+# Diagnostics
+  [error] RAD30001 @ 2:25 - Argument type 'null' is not assignable to expected type 'str|list|map'
+### TITLE ###
+AndRightOperandInUnreachableBranch
+### DESCRIPTION ###
+New consequence of narrowing the right operand: with x already int,
+`type_of(x) != "int"` being true is impossible, so x narrows to Never
+and the operand check goes quiet. Correct - the branch can't run -
+but it means an `and` can now suppress a diagnostic it used to emit.
+### INPUT ###
+fn f(x: int):
+    if type_of(x) != "int" and x + 1 > 0:
+        n = 0
+### STDOUT ###
+# Identifier types
+  type_of @ 2:8 -> dynamic
+  x @ 2:16 -> int
+  x @ 2:32 -> never
+  n @ 3:9 -> <no-type>
+
+# Symbol types
+  f (fn): fn(int) -> void
+  n (local): int
+  x (param): int
 
 # Diagnostics
   (none)

@@ -16,6 +16,32 @@ import "github.com/amterp/rad/rts/rl"
 type Frame struct {
 	parent   *Frame
 	bindings map[*Symbol]rl.TypingT
+
+	// memberships holds the COMPLETE set of facts active at this frame,
+	// not a delta the way bindings are. That costs a copy on the rare
+	// frame that adds one, and buys two things: lookup is a single field
+	// read instead of a parent walk, and - the load-bearing part - a
+	// frame can *erase* inherited facts by carrying an empty set. See
+	// withMembershipsOf and joinFrames for why erasing has to be
+	// expressible.
+	memberships map[MembershipFact]bool
+}
+
+// MembershipFact records that `Element in Container` was proven at this
+// program point, so a lookup of Element in Container can't come up empty.
+//
+// Keyed on symbols rather than syntax: shadowing is handled for free, and the
+// use site does a map lookup instead of re-matching an AST it would have to
+// re-resolve anyway.
+//
+// Unlike a narrowing, a membership has no repair mechanism when the program
+// invalidates it - bindAssignTarget rewrites a symbol's narrowed type on
+// assignment, but nothing rewrites "flag is still in args" after `args = []`.
+// So facts are kept strictly scoped to a region we have scanned: see
+// applyMembershipFacts for the entry check and joinFrames for the exit.
+type MembershipFact struct {
+	Container *Symbol
+	Element   *Symbol
 }
 
 // NewFrame returns a root frame with no narrowings. Used at the entry
@@ -28,7 +54,17 @@ func NewFrame() *Frame {
 // With returns a new frame that narrows sym to t. The receiver is
 // unchanged. O(1) - no map copy.
 func (f *Frame) With(sym *Symbol, t rl.TypingT) *Frame {
-	return &Frame{parent: f, bindings: map[*Symbol]rl.TypingT{sym: t}}
+	return &Frame{parent: f, bindings: map[*Symbol]rl.TypingT{sym: t}, memberships: f.mems()}
+}
+
+// mems returns the frame's active membership set. Nil-safe: several callers
+// (and the interpretCondition unit tests) pass a nil *Frame around, and the
+// rest of the Frame API tolerates that by never dereferencing the receiver.
+func (f *Frame) mems() map[MembershipFact]bool {
+	if f == nil {
+		return nil
+	}
+	return f.memberships
 }
 
 // WithMany returns a new frame applying every entry in m as a
@@ -43,7 +79,41 @@ func (f *Frame) WithMany(m map[*Symbol]rl.TypingT) *Frame {
 	for k, v := range m {
 		cp[k] = v
 	}
-	return &Frame{parent: f, bindings: cp}
+	return &Frame{parent: f, bindings: cp, memberships: f.mems()}
+}
+
+// WithMembership returns a new frame with fact proven, leaving the receiver
+// alone. The membership map is shared by pointer everywhere else, so this is
+// the one place that copies it.
+func (f *Frame) WithMembership(fact MembershipFact) *Frame {
+	if f.HasMembership(fact) {
+		return f
+	}
+	cur := f.mems()
+	cp := make(map[MembershipFact]bool, len(cur)+1)
+	for k := range cur {
+		cp[k] = true
+	}
+	cp[fact] = true
+	return &Frame{parent: f, memberships: cp}
+}
+
+// HasMembership reports whether fact was proven at this program point.
+func (f *Frame) HasMembership(fact MembershipFact) bool {
+	return f.mems()[fact]
+}
+
+// withMembershipsOf returns a frame keeping the receiver's bindings but
+// carrying ref's membership set instead of its own - including when ref has
+// none, which is how a region boundary drops facts it can no longer vouch
+// for. Returns the receiver untouched when there are no facts either side,
+// so the overwhelmingly common case allocates nothing.
+func (f *Frame) withMembershipsOf(ref *Frame) *Frame {
+	m := ref.mems()
+	if len(f.mems()) == 0 && len(m) == 0 {
+		return f
+	}
+	return &Frame{parent: f, memberships: m}
 }
 
 // Lookup walks the frame chain looking for a narrowing on sym. Returns
@@ -199,6 +269,84 @@ func (tc *typeChecker) interpretBinaryCondition(c *rl.OpBinary, frame *Frame) Re
 	return EmptyRefinement()
 }
 
+// shortCircuitRight returns the left operand's refinement and the frame the
+// RIGHT operand of a short-circuiting `and`/`or` is evaluated under.
+//
+// `and` only reaches its right operand when the left was truthy, so the right
+// sees the left's WhenTrue: in `x != null and x > 5`, the `x > 5` is evaluated
+// knowing x is non-null. `or` is the mirror - it only reaches the right when
+// the left was falsy, so the right sees WhenFalse.
+//
+// Two passes need this frame and they must not derive it independently:
+// interpretAnd/interpretOr below use it to build the condition's refinement,
+// and synthOpBinary uses it so the right operand's own expression types (and
+// therefore its diagnostics) are computed under the same narrowing. Before
+// they shared this helper, only the interpretation pass short-circuited, and
+// `if x != null and len(x) > 3:` reported a false positive on x.
+func (tc *typeChecker) shortCircuitRight(c *rl.OpBinary, frame *Frame) (Refinement, *Frame) {
+	leftRef := tc.interpretCondition(c.Left, frame)
+	switch c.Op {
+	case rl.OpAnd:
+		// The left having held is also what makes any membership it proved
+		// available to the right operand, so `flag in xs and xs.index_of(flag)
+		// > 0` refines. Safer here than in a branch body: no statement runs
+		// between the two operands, so nothing can invalidate the fact.
+		right := frame.WithMany(leftRef.WhenTrue)
+		return leftRef, tc.withMembershipFacts(right, c.Left)
+	case rl.OpOr:
+		return leftRef, frame.WithMany(leftRef.WhenFalse)
+	}
+	return EmptyRefinement(), frame
+}
+
+// withMembershipFacts returns frame plus every membership cond proves when it
+// holds. Recurses through `and` (both operands must hold for the conjunction
+// to) but not `or` or `not`, where holding proves nothing about either
+// operand individually.
+func (tc *typeChecker) withMembershipFacts(frame *Frame, cond rl.Node) *Frame {
+	for _, fact := range tc.membershipFactsIn(cond) {
+		frame = frame.WithMembership(fact)
+	}
+	return frame
+}
+
+// membershipFactsIn collects the memberships a condition proves when truthy.
+//
+// Only `<ident> in <ident>` counts. A literal container or element
+// (`if "x" in xs:`) has no symbol to key on, and the guard-clause form
+// (`if flag not in xs: return`) is deliberately out of scope - the fact it
+// establishes has an unbounded lifetime, with no region boundary to retire it
+// at, which is a different and larger problem than this one.
+func (tc *typeChecker) membershipFactsIn(cond rl.Node) []MembershipFact {
+	c, ok := cond.(*rl.OpBinary)
+	if !ok {
+		return nil
+	}
+	switch c.Op {
+	case rl.OpAnd:
+		return append(tc.membershipFactsIn(c.Left), tc.membershipFactsIn(c.Right)...)
+	case rl.OpIn:
+		element, ok := c.Left.(*rl.Identifier)
+		if !ok {
+			return nil
+		}
+		container, ok := c.Right.(*rl.Identifier)
+		if !ok {
+			return nil
+		}
+		elemSym, ok := tc.resolved.Uses[element]
+		if !ok || elemSym == nil {
+			return nil
+		}
+		contSym, ok := tc.resolved.Uses[container]
+		if !ok || contSym == nil {
+			return nil
+		}
+		return []MembershipFact{{Container: contSym, Element: elemSym}}
+	}
+	return nil
+}
+
 // interpretAnd handles `a and b`. Short-circuit evaluation drives
 // the narrowing semantics:
 //
@@ -212,14 +360,8 @@ func (tc *typeChecker) interpretBinaryCondition(c *rl.OpBinary, frame *Frame) Re
 //   - either "a falsy" or "a truthy, b falsy" - and we don'\”t have
 //     a way to express "OR of two refinements" without losing info.
 //     Conservative: empty WhenFalse. Pyright takes the same shortcut.
-//
-// The right-hand side is interpreted with a'\”s truthy narrowing
-// active: in `x != null and x > 5`, the `x > 5` is evaluated knowing
-// x is non-null. That'\”s why we walk the right under
-// frame.WithMany(leftRef.WhenTrue) before interpreting.
 func (tc *typeChecker) interpretAnd(c *rl.OpBinary, frame *Frame) Refinement {
-	leftRef := tc.interpretCondition(c.Left, frame)
-	rightFrame := frame.WithMany(leftRef.WhenTrue)
+	leftRef, rightFrame := tc.shortCircuitRight(c, frame)
 	rightRef := tc.interpretCondition(c.Right, rightFrame)
 	return Refinement{
 		WhenTrue:  mergeRefinementMaps(leftRef.WhenTrue, rightRef.WhenTrue),
@@ -235,8 +377,7 @@ func (tc *typeChecker) interpretAnd(c *rl.OpBinary, frame *Frame) Refinement {
 //
 //   - WhenTrue: at least one truthy. Disjunction, conservatively empty.
 func (tc *typeChecker) interpretOr(c *rl.OpBinary, frame *Frame) Refinement {
-	leftRef := tc.interpretCondition(c.Left, frame)
-	rightFrame := frame.WithMany(leftRef.WhenFalse)
+	leftRef, rightFrame := tc.shortCircuitRight(c, frame)
 	rightRef := tc.interpretCondition(c.Right, rightFrame)
 	return Refinement{
 		WhenTrue:  map[*Symbol]rl.TypingT{},

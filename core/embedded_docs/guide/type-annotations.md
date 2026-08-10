@@ -267,6 +267,38 @@ Without the `idx != null` check, `idx + 1` reports a hint (`cannot do
 'int? + int'`) - the value really could be null. The null-check is both the
 fix for the hint and the correctness fix.
 
+A guard doesn't need its own block. `and` reaches its right operand only when
+the left was true, and `or` only when it was false, so the narrowing carries
+across:
+
+```rad
+my_args = ["build", "-o", "out"]
+idx = my_args.index_of("-o")
+
+if idx != null and idx + 1 < my_args.len():
+    print("output:", my_args[idx + 1])
+```
+
+Order decides it, though. Written the other way round, as
+`idx + 1 < my_args.len() and idx != null`, the comparison runs before anything
+is known and still reports.
+
+An `in` guard narrows `index_of` on the spot, with no variable to hold the
+result:
+
+```rad
+my_args = ["build", "-o", "out"]
+flag = "-o"
+
+if flag in my_args:
+    // the lookup can't miss here, so it's int rather than int?
+    print(my_args.index_of(flag) + 1)
+```
+
+That last one is a pattern match rather than general reasoning. It wants the
+same container and the same target on both sides, and it drops if you pass `n`
+or `start`, which ask for an occurrence membership doesn't promise.
+
 ## Defaults
 
 Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with `?`:

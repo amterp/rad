@@ -859,6 +859,7 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 		_ = tc.synth(branch.Condition)
 		ref := tc.interpretCondition(branch.Condition, tc.frame)
 		tc.frame = tc.frame.WithMany(ref.WhenTrue)
+		tc.frame = tc.applyMembershipFacts(tc.frame, branch.Condition, branch.Body)
 		tc.walkStmts(branch.Body)
 		if !tc.branchExits(branch.Body) {
 			branchFrames = append(branchFrames, tc.frame)
@@ -871,6 +872,37 @@ func (tc *typeChecker) walkIf(n *rl.If) {
 		branchFrames = append(branchFrames, acc)
 	}
 	tc.frame = tc.joinFrames(initial, branchFrames)
+}
+
+// applyMembershipFacts layers onto frame the memberships cond proves, minus
+// any whose container or element the body reassigns.
+//
+// The drop is what keeps the fact honest. `if flag in xs: xs = []` leaves the
+// fact keyed on a symbol that no longer holds it, and unlike a narrowed type
+// there's nothing that rewrites a membership on assignment. Refusing the fact
+// up front costs only the status-quo false positive; keeping it would cost a
+// missed diagnostic.
+//
+// Known gap, deliberately left: collectAssignedSyms only records identifier
+// targets, so an indexed write (`xs[0] = "z"`) or an in-place mutation
+// (`xs.pop()`) inside the body does not retire the fact. Widening
+// collectAssignedSyms is not the fix - walkWhileLoop shares it, and
+// bindAssignTarget is explicit that an indexed assign doesn't change the
+// binding's type. The failure mode is a suppressed hint, which is the right
+// direction to err at this severity.
+func (tc *typeChecker) applyMembershipFacts(frame *Frame, cond rl.Node, body []rl.Node) *Frame {
+	facts := tc.membershipFactsIn(cond)
+	if len(facts) == 0 {
+		return frame
+	}
+	assigned := tc.collectAssignedSyms(body)
+	for _, fact := range facts {
+		if assigned[fact.Container] || assigned[fact.Element] {
+			continue
+		}
+		frame = frame.WithMembership(fact)
+	}
+	return frame
 }
 
 // walkFnDef handles a function definition statement. The body opens
@@ -1879,12 +1911,20 @@ func callIsNoReturn(call *rl.Call, tc *typeChecker) bool {
 //
 // Returns initial unchanged when no branch narrowed anything (or
 // when only one branch survived early-exit filtering).
+//
+// Invariant on the way out: the joined frame carries INITIAL's membership
+// set, never a branch's. Memberships are only valid inside the region whose
+// statements applyMembershipFacts scanned for reassignment, and post-join is
+// outside it. The single-surviving-branch shortcut is where this bites -
+// `if flag in xs: ... else: return` really does prove the fact on the
+// fall-through, but a later `xs = []` is beyond anything we checked, so the
+// fact has to retire at the boundary rather than escape it.
 func (tc *typeChecker) joinFrames(initial *Frame, branches []*Frame) *Frame {
 	if len(branches) == 0 {
 		return initial
 	}
 	if len(branches) == 1 {
-		return branches[0]
+		return branches[0].withMembershipsOf(initial)
 	}
 	narrowed := map[*Symbol]bool{}
 	for _, branch := range branches {
@@ -2673,7 +2713,7 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 	case *rl.Identifier:
 		return tc.synthIdentifier(v)
 	case *rl.Call:
-		return tc.synthCall(v, 0, nil)
+		return tc.synthCall(v, nil)
 	case *rl.VarPath:
 		return tc.synthVarPath(v, false)
 	case *rl.OpBinary:
@@ -2711,11 +2751,14 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 // checking lands in the next sub-commit so this one stays focused on
 // the arity-matching algorithm.
 //
-// implicitReceiverCount is non-zero for UFCS-style calls
-// (`expr.method(args)`), where the receiver of the chain is the
-// implicit first positional argument. The arity check then expects
-// `len(args) + implicitReceiverCount` to match the formal signature.
-func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int, recvType rl.TypingT) rl.TypingT {
+// recv is non-nil for UFCS-style calls (`expr.method(args)`), where the
+// receiver of the chain is the implicit first positional argument. The arity
+// check then expects `len(args) + 1` to match the formal signature.
+func (tc *typeChecker) synthCall(call *rl.Call, recv *callReceiver) rl.TypingT {
+	implicitReceiverCount := 0
+	if recv != nil {
+		implicitReceiverCount = 1
+	}
 	// Always synth the args themselves so identifier-uses get recorded.
 	for _, a := range call.Args {
 		_ = tc.synth(a)
@@ -2735,10 +2778,21 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int, recvT
 	tc.checkCall(call, typing, implicitReceiverCount)
 
 	if typing.ReturnT != nil {
-		ret := tc.refineBuiltinReturn(call, typing, recvType, *typing.ReturnT)
+		ret := tc.refineBuiltinReturn(call, typing, recv, *typing.ReturnT)
 		return tc.record(call, tc.maybeStripFallible(call, ret))
 	}
 	return tc.record(call, rl.NewDynamicType())
+}
+
+// callReceiver is the implicit first argument of a UFCS call
+// (`xs.index_of(f)`): the chain evaluated so far. nil for a plain
+// `index_of(xs, f)`. Type is what arity and assignability checking need; Node
+// is what builtin-return refinement needs in order to reason about the
+// receiver expression itself, and is set only when the receiver is the
+// varpath root - `a.b.index_of(x)` has no single node standing for the chain.
+type callReceiver struct {
+	Node rl.Node
+	Type rl.TypingT
 }
 
 // refineBuiltinReturn sharpens a few builtin return types the signature DSL
@@ -2765,7 +2819,7 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int, recvT
 func (tc *typeChecker) refineBuiltinReturn(
 	call *rl.Call,
 	typing *rl.TypingFnT,
-	recvType rl.TypingT,
+	recv *callReceiver,
 	ret rl.TypingT,
 ) rl.TypingT {
 	ident, ok := call.Func.(*rl.Identifier)
@@ -2780,8 +2834,8 @@ func (tc *typeChecker) refineBuiltinReturn(
 	// argument and isn't in call.Args; prepend it so refinement reasons over
 	// every argument, not just the written ones.
 	args := tc.positionalArgTypes(call)
-	if recvType != nil {
-		args = append([]rl.TypingT{recvType}, args...)
+	if recv != nil && recv.Type != nil {
+		args = append([]rl.TypingT{recv.Type}, args...)
 	}
 	switch ident.Name {
 	case "sort":
@@ -2796,6 +2850,8 @@ func (tc *typeChecker) refineBuiltinReturn(
 		return refineRange(args, ret)
 	case "read_file":
 		return refineReadFile(call, typing, ret)
+	case "index_of":
+		return tc.refineIndexOf(call, recv, ret)
 	case "clamp", "min", "max", "abs":
 		// These select/transform among numeric inputs without changing
 		// int-ness, so all-int scalar args produce an int result. The
@@ -2807,6 +2863,73 @@ func (tc *typeChecker) refineBuiltinReturn(
 		}
 	}
 	return ret
+}
+
+// refineIndexOf strips the null from `index_of`'s `int?` when an enclosing
+// `in` guard already proved the target is present. `if flag in xs:` and
+// `xs.index_of(flag)` name the same relation, but narrowing is keyed on
+// symbols and `xs.index_of(flag)` isn't one, so the guard couldn't reach it -
+// one real script took this hint ten times off a single flag-parsing idiom.
+//
+// The membership has to be the call's OWN pair: a guard on some other
+// container proves nothing here.
+//
+// Named args disqualify the call outright. `n` picks the Nth occurrence and
+// `start` skips a prefix, and membership promises neither - verified against
+// the runtime, where `f in xs` is true while `xs.index_of(f, n=1)` and
+// `xs.index_of(f, start=1)` both return null. Both are named-only in the
+// signature, so they can't arrive positionally and this check is complete.
+//
+// One accepted hole, on str subjects only: `"" in s` is true for every s
+// (strings.Contains), but `s.index_of("")` is null. An empty search target
+// therefore loses a hint. Taking it, rather than refining lists only, because
+// the asymmetry would be harder to explain than the hole and this is a hint,
+// not an error.
+func (tc *typeChecker) refineIndexOf(call *rl.Call, recv *callReceiver, ret rl.TypingT) rl.TypingT {
+	if len(call.NamedArgs) != 0 {
+		return ret
+	}
+	var containerNode, elementNode rl.Node
+	switch {
+	case recv != nil && recv.Node != nil && len(call.Args) == 1:
+		containerNode, elementNode = recv.Node, call.Args[0]
+	case recv == nil && len(call.Args) == 2:
+		containerNode, elementNode = call.Args[0], call.Args[1]
+	default:
+		return ret
+	}
+	container, ok := tc.identSymbol(containerNode)
+	if !ok {
+		return ret
+	}
+	element, ok := tc.identSymbol(elementNode)
+	if !ok {
+		return ret
+	}
+	if !tc.frame.HasMembership(MembershipFact{Container: container, Element: element}) {
+		return ret
+	}
+	// stripNullFrom rather than a hand-rolled unwrap: it drops null arms and
+	// leaves every other arm alone, so the "refinement must preserve the
+	// error arm" invariant holds if index_of ever becomes fallible.
+	if nonNull := stripNullFrom(ret); nonNull != nil {
+		return nonNull
+	}
+	return ret
+}
+
+// identSymbol resolves a node to its symbol when the node is a plain
+// identifier. Anything more elaborate has no symbol to key a fact on.
+func (tc *typeChecker) identSymbol(n rl.Node) (*Symbol, bool) {
+	ident, ok := n.(*rl.Identifier)
+	if !ok {
+		return nil, false
+	}
+	sym, ok := tc.resolved.Uses[ident]
+	if !ok || sym == nil {
+		return nil, false
+	}
+	return sym, true
 }
 
 // refineSort types `sort`'s two distinct shapes. Single-list/str sort returns
@@ -3108,8 +3231,14 @@ func (tc *typeChecker) synthVarPath(v *rl.VarPath, asTarget bool) rl.TypingT {
 		case seg.IsUFCS:
 			if call, ok := seg.Index.(*rl.Call); ok {
 				// The chain so far (cur) is the implicit first argument; pass it
-				// so builtin-return refinement sees the receiver's type too.
-				cur = tc.synthCall(call, 1, cur)
+				// so builtin-return refinement sees the receiver's type too. The
+				// node comes along only for a first-segment call, where the
+				// receiver IS v.Root; deeper in a chain there's no node to name.
+				recv := &callReceiver{Type: cur}
+				if i == 0 {
+					recv.Node = v.Root
+				}
+				cur = tc.synthCall(call, recv)
 			} else {
 				// Defensive: the converter always sets Index to the
 				// Call when IsUFCS, so this branch is unreachable.
@@ -3500,9 +3629,35 @@ func (tc *typeChecker) record(n rl.Node, t rl.TypingT) rl.TypingT {
 // poison marker that suppresses cascades.
 
 func (tc *typeChecker) synthOpBinary(n *rl.OpBinary) rl.TypingT {
-	left := tc.synth(n.Left)
-	right := tc.synth(n.Right)
+	if n.Op == rl.OpAnd || n.Op == rl.OpOr {
+		return tc.synthShortCircuit(n)
+	}
+	return tc.opBinaryResult(n, tc.synth(n.Left), tc.synth(n.Right))
+}
 
+// synthShortCircuit synthesizes `a and b` / `a or b`. Unlike every other
+// binary operator, the right operand is not evaluated under the same
+// conditions as the left: `and` reaches it only when the left was truthy,
+// `or` only when it was falsy. Synthesizing both under one frame is what made
+// `if x != null and len(x) > 3:` report a false positive on x - diagnostics
+// come out of this pass, so the narrowing the interpretation pass computes has
+// to be in the frame HERE to reach the operand that needed it.
+//
+// shortCircuitRight is shared with interpretAnd/interpretOr so the two passes
+// can't drift on which side of the left's refinement applies.
+func (tc *typeChecker) synthShortCircuit(n *rl.OpBinary) rl.TypingT {
+	left := tc.synth(n.Left)
+	saved := tc.frame
+	_, tc.frame = tc.shortCircuitRight(n, saved)
+	right := tc.synth(n.Right)
+	tc.frame = saved
+	return tc.opBinaryResult(n, left, right)
+}
+
+// opBinaryResult is the shared tail of binary-operator synthesis: the operand
+// types are in hand, and all that's left is the gradual-typing escape hatches
+// and the overload table.
+func (tc *typeChecker) opBinaryResult(n *rl.OpBinary, left, right rl.TypingT) rl.TypingT {
 	if anyIsErrorType(left, right) {
 		return tc.record(n, rl.NewErrorTypeType())
 	}
@@ -4048,6 +4203,12 @@ func (tc *typeChecker) synthLambda(n *rl.Lambda) rl.TypingT {
 	if overrides := tc.closureOverridesForLambda(n); overrides != nil {
 		tc.frame = tc.frame.WithMany(overrides)
 	}
+	// Memberships don't survive the capture, even though narrowings do. The
+	// closure rule above keys off reassignment, and a membership can be
+	// undone without one - `xs.pop()` between the lambda's definition and its
+	// call. A lambda can also escape the guarded region entirely, at which
+	// point there is no reassignment scan that covers where it runs.
+	tc.frame = tc.frame.withMembershipsOf(nil)
 
 	// Feed the declared return (if any) into the return frame so
 	// each `return E` in the body gets checked against the
