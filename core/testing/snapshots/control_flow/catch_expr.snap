@@ -79,3 +79,17 @@ print(outer("AAA"))
 ### STDOUT ###
 fallback AAA
 
+### TITLE ###
+Catch accepts a signed operand on the right
+### INPUT ###
+
+n = 7
+
+print(parse_int("x") catch -1)
+print(parse_int("x") catch -n)
+print(parse_int("9") catch -1)
+### STDOUT ###
+-1
+-7
+9
+

@@ -15,7 +15,7 @@ Finds the index of a target value within a string or list. Returns `null` if not
 "hello world hello".index_of("hello", n=1)      // -> 12
 "hello world hello".index_of("hello", n=-1)     // -> 12
 "hello".index_of("xyz")                         // -> null
-"hello".index_of("xyz") ?? (-1)                 // -> -1
+"hello".index_of("xyz") ?? -1                   // -> -1
 "hello".index_of("")                             // -> null (empty target)
 
 // List search
