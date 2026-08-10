@@ -232,14 +232,16 @@ Script args:
       --numbers ints
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ### EXIT ###
 1
 
@@ -261,14 +263,16 @@ Script args:
       --values [floats...]
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ### EXIT ###
 1
 
@@ -310,7 +314,7 @@ Usage:
 
 Script args:
       --command str
-      --options [strs...]
+      --options string,string
   -v, --verbose
 
 ### TITLE ###
@@ -329,8 +333,8 @@ Usage:
 
 Script args:
       --command str
-      --options1 [strs...]
-      --options2 [strs...]
+      --options1 string,string
+      --options2 string,string
   -f, --flag
 
 ### TITLE ###

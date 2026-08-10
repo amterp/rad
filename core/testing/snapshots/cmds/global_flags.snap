@@ -19,9 +19,9 @@ Usage:
   rad fmt [paths...] [OPTIONS]
 
 Arguments:
-      --paths [strs...]   Paths of Rad scripts to format.
-      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
-      --check             Don't write; exit non-zero if any file isn't formatted.
+      --paths string,string   Paths of Rad scripts to format.
+      --stdout                Print formatted output to stdout instead of writing files. Excludes: check
+      --check                 Don't write; exit non-zero if any file isn't formatted.
 
 Global options:
   -h, --help          Print usage string.
@@ -49,9 +49,9 @@ Usage:
   rad fmt [paths...] [OPTIONS]
 
 Arguments:
-      --paths [strs...]   Paths of Rad scripts to format.
-      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
-      --check             Don't write; exit non-zero if any file isn't formatted.
+      --paths string,string   Paths of Rad scripts to format.
+      --stdout                Print formatted output to stdout instead of writing files. Excludes: check
+      --check                 Don't write; exit non-zero if any file isn't formatted.
 
 Global options:
   -h, --help          Print usage string.
@@ -79,9 +79,9 @@ Usage:
   rad fmt [paths...] [OPTIONS]
 
 Arguments:
-      --paths [strs...]   Paths of Rad scripts to format.
-      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
-      --check             Don't write; exit non-zero if any file isn't formatted.
+      --paths string,string   Paths of Rad scripts to format.
+      --stdout                Print formatted output to stdout instead of writing files. Excludes: check
+      --check                 Don't write; exit non-zero if any file isn't formatted.
 
 Global options:
   -h, --help          Print usage string.
@@ -109,9 +109,9 @@ Usage:
   rad fmt [paths...] [OPTIONS]
 
 Arguments:
-      --paths [strs...]   Paths of Rad scripts to format.
-      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
-      --check             Don't write; exit non-zero if any file isn't formatted.
+      --paths string,string   Paths of Rad scripts to format.
+      --stdout                Print formatted output to stdout instead of writing files. Excludes: check
+      --check                 Don't write; exit non-zero if any file isn't formatted.
 
 Global options:
   -h, --help          Print usage string.
@@ -238,9 +238,9 @@ Usage:
   rad fmt [paths...] [OPTIONS]
 
 Arguments:
-      --paths [strs...]   Paths of Rad scripts to format.
-      --stdout            Print formatted output to stdout instead of writing files. Excludes: check
-      --check             Don't write; exit non-zero if any file isn't formatted.
+      --paths string,string   Paths of Rad scripts to format.
+      --stdout                Print formatted output to stdout instead of writing files. Excludes: check
+      --check                 Don't write; exit non-zero if any file isn't formatted.
 
 ### TITLE ###
 Fmt_AcceptsUniversalQuietFlag

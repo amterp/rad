@@ -179,6 +179,10 @@ func (r *RadRunner) detectAndSetup(args []string) (InvocationType, error) {
 		os.Args = append([]string{os.Args[0]}, args[1:]...)
 	}
 
+	// Kept before the rewrite above: anything reconstructing the caller's own
+	// command line needs their argv as they typed it, not as Ra wants to see it.
+	RawArgs = append([]string{}, args...)
+
 	// Set up minimal printer for error handling during metadata extraction
 	RP = NewPrinter(r, false, false, false, false)
 
@@ -444,6 +448,10 @@ func (r *RadRunner) parseAndExecute(invocationType InvocationType) error {
 	if r.scriptData == nil {
 		return fmt.Errorf("Bug! Script expected by this point, but found none")
 	}
+
+	// Last stop before anything runs: replies are parsed, the invoked command is
+	// known, and no statement has executed yet.
+	r.runPromptPreflight(invokedCommand)
 
 	interpreter := NewInterpreter(InterpreterInput{
 		Src:            r.scriptData.Src,

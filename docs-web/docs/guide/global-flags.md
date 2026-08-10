@@ -27,6 +27,8 @@ Global options:
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+      --reply line:value    Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ```
 
 [//]: # (todo script something to keep the above blob in check)
@@ -210,9 +212,110 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 
 [//]: # (todo can be set several times?)
 
+## `reply`
+
+`input`, `confirm`, `pick`, `pick_kv`, `pick_from_resource`, `multipick`, and `confirm`-gated shell commands all need a person at a terminal. Rad looks for one on stdin and, failing that, on `/dev/tty`, which still works when stdin carries data rather than keystrokes. In CI, cron, and AI agent tool calls, neither is there.
+
+Rather than run until it hits a prompt and dies, rad stops first and prints what the script would ask:
+
+```shell
+rad deploy.rad prod
+```
+
+```title="stderr"
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  deploy.rad prompts in 3 places. rad found no terminal - stdin isn't one and
+  /dev/tty isn't available - so it can't ask. Supply the answers up front,
+  keyed by line number.
+
+  deploy.rad:5  confirm "Deploy to prod?"
+  deploy.rad:6  input   "Release notes"
+  deploy.rad:7  pick    options: web-1, web-2, db-1
+
+    rad deploy.rad prod --reply 5:yes --reply '6:<value>' --reply 7:web-1
+```
+
+Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is the command you wanted, with the keys filled in. Replace any `<value>` placeholder before running it - rad takes them literally.
+
+Rad exits `7` when it stops like this, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.
+
+Each listed prompt may also carry a note about how it behaves:
+
+| Note | Meaning |
+|---|---|
+| `filtered - may not prompt, and then ignores its answer` | A `pick` given a filter. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped. |
+| `used as a value - ...` | An interactive function passed around rather than called. Takes `--reply-na` only. |
+| `may run more than once - repeat --reply per run` | It sits in a loop, or in a function called from several places. One `--reply` answers one execution. |
+| `secret - cannot be answered on the command line` | See [secret inputs](#reply-na) below. |
+| `options computed at runtime` | Rad can't list the choices without running the script. They're checked when the prompt is reached. |
+
+### Prompts rad can't answer
+
+One shape takes no `--reply`: passing an interactive function around as a value rather than calling it.
+
+```rad
+ask = pick
+answer = ask(["dev", "prod"])
+```
+
+Answers are addressed by the position of the call, and rad can't see where such a value ends up or how many times it runs - so there is nothing for a value to attach to. It's still listed and still keyed, so `--reply-na` can assert the value is never invoked:
+
+```shell
+rad dispatch.rad --reply-na 1
+```
+
+That matters for a script that merely *mentions* one on a path this run won't take - a handler map where the interactive entry isn't selected. If the assertion turns out to be wrong, the script stops at the prompt with [RAD20047](../reference/errors.md) rather than acting on a guess.
+
+Answers are matched by the kind of prompt on that line, so only `multipick` needs escaping:
+
+| Prompt | Answer |
+|---|---|
+| `confirm`, `confirm $\`...\`` | `yes` or `no` (also `y`, `n`, `true`, `false`) |
+| `input` | everything after the colon, verbatim; empty takes the arg's `default` |
+| `pick`, `pick_kv`, `pick_from_resource` | one option, matched exactly |
+| `multipick` | comma-separated; `\,` is a literal comma, `\\` a literal backslash |
+
+Only the first colon separates the key from the value, so `--reply 6:https://example.com` works without quoting. For `pick_kv`, answer with the key the user would see, not the value it returns - the listing names it `pick_kv` rather than `pick` for exactly this reason.
+
+Matching is exact. A near miss fails rather than running the wrong thing.
+
+A `multipick` answer must name each option at most once, and must satisfy the prompt's own `min` and `max`. Where those are written literally in the script, a bad count fails at pre-flight rather than partway through the run. Answer with an empty value (`--reply 3:`) to select nothing, which a `min=0` prompt accepts.
+
+### Prompts that run more than once
+
+A prompt inside a loop asks once per pass. Repeat its key to answer each one, in order:
+
+```shell
+rad cleanup.rad --reply 12:yes --reply 12:no
+```
+
+Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single `yes` approving five hundred deletions is the accident this avoids. When there *is* a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.
+
+One answer is consumed per execution of the line, not per prompt you would have seen. A filtered `pick` that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. That answer is then discarded: you answer prompts, and no prompt happened, so the script's own filter decides. The same applies when a `pick`'s list simply happens to hold one entry on this run.
+
+## `reply-na`
+
+Some prompts sit on branches a given run won't take. Rather than invent a value you expect to go unused, assert that the prompt won't be reached:
+
+```shell
+rad deploy.rad --dry-run --reply-na 20
+```
+
+If the script reaches it anyway, rad fails with [RAD20047](../reference/errors.md) instead of acting on a guess.
+
+This is also a good answer for a `pick` given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Rad marks those in the list, and suggests a `--reply` anyway when it knows the options - that answer is harmless whether or not the filter ends up settling the choice. Where both the options and the filter are written literally, the suggested value is one the filter actually keeps.
+
+Secret inputs are the one case with no `--reply` at all. Command-line arguments are visible to other processes, so a secret `input` can only be answered at a terminal. Use `--reply-na` if this run won't reach it. This holds whether `secret` is written as a literal or computed while the script runs - in the second case rad can't warn you up front, but it still refuses the answer.
+
+!!! note "Scripts that disable global options"
+
+    A script setting `@enable_global_options = false` has no `--reply` flag to give it. Rad says so rather than suggesting a command the script would reject; such a script can only be answered at a terminal.
+
 ## Summary
 
 - Rad provides several global flags that can be used across all Rad scripts.
+- Use `--reply` and `--reply-na` to run scripts that prompt in CI, cron, or an AI agent.
 - Use `--src`, `--cst-tree`, and `--ast-tree` to inspect scripts without running them.
 - Use `--tls-insecure` for development against self-signed certs.
 - Use `--mock-response` to test your scripts against canned API responses.

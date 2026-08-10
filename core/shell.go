@@ -9,7 +9,10 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/amterp/rad/rts/prompts"
 	"github.com/amterp/rad/rts/rl"
+
+	"github.com/amterp/radish"
 )
 
 // todo
@@ -137,19 +140,41 @@ func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 	}
 
 	if FlagConfirmShellCommands.Value || shell.IsConfirm {
-		ok, err := RConfirm(invocation.Display(), "Run above command? [Y/n] > ")
-		if err != nil {
-			// User aborted the prompt (Ctrl-C / Esc). Surface a catchable
-			// user-input error, consistent with confirm()/pick()/input(),
-			// rather than crashing as an internal bug.
-			errVal := newRadValue(i, shell, NewErrorStrf("Shell command aborted: %v", err).SetCode(rl.ErrUserInput))
-			i.NewRadPanic(shell, errVal).Panic()
+		// Only author-marked `confirm $` commands are addressable by --reply:
+		// they're the ones the static walk can see. A blanket --confirm-shell run
+		// with no terminal is refused up front (see runPromptPreflight), so it
+		// never reaches here expecting an answer.
+		approved := false
+
+		if answer, outcome := takeReply(shell); outcome != prompts.NoReply {
+			if outcome != prompts.Answered {
+				errVal := newRadValue(i, shell,
+					unansweredPromptErr(outcome, "The shell confirmation for "+invocation.Display()))
+				i.NewRadPanic(shell, errVal).Panic()
+			}
+			approved = answer.Bool
+		} else {
+			ok, err := RConfirm(invocation.Display(), "Run above command? [Y/n] > ")
+			if err != nil {
+				if errors.Is(err, radish.ErrNotInteractive) {
+					errVal := newRadValue(i, shell,
+						unansweredPromptErr(prompts.NoReply, "The shell confirmation for "+invocation.Display()))
+					i.NewRadPanic(shell, errVal).Panic()
+				}
+				// User aborted the prompt (Ctrl-C / Esc). Surface a catchable
+				// user-input error, consistent with confirm()/pick()/input(),
+				// rather than crashing as an internal bug.
+				errVal := newRadValue(i, shell, NewErrorStrf("Shell command aborted: %v", err).SetCode(rl.ErrUserInput))
+				i.NewRadPanic(shell, errVal).Panic()
+			}
+			approved = ok
 		}
-		if !ok {
-			// User declined ("n"): don't run the command, but still surface
-			// exit code 1 (a catchable "Command exited with code 1"). Populate
-			// captures with empty output so capture targets stay defined, just
-			// like a command that actually ran and exited non-zero would.
+
+		if !approved {
+			// Declined ("n"): don't run the command, but still surface exit code 1
+			// (a catchable "Command exited with code 1"). Populate captures with
+			// empty output so capture targets stay defined, just like a command
+			// that actually ran and exited non-zero would.
 			return newShellResult(1, "", "", captureStdout, captureStderr)
 		}
 	}

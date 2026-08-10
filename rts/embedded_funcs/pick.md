@@ -5,7 +5,7 @@ Presents an interactive menu for selecting from a list of options.
 
 ## Signature
 
-`pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> str`
+`pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> error|str`
 
 ## Examples
 

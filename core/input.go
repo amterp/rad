@@ -65,9 +65,9 @@ func runInputDefault(model *radish.InputModel, default_ string) (RadString, erro
 func runInput(model *radish.InputModel) (string, error) {
 	res, _, err := RInteractive.Run(model)
 	if err != nil {
-		if errors.Is(err, radish.ErrNotInteractive) {
-			return "", errors.New("input requires an interactive terminal")
-		}
+		// ErrNotInteractive is passed through rather than reworded here: only the
+		// caller knows which prompt this is and where it sits, and that is what
+		// turns "no terminal" into a message naming the line to answer.
 		return "", err
 	}
 	if res.Canceled {

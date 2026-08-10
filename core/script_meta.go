@@ -10,11 +10,18 @@ import (
 )
 
 type ScriptData struct {
-	ScriptName        string
-	Args              []*ScriptArg
-	Commands          []*ScriptCommand
-	Description       *string
-	Tree              *rts.RadTree
+	ScriptName  string
+	Args        []*ScriptArg
+	Commands    []*ScriptCommand
+	Description *string
+	Tree        *rts.RadTree
+	// Ast and Resolved are the converted AST and its name resolution, both
+	// already computed during syntax validation. They're retained rather than
+	// recomputed because the interactive pre-flight walk needs to tell a real
+	// pick() call from one where a local shadows the builtin, and that answer
+	// lives in Resolved.Uses. Either may be nil when conversion failed.
+	Ast               *rl.SourceFile
+	Resolved          *check.Resolved
 	Src               string
 	DisableGlobalOpts bool
 	DisableArgsBlock  bool
@@ -30,8 +37,8 @@ func ExtractMetadata(src string) *ScriptData {
 
 	tree := radTree.Parse(src)
 
-	// Validate syntax and get the AST
-	ast := validateSyntax(src, tree, radTree)
+	// Validate syntax and get the AST plus its name resolution
+	ast, resolved := validateSyntax(src, tree, radTree)
 
 	disableGlobalOpts := false
 	disableArgsBlock := false
@@ -64,6 +71,8 @@ func ExtractMetadata(src string) *ScriptData {
 		Commands:          commands,
 		Description:       description,
 		Tree:              tree,
+		Ast:               ast,
+		Resolved:          resolved,
 		Src:               src,
 		DisableGlobalOpts: disableGlobalOpts,
 		DisableArgsBlock:  disableArgsBlock,
@@ -98,7 +107,11 @@ func tryConvertAST(tree *rts.RadTree, src string, file string) (ast *rl.SourceFi
 // Returns the AST produced during validation so callers can extract metadata from it.
 // This runs before argument parsing, so it only respects environment variables (like NO_COLOR),
 // not command-line flags like --color=never.
-func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) *rl.SourceFile {
+func validateSyntax(
+	src string,
+	tree *rts.RadTree,
+	parser *rts.RadParser,
+) (*rl.SourceFile, *check.Resolved) {
 	ast := tryConvertAST(tree, src, ScriptName)
 	checker := check.NewCheckerWithTree(tree, parser, src, ast)
 	result, err := checker.Check()
@@ -129,7 +142,7 @@ func validateSyntax(src string, tree *rts.RadTree, parser *rts.RadParser) *rl.So
 		RExit.Exit(1)
 	}
 
-	return ast
+	return ast, result.Resolved
 }
 
 func extractArgsFromAST(argBlock *rl.ArgBlock, src string) []*ScriptArg {

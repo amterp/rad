@@ -155,6 +155,8 @@ Global options:
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+      --reply line:value    Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 To execute a Rad script:
   rad path/to/script.rad [args]
@@ -244,6 +246,8 @@ Global options:
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+      --reply line:value    Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 To execute a Rad script:
   rad path/to/script.rad [args]
@@ -269,13 +273,15 @@ Script args:
       --src str
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 ### TITLE ###
 Misc_CanShadowGlobalFlagThatHasShorthand
@@ -293,14 +299,16 @@ Script args:
       --debug str
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d                    Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d                       Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 ### TITLE ###
 Misc_CanShadowGlobalShorthand
@@ -318,14 +326,16 @@ Script args:
   -q, --myquiet str
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-      --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+      --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 ### TITLE ###
 Misc_CanShadowGlobalFlagAndShorthand
@@ -343,14 +353,16 @@ Script args:
   -v, --version str
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 ### TITLE ###
 Misc_CanShadowGlobalFlagAndUseIt
@@ -414,14 +426,16 @@ Script args:
       --value int   Input value for % calculation
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 ### TITLE ###
 Misc_PercentCharactersInArgComments
@@ -449,14 +463,16 @@ Script args:
       --discount int       Discount rate (5% to 50%)
 
 Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 
 ### TITLE ###
 Misc_DoesNotMisFormatWithMissing

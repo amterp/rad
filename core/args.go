@@ -562,6 +562,12 @@ func (f *StringListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetHiddenInShortHelp(asRaGlobal).
 		SetFlagOnly(flagOnly)
 
+	// Only when the caller supplied one: script-declared list args leave this
+	// empty and should keep rendering as the generic "strs".
+	if f.ArgUsage != "" {
+		arg = arg.SetCustomUsageType(f.ArgUsage)
+	}
+
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
 	}

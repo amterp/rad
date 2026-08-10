@@ -5,7 +5,7 @@ Presents an interactive menu for selecting multiple options from a list.
 
 ## Signature
 
-`multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> str[]`
+`multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> error|str[]`
 
 ## Examples
 
