@@ -2,7 +2,7 @@
   "_v": 3,
   "alias": "defuse-single",
   "alias_explicit": false,
-  "column": "doing",
+  "column": "done",
   "created_at_millis": 1786343578979,
   "creator": "Alexander Terp",
   "description": "#153 Tier 1. ``x = $`cmd` `` binds `0` rather than the output, and stringifies happily downstream. The most natural-looking capture is the wrong one, and nothing errors.\n\n#153 proposes the cheap defusal: a lint on a single non-`code` variable later used as a string. Whether the capture semantics themselves should change is a larger question - the lint stands on its own.\n\n---\n\n### Orientation\n\n- `core/` owns the runtime semantics; `rts/check/` owns the lint. `rts` must not import `core`.\n- The capture-arity rule is `core/shell.go:97` `positionalCaptureMode`: `captureStdout = numVars \u003e= 2`, `captureStderr = numVars \u003e= 3`. One target means nothing is captured, so `core/shell.go:351` `assignShellResults` puts the exit code on target 0.\n- The named form already works and is the fix to point users at: `core/shell.go:103` `namedCaptureMode` recognizes targets literally named `code`, `stdout`, `stderr`.\n- The checker already binds shell targets - `rts/check/binder.go:445` `visitShell` calls `declareTarget` on each - but never types them. `*rl.Shell` appears in `rts/check/type_check.go` only at `:321` (`markGuarded`) and `:1169` (`collectAssignedSymsIn`); `walkStmt` at `rts/check/type_check.go:764` has no `Shell` case. So today the checker does not know `x` is an int.\n\n### Watch out for\n\n- This card is scoped to a lint, not a semantics change. If the capture semantics themselves get revisited later, that is a breaking change with the three-layer migration obligation from AGENTS.md (migration diagnostic, error doc, `docs-web/docs/migrations/v0.X.md` entry) and a `fix!:` prefix.\n- `core/error_docs/` has its own style guide at `core/error_docs/AGENTS.md`.\n- `docs-web/docs/reference/errors.md` and `core/embedded_docs/` are generated from `core/error_docs/`. Edit the source and run `make generate`.\n",
@@ -11,15 +11,16 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUU",
+  "position": "UUUUUUUUUUUUUUUUU",
   "source": [
     "friction-153"
   ],
   "title": "Defuse single-variable shell capture binding the exit code",
   "type": "bug",
-  "updated_at_millis": 1786370438041,
+  "updated_at_millis": 1786386126002,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786343578979},
-    {"field":"column","value":"doing","at":1786370438041}
+    {"field":"column","value":"doing","at":1786370438041},
+    {"field":"column","value":"done","at":1786386126002}
   ]
 }

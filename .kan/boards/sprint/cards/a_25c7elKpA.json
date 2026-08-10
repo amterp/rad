@@ -1,0 +1,26 @@
+{
+  "_v": 3,
+  "alias": "reject-dash-prefixed",
+  "alias_explicit": false,
+  "column": "doing",
+  "created_at_millis": 1786377932437,
+  "creator": "Alexander Terp",
+  "description": "A flag takes whatever token follows it, even one that looks like a flag:\n\n```\nmycmd --name --verbose      -\u003e name = \"--verbose\", and verbose stays false\nmycmd -c --tpyo             -\u003e filter = [\"--tpyo\"]\n```\n\nA mistyped flag becomes data instead of an error. #153 raised the same complaint about its no-declared-flag workaround: the script ends up hand-rolling a `starts_with(value, \"-\")` rejection that a declared flag should have given it for free.\n\nA `-`-prefixed token shouldn't be accepted as a value. `--name=--verbose` is how you say you meant it, and `--` still ends flag parsing. Negative numbers have to keep working - `ra` already distinguishes them when collecting variadic number slices, so the predicate exists.\n\nNothing in `ra`'s history speaks to the current behavior: the scalar value-consumption code hasn't been touched since it was first written, no test asserts it, and no commit or design doc mentions it. There's an accidental asymmetry to clean up while in there - a variadic slice flag already stops at recognized flags, while a non-variadic one takes the next token unconditionally.\n\nPart of the same model as `collect-bare`, but separable: this one reaches every flag type, not just lists.",
+  "effort": "s",
+  "id": "a_25c7elKpA",
+  "labels": [
+    "ai-lo",
+    "breaking"
+  ],
+  "position": "UUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Reject dash-prefixed tokens as flag values",
+  "type": "bug",
+  "updated_at_millis": 1786378362540,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786377932437},
+    {"field":"column","value":"doing","at":1786378362540}
+  ]
+}

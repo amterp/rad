@@ -1,0 +1,28 @@
+{
+  "_v": 3,
+  "alias": "scalar-arg",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786377913950,
+  "creator": "Alexander Terp",
+  "description": "`enum`, `regex` and `range` are accepted on a list or variadic arg, shown nowhere, and never enforced:\n\n```rad\nargs:\n    scores int[]\n    scores range [0, 100]\n```\n\n```\n$ rad script.rad --scores 5 --scores 500\nscores=[ 5, 500 ]\n```\n\nSame for `enum` on `str[]` (`--envs nope` passes) and `regex` on `*tags` (`ABC` and `123` pass). `rad check` reports no diagnostics, and the constraint never reaches `-h` - the args block shows a bare `--scores ints` where the scalar equivalent shows `Range: [0, 100]`.\n\nThe scalar path works, so an author has every reason to believe the list one does. A script validating `*envs str enum [...]` before feeding those values into a shell command is trusting something that isn't happening.\n\nVisible on both sides of the boundary: the four `*ListRadArg` types in `core/args.go` carry no `EnumConstraint`, `RegexConstraint` or `RangeConstraint` field, and `ra`'s slice flags expose no constraint setters at all. So this is Rad wiring plus per-element validation in `ra`.\n\nThe natural reading is per-element:\n\n```rad\nargs:\n    scores int[] range [0, 100]\n    *envs str enum [\"dev\", \"stg\", \"prd\"]\n    *tags str regex \"[a-z][a-z0-9-]*\"\n```\n\nMinimum bar is rejecting a declaration that can't be honored rather than ignoring it. Enforcing per-element is the better answer.\n\nEnforcing will fail scripts that currently pass values violating a declared-but-ignored constraint - which is the point, but it needs a migration note.\n\n`run-the-nine` lists regex-on-variadics as an unverified probe; this resolves it.",
+  "effort": "l",
+  "id": "a_25c7AwONv",
+  "labels": [
+    "ai-lo",
+    "breaking"
+  ],
+  "position": "UUUUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Scalar arg constraints are silently ignored on list and variadic args",
+  "type": "bug",
+  "updated_at_millis": 1786379118341,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786377913950},
+    {"field":"column","value":"doing","at":1786378361334},
+    {"field":"column","value":"big-rocks","at":1786379117383},
+    {"field":"column","value":"p0-tier1","at":1786379118341}
+  ]
+}
