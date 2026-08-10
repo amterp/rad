@@ -79,6 +79,9 @@ with `-update` - but **scope it to the files you actually changed**:
 go test ./core/testing/ -run TestSnapshots -update=types/str_lexing
 go test ./core/testing/ -run TestSnapshots -update=errors/validation,control_flow
 
+# Same, but reaching every package in one run:
+SNAP_UPDATE=types/str_lexing go test ./...
+
 # Rewrite every snapshot (use sparingly):
 go test ./core/testing/ -update-all
 ```
@@ -86,11 +89,29 @@ go test ./core/testing/ -update-all
 `-update` is deliberately targeted: a mismatch in a file you did **not** target
 still fails the test, so an unrelated regression can't be silently baked into a
 snapshot. Prefer it over `-update-all`, and always review `git diff` on the
-`.snap` files afterward.
+`.snap` files afterward. Every failure prints the file, the line, and the exact
+command that would accept it.
 
 Write the value with `=` (`-update=foo`). A bare `-update` errors, and
-`-update -run X` would swallow `-run` as the update value (the test guards against
-this and tells you).
+`-update -run X` would swallow `-run` as the update value (the runner refuses a
+target starting with `-` and tells you).
+
+Use `SNAP_UPDATE` for anything wider than one package. The `-update` flag is
+only registered by packages that link the snapshot library, so
+`go test ./... -update=x` fails on the ones that don't; the environment variable
+reaches all of them.
+
+Accepting an update is refused when `CI` is set, unless you also set
+`SNAP_UPDATE_CI=1`. And an update rewrites a file whenever the library's
+canonical rendering differs from what is on disk, not only when an expectation
+changed - so `-update-all` doubles as a formatter for these files.
+
+The suites run on [go-snap](https://github.com/amterp/go-snap). Each declares
+its own sections next to its runner, so section names differ between suites: the
+syntax-tree suite writes `CST` and `AST`, the checker writes `CHECK`, the
+formatter writes `FORMATTED`, and the end-to-end script suite writes `STDOUT`,
+`STDERR`, `FRAMES` and `EXIT`. A header naming a section its suite never
+declared is a parse error rather than content.
 
 #### Quick Platform Testing
 

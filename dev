@@ -10,7 +10,7 @@ args:
     build    b bool  # Enable to build.
     validate v bool  # Enable to build & test.
     test     t bool  # Enable to run tests once.
-    update   u bool  # Enable to update ALL snapshot tests with current output. For a scoped update, run `go test <pkg> -update=<path-substr>` directly.
+    update   u bool  # Enable to update ALL snapshot tests with current output. For a scoped update, run `go test <pkg> -update=<path-substr>` or `SNAP_UPDATE=<path-substr> go test ./...` directly.
     bump       bool  # Enable to bump all dependency versions in go.mod.
 
     release range [1, 3]
@@ -30,9 +30,10 @@ if build:
     $`make build`
 
 if update:
-    // Scoped to packages that own snapshot suites (and thus register the flag);
-    // ./rts/... would also pull in rts/rl & rts/test, which don't define it.
-    $`go test ./core/testing/... ./rts ./rts/check/... ./rts/radfmt/... ./radls/lstesting/... -args -update-all`
+    // SNAP_UPDATE reaches every package, including those that never link
+    // go-snap and so would reject an unknown -update flag. That is why this is
+    // an environment variable and not `go test ./... -args -update-all`.
+    $`SNAP_UPDATE=all go test ./...`
 else if test:
     $`make test`
 

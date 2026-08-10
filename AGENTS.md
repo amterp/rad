@@ -55,10 +55,24 @@ over bespoke Go assertions when either would do. Five suites:
 (syntax trees), `rts/check/snapshots/` (checker diagnostics),
 `rts/radfmt/snapshots/` (formatter), `radls/lstesting/snapshots/` (LSP).
 
-`.snap` files hold multiple cases delimited by `### TITLE ###` /
-`### INPUT ###` (Rad source) / `### ARGS ###` / `### STDOUT ###` /
-`### STDERR ###` / `### EXIT ###`, plus `### KEYS ###` / `### FRAMES ###` for
-scripted interactive prompts.
+The engine is go-snap (`github.com/amterp/go-snap`); each suite declares its own
+sections next to its runner, so the section names differ by suite. `.snap` files
+hold multiple cases delimited by `### TITLE ###` and `### INPUT ###` (Rad
+source), then:
+
+| Suite | Sections |
+|---|---|
+| `core/testing` | `ARGS` / `RAW_ARGS` / `TERM_WIDTH` / `KEYS` in; `STDOUT` / `STDERR` / `FRAMES` / `EXIT` out |
+| `rts` (syntax trees) | `CST` (tree-sitter dump) and `AST` out |
+| `rts/check` | `ARGS` in; `CHECK` (binder + type checker dump) out |
+| `rts/radfmt` | `FORMATTED` out |
+| `radls/lstesting` | repeatable action headers (`### HOVER 1:6 ###`, ...); `STDOUT` out |
+
+A header naming a section its suite never declared is a parse error, not
+content. An absent output section asserts that channel is empty, so accepting an
+update deletes any section it can reproduce. Mark a section `[raw]` (e.g.
+`### INPUT [raw] ###`) to store it as a Go-quoted string compared byte for byte,
+which is how the formatter's line-ending and trailing-whitespace cases work.
 
 When you intentionally change behavior, update snapshots scoped to what you
 changed:
@@ -68,15 +82,27 @@ changed:
 go test ./core/testing/ -run TestSnapshots -update=types/str_lexing
 go test ./core/testing/ -run TestSnapshots -update=errors/validation,control_flow
 
+# Same, but reaching every package in one run:
+SNAP_UPDATE=types/str_lexing go test ./...
+
 # Blanket rewrite (use sparingly): ./dev --update, or per-package -update-all
 ```
 
 Under `-update=...`, mismatches in non-targeted files still fail, so unrelated
 regressions can't be silently baked in. Write the value with `=`: a bare
-`-update -run X` swallows `-run` as the update value. Always review the `.snap`
-diff afterward. Only packages that own snapshot suites register these flags
-(e.g. `./rts/...` fails because `rts/rl` doesn't define them; see `./dev` for
-the exact package list).
+`-update -run X` swallows `-run` as the update value (go-snap refuses a target
+starting with `-` for exactly this reason). Always review the `.snap` diff
+afterward.
+
+Prefer `SNAP_UPDATE` for anything wider than one package: `-update` is only
+registered by packages that link go-snap, so `go test ./... -update=x` fails on
+the ones that don't, while the environment variable reaches all of them.
+
+Two things to know about accepting an update. It is refused when `CI` is set,
+unless `SNAP_UPDATE_CI=1`. And it rewrites a file whenever go-snap's canonical
+rendering differs from what is on disk, not only when an expectation changed -
+so `-update-all` doubles as a formatter, and a format change can be migrated
+across every existing snapshot in one pass.
 
 ### CI
 
