@@ -162,3 +162,80 @@ print(a)
 ### STDOUT ###
 { "alice": [ 3, 2 ], "bob": [ 3, 6 ] }
 
+### TITLE ###
+Accumulates into fn local shadowing a module variable
+### INPUT ###
+tally = ["module"]
+
+fn f():
+	tally = []
+	tally += ["from-fn"]
+	return tally
+
+print(f())
+print(tally)
+### STDOUT ###
+[ "from-fn" ]
+[ "module" ]
+
+### TITLE ###
+Fn local shadowing a builtin leaves the builtin callable
+### INPUT ###
+fn collect():
+	keys = []
+	keys += [1]
+	return keys
+
+print(collect())
+print(keys({"a": 1}))
+### STDOUT ###
+[ 1 ]
+[ "a" ]
+
+### TITLE ###
+Accumulates into a param shadowing a module variable
+### INPUT ###
+n = 100
+
+fn bump(n):
+	n += 1
+	return n
+
+print(bump(1))
+print(n)
+### STDOUT ###
+2
+100
+
+### TITLE ###
+Accumulates into fn local from inside if and for bodies
+### INPUT ###
+total = 0
+
+fn sum_evens(limit):
+	total = 0
+	for i in range(limit):
+		if i % 2 == 0:
+			total += i
+	return total
+
+print(sum_evens(6))
+print(total)
+### STDOUT ###
+6
+0
+
+### TITLE ###
+Without a fn local, still writes the enclosing binding
+### INPUT ###
+total = 0
+
+fn add(x):
+	total += x
+
+add(3)
+add(4)
+print(total)
+### STDOUT ###
+7
+
