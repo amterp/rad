@@ -12,6 +12,7 @@ var FuncSplit = BuiltInFunc{
 	Execute: func(f FuncInvocation) RadValue {
 		toSplit := f.GetStr("_val").Plain()
 		splitter := f.GetStr("_sep").Plain()
+		useRegex := f.GetBool("regex")
 
 		limitArg := f.GetArg("limit")
 		limit := -1
@@ -24,28 +25,24 @@ var FuncSplit = BuiltInFunc{
 			limit = int(limitVal) + 1
 		}
 
-		return f.Return(regexSplit(f.i, f.callNode, toSplit, splitter, limit))
-	},
-}
-
-func regexSplit(i *Interpreter, callNode rl.Node, input string, sep string, limit int) []RadValue {
-	re, err := regexp.Compile(sep)
-
-	var parts []string
-	if err == nil {
-		parts = re.Split(input, limit)
-	} else {
-		if limit < 0 {
-			parts = strings.Split(input, sep)
+		var parts []string
+		if useRegex {
+			re, err := regexp.Compile(splitter)
+			if err != nil {
+				return f.ReturnErrf(rl.ErrInvalidRegex, "Error compiling regex pattern: %s", err)
+			}
+			parts = re.Split(toSplit, limit)
+		} else if limit < 0 {
+			parts = strings.Split(toSplit, splitter)
 		} else {
-			parts = strings.SplitN(input, sep, limit)
+			parts = strings.SplitN(toSplit, splitter, limit)
 		}
-	}
 
-	result := make([]RadValue, 0, len(parts))
-	for _, part := range parts {
-		result = append(result, newRadValue(i, callNode, part))
-	}
+		result := make([]RadValue, 0, len(parts))
+		for _, part := range parts {
+			result = append(result, newRadValue(f.i, f.callNode, part))
+		}
 
-	return result
+		return f.Return(result)
+	},
 }

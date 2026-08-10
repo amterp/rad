@@ -131,6 +131,7 @@ const (
 	ErrCaseKeyNotInDiscriminantType     Error = "40013"
 	ErrUnknownMapKey                    Error = "40014"
 	ErrIntLiteralOutOfRange             Error = "40015"
+	ErrRegexPatternWithoutRegexArg      Error = "40016"
 )
 
 func (e Error) String() string {

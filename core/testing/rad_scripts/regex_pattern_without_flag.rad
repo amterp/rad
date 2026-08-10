@@ -1,0 +1,15 @@
+text = "a b  c"
+
+// Warns: regex constructs, no regex=true. Plain and UFCS call forms both count.
+a = split(text, "\s+")
+b = text.replace("[^a-z]", "")
+
+// Quiet: literal separators that happen to be metacharacters.
+c = split(text, ".")
+d = text.replace(".txt", "")
+e = split(text, "|")
+
+// Quiet: the regex is declared.
+f = split(text, "\s+", regex=true)
+
+print(a, b, c, d, e, f)

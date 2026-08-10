@@ -6,6 +6,17 @@ print(split("a,b,c", ","))
 [ "a", "b", "c" ]
 
 ### TITLE ###
+Separator is literal by default
+### INPUT ###
+print(split("a.b.c", "."))
+print(split("a(b", "("))
+print(split("a|b", "|"))
+### STDOUT ###
+[ "a", "b", "c" ]
+[ "a", "b" ]
+[ "a", "b" ]
+
+### TITLE ###
 Long split
 ### INPUT ###
 print(split("Alice      Smith", " "))
@@ -15,7 +26,7 @@ print(split("Alice      Smith", " "))
 ### TITLE ###
 Long split regex
 ### INPUT ###
-print(split("Alice      Smith", " +"))
+print(split("Alice      Smith", " +", regex=true))
 ### STDOUT ###
 [ "Alice", "Smith" ]
 
@@ -30,7 +41,7 @@ print(split("Alice", ""))
 Can split tags
 ### INPUT ###
 tags = ["0.0.1", "0.2.1", "0.0.3"]
-tags = [split(t, "\.") for t in tags]
+tags = [split(t, ".") for t in tags]
 print(tags)
 ### STDOUT ###
 [ [ "0", "0", "1" ], [ "0", "2", "1" ], [ "0", "0", "3" ] ]
@@ -59,17 +70,33 @@ print(split("a,b,c", ",", limit=10))
 ### TITLE ###
 Regex with limit
 ### INPUT ###
-print(split("a b c d", " +", limit=1))
+print(split("a b c d", " +", regex=true, limit=1))
 ### STDOUT ###
 [ "a", "b c d" ]
 
 ### TITLE ###
-Literal fallback with limit
+Literal metacharacter with limit
 ### INPUT ###
 print(split("a[b[c", "[", limit=1))
 ### STDOUT ###
 [ "a", "b[c" ]
 
+### TITLE ###
+Uncompilable pattern errors under regex
+### INPUT ###
+split("a[b[c", "[", regex=true)
+### STDERR ###
+error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing closing ]: `[`
+  --> <script>:1:1
+  |
+1 | split("a[b[c", "[", regex=true)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad docs RAD20024
+
+
+### EXIT ###
+1
 ### TITLE ###
 Limit of zero errors
 ### INPUT ###

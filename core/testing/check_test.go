@@ -91,6 +91,27 @@ Reported 3 diagnostics.
 	assertOnlyOutput(t, stdOutBuffer, expected)
 }
 
+func Test_Check_RegexPatternWithoutRegexArg(t *testing.T) {
+	setupAndRunArgs(t, "check", "./rad_scripts/regex_pattern_without_flag.rad", "--color=never")
+	expected := `L4:17: WARN
+
+     4 | a = split(text, "\s+")
+       |                 ^ '\s+' reads as a regex ('\s'), but split() matches literally unless you pass regex=true. It will search for that exact text, most likely match nothing, and return the input unchanged - no error, just a wrong answer.
+       |                 (code: RAD40016)
+       = help: add regex=true to keep the old behavior, or ignore this if the text really is literal. See https://amterp.dev/rad/migrations/v0.12/
+
+L5:18: WARN
+
+     5 | b = text.replace("[^a-z]", "")
+       |                  ^ '[^a-z]' reads as a regex ('[...]'), but replace() matches literally unless you pass regex=true. It will search for that exact text, most likely match nothing, and return the input unchanged - no error, just a wrong answer.
+       |                  (code: RAD40016)
+       = help: add regex=true to keep the old behavior, or ignore this if the text really is literal. See https://amterp.dev/rad/migrations/v0.12/
+
+Reported 2 diagnostics.
+`
+	assertOnlyOutput(t, stdOutBuffer, expected)
+}
+
 func Test_Check_DeprecatedRequest(t *testing.T) {
 	setupAndRunArgs(t, "check", "./rad_scripts/deprecated_request.rad", "--color=never")
 	expected := `L1:1: ERROR

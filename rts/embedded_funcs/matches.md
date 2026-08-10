@@ -21,6 +21,12 @@ matches("abc", "(")                    // -> error: invalid regex
 
 strings
 
+## Notes
+
+Unlike `split` and `replace`, `matches` has no `regex` parameter and always treats `_pattern`
+as a regex. A literal `matches` would just be `==` (full match) or a substring test (partial),
+neither of which needs a function.
+
 ## See also
 
 `replace`, `split`
