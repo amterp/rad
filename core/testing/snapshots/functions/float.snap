@@ -41,10 +41,9 @@ error[RAD20016]: Cannot cast "map" to float
   | ^^^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Float errors on string with details
 ### INPUT ###
@@ -57,7 +56,5 @@ error[RAD20016]: Cannot cast string to float. Did you mean to use 'parse_float' 
   | ^^^^^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1

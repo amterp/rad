@@ -36,10 +36,9 @@ error[RAD20028]: Undefined identifier 'notarealsymbol'
   | ^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors if invoking non-function
 ### INPUT ###
@@ -55,7 +54,5 @@ error[RAD30001]: Cannot invoke 'foo' as a function: it is a str
   | ^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

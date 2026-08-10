@@ -36,6 +36,7 @@ rest += ["d"]
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SliceOfAStrIsAStr
 ### DESCRIPTION ###
@@ -58,6 +59,7 @@ split(head, "e")
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SliceOfUnknownStaysDynamic
 ### DESCRIPTION ###

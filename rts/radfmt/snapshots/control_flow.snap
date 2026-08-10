@@ -14,6 +14,7 @@ else if y:
     print(2)
 else:
     print(3)
+
 ### TITLE ###
 [F18] For loop
 ### INPUT ###
@@ -22,6 +23,7 @@ for i in range(3):
 ### STDOUT ###
 for i in range(3):
     print(i)
+
 ### TITLE ###
 [F18] For loop with multiple vars
 ### INPUT ###
@@ -30,6 +32,7 @@ for i,x in items:
 ### STDOUT ###
 for i, x in items:
     print(x)
+
 ### TITLE ###
 [F43] For loop with context clause
 ### INPUT ###
@@ -38,6 +41,7 @@ for x in [1,2,3]  with  loop:
 ### STDOUT ###
 for x in [1, 2, 3] with loop:
     print(loop.idx)
+
 ### TITLE ###
 [F43] Keyed for loop with context clause
 ### INPUT ###
@@ -46,6 +50,7 @@ for k,v in m with loop:
 ### STDOUT ###
 for k, v in m with loop:
     print(loop.idx, k, v)
+
 ### TITLE ###
 [F19] While loop
 ### INPUT ###
@@ -54,6 +59,7 @@ while x:
 ### STDOUT ###
 while x:
     x = x - 1
+
 ### TITLE ###
 [F1][F17][F18] Nested blocks indent four spaces
 ### INPUT ###

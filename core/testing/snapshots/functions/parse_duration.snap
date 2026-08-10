@@ -83,10 +83,9 @@ error[RAD20043]: Failed to parse duration "invalid!": invalid duration: time: in
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20043
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Day hour minute combined
 ### INPUT ###
@@ -113,10 +112,9 @@ error[RAD20043]: Failed to parse duration "-": empty duration string
   | ^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20043
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Error on duplicate days
 ### INPUT ###
@@ -129,10 +127,9 @@ error[RAD20043]: Failed to parse duration "1d2d": multiple day components in dur
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20043
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Error on overflow
 ### INPUT ###
@@ -145,10 +142,9 @@ error[RAD20043]: Failed to parse duration "106751d24h": duration overflow: total
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20043
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Dot-five days
 ### INPUT ###
@@ -210,7 +206,5 @@ error[RAD20043]: Failed to parse duration "1w2w": multiple week components in du
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20043
-
-
 ### EXIT ###
 1

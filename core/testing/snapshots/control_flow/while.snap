@@ -63,4 +63,3 @@ while a < 2:
 print(a, b)
 ### STDOUT ###
 2 40
-

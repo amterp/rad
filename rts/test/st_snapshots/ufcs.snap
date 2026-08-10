@@ -54,7 +54,6 @@ B: [15, 16] PS: [0, 15] PE: [0, 16]                             ( `(`
 B: [16, 17] PS: [0, 16] PE: [0, 17]                             ) `)`
 B: [17, 18] PS: [0, 17] PE: [0, 18]                           . `.`
 B: [18, 19] PS: [0, 18] PE: [0, 19]                           indexing: identifier `d`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 19] SourceFile
 PS: [0,  0] PE: [0, 19]   ExprStmt
@@ -69,4 +68,3 @@ PS: [0,  9] PE: [0, 12]           Identifier "bar"
 PS: [0, 14] PE: [0, 17]         Call
 PS: [0, 14] PE: [0, 15]           Identifier "c"
                             .d
-

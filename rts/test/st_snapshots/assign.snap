@@ -137,7 +137,6 @@ B: [39, 40] PS: [3, 14] PE: [3, 15]                         delegate: indexed_ex
 B: [39, 40] PS: [3, 14] PE: [3, 15]                           root: primary_expr
 B: [39, 40] PS: [3, 14] PE: [3, 15]                             literal
 B: [39, 40] PS: [3, 14] PE: [3, 15]                               int `4`
-
 ### STDERR ###
 PS: [0,  0] PE: [3, 15] SourceFile
 PS: [0,  0] PE: [0,  5]   Assign
@@ -164,4 +163,3 @@ PS: [3,  2] PE: [3,  3]         LitInt 0
                             [index]
 PS: [3,  7] PE: [3, 10]         LitString "c"
 PS: [3, 14] PE: [3, 15]     LitInt 4
-

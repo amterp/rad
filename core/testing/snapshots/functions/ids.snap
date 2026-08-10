@@ -58,10 +58,9 @@ error[RAD20020]: Error creating FID generator: alphabet must contain at least 2 
   | ^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20020
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 gen_fid errors on negative num_random_chars
 ### INPUT ###
@@ -74,7 +73,5 @@ error[RAD20017]: Number of random chars must be non-negative, got -1
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20017
-
-
 ### EXIT ###
 1

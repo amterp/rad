@@ -30,4 +30,3 @@ signal_trap("sigint", fn(ctx):
 print("done")
 ### STDOUT ###
 done
-

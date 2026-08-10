@@ -7,10 +7,10 @@ twice = [50, 60, 70]
 rad:
 	fields names, ages, twice
 ### STDOUT ###
-names    ages  twice 
-Alice    25    50     
-Bob      30    60     
-Charlie        70     
+\"names    ages  twice "
+\"Alice    25    50     "
+\"Bob      30    60     "
+\"Charlie        70     "
 
 ### TITLE ###
 Tbl FillsMissingValuesWithEmptyStringsShortestFirst
@@ -21,8 +21,7 @@ twice = [50, 60, 70]
 rad:
 	fields ages, names, twice
 ### STDOUT ###
-ages  names    twice 
-25    Alice    50     
-30    Bob      60     
-      Charlie  70     
-
+\"ages  names    twice "
+\"25    Alice    50     "
+\"30    Bob      60     "
+\"      Charlie  70     "

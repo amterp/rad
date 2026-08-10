@@ -31,10 +31,9 @@ error[RAD20000]: Filtered 0 options to 0 with filters: []
   | ^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors if key value arrays are not equal length
 ### INPUT ###
@@ -50,10 +49,9 @@ error[RAD20000]: Number of keys and values must match, but got 1 key and 2 value
   | ^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Works with multiple tokens
 ### INPUT ###
@@ -62,4 +60,3 @@ values = ["Hamburger", "Chicken Burger", "Fishwich"]
 print(pick_kv(keys, values, ["Be", "ef"]))
 ### STDOUT ###
 Hamburger
-

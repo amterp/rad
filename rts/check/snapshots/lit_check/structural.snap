@@ -19,6 +19,7 @@ print(f())
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ListLiteralIntoTupleElementMismatchLocalized
 ### DESCRIPTION ###
@@ -39,6 +40,7 @@ print(f())
 
 # Diagnostics
   [error] RAD30001 @ 2:16 - Return value of type 'int' is not assignable to declared return type 'str'
+
 ### TITLE ###
 MapLiteralIntoStructAccepts
 ### DESCRIPTION ###
@@ -59,6 +61,7 @@ print(f())
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 MapLiteralIntoStructValueMismatchLocalized
 ### DESCRIPTION ###
@@ -78,6 +81,7 @@ print(f())
 
 # Diagnostics
   [error] RAD30001 @ 2:19 - Return value of type 'str' is not assignable to declared return type 'int'
+
 ### TITLE ###
 StructOptionalFieldOmittedAccepts
 ### DESCRIPTION ###
@@ -98,6 +102,7 @@ print(f())
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 StructMissingRequiredFieldFires
 ### DESCRIPTION ###
@@ -118,6 +123,7 @@ print(f())
 
 # Diagnostics
   [error] RAD30001 @ 2:12 - Return value of type '{ str: int }' is not assignable to declared return type '{ "a": int, "b": str }' (missing required field 'b')
+
 ### TITLE ###
 StructExtraFieldAccepted
 ### DESCRIPTION ###
@@ -139,6 +145,7 @@ print(f())
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 StrLiteralIntoStrEnumArgAccepts
 ### DESCRIPTION ###
@@ -161,6 +168,7 @@ pick("read")
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 StrLiteralIntoStrEnumArgNonMemberFires
 ### DESCRIPTION ###
@@ -182,6 +190,7 @@ pick("delete")
 
 # Diagnostics
   [error] RAD30001 @ 4:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+
 ### TITLE ###
 NestedMapListIntoStructTupleAccepts
 ### DESCRIPTION ###
@@ -202,6 +211,7 @@ print(f())
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NestedMismatchLocalizedToInnerElement
 ### DESCRIPTION ###
@@ -222,6 +232,7 @@ print(f())
 
 # Diagnostics
   [error] RAD30001 @ 2:23 - Return value of type 'int' is not assignable to declared return type 'str'
+
 ### TITLE ###
 AssignListLiteralIntoTupleLocalAccepts
 ### DESCRIPTION ###
@@ -240,6 +251,7 @@ print(x)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 IndexedAssignElementLiteralChecks
 ### DESCRIPTION ###

@@ -596,7 +596,6 @@ B: [301, 306] PS: [27, 11] PE: [27, 16]                                         
 B: [301, 306] PS: [27, 11] PE: [27, 16]                                                                 content: string_content `BUG!!`
 B: [306, 307] PS: [27, 16] PE: [27, 17]                                                               end: string_end `"`
 B: [307, 308] PS: [27, 17] PE: [27, 18]                                   ) `)`
-
 ### STDERR ###
 PS: [ 0,  0] PE: [27, 18] SourceFile
 PS: [ 0,  0] PE: [ 3, 17]   If
@@ -677,4 +676,3 @@ PS: [27,  4] PE: [27, 18]       ExprStmt
 PS: [27,  4] PE: [27, 18]         Call
 PS: [27,  4] PE: [27,  9]           Identifier "print"
 PS: [27, 10] PE: [27, 17]           LitString "BUG!!"
-

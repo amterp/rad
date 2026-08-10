@@ -48,7 +48,6 @@ pprint(node[0])
   "age": 30,
   "hometown": "New York"
 }
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -66,7 +65,6 @@ pprint(node[0])
 .*:./responses/unique_keys.json
 ### STDOUT ###
 30
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -101,7 +99,6 @@ pprint(node)
     10
   ]
 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -151,7 +148,6 @@ pprint(node[0])
   },
   null
 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -217,4 +213,3 @@ print_err("hi", end="_charlie\n")
 hi alice
 hi_bob
 hi_charlie
-

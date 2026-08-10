@@ -14,6 +14,7 @@ for i in [1, 2, 3]:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ForOverStringBindsChar
 ### INPUT ###
@@ -30,6 +31,7 @@ for c in "hello":
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ForOverMapBindsKey
 ### INPUT ###
@@ -46,6 +48,7 @@ for k in {"a": 1, "b": 2}:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ForOverTypedListVarIsElement
 ### INPUT ###
@@ -66,6 +69,7 @@ fn f(xs: int[]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ForOverUnknownIterFallsBackDynamic
 ### INPUT ###
@@ -83,6 +87,7 @@ for v in unknown_thing():
 
 # Diagnostics
   [error] RAD20028 @ 1:10 - Undefined identifier 'unknown_thing'
+
 ### TITLE ###
 ForOverUnionOfListsBindsUnionElement
 ### DESCRIPTION ###
@@ -106,6 +111,7 @@ fn iter(xs: int[]|str[]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ForOverUnionOfListsMismatchFires
 ### DESCRIPTION ###
@@ -136,6 +142,7 @@ fn consume(x: int):
 
 # Diagnostics
   [hint] RAD30001 @ 3:17 - Argument type 'int|str' is not assignable to expected type 'int'
+
 ### TITLE ###
 ForTwoVarOverMapBindsKeyAndValue
 ### DESCRIPTION ###
@@ -166,6 +173,7 @@ fn consume_str(s: str):
 
 # Diagnostics
   [error] RAD30001 @ 3:21 - Argument type 'int' is not assignable to expected type 'str'
+
 ### TITLE ###
 ForTwoVarOverMapValueIsTyped
 ### DESCRIPTION ###

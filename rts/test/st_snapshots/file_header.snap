@@ -44,7 +44,6 @@ B: [40, 41] PS: [6,  9] PE: [6, 10]                                           de
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                             root: primary_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                               literal
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                                 int `2`
-
 ### STDERR ###
 PS: [0,  0] PE: [6, 10] SourceFile
 PS: [0,  0] PE: [6,  0]   FileHeader "This is\na\n\nfile header"
@@ -52,4 +51,3 @@ PS: [6,  0] PE: [6, 10]   Assign
 PS: [6,  0] PE: [6,  1]     Identifier "a"
 PS: [6,  4] PE: [6, 10]     Lambda block=false
 PS: [6,  9] PE: [6, 10]       LitInt 2
-

@@ -21,6 +21,7 @@ print(a + 1)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UnguardedFallibleWarnsUnderStrict
 ### DESCRIPTION ###
@@ -45,6 +46,7 @@ print(a + 1)
 # Diagnostics
   [warn] RAD30011 @ 1:5 - This call can fail; the error isn't handled and would halt the script
     help: Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`
+
 ### TITLE ###
 CatchExpressionSuppressesHint
 ### DESCRIPTION ###
@@ -65,6 +67,7 @@ print(a + 1)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FallbackOperatorSuppressesHint
 ### DESCRIPTION ###
@@ -85,6 +88,7 @@ print(a + 1)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FallibleInsideGuardedExprNoOpError
 ### DESCRIPTION ###
@@ -110,6 +114,7 @@ print(r)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 StatementCatchBindsErrorInBody
 ### DESCRIPTION ###
@@ -132,6 +137,7 @@ a = parse_int("2") catch:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ErrorBuiltinKeepsErrorValue
 ### DESCRIPTION ###
@@ -153,6 +159,7 @@ print(e)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UserFnUnionWarnsUnderStrict
 ### DESCRIPTION ###

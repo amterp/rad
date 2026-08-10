@@ -16,6 +16,7 @@ fn add_one(x: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 HoistedFnNoReturnIsVoid
 ### DESCRIPTION ###
@@ -35,6 +36,7 @@ fn say_hi(name: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 HoistedFnMultiplePathsUnioned
 ### DESCRIPTION ###
@@ -54,6 +56,7 @@ fn pick(flag: bool):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 HoistedFnForwardReferenceResolves
 ### DESCRIPTION ###
@@ -76,6 +79,7 @@ fn b():
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 HoistedFnSelfRecursionDynamic
 ### DESCRIPTION ###
@@ -97,6 +101,7 @@ fn loop_forever(x: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 HoistedFnSelfRecursionWithBaseCase
 ### DESCRIPTION ###
@@ -121,6 +126,7 @@ fn factorial(n: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 HoistedFnMutualRecursionUnioned
 ### DESCRIPTION ###

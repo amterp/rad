@@ -348,9 +348,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 UnderscoresToHyphens_staging
 ### INPUT ###
@@ -402,7 +402,6 @@ Commands:
 ### TITLE ###
 NoScript_ErrorsOnUnknownArguments
 ### INPUT ###
-
 ### ARGS ###
 --unknown-flag
 ### STDERR ###
@@ -454,6 +453,5 @@ To execute a command:
   rad <command> [args]
 
 If you're new, check out the Getting Started guide: https://amterp.dev/rad/guide/getting-started/
-
 ### EXIT ###
 1

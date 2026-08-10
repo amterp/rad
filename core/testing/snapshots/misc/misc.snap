@@ -10,10 +10,9 @@ error[RAD10009]: Unexpected '1 ='
   | ^^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_ReadingFromUnderscoreVarErrors
 ### INPUT ###
@@ -29,10 +28,9 @@ error[RAD20039]: Cannot use '_' as a value
   |       ^
   |
    = info: rad docs RAD20039
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_CanHaveVarNameThatIsJustAnUnderscoreInForLoop
 ### INPUT ###
@@ -64,7 +62,6 @@ Misc_PrioritizesHelpIfBothHelpAndVersionSpecified
 ### SKIP ###
 TODO: currently failing, should fix
 ### INPUT ###
-
 ### ARGS ###
 -h
 -v
@@ -115,7 +112,6 @@ If you're new, check out the Getting Started guide: https://amterp.dev/rad/guide
 ### TITLE ###
 Misc_PrintsHelpToStderrIfUnknownGlobalFlag
 ### INPUT ###
-
 ### ARGS ###
 --asd
 ### STDERR ###
@@ -167,9 +163,9 @@ To execute a command:
   rad <command> [args]
 
 If you're new, check out the Getting Started guide: https://amterp.dev/rad/guide/getting-started/
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_Abs_Int
 ### INPUT ###
@@ -204,14 +200,12 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int|flo
   |         ^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_PrintsUsageIfInvokedWithNoScript
 ### INPUT ###
-
 ### STDOUT ###
 rad: A tool for writing user-friendly command line scripts.
 GitHub: https://github.com/amterp/rad
@@ -373,7 +367,6 @@ someversion!
 ### TITLE ###
 Misc_GlobalSrcFlag
 ### INPUT ###
-
 ### ARGS ###
 ./rad_scripts/example_arg.rad
 --src
@@ -497,10 +490,9 @@ error[RAD20028]: Undefined identifier 'usernme'
   |
    = help: did you mean 'username' or 'base_name'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_UndefinedVariableSuggestsMultipleSimilar
 ### INPUT ###
@@ -518,10 +510,9 @@ error[RAD20028]: Undefined identifier 'usernme'
   |
    = help: did you mean 'username', 'user_name', or 'base_name'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_UndefinedVariableNoSuggestionIfTooDistant
 ### INPUT ###
@@ -537,10 +528,9 @@ error[RAD20028]: Undefined identifier 'completely_different_name'
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Misc_Func_Get_Rad_Home
 ### INPUT ###
@@ -552,4 +542,3 @@ d[-1].print()
 ### STDOUT ###
 true
 rad_test_home
-

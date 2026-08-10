@@ -8,9 +8,9 @@ rad:
     ages:
         filter fn(a) a >= 18
 ### STDOUT ###
-ages  names   
-25    Bob      
-30    Charlie  
+\"ages  names   "
+\"25    Bob      "
+\"30    Charlie  "
 
 ### TITLE ###
 Rad Filter MultipleFields AND
@@ -24,8 +24,8 @@ rad:
     names:
         filter fn(n) len(n) > 3
 ### STDOUT ###
-ages  names   
-30    Charlie  
+\"ages  names   "
+\"30    Charlie  "
 
 ### TITLE ###
 Rad Filter WithMap
@@ -37,9 +37,9 @@ rad:
         filter fn(a) a >= 18
         map fn(a) a * 12
 ### STDOUT ###
-ages 
-300   
-360   
+\"ages "
+\"300   "
+\"360   "
 
 ### TITLE ###
 Rad Filter EmptyResult
@@ -50,7 +50,7 @@ rad:
     ages:
         filter fn(a) a >= 18
 ### STDOUT ###
-ages 
+\"ages "
 
 ### TITLE ###
 Rad Filter UsingIdentifier
@@ -62,9 +62,9 @@ rad:
     ages:
         filter is_adult
 ### STDOUT ###
-ages 
-25    
-30    
+\"ages "
+\"25    "
+\"30    "
 
 ### TITLE ###
 Rad Filter WithSorting
@@ -77,10 +77,10 @@ rad:
     ages:
         filter fn(a) a >= 18
 ### STDOUT ###
-ages  names   
-30    Charlie  
-25    Bob      
-22    Frank    
+\"ages  names   "
+\"30    Charlie  "
+\"25    Bob      "
+\"22    Frank    "
 
 ### TITLE ###
 Rad Filter FilterBeforeMapVerification
@@ -92,10 +92,10 @@ rad:
         filter fn(v) v < 35
         map fn(v) v * 2
 ### STDOUT ###
-values 
-20      
-40      
-60      
+\"values "
+\"20      "
+\"40      "
+\"60      "
 
 ### TITLE ###
 Rad Filter CannotFilterUnevenLengths
@@ -117,7 +117,5 @@ error[RAD20042]: Bug: Field "values2" has 3 rows but expected 4. All fields must
 6 |         filter fn(v) v % 2 == 0
   |
    = info: rad docs RAD20042
-
-
 ### EXIT ###
 1

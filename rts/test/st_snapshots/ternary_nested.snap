@@ -136,7 +136,6 @@ B: [40, 41] PS: [0, 40] PE: [0, 41]                             delegate: indexe
 B: [40, 41] PS: [0, 40] PE: [0, 41]                               root: primary_expr
 B: [40, 41] PS: [0, 40] PE: [0, 41]                                 literal
 B: [40, 41] PS: [0, 40] PE: [0, 41]                                   int `7`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 41] SourceFile
 PS: [0,  0] PE: [0, 41]   Assign
@@ -157,4 +156,3 @@ PS: [0, 28] PE: [0, 29]           Identifier "c"
 PS: [0, 32] PE: [0, 33]           LitInt 5
 PS: [0, 36] PE: [0, 37]         LitInt 6
 PS: [0, 40] PE: [0, 41]         LitInt 7
-

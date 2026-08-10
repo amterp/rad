@@ -62,7 +62,6 @@ B: [19, 20] PS: [2, 5] PE: [2, 6]                                               
 B: [20, 21] PS: [2, 6] PE: [2, 7]                                     } `}`
 B: [21, 22] PS: [2, 7] PE: [2, 8]                                   content: string_content `)`
 B: [22, 30] PS: [2, 8] PE: [3, 7]                                 end: string_end `\n    """`
-
 ### STDERR ###
 PS: [0, 0] PE: [3, 7] SourceFile
 PS: [0, 0] PE: [0, 5]   Assign
@@ -74,4 +73,3 @@ PS: [1, 4] PE: [3, 7]     LitString (interpolated, 2 segments)
                           Interpolation
 PS: [2, 5] PE: [2, 6]         Identifier "x"
                           Literal ")"
-

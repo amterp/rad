@@ -25,6 +25,7 @@ fn f(x: ["a", "b", "c"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NeqStrLiteralInverts
 ### DESCRIPTION ###
@@ -51,6 +52,7 @@ fn f(x: ["a", "b", "c"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 InStringListNarrows
 ### DESCRIPTION ###
@@ -78,6 +80,7 @@ fn f(x: ["a", "b", "c"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NotInStringListInverts
 ### INPUT ###
@@ -102,6 +105,7 @@ fn f(x: ["a", "b", "c"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 PlainStrNotNarrowedByEquality
 ### DESCRIPTION ###
@@ -129,6 +133,7 @@ fn f(x: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 StrLiteralArgAcceptedByEnumParam
 ### DESCRIPTION ###
@@ -158,6 +163,7 @@ open("append")
 
 # Diagnostics
   [error] RAD30001 @ 6:6 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+
 ### TITLE ###
 InLiteralListUpgradesPlainStrToEnum
 ### DESCRIPTION ###
@@ -185,6 +191,7 @@ fn f(x: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NotInLiteralListNarrowsFalsyBranch
 ### DESCRIPTION ###

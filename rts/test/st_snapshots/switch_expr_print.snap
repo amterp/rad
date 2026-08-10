@@ -267,7 +267,6 @@ B: [146, 147] PS: [5,  4] PE: [5,  5]                         delegate: indexed_
 B: [146, 147] PS: [5,  4] PE: [5,  5]                           root: primary_expr
 B: [146, 147] PS: [5,  4] PE: [5,  5]                             literal
 B: [146, 147] PS: [5,  4] PE: [5,  5]                               int `2`
-
 ### STDERR ###
 PS: [0,  0] PE: [5,  5] SourceFile
 PS: [0,  0] PE: [0, 14]   Assign
@@ -299,4 +298,3 @@ PS: [4, 25] PE: [4, 34]           LitString "CHARLIE"
 PS: [5,  0] PE: [5,  5]   Assign
 PS: [5,  0] PE: [5,  1]     Identifier "a"
 PS: [5,  4] PE: [5,  5]     LitInt 2
-

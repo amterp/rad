@@ -111,7 +111,6 @@ B: [16, 17] PS: [2, 3] PE: [2, 4]                                               
 B: [16, 17] PS: [2, 3] PE: [2, 4]                                                     literal
 B: [16, 17] PS: [2, 3] PE: [2, 4]                                                       int `1`
 B: [17, 18] PS: [2, 4] PE: [2, 5]                           ] `]`
-
 ### STDERR ###
 PS: [0, 0] PE: [2, 5] SourceFile
 PS: [0, 0] PE: [0, 4]   ExprStmt
@@ -132,4 +131,3 @@ PS: [2, 0] PE: [2, 1]       Identifier "a"
                           [index]
 PS: [2, 2] PE: [2, 4]         OpUnary -
 PS: [2, 3] PE: [2, 4]           LitInt 1
-

@@ -26,6 +26,7 @@ fact = fn(n: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RecursiveLambdaPureLoopDynamic
 ### DESCRIPTION ###
@@ -47,6 +48,7 @@ loop = fn(x: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RecursiveLambdaMultiPathUnioned
 ### DESCRIPTION ###
@@ -73,6 +75,7 @@ pick = fn(x: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RecursiveLambdaCallFromOutsideUsesInferredReturn
 ### DESCRIPTION ###
@@ -103,6 +106,7 @@ result = fact(5)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedLambdaRecursiveCallUsesDeclared
 ### DESCRIPTION ###

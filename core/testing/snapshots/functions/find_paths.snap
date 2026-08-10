@@ -21,6 +21,7 @@ Need to test abstractions in place for this to work regardless of the computer r
 ### INPUT ###
 paths = find_paths("path_example/dir2", relative="absolute")
 print(paths)
+
 ### TITLE ###
 FindPaths depth
 ### INPUT ###
@@ -44,4 +45,3 @@ paths = find_paths("path_example", depth=0)
 print(paths)
 ### STDOUT ###
 [ ]
-

@@ -27,5 +27,4 @@ print(trim_right(a))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-  [31mhello[0m
-
+\"  \x1b[31mhello\x1b[0m"

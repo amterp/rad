@@ -67,4 +67,3 @@ A, B, C = sort(a, b, c, reverse=true)
 print(A, B, C)
 ### STDOUT ###
 [ 4, 3, 2, 1 ] [ "c", "d", "a", "b" ] [ true, false, true, false ]
-

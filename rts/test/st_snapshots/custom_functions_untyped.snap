@@ -163,7 +163,6 @@ B: [97, 98] PS: [4, 15] PE: [4, 16]                           delegate: indexed_
 B: [97, 98] PS: [4, 15] PE: [4, 16]                             root: primary_expr
 B: [97, 98] PS: [4, 15] PE: [4, 16]                               literal
 B: [97, 98] PS: [4, 15] PE: [4, 16]                                 int `2`
-
 ### STDERR ###
 PS: [0,  0] PE: [4, 16] SourceFile
 PS: [0,  0] PE: [0, 22]   FnDef "myfoo" block=false
@@ -186,4 +185,3 @@ PS: [4,  4] PE: [4, 16]     Return
 PS: [4, 11] PE: [4, 16]       OpBinary /
 PS: [4, 11] PE: [4, 12]         Identifier "a"
 PS: [4, 15] PE: [4, 16]         LitInt 2
-

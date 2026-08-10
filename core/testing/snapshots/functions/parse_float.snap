@@ -21,10 +21,9 @@ error[RAD20002]: parse_float() failed to parse "asd"
   |     ^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can parse int
 ### INPUT ###
@@ -49,4 +48,3 @@ a = parse_float("asd") catch:
 	print("Got", a)
 ### STDOUT ###
 Got parse_float() failed to parse "asd"
-

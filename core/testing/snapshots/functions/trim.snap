@@ -30,7 +30,7 @@ print(trim(a))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mhello[0m
+\"\x1b[31mhello\x1b[0m"
 
 ### TITLE ###
 Preserves color across segment boundary
@@ -40,5 +40,4 @@ print(trim(a, " ,"))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mhe[0m[34mllo[0m
-
+\"\x1b[31mhe\x1b[0m\x1b[34mllo\x1b[0m"

@@ -63,10 +63,8 @@ B: [28, 29] PS: [0, 28] PE: [0, 29]           ] `]`
 B: [29, 30] PS: [0, 29] PE: [0, 30]       . `.`
 B: [30, 33] PS: [0, 30] PE: [0, 33]       segment: json_segment
 B: [30, 33] PS: [0, 30] PE: [0, 33]         key: identifier `bar`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 33] SourceFile
 PS: [0,  0] PE: [0, 33]   Assign
 PS: [0,  0] PE: [0,  4]     Identifier "Nums"
 PS: [0,  7] PE: [0, 33]     JsonPath json[][][expr].foo[][expr][].bar
-

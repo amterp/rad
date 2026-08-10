@@ -86,10 +86,9 @@ error[RAD10009]: Unexpected '++'
   |    ^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Decrement cannot chain
 ### INPUT ###
@@ -104,10 +103,9 @@ error[RAD10009]: Unexpected '--'
   |    ^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Incr decr cannot chain
 ### INPUT ###
@@ -122,10 +120,9 @@ error[RAD10009]: Unexpected '--'
   |    ^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Decr incr cannot chain
 ### INPUT ###
@@ -140,10 +137,9 @@ error[RAD10009]: Unexpected '++'
   |    ^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Increment can increment float
 ### INPUT ###
@@ -208,4 +204,3 @@ record()
 print(hits)
 ### STDOUT ###
 2
-

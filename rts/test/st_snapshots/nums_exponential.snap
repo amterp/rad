@@ -115,7 +115,6 @@ B: [38, 47] PS: [6, 0] PE: [6, 9]                         delegate: indexed_expr
 B: [38, 47] PS: [6, 0] PE: [6, 9]                           root: primary_expr
 B: [38, 47] PS: [6, 0] PE: [6, 9]                             literal
 B: [38, 47] PS: [6, 0] PE: [6, 9]                               scientific_number `12.3e-9_8`
-
 ### STDERR ###
 PS: [0, 0] PE: [6, 9] SourceFile
 PS: [0, 0] PE: [0, 5]   ExprStmt
@@ -132,4 +131,3 @@ PS: [5, 0] PE: [5, 8]   ExprStmt
 PS: [5, 0] PE: [5, 8]     LitFloat 1.23e+99
 PS: [6, 0] PE: [6, 9]   ExprStmt
 PS: [6, 0] PE: [6, 9]     LitFloat 1.23e-97
-

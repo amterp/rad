@@ -214,7 +214,6 @@ B: [154, 155] PS: [3,  4] PE: [3,  5]                         delegate: indexed_
 B: [154, 155] PS: [3,  4] PE: [3,  5]                           root: primary_expr
 B: [154, 155] PS: [3,  4] PE: [3,  5]                             literal
 B: [154, 155] PS: [3,  4] PE: [3,  5]                               int `2`
-
 ### STDERR ###
 PS: [0,  0] PE: [3,  5] SourceFile
 PS: [0,  0] PE: [2, 56]   Assign unpack
@@ -242,4 +241,3 @@ PS: [2, 31] PE: [2, 35]               Identifier "base"
 PS: [3,  0] PE: [3,  5]   Assign
 PS: [3,  0] PE: [3,  1]     Identifier "a"
 PS: [3,  4] PE: [3,  5]     LitInt 2
-

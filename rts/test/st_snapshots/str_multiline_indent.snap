@@ -31,10 +31,8 @@ B: [ 9, 14] PS: [1, 1] PE: [1, 6]                                   content: str
 B: [14, 15] PS: [1, 6] PE: [2, 0]                                   content: string_content `\n`
 B: [16, 23] PS: [2, 1] PE: [2, 8]                                   content: string_content ` friend`
 B: [23, 28] PS: [2, 8] PE: [3, 4]                                 end: string_end `\n """`
-
 ### STDERR ###
 PS: [0, 0] PE: [3, 4] SourceFile
 PS: [0, 0] PE: [3, 4]   Assign
 PS: [0, 0] PE: [0, 1]     Identifier "a"
 PS: [0, 4] PE: [3, 4]     LitString "hello\n friend"
-

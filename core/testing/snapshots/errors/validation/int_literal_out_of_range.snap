@@ -13,10 +13,9 @@ error[RAD40015]: Integer literal is out of range
   |
    = help: int values must fit in a signed 64-bit integer (max 9223372036854775807). Write the minimum as `-9223372036854775807 - 1`, or use a float for larger magnitudes.
    = info: rad docs RAD40015
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Min int64 literal cannot be written directly
 ### DESCRIPTION ###
@@ -33,7 +32,5 @@ error[RAD40015]: Integer literal is out of range
   |
    = help: int values must fit in a signed 64-bit integer (max 9223372036854775807). Write the minimum as `-9223372036854775807 - 1`, or use a float for larger magnitudes.
    = info: rad docs RAD40015
-
-
 ### EXIT ###
 1

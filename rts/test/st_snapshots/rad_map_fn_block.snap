@@ -80,7 +80,6 @@ B: [101, 104] PS: [5, 19] PE: [5, 22]                             delegate: fall
 B: [101, 104] PS: [5, 19] PE: [5, 22]                               delegate: catch_expr
 B: [101, 104] PS: [5, 19] PE: [5, 22]                                 delegate: var_path
 B: [101, 104] PS: [5, 19] PE: [5, 22]                                   root: identifier `out`
-
 ### STDERR ###
 PS: [0,  0] PE: [5, 22] SourceFile
 PS: [0,  0] PE: [5, 22]   RadBlock "rad"
@@ -99,4 +98,3 @@ PS: [4, 18] PE: [4, 19]               Identifier "n"
 PS: [4, 22] PE: [4, 23]               LitInt 2
 PS: [5, 12] PE: [5, 22]           Return
 PS: [5, 19] PE: [5, 22]             Identifier "out"
-

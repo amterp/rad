@@ -96,9 +96,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 ExclusiveMax
 ### INPUT ###
@@ -126,9 +126,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FloatBasic
 ### INPUT ###
@@ -168,9 +168,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 NoMax
 ### INPUT ###
@@ -210,9 +210,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 AboveMaxNoMin
 ### INPUT ###
@@ -240,9 +240,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 NoMin
 ### INPUT ###
@@ -255,4 +255,3 @@ print("Age:", age)
 -300
 ### STDOUT ###
 Age: -300
-

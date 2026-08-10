@@ -41,7 +41,6 @@ B: [15, 22] PS: [0, 15] PE: [0, 22]                                             
 B: [15, 20] PS: [0, 15] PE: [0, 20]                                               func: identifier `upper`
 B: [20, 21] PS: [0, 20] PE: [0, 21]                                               ( `(`
 B: [21, 22] PS: [0, 21] PE: [0, 22]                                               ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 22] SourceFile
 PS: [0,  0] PE: [0, 22]   ExprStmt
@@ -54,4 +53,3 @@ PS: [0,  8] PE: [0, 12]             Identifier "trim"
                               [index]
 PS: [0, 15] PE: [0, 22]           Call
 PS: [0, 15] PE: [0, 20]             Identifier "upper"
-

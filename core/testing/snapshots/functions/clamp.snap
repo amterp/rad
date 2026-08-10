@@ -24,10 +24,9 @@ error[RAD30007]: Missing required argument 'max'
   |       ^^^^^^^^^^^
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Clamp errors for non-numeric elements
 ### INPUT ###
@@ -40,10 +39,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int|flo
   |                ^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Clamp negative
 ### INPUT ###
@@ -73,4 +71,3 @@ myidx = 7
 print(mylist[clamp(myidx, 0, 4)])
 ### STDOUT ###
 50
-

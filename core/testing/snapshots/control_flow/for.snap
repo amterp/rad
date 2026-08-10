@@ -123,8 +123,8 @@ for char in a:
 --color=always
 ### STDOUT ###
 h
-[34me[0m
-[34ml[0m
+\"\x1b[34me\x1b[0m"
+\"\x1b[34ml\x1b[0m"
 l
 o
 
@@ -173,4 +173,3 @@ for item in items:
 1
 2
 99
-

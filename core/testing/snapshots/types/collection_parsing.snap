@@ -67,10 +67,9 @@ error[RAD10009]: Unexpected ','
 2 | print(a)
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 List_Parse
 ### INPUT ###
@@ -123,4 +122,3 @@ a = [
 print(a)
 ### STDOUT ###
 [ "a", "b", "c", [ ], [ 1, 2, 3 ], [ "nested", [ "deeply", "nested" ] ], [ "mixed", 1, 2.5, [ "another", "level" ], "types" ], { }, { "key": "value" }, { "another": "map", "with": [ "nested", "list" ] }, 1, 2, 3 ]
-

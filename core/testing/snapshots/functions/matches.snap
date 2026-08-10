@@ -102,10 +102,9 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing ar
 2 | print("Should not reach this")
   |
    = info: rad docs RAD20024
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Matches invalid regex unclosed group
 ### INPUT ###
@@ -120,10 +119,9 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing cl
 2 | print("Should not reach this")
   |
    = info: rad docs RAD20024
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Matches returns bool
 ### INPUT ###
@@ -185,4 +183,3 @@ true
 false
 true
 false
-

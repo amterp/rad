@@ -93,10 +93,9 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing cl
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20024
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Limit of zero errors
 ### INPUT ###
@@ -109,10 +108,9 @@ error[RAD20017]: limit must be at least 1, got 0
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20017
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Negative limit errors
 ### INPUT ###
@@ -125,7 +123,5 @@ error[RAD20017]: limit must be at least 1, got -1
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20017
-
-
 ### EXIT ###
 1

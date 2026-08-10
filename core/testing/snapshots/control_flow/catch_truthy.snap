@@ -46,4 +46,3 @@ else:
 	print("falsy")
 ### STDOUT ###
 truthy
-

@@ -23,10 +23,9 @@ error[RAD30001]: Argument type 'null' is not assignable to expected type 'str'
   |       ^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Null parse json gives null
 ### INPUT ###
@@ -99,4 +98,3 @@ false
 true
 true
 false
-

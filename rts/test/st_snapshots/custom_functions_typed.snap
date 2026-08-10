@@ -250,7 +250,6 @@ B: [225, 226] PS: [8, 11] PE: [8, 12]                           delegate: indexe
 B: [225, 226] PS: [8, 11] PE: [8, 12]                             root: primary_expr
 B: [225, 226] PS: [8, 11] PE: [8, 12]                               literal
 B: [225, 226] PS: [8, 11] PE: [8, 12]                                 int `1`
-
 ### STDERR ###
 PS: [0,  0] PE: [8, 12] SourceFile
 PS: [0,  0] PE: [0, 30]   FnDef "myfoo" block=false
@@ -277,4 +276,3 @@ PS: [6, 11] PE: [6, 12]       LitInt 1
 PS: [7,  0] PE: [8, 12]   FnDef "myfoo" block=true
 PS: [8,  4] PE: [8, 12]     Return
 PS: [8, 11] PE: [8, 12]       LitInt 1
-

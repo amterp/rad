@@ -12,10 +12,9 @@ rad url:
 --mock-response
 .*:./responses/id_name.json
 ### STDOUT ###
-id  name  
-1   Alice  
-2   Bob    
-
+\"id  name  "
+\"1   Alice  "
+\"2   Bob    "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -41,7 +40,5 @@ error[RAD20028]: Cannot modify undefined field "does_not_exist"
 6 |         map fn(x) truncate(x, 5)
   |
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1

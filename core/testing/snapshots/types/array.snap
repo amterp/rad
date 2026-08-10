@@ -51,6 +51,7 @@ print((a[1][1])[0]) // 3
 ### STDOUT ###
 2
 3
+
 ### TITLE ###
 Deep nesting
 ### INPUT ###
@@ -125,10 +126,9 @@ error[RAD20029]: Index out of bounds: 4 (length 4)
   |   ^
   |
    = info: rad docs RAD20029
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Positive indexing
 ### INPUT ###
@@ -173,10 +173,9 @@ error[RAD20029]: Index out of bounds: -99 (length 4)
   |         ^^^
   |
    = info: rad docs RAD20029
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Too negative index assignment gives error
 ### INPUT ###
@@ -191,7 +190,5 @@ error[RAD20029]: Index out of bounds: -99 (length 4)
   |   ^^^
   |
    = info: rad docs RAD20029
-
-
 ### EXIT ###
 1

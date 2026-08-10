@@ -2795,7 +2795,6 @@ B: [2159, 2166] PS: [141, 34] PE: [141, 41]                                     
 B: [2166, 2167] PS: [141, 41] PE: [141, 42]                                       } `}`
 B: [2167, 2168] PS: [141, 42] PE: [141, 43]                                     content: string_content `"`
 B: [2168, 2169] PS: [141, 43] PE: [141, 44]                                   end: string_end ```
-
 ### STDERR ###
 PS: [  0,  0] PE: [141, 44] SourceFile
 PS: [  1,  0] PE: [  7,  0]   FileHeader "this is a file\nheader\n\nwhoa! hello"
@@ -3186,4 +3185,3 @@ PS: [141,  1] PE: [141, 44]     LitString (interpolated, 3 segments)
                                 Interpolation
 PS: [141, 34] PE: [141, 41]         Identifier "version"
                                 Literal "\""
-

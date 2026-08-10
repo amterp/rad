@@ -10,9 +10,9 @@ rad:
 ### TERM_WIDTH ###
 80
 ### STDOUT ###
-Name   Age 
-Alice  30   
-Bob    40   
+\"Name   Age "
+\"Alice  30   "
+\"Bob    40   "
 
 ### TITLE ###
 One wide column truncated
@@ -26,9 +26,9 @@ rad:
 ### TERM_WIDTH ###
 35
 ### STDOUT ###
-Id  Description                  
-1   A very long description tha…  
-2   Another lengthy description…  
+\"Id  Description                  "
+\"1   A very long description tha…  "
+\"2   Another lengthy description…  "
 
 ### TITLE ###
 All columns wide - proportional reduction
@@ -45,9 +45,9 @@ rad:
 ### TERM_WIDTH ###
 30
 ### STDOUT ###
-First      Second    Third   
-Alessand…  Philade…  Massac…  
-Constant…  Pennsyl…  Revolu…  
+\"First      Second    Third   "
+\"Alessand…  Philade…  Massac…  "
+\"Constant…  Pennsyl…  Revolu…  "
 
 ### TITLE ###
 Narrow terminal - reduction below minimum leaves column untruncated
@@ -69,9 +69,9 @@ rad:
 ### TERM_WIDTH ###
 15
 ### STDOUT ###
-Name   Age  City     
-Alice  30   New York  
-Bob    40   LA        
+\"Name   Age  City     "
+\"Alice  30   New York  "
+\"Bob    40   LA        "
 
 ### TITLE ###
 Wide column with narrow columns
@@ -86,9 +86,9 @@ rad:
 ### TERM_WIDTH ###
 40
 ### STDOUT ###
-Id  X  Description                    
-1   a  This is a really long descrip…  
-2   b  Another verbose description t…  
+\"Id  X  Description                    "
+\"1   a  This is a really long descrip…  "
+\"2   b  Another verbose description t…  "
 
 ### TITLE ###
 Even distribution no column exceeds entitlement
@@ -105,9 +105,9 @@ rad:
 ### TERM_WIDTH ###
 22
 ### STDOUT ###
-AA   BB   CC   DD   
-ab…  ij…  qr…  yzab  
-ef…  mn…  uv…  cdef  
+\"AA   BB   CC   DD   "
+\"ab…  ij…  qr…  yzab  "
+\"ef…  mn…  uv…  cdef  "
 
 ### TITLE ###
 Transposed table no truncation
@@ -122,8 +122,8 @@ rad:
 ### TERM_WIDTH ###
 80
 ### STDOUT ###
-Name  Alice  Bob  
-Age   30     40   
+\"Name  Alice  Bob  "
+\"Age   30     40   "
 
 ### TITLE ###
 Transposed table truncated
@@ -138,6 +138,5 @@ rad:
 ### TERM_WIDTH ###
 30
 ### STDOUT ###
-Name  Alexander…  Elizabeth…  
-Age   30          40          
-
+\"Name  Alexander…  Elizabeth…  "
+\"Age   30          40          "

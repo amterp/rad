@@ -4,6 +4,7 @@ Shell_ExportsNothingIfNoVars
 2 + 3
 ### ARGS ###
 --shell
+
 ### TITLE ###
 Shell_ExportsStrings
 ### INPUT ###
@@ -24,7 +25,6 @@ print('hi')
 --shell
 ### STDOUT ###
 a="alice"
-
 ### STDERR ###
 hi
 
@@ -38,9 +38,9 @@ exit(2)
 --shell
 ### STDOUT ###
 exit 2
-
 ### EXIT ###
 2
+
 ### TITLE ###
 Shell_NonErrorExitFuncStillExportsVars
 ### SKIP ###
@@ -83,4 +83,3 @@ PATH = "noo"
 --shell
 ### STDOUT ###
 a=1
-

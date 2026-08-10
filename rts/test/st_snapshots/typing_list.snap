@@ -39,11 +39,9 @@ B: [48, 49] PS: [2, 21] PE: [2, 22]           optional: ? `?`
 B: [49, 50] PS: [2, 22] PE: [2, 23]     ) `)`
 B: [50, 51] PS: [2, 23] PE: [2, 24]     block_colon: : `:`
 B: [56, 60] PS: [3,  4] PE: [3,  8]     stmt: pass_stmt `pass`
-
 ### STDERR ###
 PS: [0, 0] PE: [3, 8] SourceFile
 PS: [0, 0] PE: [1, 8]   FnDef "foo" block=true
 PS: [1, 4] PE: [1, 8]     Pass
 PS: [2, 0] PE: [3, 8]   FnDef "bar" block=true
 PS: [3, 4] PE: [3, 8]     Pass
-

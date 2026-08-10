@@ -16,6 +16,7 @@ xs[0] = 99
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedListIndexedAssignMismatch
 ### DESCRIPTION ###
@@ -35,6 +36,7 @@ xs[0] = "wrong"
 
 # Diagnostics
   [error] RAD30010 @ 2:9 - Value of type 'str' is not assignable to element type 'int'
+
 ### TITLE ###
 TypedMapIndexedAssignOk
 ### DESCRIPTION ###
@@ -52,6 +54,7 @@ m["b"] = 5
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedMapIndexedAssignMismatch
 ### DESCRIPTION ###
@@ -70,6 +73,7 @@ m["b"] = "wrong"
 
 # Diagnostics
   [error] RAD30010 @ 2:10 - Value of type 'str' is not assignable to element type 'int'
+
 ### TITLE ###
 ParamIndexedAssignMismatch
 ### DESCRIPTION ###
@@ -88,6 +92,7 @@ fn f(xs: int[]):
 
 # Diagnostics
   [error] RAD30010 @ 2:13 - Value of type 'str' is not assignable to element type 'int'
+
 ### TITLE ###
 UntypedListSkipsCheck
 ### DESCRIPTION ###
@@ -108,6 +113,7 @@ xs[0] = "anything"
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 OpenListAnnotationSkipsCheck
 ### DESCRIPTION ###
@@ -126,6 +132,7 @@ xs[0] = "anything"
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 OpenMapAnnotationSkipsCheck
 ### DESCRIPTION ###
@@ -143,6 +150,7 @@ m["b"] = "anything"
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ChainedIndexedAssignSkipsCheck
 ### DESCRIPTION ###
@@ -163,6 +171,7 @@ fn f(m: { "a": int[] }):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FieldAssignSkipsCheck
 ### DESCRIPTION ###
@@ -181,6 +190,7 @@ fn f(obj: { "x": int }):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 DynamicReceiverSkipsCheck
 ### DESCRIPTION ###
@@ -200,6 +210,7 @@ fn f(xs):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ErrorTypeRhsSuppresses
 ### DESCRIPTION ###
@@ -220,6 +231,7 @@ xs[0] = 1 + "not a number"
 # Diagnostics
   [error] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int + str'
     help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
+
 ### TITLE ###
 NarrowedOptionalListChecks
 ### DESCRIPTION ###

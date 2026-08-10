@@ -14,4 +14,3 @@ Stable within a process
 print(get_pid() == get_pid())
 ### STDOUT ###
 true
-

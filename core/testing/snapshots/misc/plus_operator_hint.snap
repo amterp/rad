@@ -11,10 +11,9 @@ error[RAD30002]: Invalid operand types: cannot do 'str + int'
   |
    = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 String plus float shows migration hint
 ### INPUT ###
@@ -28,10 +27,9 @@ error[RAD30002]: Invalid operand types: cannot do 'str + float'
   |
    = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 String plus bool shows migration hint
 ### INPUT ###
@@ -45,10 +43,9 @@ error[RAD30002]: Invalid operand types: cannot do 'str + bool'
   |
    = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Int plus string shows migration hint
 ### INPUT ###
@@ -62,7 +59,5 @@ error[RAD30002]: Invalid operand types: cannot do 'int + str'
   |
    = help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1

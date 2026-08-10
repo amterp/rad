@@ -8,11 +8,11 @@ rad:
 	nums:
 		map fn(num) "{num * 100:6.2}%"
 ### STDOUT ###
-nums    
-  9.23%  
- 63.42%  
- 70.00%  
-163.00%  
+\"nums    "
+\"  9.23%  "
+\" 63.42%  "
+\" 70.00%  "
+\"163.00%  "
 
 ### TITLE ###
 Rad MultiplyInts
@@ -24,11 +24,11 @@ rad:
 	nums:
 		map fn(num) num * 10
 ### STDOUT ###
-nums 
-1630  
-630   
-200   
-90    
+\"nums "
+\"1630  "
+\"630   "
+\"200   "
+\"90    "
 
 ### TITLE ###
 Rad CanTruncateWithMap
@@ -40,11 +40,11 @@ rad:
 	names:
 		map fn(name) name[:3]
 ### STDOUT ###
-names 
-Ali    
-Bob    
-Cha    
-Dav    
+\"names "
+\"Ali    "
+\"Bob    "
+\"Cha    "
+\"Dav    "
 
 ### TITLE ###
 Rad CanMapTwoFieldsAtOnce
@@ -57,9 +57,8 @@ rad:
 	FirstNames, LastNames:
 		map fn(name) upper(name)
 ### STDOUT ###
-FirstNames  LastNames 
-ALICE       SMITH      
-BOB         JONES      
-CHARLIE     BROWN      
-DAVID       WHITE      
-
+\"FirstNames  LastNames "
+\"ALICE       SMITH      "
+\"BOB         JONES      "
+\"CHARLIE     BROWN      "
+\"DAVID       WHITE      "

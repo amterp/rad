@@ -39,7 +39,6 @@ B: [10, 17] PS: [1, 0] PE: [1, 7]                             call
 B: [10, 15] PS: [1, 0] PE: [1, 5]                               func: identifier `quiet`
 B: [15, 16] PS: [1, 5] PE: [1, 6]                               ( `(`
 B: [16, 17] PS: [1, 6] PE: [1, 7]                               ) `)`
-
 ### STDERR ###
 PS: [0, 0] PE: [1, 7] SourceFile
 PS: [0, 0] PE: [0, 9]   ExprStmt
@@ -48,4 +47,3 @@ PS: [0, 0] PE: [0, 7]       Identifier "confirm"
 PS: [1, 0] PE: [1, 7]   ExprStmt
 PS: [1, 0] PE: [1, 7]     Call
 PS: [1, 0] PE: [1, 5]       Identifier "quiet"
-

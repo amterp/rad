@@ -296,7 +296,6 @@ B: [604, 608] PS: [35, 21] PE: [35, 25]                                         
 B: [608, 609] PS: [35, 25] PE: [35, 26]                                                                 } `}`
 B: [609, 610] PS: [35, 26] PE: [35, 27]                                                             end: string_end `"`
 B: [610, 611] PS: [35, 27] PE: [35, 28]                                 ) `)`
-
 ### STDERR ###
 PS: [ 0,  0] PE: [35, 28] SourceFile
 PS: [ 1,  0] PE: [ 5,  0]   FileHeader "Script description"
@@ -341,4 +340,3 @@ PS: [35, 10] PE: [35, 27]         LitString (interpolated, 2 segments)
                                   Literal "Removing "
                                   Interpolation
 PS: [35, 21] PE: [35, 25]             Identifier "file"
-

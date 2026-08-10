@@ -23,6 +23,7 @@ fn f(x: int|float):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NumericUnionComparison
 ### DESCRIPTION ###
@@ -43,6 +44,7 @@ fn f(x: int|float):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NonNumericUnionStillFlags
 ### DESCRIPTION ###
@@ -64,6 +66,7 @@ fn f(x: int|str):
 
 # Diagnostics
   [hint] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int|str - int'
+
 ### TITLE ###
 DynamicArmUnionIsLenient
 ### DESCRIPTION ###
@@ -101,6 +104,7 @@ fn f(d):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 DynamicArmUnionConcreteMismatchStillFlags
 ### DESCRIPTION ###

@@ -63,10 +63,9 @@ error[RAD20041]: Key not found: "eve"
 3 | print(a)
   |
    = info: rad docs RAD20041
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Map Can Modify Array Nested In Map
 ### INPUT ###
@@ -131,10 +130,9 @@ error[RAD20041]: Key not found: "bob"
   |         ^^^^^
   |
    = info: rad docs RAD20041
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Map Missing Key Dot Syntax Errors
 ### INPUT ###
@@ -149,7 +147,5 @@ error[RAD20041]: Key not found: bob
   |         ^^^
   |
    = info: rad docs RAD20041
-
-
 ### EXIT ###
 1

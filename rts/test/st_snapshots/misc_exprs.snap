@@ -152,7 +152,6 @@ B: [62, 63] PS: [2, 18] PE: [2, 19]                                             
 B: [62, 63] PS: [2, 18] PE: [2, 19]                                               delegate: var_path
 B: [62, 63] PS: [2, 18] PE: [2, 19]                                                 root: identifier `i`
 B: [63, 64] PS: [2, 19] PE: [2, 20]                           ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [2, 20] SourceFile
 PS: [0,  0] PE: [0, 21]   ExprStmt
@@ -184,4 +183,3 @@ PS: [2, 11] PE: [2, 20]       VarPath
 PS: [2, 11] PE: [2, 17]         Identifier "height"
                               [index]
 PS: [2, 18] PE: [2, 19]           Identifier "i"
-

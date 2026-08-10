@@ -13,10 +13,9 @@ rad url:
 --mock-response
 .*:./responses/parallel_arrays.json
 ### STDOUT ###
-name   age  country 
-Alice  25   US       
-Bob    30   US       
-
+\"name   age  country "
+\"Alice  25   US       "
+\"Bob    30   US       "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -35,11 +34,10 @@ rad url:
 --mock-response
 .*:./responses/array_wildcard.json
 ### STDOUT ###
-Name     FirstId  SecondId 
-Alice    1        2         
-Bob      4        5         
-Charlie  9        10        
-
+\"Name     FirstId  SecondId "
+\"Alice    1        2         "
+\"Bob      4        5         "
+\"Charlie  9        10        "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -59,7 +57,5 @@ print(Nums)
 .*:./responses/deeply_nested_arrays.json
 ### STDOUT ###
 [ 2, 4, 6, 8 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
-

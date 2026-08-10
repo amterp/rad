@@ -23,7 +23,5 @@ pprint(http_get(url))
   "status_code": 200,
   "success": true
 }
-
 ### STDERR ###
 Mocking response for url (matched ".*"): http//www.google.com
-

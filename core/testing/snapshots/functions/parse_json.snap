@@ -60,10 +60,9 @@ error[RAD20011]: Error parsing JSON: invalid character 'a' looking for beginning
   | ^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20011
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors on invalid type
 ### INPUT ###
@@ -76,10 +75,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
   |            ^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors on no args
 ### INPUT ###
@@ -92,10 +90,9 @@ error[RAD30007]: Missing required argument '_str'
   | ^^^^^^^^^^^^
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors on too many args
 ### INPUT ###
@@ -108,10 +105,9 @@ error[RAD30007]: Expected at most 1 args, but was invoked with 2
   | ^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Empty list
 ### INPUT ###
@@ -119,4 +115,3 @@ blop = r'{ "foo": [] }'
 blop.parse_json().print()
 ### STDOUT ###
 { "foo": [ ] }
-

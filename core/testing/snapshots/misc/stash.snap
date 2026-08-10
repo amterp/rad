@@ -20,10 +20,9 @@ error[RAD20022]: Script ID is not set. Set the 'stash_id' macro in the file head
   | ^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20022
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Stash_GetStashPath
 ### INPUT ###
@@ -160,4 +159,3 @@ print("Error contains 'Script ID':", "Script ID" in result)
 ### STDOUT ###
 error
 Error contains 'Script ID': true
-

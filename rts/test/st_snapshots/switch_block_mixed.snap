@@ -173,7 +173,6 @@ B: [102, 104] PS: [5, 15] PE: [5, 17]                               delegate: in
 B: [102, 104] PS: [5, 15] PE: [5, 17]                                 root: primary_expr
 B: [102, 104] PS: [5, 15] PE: [5, 17]                                   literal
 B: [102, 104] PS: [5, 15] PE: [5, 17]                                     int `50`
-
 ### STDERR ###
 PS: [0,  0] PE: [5, 17] SourceFile
 PS: [0,  0] PE: [5, 17]   Assign
@@ -198,4 +197,3 @@ PS: [4, 14] PE: [4, 16]             LitInt 30
                             Default
 PS: [5, 12] PE: [5, 17]         CaseExpr
 PS: [5, 15] PE: [5, 17]           LitInt 50
-

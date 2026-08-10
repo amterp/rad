@@ -23,10 +23,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 3 | 	return x + y
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Wrong return
 ### INPUT ###
@@ -42,10 +41,9 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   |         ^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Void return
 ### INPUT ###
@@ -88,10 +86,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 3 | 	return x / y
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Named unknown
 ### INPUT ###
@@ -108,10 +105,9 @@ error[RAD30006]: Unknown named argument 'z'
 3 | 	return x / y
   |
    = info: rad docs RAD30006
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Named missing
 ### INPUT ###
@@ -128,10 +124,9 @@ error[RAD30007]: Missing required argument 'y'
 3 | 	return x / y
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Named missing defaults
 ### INPUT ###
@@ -157,10 +152,9 @@ error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
 3 | 	return x / y
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Too many positional
 ### INPUT ###
@@ -177,10 +171,9 @@ error[RAD30007]: Expected at most 2 args, but was invoked with 3
 3 | 	return x / y
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Too many positional but named only allowed
 ### INPUT ###
@@ -207,10 +200,9 @@ error[RAD30007]: Missing required argument 'z'
 3 | 	return x / y + z
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Positional only
 ### INPUT ###
@@ -277,10 +269,9 @@ error[RAD30007]: Missing required argument '_y'
 3 | 	return x / y
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Optional arg nulls
 ### INPUT ###
@@ -317,10 +308,9 @@ error[RAD20038]: Expected 'float', but got void value
    = stack:
      at foo (TestCase:1:1)
    = info: rad docs RAD20038
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Repeat arg
 ### INPUT ###
@@ -337,10 +327,9 @@ error[RAD30006]: Argument 'x' already specified
 3 | 	return x / y
   |
    = info: rad docs RAD30006
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Repeat named arg
 ### INPUT ###
@@ -357,10 +346,9 @@ error[RAD30006]: Argument 'y' already specified
 3 | 	return x / y
   |
    = info: rad docs RAD30006
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Str param valid
 ### INPUT ###
@@ -386,10 +374,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Str return valid
 ### INPUT ###
@@ -414,10 +401,9 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   |         ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Int param valid
 ### INPUT ###
@@ -443,10 +429,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Int param null
 ### INPUT ###
@@ -463,10 +448,9 @@ error[RAD30001]: Argument type 'null' is not assignable to expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Int return valid
 ### INPUT ###
@@ -491,10 +475,9 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   |         ^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Bool param valid
 ### INPUT ###
@@ -520,10 +503,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'bool'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Bool return valid
 ### INPUT ###
@@ -548,10 +530,9 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   |         ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Error param valid
 ### INPUT ###
@@ -577,10 +558,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'error'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Error return valid
 ### INPUT ###
@@ -606,10 +586,9 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   |         ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Any param valid
 ### INPUT ###
@@ -674,10 +653,9 @@ error[RAD20028]: Undefined identifier 'x'
   |
    = help: did you mean 'max'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Any list param valid
 ### INPUT ###
@@ -703,10 +681,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'list'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Any list param invalid var arg
 ### INPUT ###
@@ -733,10 +710,9 @@ error[RAD30007]: Expected at most 1 args, but was invoked with 2
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Any list return valid
 ### INPUT ###
@@ -770,10 +746,9 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   |         ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Tuple param valid
 ### INPUT ###
@@ -799,10 +774,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Tuple return valid
 ### INPUT ###
@@ -827,10 +801,9 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   |             ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 List param valid
 ### INPUT ###
@@ -858,10 +831,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 List return valid
 ### INPUT ###
@@ -886,10 +858,9 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   |             ^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Str enum param valid
 ### INPUT ###
@@ -915,10 +886,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type '["foo",
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Str enum return valid
 ### INPUT ###
@@ -943,10 +913,9 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   |         ^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Any map param valid
 ### INPUT ###
@@ -972,10 +941,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'map'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Any map return valid
 ### INPUT ###
@@ -1000,10 +968,9 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   |         ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Struct param valid
 ### INPUT ###
@@ -1029,10 +996,9 @@ error[RAD30001]: Argument type '{ str: int }' is not assignable to expected type
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Struct return valid
 ### INPUT ###
@@ -1057,10 +1023,9 @@ error[RAD30001]: Return value of type '{ str: int }' is not assignable to declar
   |         ^^^^^^^^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Struct return invalid value
 ### INPUT ###
@@ -1076,10 +1041,9 @@ error[RAD30001]: Return value of type '{ str: str }' is not assignable to declar
   |         ^^^^^^^^^^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Map param valid
 ### INPUT ###
@@ -1105,10 +1069,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Map return valid
 ### INPUT ###
@@ -1133,10 +1096,9 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   |                  ^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Var arg param valid
 ### INPUT ###
@@ -1166,10 +1128,9 @@ error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Variadic param no typing
 ### INPUT ###
@@ -1236,10 +1197,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Optional return valid
 ### INPUT ###
@@ -1268,10 +1228,9 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   |         ^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Union param valid
 ### INPUT ###
@@ -1299,10 +1258,9 @@ error[RAD30001]: Argument type 'float' is not assignable to expected type 'int|s
 3 | 	print("|{x}|")
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Union return valid
 ### INPUT ###
@@ -1334,7 +1292,5 @@ error[RAD30001]: Return value of type 'float' is not assignable to declared retu
   |         ^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

@@ -99,4 +99,3 @@ B: [38, 55] PS: [5,  0] PE: [5, 17]                         delegate: indexed_ex
 B: [38, 55] PS: [5,  0] PE: [5, 17]                           root: primary_expr
 B: [38, 55] PS: [5,  0] PE: [5, 17]                             literal
 B: [38, 55] PS: [5,  0] PE: [5, 17]                               scientific_number `12_34.45_56e24_24`
-

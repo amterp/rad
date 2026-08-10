@@ -4,4 +4,3 @@ Func GetArgs
 print(get_args())
 ### STDOUT ###
 [ "--color=never" ]
-

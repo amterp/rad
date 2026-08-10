@@ -144,7 +144,6 @@ B: [101, 102] PS: [6, 15] PE: [6, 16]                                         de
 B: [101, 102] PS: [6, 15] PE: [6, 16]                                           delegate: catch_expr
 B: [101, 102] PS: [6, 15] PE: [6, 16]                                             delegate: var_path
 B: [101, 102] PS: [6, 15] PE: [6, 16]                                               root: identifier `y`
-
 ### STDERR ###
 PS: [0,  0] PE: [6, 16] SourceFile
 PS: [0,  0] PE: [1, 12]   Assign
@@ -169,4 +168,3 @@ PS: [6,  4] PE: [6, 16]       Return
 PS: [6, 11] PE: [6, 16]         OpBinary *
 PS: [6, 11] PE: [6, 12]           Identifier "x"
 PS: [6, 15] PE: [6, 16]           Identifier "y"
-

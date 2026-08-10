@@ -6,6 +6,7 @@ x = 1 // trailing
 ### STDOUT ###
 // leading
 x = 1 // trailing
+
 ### TITLE ###
 [F6][F8] Multiple blank lines collapse to one
 ### INPUT ###
@@ -18,6 +19,7 @@ b = 2
 a = 1
 
 b = 2
+
 ### TITLE ###
 [F7] Blank lines stripped at file edges
 ### INPUT ###
@@ -25,10 +27,9 @@ b = 2
 
 
 x = 1
-
-
 ### STDOUT ###
 x = 1
+
 ### TITLE ###
 [F9] Comment inside block
 ### INPUT ###
@@ -39,6 +40,7 @@ if x:
 if x:
     // note
     print(1)
+
 ### TITLE ###
 [F9] Standalone comment between statements
 ### INPUT ###
@@ -49,6 +51,7 @@ b = 2
 a = 1
 // a section
 b = 2
+
 ### TITLE ###
 [F11] Comment trailing a block header stays on the header line
 ### INPUT ###

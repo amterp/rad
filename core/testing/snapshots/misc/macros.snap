@@ -69,9 +69,9 @@ Docs here.
 
 Usage:
   TestCase [OPTIONS]
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Macros disabling global options leads to complaints about them if specified
 ### INPUT ###
@@ -90,9 +90,9 @@ Docs here.
 
 Usage:
   TestCase [OPTIONS]
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Macros errors if args block disabled but specified
 ### INPUT ###
@@ -105,9 +105,9 @@ args:
 print("hi")
 ### STDERR ###
 Macro 'enable_args_block' disabled, but args block found.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Macros does passthrough of help
 ### SKIP ###
@@ -138,6 +138,7 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
+
 ### TITLE ###
 Macros does not complain of unused positional args if args block disabled
 ### INPUT ###
@@ -150,4 +151,3 @@ print("hi", get_args())
 bob
 ### STDOUT ###
 hi [ "bob", "--color=never" ]
-

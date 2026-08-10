@@ -4,6 +4,7 @@ CanCustomizeEnd
 print("hello", "there", "claire", end="bloop")
 ### STDOUT ###
 hello there clairebloop
+
 ### TITLE ###
 CanUseEndToRemoveNewlines
 ### INPUT ###

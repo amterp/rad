@@ -69,7 +69,6 @@ B: [16, 17] PS: [0, 16] PE: [0, 17]                                             
 B: [16, 17] PS: [0, 16] PE: [0, 17]                                                       literal
 B: [16, 17] PS: [0, 16] PE: [0, 17]                                                         int `2`
 B: [17, 18] PS: [0, 17] PE: [0, 18]                               ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 18] SourceFile
 PS: [0,  0] PE: [0, 18]   ExprStmt
@@ -80,4 +79,3 @@ PS: [0,  7] PE: [0, 12]         OpBinary +
 PS: [0,  7] PE: [0,  8]           LitInt 1
 PS: [0, 11] PE: [0, 12]           LitInt 2
 PS: [0, 16] PE: [0, 17]         LitInt 2
-

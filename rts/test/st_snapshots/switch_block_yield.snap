@@ -252,7 +252,6 @@ B: [173, 174] PS: [8, 17] PE: [8, 18]                                 delegate: 
 B: [173, 174] PS: [8, 17] PE: [8, 18]                                   root: primary_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]                                     literal
 B: [173, 174] PS: [8, 17] PE: [8, 18]                                       int `0`
-
 ### STDERR ###
 PS: [0,  0] PE: [8, 18] SourceFile
 PS: [0,  0] PE: [8, 18]   Assign unpack
@@ -286,4 +285,3 @@ PS: [7, 14] PE: [7, 30]               LitString "default, third"
 PS: [8,  8] PE: [8, 18]           Yield
 PS: [8, 14] PE: [8, 15]             LitInt 0
 PS: [8, 17] PE: [8, 18]             LitInt 0
-

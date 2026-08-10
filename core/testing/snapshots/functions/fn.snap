@@ -44,10 +44,9 @@ error[RAD20028]: Undefined identifier 'a'
   |
    = help: did you mean 'b', 'abs', or 'map'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Block
 ### INPUT ###
@@ -150,8 +149,8 @@ rad a:
     name:
         map fn(n) n.upper()
 ### STDOUT ###
-name 
-ALEX  
+\"name "
+\"ALEX  "
 
 ### TITLE ###
 Rad block identifier
@@ -165,8 +164,8 @@ rad a:
     name:
         map upper
 ### STDOUT ###
-name 
-ALEX  
+\"name "
+\"ALEX  "
 
 ### TITLE ###
 Rad block block
@@ -182,8 +181,8 @@ rad a:
             out = n.upper()
             return out
 ### STDOUT ###
-name 
-ALEX  
+\"name "
+\"ALEX  "
 
 ### TITLE ###
 Block requires return
@@ -192,8 +191,6 @@ Block requires return
 print(add(4, 5))
 fn add(x, y):
 	x + y
-### STDOUT ###
-
 
 ### TITLE ###
 Can return nothing
@@ -310,10 +307,9 @@ error[RAD30002]: Invalid operand types: cannot do 'void + int'
   | ^^^^^^^
   |
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Void in comparison
 ### INPUT ###
@@ -329,10 +325,9 @@ error[RAD20038]: Cannot use void value in expression
   | ^^^
   |
    = info: rad docs RAD20038
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Void in string interpolation
 ### INPUT ###
@@ -348,10 +343,9 @@ error[RAD20038]: Cannot use void value in expression
   |         ^^^
   |
    = info: rad docs RAD20038
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Void in switch
 ### INPUT ###
@@ -369,10 +363,9 @@ error[RAD20038]: Cannot use void value in expression
 4 | 	case 1 -> print("one")
   |
    = info: rad docs RAD20038
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Void in unary negation
 ### INPUT ###
@@ -388,10 +381,9 @@ error[RAD30002]: Invalid operand type 'void' for unary '-'
   | ^^^^
   |
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Compound assign in a nested fn stops at the nearest enclosing binding
 ### INPUT ###
@@ -411,4 +403,3 @@ print(n)
 ### STDOUT ###
 2
 100
-

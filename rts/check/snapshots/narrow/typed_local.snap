@@ -18,6 +18,7 @@ y = x
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedLocalReassignWidensBackToDeclared
 ### DESCRIPTION ###
@@ -47,6 +48,7 @@ y = x
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedLocalRHSMismatchDoesNotNarrow
 ### DESCRIPTION ###
@@ -68,6 +70,7 @@ y = x
 
 # Diagnostics
   [error] RAD30001 @ 1:10 - Value of type 'str' is not assignable to declared type 'int'
+
 ### TITLE ###
 TypedLocalUntypedReassignIsClean
 ### DESCRIPTION ###
@@ -88,6 +91,7 @@ bb = 6
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedLocalRedeclarationWithDifferentTypeIsRejected
 ### DESCRIPTION ###
@@ -111,6 +115,7 @@ bb: str = "hi"
 # Diagnostics
   [error] RAD40011 @ 3:1 - Cannot re-declare 'bb' with a type annotation (originally declared on line 1); drop ': str' to reassign
   [error] RAD30001 @ 3:11 - Value of type 'str' is not assignable to declared type 'int'
+
 ### TITLE ###
 TypedLocalRedeclarationSameTypeIsRejected
 ### DESCRIPTION ###
@@ -130,6 +135,7 @@ bb: int = 6
 
 # Diagnostics
   [error] RAD40011 @ 2:1 - Cannot re-declare 'bb' with a type annotation (originally declared on line 1); drop ': int' to reassign
+
 ### TITLE ###
 ParenTypeGroupListWraps
 ### DESCRIPTION ###
@@ -151,6 +157,7 @@ y = xs[0]
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ListCovarianceWidensIntElementToUnion
 ### DESCRIPTION ###
@@ -169,6 +176,7 @@ xs: (int|str)[] = [1, 2, 3]
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ListCovarianceWidensStrElementToUnion
 ### DESCRIPTION ###
@@ -184,6 +192,7 @@ xs: (int|str)[] = ["a", "b"]
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ListCovarianceNestedParenUnionLeftAssoc
 ### DESCRIPTION ###
@@ -203,6 +212,7 @@ xs: ((int|str)|bool)[] = [1, "hi", true]
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ListCovarianceNestedParenUnionRightAssoc
 ### DESCRIPTION ###
@@ -218,6 +228,7 @@ xs: (int|(str|bool))[] = [1, "hi", true]
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ListCovarianceGenuineMismatchStillFires
 ### DESCRIPTION ###
@@ -235,6 +246,7 @@ xs: int[] = ["a"]
 
 # Diagnostics
   [error] RAD30001 @ 1:14 - Value of type 'str' is not assignable to declared type 'int'
+
 ### TITLE ###
 ParenTypeGroupOptionalWraps
 ### DESCRIPTION ###
@@ -255,6 +267,7 @@ y = x
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 InlineLambdaWithAnnotationsParses
 ### DESCRIPTION ###

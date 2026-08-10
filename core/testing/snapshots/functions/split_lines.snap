@@ -53,4 +53,3 @@ UFCS style
 "one\ntwo\nthree".split_lines().print()
 ### STDOUT ###
 [ "one", "two", "three" ]
-

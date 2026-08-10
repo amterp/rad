@@ -99,7 +99,6 @@ B: [84, 85] PS: [4, 14] PE: [4, 15]           ] `]`
 B: [85, 86] PS: [4, 15] PE: [4, 16]       . `.`
 B: [86, 89] PS: [4, 16] PE: [4, 19]       segment: json_segment
 B: [86, 89] PS: [4, 16] PE: [4, 19]         key: identifier `bbb`
-
 ### STDERR ###
 PS: [0,  0] PE: [4, 19] SourceFile
 PS: [0,  0] PE: [0, 18]   Assign
@@ -117,4 +116,3 @@ PS: [3,  4] PE: [3, 16]     JsonPath json.*[].bbb
 PS: [4,  0] PE: [4, 19]   Assign
 PS: [4,  0] PE: [4,  1]     Identifier "e"
 PS: [4,  4] PE: [4, 19]     JsonPath json.aaa[expr].bbb
-

@@ -22,6 +22,7 @@ x, y = pair()
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UnpackUnionOfTuples
 ### DESCRIPTION ###
@@ -55,6 +56,7 @@ ep = parse_epoch(x)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UnpackIntoDeclaredTargetsClean
 ### DESCRIPTION ###
@@ -84,6 +86,7 @@ a, b = get_pair()
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UnpackIntoDeclaredTargetMismatch
 ### DESCRIPTION ###
@@ -112,6 +115,7 @@ a, b = get_pair()
 
 # Diagnostics
   [error] RAD30001 @ 6:1 - Value of type 'int' is not assignable to declared type 'str'
+
 ### TITLE ###
 UnpackOptionalTupleDistributesNullable
 ### DESCRIPTION ###

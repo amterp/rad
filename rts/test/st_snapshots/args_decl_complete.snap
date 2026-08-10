@@ -72,7 +72,6 @@ B: [125, 126] PS: [5,  4] PE: [5,  5]                         delegate: indexed_
 B: [125, 126] PS: [5,  4] PE: [5,  5]                           root: primary_expr
 B: [125, 126] PS: [5,  4] PE: [5,  5]                             literal
 B: [125, 126] PS: [5,  4] PE: [5,  5]                               int `2`
-
 ### STDERR ###
 PS: [0,  0] PE: [5,  5] SourceFile
 PS: [0,  0] PE: [4, 34]   ArgBlock
@@ -91,4 +90,3 @@ PS: [4, 22] PE: [4, 24]         LitInt 30
 PS: [5,  0] PE: [5,  5]   Assign
 PS: [5,  0] PE: [5,  1]     Identifier "a"
 PS: [5,  4] PE: [5,  5]     LitInt 2
-

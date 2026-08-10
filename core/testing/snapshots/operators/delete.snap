@@ -15,4 +15,3 @@ del a["bob"]["ids"][1]
 print(a)
 ### STDOUT ###
 { "alice": 35, "bob": { "car": "toyota", "ids": [ 10, 30 ] }, "charlie": [ 1, "hi" ] }
-

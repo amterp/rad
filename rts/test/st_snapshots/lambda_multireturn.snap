@@ -129,7 +129,6 @@ B: [36, 37] PS: [1, 17] PE: [1, 18]                                             
 B: [36, 37] PS: [1, 17] PE: [1, 18]                                                                                                   root: identifier `b`
 B: [37, 38] PS: [1, 18] PE: [1, 19]                                                                             ] `]`
 B: [38, 39] PS: [1, 19] PE: [1, 20]                               ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [1, 20] SourceFile
 PS: [0,  0] PE: [0, 18]   ExprStmt
@@ -145,4 +144,3 @@ PS: [1,  8] PE: [1, 19]       Lambda block=false
 PS: [1, 13] PE: [1, 19]         LitList (2 elements)
 PS: [1, 14] PE: [1, 15]           Identifier "a"
 PS: [1, 17] PE: [1, 18]           Identifier "b"
-

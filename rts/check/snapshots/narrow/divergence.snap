@@ -25,6 +25,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NestedIfReturnPropagatesDivergence
 ### DESCRIPTION ###
@@ -52,6 +53,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ExitCallDivergesBranch
 ### DESCRIPTION ###
@@ -77,6 +79,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ExhaustiveSwitchAllCasesDivergeNoDefault
 ### DESCRIPTION ###
@@ -103,6 +106,7 @@ fn f(x: ["a", "b"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 WhileTrueWithBreakDoesNotDiverge
 ### DESCRIPTION ###

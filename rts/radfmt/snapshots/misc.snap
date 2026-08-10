@@ -6,6 +6,7 @@ yield  2
 ### STDOUT ###
 return 1
 yield 2
+
 ### TITLE ###
 [F23] Parentheses are preserved, never added or removed
 ### INPUT ###
@@ -14,6 +15,7 @@ y = a and ( b or c )
 ### STDOUT ###
 x = (1 + 2) * 3
 y = a and (b or c)
+
 ### TITLE ###
 [F33] Number, bool, and null literals are preserved verbatim
 ### INPUT ###
@@ -24,6 +26,7 @@ c = true
 a = 3.140
 b = 100
 c = true
+
 ### TITLE ###
 [F34] Shebang line is preserved
 ### INPUT ###
@@ -32,6 +35,7 @@ x=1
 ### STDOUT ###
 #!/usr/bin/env rad
 x = 1
+
 ### TITLE ###
 [F35] File header block is preserved verbatim
 ### INPUT ###

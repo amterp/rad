@@ -84,10 +84,9 @@ error[RAD30002]: Invalid operand types: cannot do 'int[] -= int'
   | ^^^^^^
   |
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Divide from array errors
 ### INPUT ###
@@ -102,10 +101,9 @@ error[RAD30002]: Invalid operand types: cannot do 'int[] /= int'
   | ^^^^^^
   |
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multiply from array errors
 ### INPUT ###
@@ -120,10 +118,9 @@ error[RAD30002]: Invalid operand types: cannot do 'int[] *= int'
   | ^^^^^^
   |
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors if append not array
 ### INPUT ###
@@ -139,10 +136,9 @@ error[RAD30002]: Invalid operand types: cannot do 'int[] += int'
   |
    = help: Did you mean to wrap the right side in a list in order to append? e.g. `myList + [item]`
    = info: rad docs RAD30002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Add through collection
 ### INPUT ###
@@ -238,4 +234,3 @@ add(4)
 print(total)
 ### STDOUT ###
 7
-

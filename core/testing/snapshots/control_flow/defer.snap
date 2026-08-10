@@ -54,9 +54,9 @@ exit(1)
 ### STDOUT ###
 hi
 bye
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Runs despite error
 ### INPUT ###
@@ -74,10 +74,9 @@ error[RAD20028]: Undefined identifier 'asd'
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 All defers run even if one fails
 ### INPUT ###
@@ -98,10 +97,9 @@ error[RAD20028]: Undefined identifier 'asd'
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Uses non-zero code from LIFO deferred exit despite deferred error
 ### INPUT ###
@@ -123,10 +121,9 @@ error[RAD20028]: Undefined identifier 'asd'
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Uses error code LIFO deferred error over later non-zero exit
 ### INPUT ###
@@ -148,10 +145,9 @@ error[RAD20028]: Undefined identifier 'asd'
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Ignores zero code from LIFO deferred exit instead uses deferred error
 ### INPUT ###
@@ -173,7 +169,5 @@ error[RAD20028]: Undefined identifier 'asd'
   |
    = help: did you mean 'abs', 'hash', or 'rand'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1

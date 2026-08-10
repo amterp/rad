@@ -23,7 +23,6 @@ B: [ 8, 11] PS: [0,  8] PE: [0, 11]                           root: identifier `
 B: [17, 28] PS: [1,  4] PE: [1, 15]     stmt: rad_field_stmt
 B: [17, 23] PS: [1,  4] PE: [1, 10]       fields `fields`
 B: [24, 28] PS: [1, 11] PE: [1, 15]       identifier: identifier `Name`
-
 ### STDERR ###
 PS: [0,  0] PE: [1, 15] SourceFile
 PS: [0,  0] PE: [1, 15]   RadBlock "request"
@@ -56,7 +55,6 @@ B: [ 8, 12] PS: [0,  8] PE: [0, 12]                           root: identifier `
 B: [18, 29] PS: [1,  4] PE: [1, 15]     stmt: rad_field_stmt
 B: [18, 24] PS: [1,  4] PE: [1, 10]       fields `fields`
 B: [25, 29] PS: [1, 11] PE: [1, 15]       identifier: identifier `Name`
-
 ### STDERR ###
 PS: [0,  0] PE: [1, 15] SourceFile
 PS: [0,  0] PE: [1, 15]   RadBlock "display"
@@ -77,10 +75,8 @@ B: [ 0,  7] PS: [0,  0] PE: [0,  7]       display `display`
 B: [13, 24] PS: [1,  4] PE: [1, 15]     stmt: rad_field_stmt
 B: [13, 19] PS: [1,  4] PE: [1, 10]       fields `fields`
 B: [20, 24] PS: [1, 11] PE: [1, 15]       identifier: identifier `Name`
-
 ### STDERR ###
 PS: [0,  0] PE: [1, 15] SourceFile
 PS: [0,  0] PE: [1, 15]   RadBlock "display"
 PS: [1,  4] PE: [1, 15]     RadField
 PS: [1, 11] PE: [1, 15]       Identifier "Name"
-

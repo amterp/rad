@@ -20,7 +20,6 @@ B: [23, 24] PS: [1, 17] PE: [1, 18]         op: + `+`
 B: [24, 25] PS: [1, 18] PE: [1, 19]         op: - `-`
 B: [25, 26] PS: [1, 19] PE: [1, 20]         op: - `-`
 B: [26, 28] PS: [1, 20] PE: [1, 22]         value: int `30`
-
 ### STDERR ###
 PS: [0,  0] PE: [1, 22] SourceFile
 PS: [0,  0] PE: [1, 22]   ArgBlock
@@ -28,4 +27,3 @@ PS: [1,  4] PE: [1, 22]     ArgDecl "age" type=int
                             Default:
 PS: [1, 14] PE: [1, 22]         OpUnary -
 PS: [1, 20] PE: [1, 22]           LitInt 30
-

@@ -6,10 +6,10 @@ Age = [30, 40, 25]
 rad:
     fields Name, Age
 ### STDOUT ###
-Name     Age 
-Alice    30   
-Bob      40   
-Charlie  25   
+\"Name     Age "
+\"Alice    30   "
+\"Bob      40   "
+\"Charlie  25   "
 
 ### TITLE ###
 Rad RequiresBlockElseError
@@ -28,10 +28,9 @@ error[RAD10009]: Unexpected 'rad url'
   | ^^^^^^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Rad CanConditionallyApplySort
 ### INPUT ###
@@ -48,14 +47,14 @@ rad:
 	if should_sort:
 		sort desc
 ### STDOUT ###
-Name     Age 
-Alice    30   
-Bob      40   
-Charlie  25   
-Name     Age 
-Charlie  25   
-Bob      40   
-Alice    30   
+\"Name     Age "
+\"Alice    30   "
+\"Bob      40   "
+\"Charlie  25   "
+\"Name     Age "
+\"Charlie  25   "
+\"Bob      40   "
+\"Alice    30   "
 
 ### TITLE ###
 Rad CanFallBackToElse
@@ -70,10 +69,10 @@ rad:
 	else:
 		sort Age asc
 ### STDOUT ###
-Name     Age 
-Charlie  25   
-Alice    30   
-Bob      40   
+\"Name     Age "
+\"Charlie  25   "
+\"Alice    30   "
+\"Bob      40   "
 
 ### TITLE ###
 Rad CanFallBackToElseIf
@@ -90,10 +89,10 @@ rad:
 	else:
 		sort Age desc
 ### STDOUT ###
-Name     Age 
-Charlie  25   
-Alice    30   
-Bob      40   
+\"Name     Age "
+\"Charlie  25   "
+\"Alice    30   "
+\"Bob      40   "
 
 ### TITLE ###
 Rad_VariousTypeLengths
@@ -111,9 +110,8 @@ rad url:
 --mock-response
 .*:./responses/numbers.json
 ### STDOUT ###
-shortint  longint              shortfloat  longfloat          
-1         1234567899987654400  1.12        1234.5678999876543  
-
+\"shortint  longint              shortfloat  longfloat          "
+\"1         1234567899987654400  1.12        1234.5678999876543  "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -134,7 +132,6 @@ print("Ages:", Age)
 ### STDOUT ###
 Names: [ "Charlie", "Bob", "Alice", "Bob" ]
 Ages: [ 30, 40, 30, 25 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -154,11 +151,10 @@ rad:
 --mock-response
 .*:./responses/arrays.json
 ### STDOUT ###
-Name     NumIds 
-Alice    3       
-Bob      5       
-Charlie  2       
-
+\"Name     NumIds "
+\"Alice    3       "
+\"Bob      5       "
+\"Charlie  2       "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -177,12 +173,11 @@ rad url:
 --mock-response
 .*:./responses/people.json
 ### STDOUT ###
-name     city        
-Alice    New York     
-Bob      London       
-Bob      Los Angeles  
-Charlie  Paris        
-
+\"name     city        "
+\"Alice    New York     "
+\"Bob      London       "
+\"Bob      Los Angeles  "
+\"Charlie  Paris        "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -201,10 +196,8 @@ rad url:
 --mock-response
 .*:./responses/id_name.json
 ### STDOUT ###
-Id  Name  
-1   Alice  
-2   Bob    
-
+\"Id  Name  "
+\"1   Alice  "
+\"2   Bob    "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
-

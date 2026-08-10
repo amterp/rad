@@ -1,20 +1,18 @@
 ### TITLE ###
 Docs_UnknownTopicErrors
 ### INPUT ###
-
 ### ARGS ###
 docs
 nonsense
 ### STDERR ###
 Unknown docs topic: nonsense
 Run 'rad docs' to see available topics, 'rad docs <function>' (e.g. 'rad docs len') for a built-in, or 'rad docs RAD<code>' to explain an error code.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Explain_DeprecatedAndUnknownCode
 ### INPUT ###
-
 ### ARGS ###
 explain
 nonsense
@@ -22,13 +20,12 @@ nonsense
 Note: 'rad explain' is deprecated; use 'rad docs' instead (e.g. 'rad docs RAD10001'). It will be removed in a future version.
 Unknown error code: nonsense
 Run 'rad docs reference/errors' to see all available error codes.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Docs_PrintsPageBySlug
 ### INPUT ###
-
 ### ARGS ###
 docs
 examples/index
@@ -44,7 +41,6 @@ Real-world scripts demonstrating Rad's features in practice.
 ### TITLE ###
 Docs_PrintsFunctionByName
 ### INPUT ###
-
 ### ARGS ###
 docs
 len
@@ -77,7 +73,6 @@ len("héllo")              // -> 5 (rune count, not byte count)
 ### TITLE ###
 Docs_PrintsFunctionWithNotesTable
 ### INPUT ###
-
 ### ARGS ###
 docs
 sleep
@@ -115,4 +110,3 @@ If `title` is provided, it's printed before sleeping.
 | `ms`         | Milliseconds |
 | `us` or `µs` | Microseconds |
 | `ns`         | Nanoseconds  |
-

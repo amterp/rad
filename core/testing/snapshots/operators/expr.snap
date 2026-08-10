@@ -36,5 +36,4 @@ print("hello!".red() * 3)
 --color=always
 ### STDOUT ###
 hello!hello!hello!
-[31mhello![0m[31mhello![0m[31mhello![0m
-
+\"\x1b[31mhello!\x1b[0m\x1b[31mhello!\x1b[0m\x1b[31mhello!\x1b[0m"

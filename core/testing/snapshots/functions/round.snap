@@ -58,10 +58,9 @@ error[RAD20017]: Precision must be non-negative, got -1
   |       ^^^^^^^^^^^
   |
    = info: rad docs RAD20017
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Round errors precision string
 ### INPUT ###
@@ -77,10 +76,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
   |                ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Round errors with string
 ### INPUT ###
@@ -96,7 +94,5 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   |             ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

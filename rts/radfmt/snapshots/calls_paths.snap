@@ -4,12 +4,14 @@
 print(  a ,b )
 ### STDOUT ###
 print(a, b)
+
 ### TITLE ###
 [F24] Nested calls
 ### INPUT ###
 x = f(g(h( 1 )), 2)
 ### STDOUT ###
 x = f(g(h(1)), 2)
+
 ### TITLE ###
 [F25] Dotted and indexed paths
 ### INPUT ###
@@ -20,24 +22,28 @@ z = a[ 0 ]
 x = obj.method(1)
 y = a.b.c
 z = a[0]
+
 ### TITLE ###
 [F26] Slice
 ### INPUT ###
 s = data[ 1 : 2 ]
 ### STDOUT ###
 s = data[1:2]
+
 ### TITLE ###
 [F22] Ternary
 ### INPUT ###
 v = cond?a:b
 ### STDOUT ###
 v = cond ? a : b
+
 ### TITLE ###
 [F32] Named call arguments bind tight
 ### INPUT ###
 connect( host="localhost" ,port= 8080,retries =3 )
 ### STDOUT ###
 connect(host="localhost", port=8080, retries=3)
+
 ### TITLE ###
 [F5][F29] Long call wraps one argument per line
 ### INPUT ###

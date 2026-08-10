@@ -10,7 +10,6 @@ print(input("Name > "))
 enter
 ### STDOUT ###
 Alice
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Name > █
@@ -26,6 +25,7 @@ Name > Alic█
 Name > Alice█
 --- frame 6 (enter) ---
 Name > Alice
+
 ### TITLE ###
 Interactive input backspace edit
 ### DESCRIPTION ###
@@ -39,7 +39,6 @@ backspace
 enter
 ### STDOUT ###
 Bob
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 > █
@@ -55,6 +54,7 @@ Bob
 > Bob█
 --- frame 6 (enter) ---
 > Bob
+
 ### TITLE ###
 Interactive input default when empty
 ### DESCRIPTION ###
@@ -66,12 +66,12 @@ print(input("> ", default="guest"))
 enter
 ### STDOUT ###
 guest
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 > █Default: guest
 --- frame 1 (enter) ---
-> 
+\"> "
+
 ### TITLE ###
 Interactive secret input
 ### DESCRIPTION ###
@@ -85,7 +85,6 @@ print(input("Password > ", secret=true))
 enter
 ### STDOUT ###
 s3cret
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Password > █
@@ -101,6 +100,7 @@ Password > █
 Password > █
 --- frame 6 (t) ---
 Password > █
+
 ### TITLE ###
 Interactive input cancel
 ### DESCRIPTION ###
@@ -119,8 +119,6 @@ error[RAD20010]: Error reading input: input canceled
   |       ^^^^^^^^^^^
   |
    = info: rad docs RAD20010
-
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 > █

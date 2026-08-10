@@ -75,7 +75,6 @@ B: [19, 20] PS: [0, 19] PE: [0, 20]                                             
 B: [19, 20] PS: [0, 19] PE: [0, 20]                                                           content: string_content `o`
 B: [20, 21] PS: [0, 20] PE: [0, 21]                                                         end: string_end `"`
 B: [21, 22] PS: [0, 21] PE: [0, 22]                             ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 22] SourceFile
 PS: [0,  0] PE: [0, 22]   ExprStmt
@@ -88,4 +87,3 @@ PS: [0,  5] PE: [0, 22]         Call
 PS: [0,  5] PE: [0, 12]           Identifier "replace"
 PS: [0, 13] PE: [0, 16]           LitString "l"
 PS: [0, 18] PE: [0, 21]           LitString "o"
-

@@ -30,10 +30,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |         ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_ErrorsOnFloatIntDivisionByZero
 ### INPUT ###
@@ -46,10 +45,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |           ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_ErrorsOnIntFloatDivisionByZero
 ### INPUT ###
@@ -62,10 +60,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |         ^^^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_ErrorsOnFloatFloatDivisionByZero
 ### INPUT ###
@@ -78,10 +75,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |           ^^^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_CompoundDivideByZeroIntIntErrors
 ### INPUT ###
@@ -96,10 +92,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |      ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_CompoundDivideByZeroIntFloatErrors
 ### INPUT ###
@@ -114,10 +109,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |      ^^^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_CompoundDivideByZeroFloatIntErrors
 ### INPUT ###
@@ -132,10 +126,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |      ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_CompoundDivideByZeroFloatFloatErrors
 ### INPUT ###
@@ -150,10 +143,9 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
   |      ^^^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Math_CanHaveManyPluses
 ### INPUT ###
@@ -169,4 +161,3 @@ a = 1 + -------2
 print(a)
 ### STDOUT ###
 -1
-

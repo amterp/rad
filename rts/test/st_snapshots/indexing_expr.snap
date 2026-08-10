@@ -49,7 +49,6 @@ B: [13, 14] PS: [0, 13] PE: [0, 14]                                             
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                                   literal
 B: [13, 14] PS: [0, 13] PE: [0, 14]                                                     int `0`
 B: [14, 15] PS: [0, 14] PE: [0, 15]                           ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 15] SourceFile
 PS: [0,  0] PE: [0, 15]   ExprStmt
@@ -59,4 +58,3 @@ PS: [0,  0] PE: [0,  4]         Identifier "sort"
 PS: [0,  5] PE: [0, 11]         Identifier "mylist"
                             [index]
 PS: [0, 13] PE: [0, 14]         LitInt 0
-

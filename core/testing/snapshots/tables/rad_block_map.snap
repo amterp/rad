@@ -15,7 +15,6 @@ Name = json.results[].name
 rad a:
 	fields Name
 ### STDOUT ###
-Name  
-alice  
-bob    
-
+\"Name  "
+\"alice  "
+\"bob    "

@@ -47,7 +47,6 @@ B: [104, 115] PS: [8,  3] PE: [8, 14]     declaration: arg_declaration
 B: [104, 107] PS: [8,  3] PE: [8,  6]       arg_name: identifier `hhh`
 B: [108, 114] PS: [8,  7] PE: [8, 13]       type: bool_list_type `bool[]`
 B: [114, 115] PS: [8, 13] PE: [8, 14]       optional: ? `?`
-
 ### STDERR ###
 PS: [0,  0] PE: [8, 14] SourceFile
 PS: [0,  0] PE: [8, 14]   ArgBlock
@@ -59,4 +58,3 @@ PS: [5,  3] PE: [5, 13]     ArgDecl "eee" type=int[] optional
 PS: [6,  3] PE: [6, 15]     ArgDecl "fff" type=float[] optional
 PS: [7,  3] PE: [7, 13]     ArgDecl "ggg" type=str[] optional
 PS: [8,  3] PE: [8, 14]     ArgDecl "hhh" type=bool[] optional
-
