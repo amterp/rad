@@ -2376,3 +2376,63 @@ unary minus applies.
 
 Write the minimum value as `-9223372036854775807 - 1`, or use a `float` if you
 need to represent larger magnitudes (with reduced precision).
+
+### RAD40016: Regex Pattern Without regex=true
+
+You passed something that reads like a regex to `split()` or `replace()`, but
+neither treats its pattern as a regex unless you ask.
+
+```rad
+line = "alice   30   admin"
+
+// Warns: '\s+' is a regex, but split() is looking for that literal text
+fields = split(line, "\s+")
+
+// Correct
+fields = split(line, "\s+", regex=true)
+```
+
+#### Why This Exists
+
+Before v0.12, `split()` and `replace()` always treated their pattern as a regex.
+That default was backwards - most calls want literal text - and it failed
+silently in the dangerous direction: a `.` in a pattern quietly matched every
+character.
+
+The default is now literal. The catch is that scripts written for the old
+behavior keep running. They just stop matching:
+
+```rad
+print(split("a b  c", "\s+"))   // -> ["a b  c"], not ["a", "b", "c"]
+```
+
+No error, no crash, only a wrong answer. This warning is the tap on the shoulder.
+
+#### How to Fix It
+
+If you meant a regex, add `regex=true`:
+
+```rad
+text = "order 66 shipped"
+print(replace(text, "\d+", "N", regex=true))   // -> "order N shipped"
+```
+
+If the text really is literal, you can ignore the warning - the call already does
+what you want, and you no longer need to escape anything:
+
+```rad
+version = "1.2.3"
+print(replace(version, ".", "-"))   // -> "1-2-3", no escaping needed
+```
+
+#### Ignore It When
+
+The heuristic looks for constructs that rarely appear in literal text: `\d`,
+`\s`, a bracketed class, a group, a quantifier, alternation with branches on both
+sides, or a leading `^` / trailing `$`. Real text does sometimes contain those -
+`"C++"` and `"a|b"` are perfectly good literal separators. The warning is advice,
+not a verdict.
+
+See the [v0.12 migration guide](https://amterp.dev/rad/migrations/v0.12/) for the
+full picture, and `rad check --from-logs all` to sweep every script you've run
+recently.

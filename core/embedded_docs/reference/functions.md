@@ -2081,23 +2081,60 @@ matches("hello world", "world", partial=true)  // -> true
 matches("abc", "(")                    // -> error: invalid regex
 ```
 
+Unlike `split` and `replace`, `matches` has no `regex` parameter and always treats `_pattern`
+as a regex. A literal `matches` would just be `==` (full match) or a substring test (partial),
+neither of which needs a function.
+
 See also: `replace`, `split`
 
 ### replace
 
-Replaces text using regex patterns. Does not preserve string color attributes.
+Replaces every occurrence of a literal substring. Pass `regex=true` to treat `_find` as a regex pattern and enable capture-group references in `_replace`. Does not preserve string color attributes.
 
 ```rad
-replace(_original: str, _find: str, _replace: str) -> str
+replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -> str
 ```
 
 ```rad
-replace("hello world", "world", "Rad")        // -> "hello Rad"
-replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1")  // -> "Name: Alice Brown"
-replace("abc123def", "\\d+", "XXX")           // -> "abcXXXdef"
+replace("hello world", "world", "Rad")           // -> "hello Rad"
+replace("1.2.3", ".", "-")                       // -> "1-2-3"
+replace("cost: $5", "$5", "$10")                 // -> "cost: $10"
+replace("abc123def", "\\d+", "XXX", regex=true)  // -> "abcXXXdef"
+replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1", regex=true) // -> "Name: Alice Brown"
 ```
 
-The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
+`_find` is matched literally unless `regex=true`, so metacharacters like `.` and `(` need no
+escaping in the default case. In literal mode `_replace` is inserted verbatim, `$` included -
+safe for text relayed from elsewhere.
+
+When `regex=true`, a pattern that fails to compile is an error. Patterns use Go's RE2 dialect,
+which has no backreferences or lookaround.
+
+**Group references in `_replace` (`regex=true` only):**
+
+| Written       | Expands to                                          |
+| ------------- | --------------------------------------------------- |
+| `$0`          | The whole match                                     |
+| `$N`          | Capture group `N`; `N` is the longest run of digits |
+| `${N}`        | Capture group `N`, explicitly delimited             |
+| `$$`          | A literal `$`                                       |
+| Anything else | Left as written                                     |
+
+A reference to a group that does not exist is left as written rather than expanding to an
+empty string, so stray `$` in your replacement text survives intact.
+
+Because `$N` consumes every following digit, use `${N}` when a literal digit has to follow a
+group reference: `${1}0` inserts group 1 followed by `0`, while `$10` means group 10.
+
+`${N}` collides with Rad's string interpolation, which would read `{1}` as an expression to
+interpolate. Write the replacement as a raw string or escape the brace:
+
+```rad
+replace("Name: abc", "a(b)c", r"${1}0", regex=true)   // -> "Name: b0"
+replace("Name: abc", "a(b)c", "$\{1}0", regex=true)   // -> "Name: b0"
+```
+
+See also: `split`, `matches`
 
 ### reverse
 
@@ -2115,24 +2152,33 @@ reverse("racecar")         // -> "racecar"
 
 ### split
 
-Splits a string using regex pattern as delimiter. Does not preserve string color attributes.
+Splits a string on a literal separator. Pass `regex=true` to treat `_sep` as a regex pattern instead. Does not preserve string color attributes.
 
 ```rad
-split(_val: str, _sep: str, *, limit: int?) -> str[]
+split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -> str[]
 ```
 
 ```rad
-split("a,b,c", ",")               // -> ["a", "b", "c"]
-split("word1 word2", "\\s+")      // -> ["word1", "word2"]
-split("abc123def", "\\d+")        // -> ["abc", "def"]
-split("key=val=ue", "=", limit=1) // -> ["key", "val=ue"]
-split("a,b,c,d", ",", limit=2)    // -> ["a", "b", "c,d"]
+split("a,b,c", ",")                    // -> ["a", "b", "c"]
+split("1.2.3", ".")                    // -> ["1", "2", "3"]
+split("word1  word2", "\\s+", regex=true) // -> ["word1", "word2"]
+split("abc123def", "\\d+", regex=true) // -> ["abc", "def"]
+split("key=val=ue", "=", limit=1)      // -> ["key", "val=ue"]
+split("a,b,c,d", ",", limit=2)         // -> ["a", "b", "c,d"]
 ```
 
-The `_sep` parameter is treated as a regex pattern if valid, otherwise as literal string.
+`_sep` is matched literally unless `regex=true`, so metacharacters like `.` and `(` need no
+escaping in the default case.
+
+When `regex=true`, a pattern that fails to compile is an error. Patterns use Go's RE2 dialect,
+which has no backreferences or lookaround.
 
 When `limit` is provided, it caps the number of splits performed. The final element contains
 the unsplit remainder. `limit` must be >= 1.
+
+An empty `_sep` splits between every character.
+
+See also: `split_lines`, `replace`, `matches`
 
 ### split_lines
 

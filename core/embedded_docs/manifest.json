@@ -64,7 +64,8 @@
         "Multiline Strings",
         "Raw Strings",
         "Escape Sequences",
-        "String Attributes"
+        "String Attributes",
+        "Patterns: Literal by Default"
       ]
     },
     {

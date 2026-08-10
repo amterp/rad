@@ -145,6 +145,18 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD40008"},
 		Reason:        "demo: deprecated `request`/`display` block keywords (removed in v0.9).",
 	},
+	"docs-web/docs/migrations/v0.12.md#8f8368df": {
+		ExpectedCodes: []string{"RAD40016"},
+		Reason:        "demo: the v0.11 escaping the migration guide tells you to drop.",
+	},
+	"core/error_docs/40016.md#fc33b11a": {
+		ExpectedCodes: []string{"RAD40016"},
+		Reason:        "demo: the warning's own wrong-then-right pair; the wrong half has to warn.",
+	},
+	"core/error_docs/40016.md#e038d85b": {
+		ExpectedCodes: []string{"RAD40016"},
+		Reason:        "demo: the silent-wrong-answer a v0.11 script gets after the literal-default flip.",
+	},
 	"core/error_docs/40009.md#ad4b7b09": {
 		ExpectedCodes: []string{"RAD40009"},
 		Reason:        "demo: duplicate parameter name in a fn signature.",

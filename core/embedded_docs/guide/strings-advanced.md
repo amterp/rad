@@ -369,6 +369,39 @@ and the `hyperlink` function for creating clickable terminal links. See the func
 
     See the Functions Reference (rad docs reference/functions) for the complete list with examples.
 
+## Patterns: Literal by Default
+
+Rad's string functions match literally. `split`, `replace`, `count`, `index_of`,
+`starts_with` and friends all look for the exact text you give them, so a `.` is a
+dot and a `(` is a parenthesis - nothing needs escaping.
+
+```rad
+print(split("1.2.3", "."))            // -> ["1", "2", "3"]
+print(replace("cost: $5", "$5", "$8")) // -> "cost: $8"
+```
+
+When you do want a regex, ask for one. `split` and `replace` take a `regex` parameter:
+
+```rad
+print(split("a b  c", "\s+", regex=true))       // -> ["a", "b", "c"]
+print(replace("order 66", "\d+", "N", regex=true)) // -> "order N"
+```
+
+`matches` is the exception, and it's the one you'd expect: it exists to test patterns,
+so it's always a regex.
+
+```rad
+print(matches("hello", "h.+o"))   // -> true
+```
+
+Patterns use Go's RE2 dialect, which has no backreferences or lookaround. A pattern
+that doesn't compile is an error rather than a silent fallback.
+
+**Info: Changed in v0.12**
+
+    `split` and `replace` used to treat their pattern as a regex by default. See the
+    v0.12 migration guide if you're upgrading.
+
 ## Summary
 
 - We learned about **escape sequences** like `\n`, `\t`, and `\{` for including special characters in strings.
@@ -377,6 +410,7 @@ and the `hyperlink` function for creating clickable terminal links. See the func
 - We explored **multiline strings** using `"""` syntax, which support both quotes and interpolation.
 - We learned about **raw strings** (prefixed with `r`) that prevent interpolation and escaping.
 - We covered **string attributes** like color and bold that are preserved through interpolation and concatenation.
+- We saw that string functions match **literally** by default, with `regex=true` to opt into pattern matching.
 - Rad also provides many built-in string manipulation functions covered in the Functions Reference (rad docs reference/functions).
 
 ## Next

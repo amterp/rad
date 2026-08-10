@@ -585,7 +585,7 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -639,7 +639,7 @@ ShebangCompletionLineZero
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -1380,7 +1380,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -1434,7 +1434,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -2172,7 +2172,7 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -2226,7 +2226,7 @@ ShebangCompletionEmptyDocMiddleOfLine
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -2966,7 +2966,7 @@ y = 2
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -3020,7 +3020,7 @@ y = 2
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -3769,7 +3769,7 @@ z = 3
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -3823,7 +3823,7 @@ z = 3
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -4572,7 +4572,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -4626,7 +4626,7 @@ x = 1
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -5376,7 +5376,7 @@ args:
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -5430,7 +5430,7 @@ args:
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -6185,7 +6185,7 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -6239,7 +6239,7 @@ fn greet(who: str):
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"
@@ -6983,7 +6983,7 @@ later = 2
       "sortText": "2"
     },
     {
-      "detail": "replace(_original: str, _find: str, _replace: str) -\u003e str",
+      "detail": "replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -\u003e str",
       "kind": 3,
       "label": "replace",
       "sortText": "2"
@@ -7037,7 +7037,7 @@ later = 2
       "sortText": "2"
     },
     {
-      "detail": "split(_val: str, _sep: str, *, limit: int?) -\u003e str[]",
+      "detail": "split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -\u003e str[]",
       "kind": 3,
       "label": "split",
       "sortText": "2"

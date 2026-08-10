@@ -6,26 +6,115 @@ print(replace("Hi, Alice", "Alice", "Bob"))
 Hi, Bob
 
 ### TITLE ###
+Find is literal by default
+### INPUT ###
+print(replace("1.2.3", ".", "-"))
+print(replace("f(x)", "(x)", "(y)"))
+print(replace("cost: $5", "$5", "$10"))
+### STDOUT ###
+1-2-3
+f(y)
+cost: $10
+
+### TITLE ###
+Literal replacement passes dollars through untouched
+### INPUT ###
+print(replace("hi NEEDLE there", "NEEDLE", "$1 and $$ and $0"))
+### STDOUT ###
+hi $1 and $$ and $0 there
+
+### TITLE ###
 Regex simple
 ### INPUT ###
-print(replace("Hi, how are you today?", ",.*", " there!"))
+print(replace("Hi, how are you today?", ",.*", " there!", regex=true))
 ### STDOUT ###
 Hi there!
 
 ### TITLE ###
 Regex capture
 ### INPUT ###
-print(replace("Hi, Charlie Brown", "(.*) Brown", "$1 Grey"))
+print(replace("Hi, Charlie Brown", "(.*) Brown", "$1 Grey", regex=true))
 
 input = "I really like sandwiches and soup and pizza."
-print(replace(input, "I really like (.*) and (.*) and (.*)\.", "I HATE $3, $2, and $1!"))
+print(replace(input, "I really like (.*) and (.*) and (.*)\.", "I HATE $3, $2, and $1!", regex=true))
 
-print(replace("Name: abc", "a(b)c", "$1o$1"))
+print(replace("Name: abc", "a(b)c", "$1o$1", regex=true))
 ### STDOUT ###
 Hi, Charlie Grey
 I HATE pizza, soup, and sandwiches!
 Name: bob
 
+### TITLE ###
+Group ten is not eaten by the group one pass
+### INPUT ###
+print(replace("abcdefghij", "(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)", "[$10]", regex=true))
+### STDOUT ###
+[j]
+
+### TITLE ###
+Braced group reference separates a trailing digit
+### INPUT ###
+print(replace("Name: abc", "a(b)c", r"${1}0", regex=true))
+print(replace("Name: abc", "a(b)c", "$\{1}0", regex=true))
+### STDOUT ###
+Name: b0
+Name: b0
+
+### TITLE ###
+A dollar inside a submatch is not re-substituted
+### INPUT ###
+print(replace("$2y", "(\$2)(y)", "[$1][$2]", regex=true))
+### STDOUT ###
+[$2][y]
+
+### TITLE ###
+Double dollar escapes
+### INPUT ###
+print(replace("x", "(x)", "$$1 $1", regex=true))
+### STDOUT ###
+$1 x
+
+### TITLE ###
+Unknown group and bare dollar are left as written
+### INPUT ###
+print(replace("x", "(x)", "$99 $1", regex=true))
+print(replace("x", "(x)", "cost $ $1", regex=true))
+### STDOUT ###
+$99 x
+cost $ x
+
+### TITLE ###
+Groups survive an assertion that only holds in context
+### INPUT ###
+print(replace("abc abc", "\Bb(c)", "[$1]", regex=true))
+print(replace("cat cat", "\bc(a)t", "[$1]", regex=true))
+### STDOUT ###
+a[c] a[c]
+[a] [a]
+
+### TITLE ###
+A group in an alternation branch that did not run is empty
+### INPUT ###
+print(replace("ab", "(a)|(b)", "[$1$2]", regex=true))
+### STDOUT ###
+[a][b]
+
+### TITLE ###
+Uncompilable pattern errors under regex
+### INPUT ###
+replace("a(b", "(", "-", regex=true)
+### STDERR ###
+error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing closing ): `(`
+  --> <script>:1:1
+  |
+1 | replace("a(b", "(", "-", regex=true)
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+   = info: rad docs RAD20024
+
+
+### EXIT ###
+1
 ### TITLE ###
 Returns string
 ### INPUT ###
