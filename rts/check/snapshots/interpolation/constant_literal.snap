@@ -17,6 +17,7 @@ pattern = "\d{4}"
 # Diagnostics
   [warn] RAD40017 @ 1:14 - Interpolating the literal 4 has no effect
     help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+
 ### TITLE ###
 EveryConstantLiteralKind
 ### DESCRIPTION ###
@@ -49,6 +50,7 @@ d = "{'s'}"
     help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
   [warn] RAD40017 @ 4:6 - Interpolating the literal 's' has no effect
     help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+
 ### TITLE ###
 NonLiteralExpressionsStayQuiet
 ### DESCRIPTION ###
@@ -81,6 +83,7 @@ z = "{four()}"
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FormatSpecWidthsAreNotValues
 ### DESCRIPTION ###
@@ -114,6 +117,7 @@ c = "{name:*>8}"
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 BothEscapeHatchesStayQuiet
 ### DESCRIPTION ###

@@ -192,10 +192,9 @@ error[RAD20000]: Filtered 2 options to 0 with filters: [gh hub g]
 6 | print(title)
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 PickPrioExactOptIn
 ### DESCRIPTION ###
@@ -216,4 +215,3 @@ result = pick_kv(["grape", "g"], [1, 2], "g", prefer_exact=true)
 print(result)
 ### STDOUT ###
 2
-

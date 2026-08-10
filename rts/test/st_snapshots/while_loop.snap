@@ -67,7 +67,6 @@ B: [30, 33] PS: [2,  4] PE: [2,  7]     stmt: incr_decr
 B: [30, 31] PS: [2,  4] PE: [2,  5]       left: var_path
 B: [30, 31] PS: [2,  4] PE: [2,  5]         root: identifier `a`
 B: [31, 33] PS: [2,  5] PE: [2,  7]       op: -- `--`
-
 ### STDERR ###
 PS: [0,  0] PE: [2,  7] SourceFile
 PS: [0,  0] PE: [2,  7]   WhileLoop
@@ -83,4 +82,3 @@ PS: [2,  4] PE: [2,  5]       Identifier "a"
 PS: [2,  4] PE: [2,  7]       OpBinary -
 PS: [2,  4] PE: [2,  5]         Identifier "a"
 PS: [2,  4] PE: [2,  7]         LitInt 1
-

@@ -147,10 +147,9 @@ error[RAD20036]: Value is 0, cannot modulo by 0
   |           ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Modulo_NegativeIntModulo0Errors
 ### INPUT ###
@@ -163,10 +162,9 @@ error[RAD20036]: Value is 0, cannot modulo by 0
   |            ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Modulo_PositiveFloatModulo0Errors
 ### INPUT ###
@@ -179,10 +177,9 @@ error[RAD20036]: Value is 0, cannot modulo by 0
   |             ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Modulo_NegativeFloatModulo0Errors
 ### INPUT ###
@@ -195,10 +192,9 @@ error[RAD20036]: Value is 0, cannot modulo by 0
   |              ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Modulo_CompoundModulo0Errors
 ### INPUT ###
@@ -213,7 +209,5 @@ error[RAD20036]: Value is 0, cannot modulo by 0
   |      ^
   |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1

@@ -121,7 +121,6 @@ B: [74, 75] PS: [5, 15] PE: [5, 16]                                             
 B: [74, 75] PS: [5, 15] PE: [5, 16]                                                           literal
 B: [74, 75] PS: [5, 15] PE: [5, 16]                                                             int `2`
 B: [75, 76] PS: [5, 16] PE: [5, 17]                                   ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [5, 17] SourceFile
 PS: [0,  0] PE: [1, 12]   FnDef "foo" block=true
@@ -136,4 +135,3 @@ PS: [5,  4] PE: [5, 17]     Return
 PS: [5, 11] PE: [5, 17]       LitList (2 elements)
 PS: [5, 12] PE: [5, 13]         LitInt 1
 PS: [5, 15] PE: [5, 16]         LitInt 2
-

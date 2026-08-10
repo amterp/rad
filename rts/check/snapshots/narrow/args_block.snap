@@ -25,6 +25,7 @@ greet(name)
 
 # Diagnostics
   [error] RAD30001 @ 7:7 - Argument type 'str' is not assignable to expected type 'int'
+
 ### TITLE ###
 ArgsBlockListUseCleanWhenSlotMatches
 ### DESCRIPTION ###
@@ -52,6 +53,7 @@ print(first(names))
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 CmdBlockTypedUseFlagsMismatch
 ### DESCRIPTION ###
@@ -84,6 +86,7 @@ fn consume_int(label: int):
 
 # Diagnostics
   [error] RAD30001 @ 6:17 - Argument type 'str' is not assignable to expected type 'int'
+
 ### TITLE ###
 ArgsBlockOptionalIsNullable
 ### DESCRIPTION ###
@@ -124,6 +127,7 @@ maybe_str(name)
 
 # Diagnostics
   [hint] RAD30001 @ 10:10 - Argument type 'str?' is not assignable to expected type 'str'
+
 ### TITLE ###
 ArgReassignedToNewTypeFlows
 ### DESCRIPTION ###
@@ -155,6 +159,7 @@ print(items.upper())
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedLocalReassignedToNewTypePinned
 ### DESCRIPTION ###

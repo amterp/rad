@@ -39,4 +39,3 @@ a = { "alice": "bobson", "charlie": "davidson" }
 a.filter(fn(k, v) k.len() > 5).map(fn(k, v) "{k} {v.upper()}").print()
 ### STDOUT ###
 [ "charlie DAVIDSON" ]
-

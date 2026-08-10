@@ -295,4 +295,3 @@ print("banana" < "cherry")
 [ "apple", "banana", "cherry" ]
 true
 true
-

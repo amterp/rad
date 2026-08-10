@@ -159,7 +159,6 @@ B: [80, 81] PS: [3, 25] PE: [3, 26]                                             
 B: [80, 81] PS: [3, 25] PE: [3, 26]                                                         literal
 B: [80, 81] PS: [3, 25] PE: [3, 26]                                                           int `5`
 B: [81, 82] PS: [3, 26] PE: [3, 27]                               ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [3, 27] SourceFile
 PS: [0,  0] PE: [0, 12]   Assign
@@ -184,4 +183,3 @@ PS: [3,  4] PE: [3, 10]       Identifier "myFunc"
 PS: [3, 11] PE: [3, 18]       LitString "hello"
                             Named "nums"
 PS: [3, 25] PE: [3, 26]         LitInt 5
-

@@ -25,6 +25,7 @@ fn outer(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NestedFnDoesNotLeakBodyMutationsOut
 ### DESCRIPTION ###

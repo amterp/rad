@@ -24,10 +24,9 @@ error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected t
   |           ^^^^^^^^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Max of negative numbers
 ### INPUT ###
@@ -82,10 +81,9 @@ error[RAD20018]: Cannot find max of empty list
   |       ^^^^^^^
   |
    = info: rad docs RAD20018
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Max no args error
 ### INPUT ###
@@ -98,10 +96,9 @@ error[RAD20018]: Cannot find max of empty list
   |       ^^^^^
   |
    = info: rad docs RAD20018
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Max multiple lists error
 ### INPUT ###
@@ -114,10 +111,9 @@ error[RAD20012]: max() with multiple arguments requires numbers, not lists. Use 
   |       ^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20012
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Max returns int when all ints
 ### INPUT ###
@@ -154,4 +150,3 @@ myidx = 2
 print(mylist[max(myidx, 0)])
 ### STDOUT ###
 30
-

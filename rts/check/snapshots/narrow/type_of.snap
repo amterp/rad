@@ -26,6 +26,7 @@ fn f(x: int|str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypeOfNarrowsUnionContainingOptional
 ### DESCRIPTION ###
@@ -55,6 +56,7 @@ fn f(x: int?|str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypeOfMissingArmGivesNever
 ### DESCRIPTION ###

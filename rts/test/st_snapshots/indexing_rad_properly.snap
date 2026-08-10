@@ -64,7 +64,6 @@ B: [17, 18] PS: [0, 17] PE: [0, 18]                         delegate: indexed_ex
 B: [17, 18] PS: [0, 17] PE: [0, 18]                           root: primary_expr
 B: [17, 18] PS: [0, 17] PE: [0, 18]                             literal
 B: [17, 18] PS: [0, 17] PE: [0, 18]                               int `1`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 18] SourceFile
 PS: [0,  0] PE: [0, 18]   ExprStmt
@@ -78,4 +77,3 @@ PS: [0,  9] PE: [0, 10]           Identifier "b"
                                 [index]
 PS: [0, 11] PE: [0, 12]             Identifier "a"
 PS: [0, 17] PE: [0, 18]         LitInt 1
-

@@ -17,10 +17,9 @@ error[RAD40002]: Hoisted function 'open' shadows an argument with the same name
 6 |     print("Opening {path}")
   |
    = info: rad docs RAD40002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Function shadows argument multiple
 ### INPUT ###
@@ -55,10 +54,9 @@ error[RAD40002]: Hoisted function 'count' shadows an argument with the same name
 10 |     return 10
    |
    = info: rad docs RAD40002
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Function shadows argument no args block
 ### INPUT ###
@@ -125,7 +123,5 @@ error[RAD10008]: 'args' is reserved (used in args blocks)
   |
    = help: use a different variable name
    = info: rad docs RAD10008
-
-
 ### EXIT ###
 1

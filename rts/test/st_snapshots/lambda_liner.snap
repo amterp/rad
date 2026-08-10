@@ -115,7 +115,6 @@ B: [51, 52] PS: [2, 19] PE: [2, 20]                                       delega
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                         delegate: catch_expr
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                           delegate: var_path
 B: [51, 52] PS: [2, 19] PE: [2, 20]                                             root: identifier `y`
-
 ### STDERR ###
 PS: [0,  0] PE: [2, 20] SourceFile
 PS: [0,  0] PE: [0, 13]   Assign
@@ -134,4 +133,3 @@ PS: [2,  6] PE: [2, 20]     Lambda block=false
 PS: [2, 15] PE: [2, 20]       OpBinary *
 PS: [2, 15] PE: [2, 16]         Identifier "x"
 PS: [2, 19] PE: [2, 20]         Identifier "y"
-

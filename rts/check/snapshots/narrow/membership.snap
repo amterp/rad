@@ -27,6 +27,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 InGuardNarrowsPlainCallForm
 ### DESCRIPTION ###
@@ -53,6 +54,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 InGuardNarrowsStrSubject
 ### DESCRIPTION ###
@@ -80,6 +82,7 @@ fn g(s: str, sub: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 AndChainCarriesMembershipToRightOperand
 ### DESCRIPTION ###
@@ -107,6 +110,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NoGuardKeepsNull
 ### DESCRIPTION ###
@@ -129,6 +133,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 MembershipDoesNotEscapeTheBranch
 ### DESCRIPTION ###
@@ -158,6 +163,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 4:9 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 MembershipRetiresWhenElseReturns
 ### DESCRIPTION ###
@@ -194,6 +200,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 7:9 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 ElseBranchHasNoMembership
 ### DESCRIPTION ###
@@ -224,6 +231,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 5:13 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 DifferentContainerDoesNotRefine
 ### DESCRIPTION ###
@@ -251,6 +259,7 @@ fn g(xs: str[], ys: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 3:13 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 ContainerReassignedInBodyDropsFact
 ### DESCRIPTION ###
@@ -280,6 +289,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 4:13 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 NamedArgDisablesRefinement
 ### DESCRIPTION ###
@@ -307,6 +317,7 @@ fn g(xs: str[], f: str):
 
 # Diagnostics
   [hint] RAD30002 @ 3:13 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 MembershipDoesNotEscapeIntoALambda
 ### DESCRIPTION ###
@@ -333,6 +344,7 @@ fn g(xs: str[], f: str) -> fn() -> int:
 
 # Diagnostics
   [hint] RAD30002 @ 3:21 - Invalid operand types: cannot do 'int? + int'
+
 ### TITLE ###
 NotInGuardDoesNotRefine
 ### DESCRIPTION ###

@@ -17,4 +17,3 @@ print(ends_with(a, "ce"))
 ### STDOUT ###
 false
 true
-

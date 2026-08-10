@@ -19,4 +19,3 @@ print(resp["error"])
 ### STDOUT ###
 false
 Failed to create HTTP request: invalid percent-encoding in query value for key "discount": invalid URL escape "%"
-

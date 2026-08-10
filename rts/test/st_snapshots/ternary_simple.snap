@@ -68,7 +68,6 @@ B: [26, 27] PS: [0, 26] PE: [0, 27]                                   start: str
 B: [27, 34] PS: [0, 27] PE: [0, 34]                                   contents: string_contents
 B: [27, 34] PS: [0, 27] PE: [0, 34]                                     content: string_content `bigger!`
 B: [34, 35] PS: [0, 34] PE: [0, 35]                                   end: string_end `"`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 35] SourceFile
 PS: [0,  0] PE: [0, 35]   Assign
@@ -79,4 +78,3 @@ PS: [0,  4] PE: [0,  5]         Identifier "a"
 PS: [0,  8] PE: [0, 10]         LitInt 10
 PS: [0, 13] PE: [0, 23]       LitString "smaller!"
 PS: [0, 26] PE: [0, 35]       LitString "bigger!"
-

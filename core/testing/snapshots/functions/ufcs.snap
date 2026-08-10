@@ -44,7 +44,5 @@ error[RAD30001]: Value '2' (int) is not compatible with expected type 'str'
   | ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

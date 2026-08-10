@@ -146,7 +146,6 @@ B: [85, 88] PS: [4, 15] PE: [4, 18]                                             
 B: [85, 88] PS: [4, 15] PE: [4, 18]                                                                     content: string_content `bad`
 B: [88, 89] PS: [4, 18] PE: [4, 19]                                                                   end: string_end `'`
 B: [89, 90] PS: [4, 19] PE: [4, 20]                                       ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [4, 20] SourceFile
 PS: [0,  0] PE: [4, 20]   Assign
@@ -167,4 +166,3 @@ PS: [4,  8] PE: [4, 20]           ExprStmt
 PS: [4,  8] PE: [4, 20]             Call
 PS: [4,  8] PE: [4, 13]               Identifier "print"
 PS: [4, 14] PE: [4, 19]               LitString "bad"
-

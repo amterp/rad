@@ -4,18 +4,21 @@
 l = [ 1,2 ,3 ]
 ### STDOUT ###
 l = [1, 2, 3]
+
 ### TITLE ###
 [F27] Nested lists
 ### INPUT ###
 m = [[1,2],[3 ,4]]
 ### STDOUT ###
 m = [[1, 2], [3, 4]]
+
 ### TITLE ###
 [F28] Map spacing
 ### INPUT ###
 m = {"x":1,  y :2}
 ### STDOUT ###
 m = { "x": 1, y: 2 }
+
 ### TITLE ###
 [F24][F27][F28] Empty collections stay tight
 ### INPUT ###
@@ -26,6 +29,7 @@ c = f(  )
 a = []
 b = {}
 c = f()
+
 ### TITLE ###
 [F5][F29] Long list wraps one element per line
 ### INPUT ###

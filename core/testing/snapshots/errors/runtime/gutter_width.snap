@@ -25,7 +25,5 @@ error[RAD20036]: Divisor was 0, cannot divide by 0
 10 | j = 10
    |
    = info: rad docs RAD20036
-
-
 ### EXIT ###
 1

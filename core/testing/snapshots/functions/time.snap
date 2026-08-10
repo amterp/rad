@@ -66,7 +66,6 @@ a = now(tz="invalid time zone") catch:
 a = now(tz="another bad one")
 ### STDOUT ###
 Invalid time zone 'invalid time zone'
-
 ### STDERR ###
 error[RAD20009]: Invalid time zone 'another bad one'
   --> <script>:3:5
@@ -76,10 +75,9 @@ error[RAD20009]: Invalid time zone 'another bad one'
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Func ParseEpochSeconds
 ### INPUT ###
@@ -120,7 +118,6 @@ a = parse_epoch(17123456781) catch:
 a = parse_epoch(17123456781)
 ### STDOUT ###
 Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
-
 ### STDERR ###
 error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
   --> <script>:3:5
@@ -130,10 +127,9 @@ error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
   |     ^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Func ParseEpochTimeZoneNegativeAmbiguousButWithUnits
 ### INPUT ###
@@ -195,10 +191,9 @@ error[RAD20008]: parse_epoch unit "milliseconds" is no longer valid
   |
    = help: Unit names were shortened in v0.9. Use "millis" instead. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad docs RAD20008
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Func ParseDateIsoDate
 ### INPUT ###
@@ -279,7 +274,6 @@ a = parse_date("not-a-date") catch:
 a = parse_date("not-a-date")
 ### STDOUT ###
 Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds). Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
-
 ### STDERR ###
 error[RAD20044]: Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds). Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
   --> <script>:3:5
@@ -289,10 +283,9 @@ error[RAD20044]: Failed to parse date "not-a-date". Supported formats: YYYY-MM-D
   |     ^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20044
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Func ParseDateSpaceDatetimeWithTzOffset
 ### INPUT ###
@@ -365,7 +358,6 @@ a = parse_date("2026-03-22", tz="bad") catch:
 a = parse_date("2026-03-22", tz="another bad one")
 ### STDOUT ###
 Invalid time zone 'bad'
-
 ### STDERR ###
 error[RAD20009]: Invalid time zone 'another bad one'
   --> <script>:3:5
@@ -375,10 +367,9 @@ error[RAD20009]: Invalid time zone 'another bad one'
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Func_NowWeekdayIsoFriday
 ### INPUT ###
@@ -406,4 +397,3 @@ Func_ParseEpochWeekday
 print(parse_epoch(1712345678, tz="UTC").weekday)
 ### STDOUT ###
 5
-

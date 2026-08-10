@@ -13,7 +13,7 @@ print(a[2:4])
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mIC[0m
+\"\x1b[31mIC\x1b[0m"
 
 ### TITLE ###
 Color equality
@@ -51,10 +51,9 @@ error[RAD20017]: RGB values must be [0, 255]; got 300
   |      ^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20017
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors on negative RGB
 ### INPUT ###
@@ -67,10 +66,9 @@ error[RAD20017]: RGB values must be [0, 255]; got -10
   |      ^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20017
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can print colored text
 ### INPUT ###
@@ -82,11 +80,11 @@ print(blue([true, "hi", 10]))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mAlice[0m
-[34mBob[0m
-[33mCharlie[0m
-[33m2[0m
-[34m[ true, "hi", 10 ][0m
+\"\x1b[31mAlice\x1b[0m"
+\"\x1b[34mBob\x1b[0m"
+\"\x1b[33mCharlie\x1b[0m"
+\"\x1b[33m2\x1b[0m"
+\"\x1b[34m[ true, \"hi\", 10 ]\x1b[0m"
 
 ### TITLE ###
 Can concat colored strings
@@ -95,7 +93,7 @@ print(red("Alice ") + blue("Bob ") + yellow("Charlie"))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mAlice [0m[34mBob [0m[33mCharlie[0m
+\"\x1b[31mAlice \x1b[0m\x1b[34mBob \x1b[0m\x1b[33mCharlie\x1b[0m"
 
 ### TITLE ###
 Can upper/lower colored strings
@@ -149,7 +147,7 @@ print([a, b, c])
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[ "Alice", "[31mAlice[0m", "[31mAlice[0m" ]
+\"[ \"Alice\", \"\x1b[31mAlice\x1b[0m\", \"\x1b[31mAlice\x1b[0m\" ]"
 
 ### TITLE ###
 Unique considers colors
@@ -163,7 +161,7 @@ print(unique([a, b, c]))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[ "Alice", "[31mAlice[0m" ]
+\"[ \"Alice\", \"\x1b[31mAlice\x1b[0m\" ]"
 
 ### TITLE ###
 Can bold
@@ -173,7 +171,7 @@ print(a.bold())
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[1mAlice[22m
+\"\x1b[1mAlice\x1b[22m"
 
 ### TITLE ###
 Can dim
@@ -183,7 +181,7 @@ print(a.dim())
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[2mAlice[22m
+\"\x1b[2mAlice\x1b[22m"
 
 ### TITLE ###
 Can italic
@@ -193,7 +191,7 @@ print(a.italic())
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[3mAlice[23m
+\"\x1b[3mAlice\x1b[23m"
 
 ### TITLE ###
 Can strikethrough
@@ -203,7 +201,7 @@ print(a.strikethrough())
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[9mAlice[29m
+\"\x1b[9mAlice\x1b[29m"
 
 ### TITLE ###
 Can underline
@@ -213,7 +211,7 @@ print(a.underline())
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[4mAlice[24m
+\"\x1b[4mAlice\x1b[24m"
 
 ### TITLE ###
 Can color int
@@ -222,7 +220,7 @@ print(2.red())
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31m2[0m
+\"\x1b[31m2\x1b[0m"
 
 ### TITLE ###
 Can RGB color
@@ -232,8 +230,8 @@ print(2.color_rgb(50, 110, 220))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;50;110;220mHi[0;22;0;0;0m
-[38;2;50;110;220m2[0;22;0;0;0m
+\"\x1b[38;2;50;110;220mHi\x1b[0;22;0;0;0m"
+\"\x1b[38;2;50;110;220m2\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize can color names
@@ -244,10 +242,10 @@ for n in names:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;230;38;25mAlice[0;22;0;0;0m
-[38;2;99;130;233mBob[0;22;0;0;0m
-[38;2;106;189;15mCharlie[0;22;0;0;0m
-[38;2;209;71;184mDavid[0;22;0;0;0m
+\"\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m"
+\"\x1b[38;2;106;189;15mCharlie\x1b[0;22;0;0;0m"
+\"\x1b[38;2;209;71;184mDavid\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize skip if single with multiple items
@@ -258,8 +256,8 @@ for n in names:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;230;38;25mAlice[0;22;0;0;0m
-[38;2;99;130;233mBob[0;22;0;0;0m
+\"\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize skip if single with one item
@@ -283,11 +281,11 @@ rad:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[33mnames  [0m 
-[38;2;230;38;25mAlice[0;22;0;0;0m    
-[38;2;99;130;233mBob[0;22;0;0;0m      
-[38;2;106;189;15mCharlie[0;22;0;0;0m  
-[38;2;209;71;184mDavid[0;22;0;0;0m    
+\"\x1b[33mnames  \x1b[0m "
+\"\x1b[38;2;230;38;25mAlice\x1b[0;22;0;0;0m    "
+\"\x1b[38;2;99;130;233mBob\x1b[0;22;0;0;0m      "
+\"\x1b[38;2;106;189;15mCharlie\x1b[0;22;0;0;0m  "
+\"\x1b[38;2;209;71;184mDavid\x1b[0;22;0;0;0m    "
 
 ### TITLE ###
 Colorize can color ints
@@ -298,9 +296,9 @@ for n in nums:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;230;38;25m1[0;22;0;0;0m
-[38;2;99;130;233m2[0;22;0;0;0m
-[38;2;106;189;15m3[0;22;0;0;0m
+\"\x1b[38;2;230;38;25m1\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233m2\x1b[0;22;0;0;0m"
+\"\x1b[38;2;106;189;15m3\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize can color bools
@@ -311,8 +309,8 @@ for b in bools:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;99;130;233mtrue[0;22;0;0;0m
-[38;2;230;38;25mfalse[0;22;0;0;0m
+\"\x1b[38;2;99;130;233mtrue\x1b[0;22;0;0;0m"
+\"\x1b[38;2;230;38;25mfalse\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize can color mixed types
@@ -323,9 +321,9 @@ for item in items:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;230;38;25m42[0;22;0;0;0m
-[38;2;99;130;233mhello[0;22;0;0;0m
-[38;2;106;189;15mtrue[0;22;0;0;0m
+\"\x1b[38;2;230;38;25m42\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233mhello\x1b[0;22;0;0;0m"
+\"\x1b[38;2;106;189;15mtrue\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize can color floats
@@ -336,9 +334,9 @@ for f in floats:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;230;38;25m1.5[0;22;0;0;0m
-[38;2;99;130;233m2.7[0;22;0;0;0m
-[38;2;106;189;15m3.14[0;22;0;0;0m
+\"\x1b[38;2;230;38;25m1.5\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233m2.7\x1b[0;22;0;0;0m"
+\"\x1b[38;2;106;189;15m3.14\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Colorize consistent colors
@@ -351,12 +349,12 @@ for v in values:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[38;2;230;38;25m1[0;22;0;0;0m
-[38;2;99;130;233m2[0;22;0;0;0m
-[38;2;106;189;15m3[0;22;0;0;0m
-[38;2;230;38;25m1[0;22;0;0;0m
-[38;2;99;130;233m2[0;22;0;0;0m
-[38;2;106;189;15m3[0;22;0;0;0m
+\"\x1b[38;2;230;38;25m1\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233m2\x1b[0;22;0;0;0m"
+\"\x1b[38;2;106;189;15m3\x1b[0;22;0;0;0m"
+\"\x1b[38;2;230;38;25m1\x1b[0;22;0;0;0m"
+\"\x1b[38;2;99;130;233m2\x1b[0;22;0;0;0m"
+\"\x1b[38;2;106;189;15m3\x1b[0;22;0;0;0m"
 
 ### TITLE ###
 Can hyperlink
@@ -367,6 +365,5 @@ print(a.red().hyperlink("https://example.com"))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-]8;;https://example.com\Alice]8;;\
-]8;;https://example.com\[31mAlice[0m]8;;\
-
+\"\x1b]8;;https://example.com\x1b\\Alice\x1b]8;;\x1b\\"
+\"\x1b]8;;https://example.com\x1b\\\x1b[31mAlice\x1b[0m\x1b]8;;\x1b\\"

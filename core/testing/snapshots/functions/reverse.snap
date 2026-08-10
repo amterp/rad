@@ -11,8 +11,6 @@ Reverse empty string
 ### INPUT ###
 a = ""
 print(reverse(a))
-### STDOUT ###
-
 
 ### TITLE ###
 Reverse string with tab spaces
@@ -21,7 +19,7 @@ a = "\t\thello\t\n"
 print(reverse(a))
 ### STDOUT ###
 
-	olleh		
+\"\tolleh\t\t"
 
 ### TITLE ###
 Reverse with nums
@@ -37,10 +35,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str|lis
   |               ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Reverse list basic
 ### INPUT ###
@@ -90,7 +87,7 @@ print(reverse(red("hello")))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31molleh[0m
+\"\x1b[31molleh\x1b[0m"
 
 ### TITLE ###
 Preserves color across segments
@@ -99,5 +96,4 @@ print(reverse(red("he") + blue("llo")))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[34moll[0m[31meh[0m
-
+\"\x1b[34moll\x1b[0m\x1b[31meh\x1b[0m"

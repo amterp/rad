@@ -17,7 +17,6 @@ print(Names)
 ### STDOUT ###
 1
 [ "Alice", "Bob", "Charlie" ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -36,10 +35,9 @@ rad url:
 --mock-response
 .*:./responses/unique_keys.json
 ### STDOUT ###
-Name   Age  Hometown    
-Alice  30   New York     
-Bob    40   Los Angeles  
-
+\"Name   Age  Hometown    "
+\"Alice  30   New York     "
+\"Bob    40   Los Angeles  "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -58,12 +56,11 @@ rad url:
 --mock-response
 .*:./responses/unique_keys_array.json
 ### STDOUT ###
-Name       Age  Hometown 
-Alice      30   London    
-Bob        40   London    
-Charlotte  35   Paris     
-David      25   Paris     
-
+\"Name       Age  Hometown "
+\"Alice      30   London    "
+\"Bob        40   London    "
+\"Charlotte  35   Paris     "
+\"David      25   Paris     "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -83,13 +80,12 @@ rad url:
 --mock-response
 .*:./responses/nested_wildcard.json
 ### STDOUT ###
-city  country    name       age 
-York  Australia  Charlotte  35   
-York  Australia  David      25   
-York  Australia  Eve        20   
-York  England    Alice      30   
-York  England    Bob        40   
-
+\"city  country    name       age "
+\"York  Australia  Charlotte  35   "
+\"York  Australia  David      25   "
+\"York  Australia  Eve        20   "
+\"York  England    Alice      30   "
+\"York  England    Bob        40   "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -112,7 +108,6 @@ print(ids)
 ### STDOUT ###
 [ "Alice", "Bob", "Charlie" ]
 [ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ], [ 9, 10 ] ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -135,7 +130,6 @@ print(ids)
 ### STDOUT ###
 [ "Alice", "Alice", "Alice", "Bob", "Charlie", "Charlie" ]
 [ 1, 2, 3, 4, 5, 6 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -154,7 +148,6 @@ print([len(x) for x in issues])
 .*:./responses/issues.json
 ### STDOUT ###
 [ 2, 3 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -174,7 +167,6 @@ print(ids)
 .*:./responses/root_prim_array.json
 ### STDOUT ###
 [ 1, 2, 3 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -197,7 +189,6 @@ print(ages)
 ### STDOUT ###
 2
 [ 30, 40 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -220,7 +211,6 @@ print(ages)
 ### STDOUT ###
 2
 [ 30, 40 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -238,7 +228,6 @@ print(sort("{node[0]}"))
 .*:./responses/unique_keys.json
 ### STDOUT ###
       """""",03::NYaeeeghkmnooortww{}
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -256,7 +245,6 @@ print(sort("{node[0]}")) // hack to get the test consistent, as the order of key
 .*:./responses/id_name.json
 ### STDOUT ###
              """""""""""",,,12::::AB[]aabcddeeeiiilmmnno{{}}
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -306,7 +294,6 @@ pprint(node[0])
   },
   null
 ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -324,10 +311,8 @@ rad url:
 --mock-response
 .*:./responses/array_and_non_array.json
 ### STDOUT ###
-Names  Len 
-Alice  2    
-Bob    2    
-
+\"Names  Len "
+\"Alice  2    "
+\"Bob    2    "
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
-

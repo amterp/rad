@@ -25,6 +25,7 @@ fn outer(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LambdaDropsNarrowingWhenReassignedLater
 ### DESCRIPTION ###
@@ -58,6 +59,7 @@ fn outer():
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LambdaKeepsNarrowingWhenReassignedBefore
 ### DESCRIPTION ###
@@ -90,6 +92,7 @@ fn outer():
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 CompoundAssignAlsoTriggersRule
 ### DESCRIPTION ###
@@ -118,6 +121,7 @@ fn outer():
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ParamUnmodifiedKeepsNarrowingInLambda
 ### DESCRIPTION ###

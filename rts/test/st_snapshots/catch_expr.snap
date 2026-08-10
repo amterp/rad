@@ -179,7 +179,6 @@ B: [144, 145] PS: [10, 14] PE: [10, 15]                               delegate: 
 B: [144, 145] PS: [10, 14] PE: [10, 15]                                 root: primary_expr
 B: [144, 145] PS: [10, 14] PE: [10, 15]                                   literal
 B: [144, 145] PS: [10, 14] PE: [10, 15]                                     int `1`
-
 ### STDERR ###
 PS: [ 0,  0] PE: [10, 15] SourceFile
 PS: [ 0,  0] PE: [ 1, 22]   ExprStmt
@@ -211,4 +210,3 @@ PS: [10,  4] PE: [10, 15]       Assign
 PS: [10,  4] PE: [10, 10]         Identifier "result"
 PS: [10, 13] PE: [10, 15]         OpUnary -
 PS: [10, 14] PE: [10, 15]           LitInt 1
-

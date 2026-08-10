@@ -41,11 +41,9 @@ B: [14, 16] PS: [0, 14] PE: [0, 16]                                             
 B: [16, 20] PS: [0, 16] PE: [0, 20]                                                             content: string_content `var}`
 B: [20, 21] PS: [0, 20] PE: [0, 21]                                                           end: string_end `"`
 B: [21, 22] PS: [0, 21] PE: [0, 22]                               ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 22] SourceFile
 PS: [0,  0] PE: [0, 22]   ExprStmt
 PS: [0,  0] PE: [0, 22]     Call
 PS: [0,  0] PE: [0,  5]       Identifier "print"
 PS: [0,  6] PE: [0, 21]       LitString "hello, {var}"
-

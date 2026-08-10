@@ -25,6 +25,7 @@ for v in items:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LockstepSortIsATupleOfItsArguments
 ### DESCRIPTION ###
@@ -57,6 +58,7 @@ a, b = sort(xs, ys)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LockstepSortWithNonListArgStaysWide
 ### DESCRIPTION ###
@@ -86,6 +88,7 @@ a, b = sort(xs, s)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UfcsClampFloatReceiverStaysFloat
 ### DESCRIPTION ###
@@ -108,6 +111,7 @@ r = v.clamp(0, 10)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 UfcsClampIntReceiverCollapsesToInt
 ### DESCRIPTION ###
@@ -130,6 +134,7 @@ r = n.clamp(0, 10)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ReadFileContentIsStrByDefault
 ### DESCRIPTION ###
@@ -152,6 +157,7 @@ split(content, "\n")
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ReadFileBytesModeContentIsIntList
 ### DESCRIPTION ###
@@ -170,6 +176,7 @@ content = read_file("f.bin", mode="bytes").content
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ReadFileNonLiteralModeStaysWide
 ### DESCRIPTION ###
@@ -198,6 +205,7 @@ content = read_file("f.bin", mode=m).content
 
 # Diagnostics
   [hint] RAD30001 @ 2:35 - Argument type 'str' is not assignable to expected type '["text", "bytes"]'
+
 ### TITLE ###
 MapTakesElementTypeFromItsLambda
 ### DESCRIPTION ###
@@ -230,6 +238,7 @@ for label in labels:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 MapOverAMapPreservesKeys
 ### DESCRIPTION ###
@@ -253,6 +262,7 @@ doubled = scores.map(fn(k, v) v * 2)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 MapOverUnknownCollectionStaysWide
 ### DESCRIPTION ###
@@ -277,6 +287,7 @@ mapped = data.map(fn(x) x)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FilterPreservesTheCollectionType
 ### DESCRIPTION ###
@@ -301,6 +312,7 @@ evens = nums.filter(fn(x) x % 2 == 0)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 ReversePreservesTheCollectionType
 ### DESCRIPTION ###
@@ -328,6 +340,7 @@ for n in flipped:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RangeOfIntsIsIntList
 ### DESCRIPTION ###
@@ -352,6 +365,7 @@ for x in xs:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RangeWithFloatStepStaysWide
 ### DESCRIPTION ###
@@ -369,6 +383,7 @@ xs = range(0, 1, 0.25)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RefinedReadFileStillReportsAsFallible
 ### DESCRIPTION ###

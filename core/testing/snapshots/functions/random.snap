@@ -66,10 +66,9 @@ error[RAD30007]: Expected at most 0 args, but was invoked with 1
   | ^^^^^^^
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Random_RandIntErrorsIfNoArgs
 ### INPUT ###
@@ -90,10 +89,9 @@ error[RAD30007]: Missing required argument '_seed'
   | ^^^^^^^^^^^^^
   |
    = info: rad docs RAD30007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Random_ErrorsIfMinMaxSame
 ### INPUT ###
@@ -108,7 +106,5 @@ error[RAD20019]: min (2) must be less than max (2).
 2 |
   |
    = info: rad docs RAD20019
-
-
 ### EXIT ###
 1

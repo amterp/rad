@@ -53,10 +53,9 @@ error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20007
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 format_epoch errors on invalid unit
 ### INPUT ###
@@ -69,10 +68,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type '["auto"
   |                                                   ^^^^^^^^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 format_epoch errors on invalid timezone
 ### INPUT ###
@@ -85,10 +83,9 @@ error[RAD20009]: invalid time zone "Mars/Olympus"
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 format_epoch errors on empty format
 ### INPUT ###
@@ -101,10 +98,9 @@ error[RAD30003]: Cannot format epoch with an empty format string
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD30003
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 format_epoch errors are catchable
 ### INPUT ###
@@ -112,4 +108,3 @@ res = format_epoch(17356896001, "YYYY-MM-DD", tz="UTC") catch:
     print("caught")
 ### STDOUT ###
 caught
-

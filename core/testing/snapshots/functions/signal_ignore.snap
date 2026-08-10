@@ -17,4 +17,3 @@ signal_ignore(["sigint", "sigterm"])
 print("ok")
 ### STDOUT ###
 ok
-

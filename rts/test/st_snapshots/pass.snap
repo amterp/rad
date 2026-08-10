@@ -84,7 +84,6 @@ B: [60, 79] PS: [7,  4] PE: [9,  8]     alt: else_alt
 B: [60, 61] PS: [7,  4] PE: [7,  5]       : `:`
 B: [66, 70] PS: [8,  4] PE: [8,  8]       stmt: pass_stmt `pass`
 B: [75, 79] PS: [9,  4] PE: [9,  8]       stmt: pass_stmt `pass`
-
 ### STDERR ###
 PS: [0,  0] PE: [9,  8] SourceFile
 PS: [0,  0] PE: [0,  4]   Pass
@@ -102,4 +101,3 @@ PS: [6,  4] PE: [6,  8]       Pass
                           Branch 1 (else)
 PS: [8,  4] PE: [8,  8]       Pass
 PS: [9,  4] PE: [9,  8]       Pass
-

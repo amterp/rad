@@ -18,6 +18,7 @@ if x
 # Diagnostics
   [error] RAD10002 @ 1:1 - Missing ':' after 'if' header
     help: add ':' at the end of the line
+
 ### TITLE ###
 MissingColonAfterForFiresRAD10002
 ### DESCRIPTION ###
@@ -37,6 +38,7 @@ for i in [1, 2, 3]
   [error] RAD10002 @ 1:1 - Missing ':' after 'for' header
     help: add ':' at the end of the line
   [error] RAD10009 @ 1:10 - Unexpected '[1, 2, 3]'
+
 ### TITLE ###
 MissingIndentAfterIfFiresRAD10018
 ### DESCRIPTION ###
@@ -57,6 +59,7 @@ y = 5
 # Diagnostics
   [error] RAD10018 @ 1:1 - Missing indent after 'if:' block header
     help: indent the body of the block
+
 ### TITLE ###
 UnterminatedStringFiresRAD10020
 ### DESCRIPTION ###

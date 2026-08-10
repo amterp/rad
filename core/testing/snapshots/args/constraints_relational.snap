@@ -46,9 +46,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Requires_ErrorsIfDefaultRequiresSomethingNotProvided
 ### INPUT ###
@@ -82,9 +82,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Excludes_CanGiveFirst
 ### INPUT ###
@@ -160,9 +160,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Mixed_CanGiveOne
 ### INPUT ###
@@ -249,9 +249,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 ErrorsIfConstraintOnUndefinedArg
 ### INPUT ###
@@ -260,9 +260,9 @@ args:
     token excludes username
 ### STDERR ###
 Undefined flag 'username'
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Bool_Can_Require
 ### INPUT ###
@@ -314,9 +314,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Bool_CanDefineRequireeForNonMutualRequirement
 ### INPUT ###
@@ -385,4 +385,3 @@ print("file={file} url={url}")
 in.txt
 ### STDOUT ###
 file=in.txt url=
-

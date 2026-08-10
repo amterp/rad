@@ -40,10 +40,9 @@ error[RAD20021]: Error decoding base64: illegal base64 data at input byte 0
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20021
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Encode decode base16
 ### INPUT ###
@@ -53,4 +52,3 @@ print(decode_base16(t))
 ### STDOUT ###
 68656c6c6f20667269656e6421
 hello friend!
-

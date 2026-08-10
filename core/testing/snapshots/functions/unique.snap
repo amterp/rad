@@ -21,4 +21,3 @@ String
 print(join(unique(split("Frodo Baggins is a hobbit", "")), ""))
 ### STDOUT ###
 Frod Baginshbt
-

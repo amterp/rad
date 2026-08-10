@@ -37,9 +37,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 ErrorsIfNonStringEnum
 ### INPUT ###
@@ -59,10 +59,9 @@ error[RAD10009]: Unexpected '2'
 4 | print("Hi", name)
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 CanHaveArgNamedEnum
 ### INPUT ###
@@ -74,4 +73,3 @@ print("Hi", enum)
 alice
 ### STDOUT ###
 Hi alice
-

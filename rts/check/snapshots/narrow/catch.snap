@@ -25,6 +25,7 @@ y = x
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 CatchBlockOnTypedLocalUsesDeclaredErrorArm
 ### DESCRIPTION ###
@@ -46,6 +47,7 @@ x: int|error = parse_int("hi") catch:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 CatchBlockYieldIsValidContext
 ### DESCRIPTION ###

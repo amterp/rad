@@ -52,10 +52,9 @@ error[RAD20000]: flat_map requires all elements to be lists, but element at inde
   |   ^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FlatMap list no fn error on non-lists
 ### INPUT ###
@@ -70,10 +69,9 @@ error[RAD20000]: flat_map requires all elements to be lists, but element at inde
   |   ^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FlatMap list with fn split
 ### INPUT ###
@@ -129,10 +127,9 @@ error[RAD20000]: flat_map function must return a list, but returned int for elem
   |   ^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FlatMap map no fn requires function
 ### INPUT ###
@@ -147,10 +144,9 @@ error[RAD20000]: flat_map on maps requires a function argument
   |   ^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FlatMap map with fn extract values
 ### INPUT ###
@@ -189,10 +185,9 @@ error[RAD20000]: flat_map function must return a list, but returned int for key 
   |   ^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FlatMap chain with filter
 ### INPUT ###
@@ -237,4 +232,3 @@ FlatMap function syntax with fn
 flat_map([1, 2], fn(x) [x, x * 10]).print()
 ### STDOUT ###
 [ 1, 10, 2, 20 ]
-

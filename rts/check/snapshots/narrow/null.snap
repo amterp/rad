@@ -24,6 +24,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NullEqualReturnsNarrowsFallthrough
 ### DESCRIPTION ###
@@ -47,6 +48,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NoNullableBaseTypeNoNarrowing
 ### DESCRIPTION ###
@@ -74,6 +76,7 @@ fn f(x: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NullLiteralRejectedByNonNullableSlot
 ### DESCRIPTION ###
@@ -92,6 +95,7 @@ a: int = null
 # Diagnostics
   [error] RAD30001 @ 1:10 - Value of type 'null' is not assignable to declared type 'int'
     help: To allow null here, declare the slot as 'int?'
+
 ### TITLE ###
 NullLiteralAcceptedByOptionalSlot
 ### DESCRIPTION ###
@@ -107,6 +111,7 @@ a: int? = null
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NotNullElseNarrowsToNull
 ### DESCRIPTION ###
@@ -135,6 +140,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 InferredReturnMixingValueAndNullProducesOptional
 ### DESCRIPTION ###
@@ -157,6 +163,7 @@ fn maybe(b: bool):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TruthyIdentifierStripsNullableInTrueBranch
 ### DESCRIPTION ###
@@ -184,6 +191,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TruthyIdentifierNoOpOnNonNullableType
 ### DESCRIPTION ###
@@ -207,6 +215,7 @@ fn f(x: int):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 NotEqualNullStripsNullArmFromThreeArmUnion
 ### DESCRIPTION ###

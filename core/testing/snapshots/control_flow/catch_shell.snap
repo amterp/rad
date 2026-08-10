@@ -12,4 +12,3 @@ code = `{fail()}` catch:
 	print("caught: {code}")
 ### STDOUT ###
 caught: cmd expression failed
-

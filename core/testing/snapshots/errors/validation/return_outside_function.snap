@@ -10,7 +10,5 @@ error[RAD40004]: 'return' can only be used inside a function
   | ^^^^^^^^
   |
    = info: rad docs RAD40004
-
-
 ### EXIT ###
 1

@@ -15,10 +15,9 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |
    = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad docs RAD20033
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Migration_V07_ForLoopIndex_ThreeVars_ShowsHelpfulError
 ### INPUT ###
@@ -36,10 +35,9 @@ error[RAD20033]: Cannot unpack "int" into 3 values
   |
    = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad docs RAD20033
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Migration_V07_ForLoopIndex_Underscore_ShowsHelpfulError
 ### INPUT ###
@@ -57,10 +55,9 @@ error[RAD20033]: Cannot unpack "int" into 2 values
   |
    = help: The for-loop syntax changed. Use: for item in items with loop: print(loop.idx, item). See: https://amterp.dev/rad/migrations/v0.7/
    = info: rad docs RAD20033
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Migration_V08_GetDefault_ShowsHelpfulError
 ### INPUT ###
@@ -77,10 +74,9 @@ error[RAD20028]: Undefined identifier 'get_default'
   |
    = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Migration_V09_GetStashDir_ShowsHelpfulError
 ### INPUT ###
@@ -96,10 +92,9 @@ error[RAD20028]: Undefined identifier 'get_stash_dir'
   |
    = help: get_stash_dir was renamed to get_stash_path. See: https://amterp.dev/rad/migrations/v0.9/
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Migration_V08_GetDefault_Ufcs_ShowsHelpfulError
 ### INPUT ###
@@ -116,7 +111,5 @@ error[RAD20028]: Undefined identifier 'get_default'
   |
    = help: get_default was removed. Use: map["key"] ?? default. See: https://amterp.dev/rad/migrations/v0.8/
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1

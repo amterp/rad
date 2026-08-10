@@ -51,8 +51,7 @@ print(s[3])
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[34ma[0m
-[34m😀[0m
+\"\x1b[34ma\x1b[0m"
+\"\x1b[34m😀\x1b[0m"
 b
 c
-

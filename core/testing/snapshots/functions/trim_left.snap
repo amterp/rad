@@ -17,7 +17,7 @@ No arg whitespace
 ### INPUT ###
 print(trim_left("  hello  "))
 ### STDOUT ###
-hello  
+\"hello  "
 
 ### TITLE ###
 Preserves color attributes
@@ -27,5 +27,4 @@ print(trim_left(a))
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mhello[0m  
-
+\"\x1b[31mhello\x1b[0m  "

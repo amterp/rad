@@ -26,4 +26,3 @@ has_data = has_stdin()
 print("Has stdin: {has_data}")
 ### STDOUT ###
 Has stdin: false
-

@@ -65,7 +65,6 @@ B: [120, 121] PS: [4, 24] PE: [4, 25]         , `,`
 B: [122, 127] PS: [4, 26] PE: [4, 31]         list_entry: bool
 B: [122, 127] PS: [4, 26] PE: [4, 31]           false `false`
 B: [127, 128] PS: [4, 31] PE: [4, 32]         ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [4, 32] SourceFile
 PS: [0,  0] PE: [4, 32]   ArgBlock
@@ -89,4 +88,3 @@ PS: [4,  3] PE: [4, 32]     ArgDecl "durian" type=bool[]
 PS: [4, 19] PE: [4, 32]         LitList (2 elements)
 PS: [4, 20] PE: [4, 24]           LitBool true
 PS: [4, 26] PE: [4, 31]           LitBool false
-

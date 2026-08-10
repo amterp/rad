@@ -51,10 +51,9 @@ error[RAD20028]: Undefined identifier 'add'
   |
    = help: did you mean 'abs', 'rand', or 'red'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can define new function in block and does not fall out
 ### INPUT ###
@@ -86,4 +85,3 @@ print(add(4, 5))
 fn add(x: int, y: int) x + y
 ### STDOUT ###
 9
-

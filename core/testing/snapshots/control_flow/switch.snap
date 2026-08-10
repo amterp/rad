@@ -71,10 +71,9 @@ error[RAD20034]: No matching case found for switch
 4 | 	case "bob" -> print("BOB")
   |
    = info: rad docs RAD20034
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multiple matches errors
 ### INPUT ###
@@ -94,10 +93,9 @@ error[RAD20035]: Multiple matching cases found for switch
 4 | 	case "bob" -> print("BOB")
   |
    = info: rad docs RAD20035
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Basic default assign
 ### INPUT ###
@@ -183,6 +181,7 @@ a, b = switch 1:
 print(a, b)
 ### STDOUT ###
 [ ] [ ]
+
 ### TITLE ###
 Dont need to yield if break
 ### INPUT ###

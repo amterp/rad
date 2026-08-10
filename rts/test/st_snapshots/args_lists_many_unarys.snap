@@ -45,7 +45,6 @@ B: [67, 68] PS: [2, 30] PE: [2, 31]           op: - `-`
 B: [68, 69] PS: [2, 31] PE: [2, 32]           op: - `-`
 B: [69, 72] PS: [2, 32] PE: [2, 35]           value: float `4.5`
 B: [72, 73] PS: [2, 35] PE: [2, 36]         ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [2, 36] SourceFile
 PS: [0,  0] PE: [2, 36]   ArgBlock
@@ -61,4 +60,3 @@ PS: [2, 20] PE: [2, 36]         LitList (2 elements)
 PS: [2, 21] PE: [2, 24]           LitFloat 2.3
 PS: [2, 26] PE: [2, 35]           OpUnary -
 PS: [2, 32] PE: [2, 35]             LitFloat 4.5
-

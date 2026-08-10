@@ -29,4 +29,3 @@ a = { "alice": 40, "bob": "bar", "charlie": [1, "hi"] }
 print(len(a))
 ### STDOUT ###
 3
-

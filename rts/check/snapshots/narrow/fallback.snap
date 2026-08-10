@@ -17,6 +17,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FallbackOnNonNullableLeftKeepsBothArms
 ### DESCRIPTION ###
@@ -33,6 +34,7 @@ y = 5 ?? "fallback"
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 CatchExprStripsErrorFromLeft
 ### DESCRIPTION ###

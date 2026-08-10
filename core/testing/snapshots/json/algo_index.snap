@@ -15,7 +15,6 @@ print(Names)
 ### STDOUT ###
 [ 20, 50, 100 ]
 [ "Alice", "Bob", "Charlie" ]
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
 
@@ -34,7 +33,5 @@ print(Name, len(Name))
 .*:./responses/id_name.json
 ### STDOUT ###
 Bob 3
-
 ### STDERR ###
 Mocking response for url (matched ".*"): https://google.com
-

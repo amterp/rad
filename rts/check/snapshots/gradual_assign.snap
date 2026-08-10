@@ -22,6 +22,7 @@ fn collect() -> str[]:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 EmptyListIntoTypedLocal
 ### DESCRIPTION ###
@@ -38,6 +39,7 @@ xs: str[] = []
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TernaryStrOrNullIntoOptional
 ### DESCRIPTION ###
@@ -58,6 +60,7 @@ fn pick_or_none(s: str) -> str?:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 DynamicUnionIntoConcreteReturn
 ### DESCRIPTION ###
@@ -77,6 +80,7 @@ fn first_items(d) -> list:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 AnyUnionIntoStrArg
 ### DESCRIPTION ###
@@ -104,6 +108,7 @@ for v in items:
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 TypedListOrBareListCompoundAdd
 ### DESCRIPTION ###

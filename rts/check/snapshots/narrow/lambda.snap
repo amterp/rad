@@ -25,6 +25,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LambdaBodyNarrowingDoesNotLeakOut
 ### DESCRIPTION ###
@@ -54,6 +55,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RecursiveLambdaTupleReturnCollapsesNeverArm
 ### DESCRIPTION ###
@@ -85,6 +87,7 @@ x: int = self_call(5)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 RecursiveLambdaScalarBaseCaseStillWorks
 ### DESCRIPTION ###

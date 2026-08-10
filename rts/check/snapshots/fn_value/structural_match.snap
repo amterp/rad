@@ -28,6 +28,7 @@ process(cb)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FnValueReturnTypeMismatchFires
 ### DESCRIPTION ###
@@ -55,6 +56,7 @@ process(cb)
 
 # Diagnostics
   [error] RAD30001 @ 7:9 - Argument type 'fn(int) -> str' is not assignable to expected type 'fn(int) -> bool'
+
 ### TITLE ###
 FnValueParamTypeMismatchFires
 ### DESCRIPTION ###
@@ -84,6 +86,7 @@ process(cb)
 
 # Diagnostics
   [error] RAD30001 @ 7:9 - Argument type 'fn(str) -> bool' is not assignable to expected type 'fn(int) -> bool'
+
 ### TITLE ###
 FnValueWiderParamOkContravariance
 ### DESCRIPTION ###
@@ -111,6 +114,7 @@ process(cb)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 FnValueArityMismatchFires
 ### DESCRIPTION ###
@@ -142,6 +146,7 @@ process(cb)
 
 # Diagnostics
   [error] RAD30001 @ 7:9 - Argument type 'fn(int, int) -> bool' is not assignable to expected type 'fn(int) -> bool'
+
 ### TITLE ###
 FnValueUntypedParamAcceptsAnything
 ### DESCRIPTION ###
@@ -171,6 +176,7 @@ process(cb)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LambdaExprWrongReturnTypeFires
 ### DESCRIPTION ###
@@ -194,6 +200,7 @@ process(fn(x) "hi")
 
 # Diagnostics
   [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> str' is not assignable to expected type 'fn(int) -> bool'
+
 ### TITLE ###
 LambdaExprRightShapeOk
 ### DESCRIPTION ###
@@ -219,6 +226,7 @@ process(fn(x) x > 0)
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 LambdaBlockMultiPathReturnUnioned
 ### DESCRIPTION ###
@@ -247,6 +255,7 @@ process(fn(x):
 
 # Diagnostics
   [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> int|str' is not assignable to expected type 'fn(int) -> bool'
+
 ### TITLE ###
 LambdaBlockNoReturnIsVoid
 ### DESCRIPTION ###
@@ -273,6 +282,7 @@ process(fn(x):
 
 # Diagnostics
   [error] RAD30001 @ 4:9 - Argument type 'fn(any) -> void' is not assignable to expected type 'fn(int) -> bool'
+
 ### TITLE ###
 LambdaDeclaredReturnMismatchFiresAtReturn
 ### DESCRIPTION ###

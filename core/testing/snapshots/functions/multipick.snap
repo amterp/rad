@@ -12,10 +12,9 @@ error[RAD20000]: Cannot multipick from empty options list
   | ^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multipick errors if min is negative
 ### INPUT ###
@@ -30,10 +29,9 @@ error[RAD20000]: min must be non-negative, got -1
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multipick errors if max is negative
 ### INPUT ###
@@ -48,10 +46,9 @@ error[RAD20000]: max must be positive, got -1
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multipick errors if max is zero
 ### INPUT ###
@@ -66,10 +63,9 @@ error[RAD20000]: max must be positive, got 0
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multipick errors if min greater than max
 ### INPUT ###
@@ -84,10 +80,9 @@ error[RAD20000]: min (5) cannot be greater than max (3)
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multipick errors if min greater than options length
 ### INPUT ###
@@ -102,10 +97,9 @@ error[RAD20000]: min is 3 but only 2 options available
   | ^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Interactive multipick toggle via space
 ### DESCRIPTION ###
@@ -121,7 +115,6 @@ space
 enter
 ### STDOUT ###
 [ "Apple", "Banana" ]
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Select options
@@ -145,6 +138,7 @@ Select options
   [ ] Cherry
 --- frame 4 (enter) ---
 Select options Apple, Banana
+
 ### TITLE ###
 Interactive multipick toggle via tab
 ### DESCRIPTION ###
@@ -160,7 +154,6 @@ tab
 enter
 ### STDOUT ###
 [ "Apple", "Cherry" ]
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Select options
@@ -189,6 +182,7 @@ Select options
 > [x] Cherry
 --- frame 5 (enter) ---
 Select options Apple, Cherry
+
 ### TITLE ###
 Interactive multipick filter then toggle
 ### DESCRIPTION ###
@@ -204,7 +198,6 @@ ctrl-u
 enter
 ### STDOUT ###
 [ "Avocado" ]
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Select options
@@ -234,6 +227,7 @@ Select options
   [x] Avocado
 --- frame 5 (enter) ---
 Select options Avocado
+
 ### TITLE ###
 Interactive multipick min blocks submit
 ### DESCRIPTION ###
@@ -250,7 +244,6 @@ space
 enter
 ### STDOUT ###
 [ "Apple", "Banana" ]
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Select at least 2 options
@@ -283,6 +276,7 @@ Select at least 2 options
   [ ] Cherry
 --- frame 5 (enter) ---
 Select at least 2 options Apple, Banana
+
 ### TITLE ###
 Interactive multipick max blocks extra toggle
 ### DESCRIPTION ###
@@ -299,7 +293,6 @@ space
 enter
 ### STDOUT ###
 [ "Apple", "Banana" ]
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Select up to 2 options
@@ -336,6 +329,7 @@ Select up to 2 options
   (max 2 selected)
 --- frame 6 (enter) ---
 Select up to 2 options Apple, Banana
+
 ### TITLE ###
 Interactive multipick cancel
 ### DESCRIPTION ###
@@ -355,8 +349,6 @@ error[RAD20000]: multipick canceled
   |       ^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Select options

@@ -67,10 +67,9 @@ error[RAD20028]: Undefined identifier 'var'
   |
    = help: did you mean 'map', 'max', or 'str'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 StringInterpolation_CanEscapeFirst
 ### INPUT ###
@@ -305,10 +304,9 @@ error[RAD30003]: Cannot format str with thousands separator ','
   |                             ^^^^^^^^
   |
    = info: rad docs RAD30003
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 StringInterpolation_ThousandsSeparator_ScientificNotation
 ### INPUT ###
@@ -360,9 +358,9 @@ print("{blue(n):<20}")
 --color=always
 ### STDOUT ###
                alice
-               [34malice[0m
-alice               
-[34malice[0m               
+\"               \x1b[34malice\x1b[0m"
+\"alice               "
+\"\x1b[34malice\x1b[0m               "
 
 ### TITLE ###
 StringInterpolation_Formatting_ColorWorksWithoutPadding
@@ -374,7 +372,7 @@ print("{blue(n)}")
 --color=always
 ### STDOUT ###
 alice
-[34malice[0m
+\"\x1b[34malice\x1b[0m"
 
 ### TITLE ###
 StringInterpolation_FillAlignment_ExplicitFill
@@ -462,9 +460,9 @@ print("{blue(n):*<20}")
 --color=always
 ### STDOUT ###
 ***************alice
-***************[34malice[0m
+\"***************\x1b[34malice\x1b[0m"
 alice***************
-[34malice[0m***************
+\"\x1b[34malice\x1b[0m***************"
 
 ### TITLE ###
 NestedDoubleQuotesInsideInterp
@@ -479,4 +477,3 @@ Hello World
 Hello + World
 Count: several
 x inner! y
-

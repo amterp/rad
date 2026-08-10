@@ -24,6 +24,7 @@ y = x
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 WhileDivergentBodyTakesFallThrough
 ### DESCRIPTION ###
@@ -49,6 +50,7 @@ fn f(x: int|str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 WhileNarrowsBodyApplyWhenFalseOutside
 ### DESCRIPTION ###
@@ -76,6 +78,7 @@ fn f(x: int?):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 WhileSorbetWidensNestedReassignment
 ### DESCRIPTION ###

@@ -12,7 +12,5 @@ error[RAD20029]: Index out of bounds: 10 (length 3)
   |         ^^
   |
    = info: rad docs RAD20029
-
-
 ### EXIT ###
 1

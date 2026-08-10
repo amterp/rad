@@ -59,10 +59,9 @@ error[RAD20015]: Strict mode enabled: all lists must have the same length, but g
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20015
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Zip errors if strict and fill provided
 ### INPUT ###
@@ -75,14 +74,12 @@ error[RAD20014]: Cannot enable 'strict' with 'fill' specified
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20014
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Zip empty lists
 ### INPUT ###
 print(zip([], [], []))
 ### STDOUT ###
 [ ]
-

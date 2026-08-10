@@ -51,7 +51,6 @@ B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                             
 B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                                   literal
 B: [ 8,  9] PS: [0,  8] PE: [0,  9]                                                     int `0`
 B: [ 9, 10] PS: [0,  9] PE: [0, 10]                           ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 10] SourceFile
 PS: [0,  0] PE: [0, 10]   Assign
@@ -60,4 +59,3 @@ PS: [0,  4] PE: [0, 10]     VarPath
 PS: [0,  5] PE: [0,  6]       Identifier "b"
                             [index]
 PS: [0,  8] PE: [0,  9]         LitInt 0
-

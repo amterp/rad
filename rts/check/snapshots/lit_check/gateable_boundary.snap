@@ -29,6 +29,7 @@ fn want_ints(xs: int[]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 StrVariableIntoStrEnumStaysHint
 ### DESCRIPTION ###
@@ -57,6 +58,7 @@ fn outer(s: str):
 
 # Diagnostics
   [hint] RAD30001 @ 5:10 - Argument type 'str' is not assignable to expected type '["read", "write"]'
+
 ### TITLE ###
 UnionWithFittingArmStaysHint
 ### DESCRIPTION ###
@@ -84,6 +86,7 @@ fn outer(x: int|str):
 
 # Diagnostics
   [hint] RAD30001 @ 5:14 - Argument type 'int|str' is not assignable to expected type 'int'
+
 ### TITLE ###
 OptionalWithFittingInnerStaysHint
 ### DESCRIPTION ###
@@ -111,6 +114,7 @@ fn outer(x: str?):
 
 # Diagnostics
   [hint] RAD30001 @ 5:14 - Argument type 'str?' is not assignable to expected type 'str'
+
 ### TITLE ###
 ConcreteMismatchGates
 ### DESCRIPTION ###

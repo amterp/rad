@@ -30,6 +30,7 @@ fn f(name: ["alice", "bob", "charlie"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchMultipleKeysPerCaseUnions
 ### DESCRIPTION ###
@@ -58,6 +59,7 @@ fn f(name: ["a", "b", "c"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchExhaustiveNoDiagnostic
 ### INPUT ###
@@ -80,6 +82,7 @@ fn f(name: ["a", "b"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchNonExhaustiveFiresDiagnostic
 ### INPUT ###
@@ -102,6 +105,7 @@ fn f(name: ["a", "b", "c"]):
 
 # Diagnostics
   [error] RAD40010 @ 2:5 - Switch is not exhaustive; missing case for ["c"]
+
 ### TITLE ###
 SwitchDefaultSuppressesDiagnostic
 ### INPUT ###
@@ -124,6 +128,7 @@ fn f(name: ["a", "b", "c"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchOnOpenTypeSkipsExhaustiveness
 ### INPUT ###
@@ -143,6 +148,7 @@ fn f(name: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchExactDuplicateCaseFlagged
 ### DESCRIPTION ###
@@ -172,6 +178,7 @@ fn classify(s: str):
 
 # Diagnostics
   [error] RAD40012 @ 5:14 - Case is unreachable; 'a' is already matched by an earlier arm on line 3
+
 ### TITLE ###
 SwitchMultiKeyOverlapFlagsRedundantKey
 ### DESCRIPTION ###
@@ -201,6 +208,7 @@ fn classify(s: str):
 
 # Diagnostics
   [error] RAD40012 @ 5:14 - Case is unreachable; 'b' is already matched by an earlier arm on line 3
+
 ### TITLE ###
 SwitchIntDuplicateFlagged
 ### DESCRIPTION ###
@@ -230,6 +238,7 @@ fn classify(n: int):
 
 # Diagnostics
   [error] RAD40012 @ 5:14 - Case is unreachable; '2' is already matched by an earlier arm on line 3
+
 ### TITLE ###
 SwitchVariableKeysSkipDuplicateCheck
 ### DESCRIPTION ###
@@ -267,6 +276,7 @@ fn classify(s: str):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchCaseKeyNotInEnumDiscriminantFlagged
 ### DESCRIPTION ###
@@ -302,6 +312,7 @@ fn f(name: ["a", "b", "c"]):
 
 # Diagnostics
   [error] RAD40013 @ 9:14 - Case 'wat' is unreachable; 'name' is of type ["a", "b", "c"] and can never equal 'wat'
+
 ### TITLE ###
 SwitchAllValidKeysOnEnumCleanNoDomainDiagnostic
 ### DESCRIPTION ###
@@ -328,6 +339,7 @@ fn f(name: ["a", "b"]):
 
 # Diagnostics
   (none)
+
 ### TITLE ###
 SwitchNonClosedDiscriminantSkipsDomainCheck
 ### DESCRIPTION ###

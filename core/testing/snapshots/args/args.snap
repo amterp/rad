@@ -53,9 +53,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 CanParseAllTypes
 ### INPUT ###
@@ -179,6 +179,7 @@ print(intArg)
 -10
 ### STDOUT ###
 -10
+
 ### TITLE ###
 CanPassNegativeFloatWithFlag
 ### INPUT ###
@@ -203,6 +204,7 @@ print(floatArg)
 -10.2
 ### STDOUT ###
 -10.2
+
 ### TITLE ###
 CanHaveSeveralMinuses
 ### INPUT ###
@@ -238,10 +240,9 @@ error[RAD10001]: Invalid argument declaration
   |                ^^
   |
    = info: rad docs RAD10001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 FullHelp
 ### INPUT ###
@@ -389,9 +390,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 TooManyArgsPrintsUsageAndReturnsError
 ### INPUT ###
@@ -421,9 +422,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 InvalidFlagPrintsUsageAndReturnsError
 ### INPUT ###
@@ -453,9 +454,9 @@ Global options:
       --confirm-shell   Confirm all shell commands before running them.
       --tls-insecure    Skip TLS certificate verification for all HTTP requests.
       --src             Instead of running the target script, just print it out.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 AutomaticallyReplacesUnderscoresWithHyphens
 ### INPUT ###

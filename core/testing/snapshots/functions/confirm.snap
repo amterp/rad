@@ -9,12 +9,12 @@ print(confirm())
 enter
 ### STDOUT ###
 true
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Confirm? [Y/n] > █
 --- frame 1 (enter) ---
-Confirm? [Y/n] > 
+\"Confirm? [Y/n] > "
+
 ### TITLE ###
 Confirm yes via y
 ### DESCRIPTION ###
@@ -26,7 +26,6 @@ print(confirm())
 enter
 ### STDOUT ###
 true
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Confirm? [Y/n] > █
@@ -34,6 +33,7 @@ Confirm? [Y/n] > █
 Confirm? [Y/n] > y█
 --- frame 2 (enter) ---
 Confirm? [Y/n] > y
+
 ### TITLE ###
 Confirm no via n
 ### DESCRIPTION ###
@@ -45,7 +45,6 @@ print(confirm())
 enter
 ### STDOUT ###
 false
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Confirm? [Y/n] > █
@@ -53,6 +52,7 @@ Confirm? [Y/n] > █
 Confirm? [Y/n] > n█
 --- frame 2 (enter) ---
 Confirm? [Y/n] > n
+
 ### TITLE ###
 Confirm cancel
 ### DESCRIPTION ###
@@ -69,8 +69,6 @@ error[RAD20010]: Error reading input: input canceled
   |       ^^^^^^^^^
   |
    = info: rad docs RAD20010
-
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Confirm? [Y/n] > █

@@ -70,4 +70,3 @@ result = switch "nested":
 print(":{result}:")
 ### STDOUT ###
 :success:
-

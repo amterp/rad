@@ -31,10 +31,9 @@ error[RAD20000]: this is an error
 4 |
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can catch on nested functions
 ### INPUT ###
@@ -107,10 +106,9 @@ error[RAD20000]: this is an error
 4 | fn foo():
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors in map
 ### INPUT ###
@@ -130,10 +128,9 @@ error[RAD20000]: this is an error
 4 | fn foo():
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can propagate
 ### INPUT ###
@@ -157,10 +154,9 @@ error[RAD20000]: bar error
 7 |
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can catch in function
 ### INPUT ###
@@ -185,10 +181,9 @@ error[RAD20000]: foo error bar error
 4 | fn foo():
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Lambda map errors
 ### INPUT ###
@@ -209,10 +204,9 @@ error[RAD20000]: this is an error
 5 | fn foo(x):
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Lambda map can catch
 ### SKIP ###
@@ -226,6 +220,7 @@ foo = fn(x):
 	return error("this is an error")
 ### EXIT ###
 1
+
 ### TITLE ###
 Return in catch block
 ### INPUT ###
@@ -358,10 +353,9 @@ error[RAD20028]: Undefined identifier 'out'
   |
    = help: did you mean 'count', 'int', or 'sort'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 List comprehension propagates
 ### INPUT ###
@@ -386,10 +380,9 @@ error[RAD20000]: error 1
    |          ^^^^^^
    |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Catch through intermediate fn evaluates in catch-site scope
 ### INPUT ###
@@ -439,10 +432,9 @@ error[RAD20028]: Undefined identifier 'x'
    |
    = help: did you mean 'max' or 't0'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Scope intact after catching propagated error
 ### INPUT ###
@@ -492,7 +484,5 @@ error[RAD20000]: boom
    |          ^^^^^^^^^^^^^ re-raised here
    |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1

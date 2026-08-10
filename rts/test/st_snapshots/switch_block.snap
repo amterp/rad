@@ -203,7 +203,6 @@ B: [110, 111] PS: [6, 14] PE: [6, 15]                                           
 B: [110, 111] PS: [6, 14] PE: [6, 15]                                                             literal
 B: [110, 111] PS: [6, 14] PE: [6, 15]                                                               int `0`
 B: [111, 112] PS: [6, 15] PE: [6, 16]                                     ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [6, 16] SourceFile
 PS: [0,  0] PE: [6, 16]   Switch
@@ -231,4 +230,3 @@ PS: [6,  8] PE: [6, 16]         ExprStmt
 PS: [6,  8] PE: [6, 16]           Call
 PS: [6,  8] PE: [6, 13]             Identifier "print"
 PS: [6, 14] PE: [6, 15]             LitInt 0
-

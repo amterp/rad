@@ -13,4 +13,3 @@ a = read_file("data/test_file.txt")
 print(a)
 ### STDOUT ###
 { "size_bytes": 9, "content": "hello bob" }
-

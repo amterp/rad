@@ -36,10 +36,9 @@ error[RAD20000]: Filtered 0 options to 0 with filters: []
   | ^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors if filtered to zero options
 ### INPUT ###
@@ -54,10 +53,9 @@ error[RAD20000]: Filtered 5 options to 0 with filters: [asdasdasd]
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Works with multiple tokens
 ### INPUT ###
@@ -80,7 +78,6 @@ down
 enter
 ### STDOUT ###
 Pizza
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Pick an option
@@ -94,6 +91,7 @@ Pick an option
   Sushi
 --- frame 2 (enter) ---
 Pick an option Pizza
+
 ### TITLE ###
 Interactive filter then select
 ### DESCRIPTION ###
@@ -107,7 +105,6 @@ print(pick(opts))
 enter
 ### STDOUT ###
 Salad
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Pick an option
@@ -126,6 +123,7 @@ Pick an option
 > Salad
 --- frame 3 (enter) ---
 Pick an option Salad
+
 ### TITLE ###
 Interactive cancel
 ### DESCRIPTION ###
@@ -146,8 +144,6 @@ error[RAD20000]: pick canceled
   |       ^^^^^^^^^^
   |
    = info: rad docs RAD20000
-
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Pick an option

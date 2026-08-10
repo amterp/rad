@@ -29,4 +29,3 @@ print(count("", ""))
 ### STDOUT ###
 0
 1
-

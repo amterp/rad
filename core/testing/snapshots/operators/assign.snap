@@ -42,10 +42,9 @@ error[RAD10001]: Json paths must be defined to plain identifiers
   | ^^^^
   |
    = info: rad docs RAD10001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Multi-assign 1
 ### INPUT ###
@@ -216,4 +215,3 @@ Multi-assign switch 9
 print(a)
 ### STDOUT ###
 1
-

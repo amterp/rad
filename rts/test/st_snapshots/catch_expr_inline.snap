@@ -140,7 +140,6 @@ B: [ 94,  95] PS: [3, 24] PE: [3, 25]                                 start: str
 B: [ 95, 102] PS: [3, 25] PE: [3, 32]                                 contents: string_contents
 B: [ 95, 102] PS: [3, 25] PE: [3, 32]                                   content: string_content `default`
 B: [102, 103] PS: [3, 32] PE: [3, 33]                                 end: string_end `"`
-
 ### STDERR ###
 PS: [0,  0] PE: [3, 33] SourceFile
 PS: [0,  0] PE: [0, 17]   Assign
@@ -174,4 +173,3 @@ PS: [3,  4] PE: [3,  9]         Call
 PS: [3,  4] PE: [3,  7]           Identifier "foo"
 PS: [3, 16] PE: [3, 20]         LitNull
 PS: [3, 24] PE: [3, 33]       LitString "default"
-

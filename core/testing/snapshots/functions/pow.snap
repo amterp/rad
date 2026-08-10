@@ -73,10 +73,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   |           ^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Pow errors with string exponent
 ### INPUT ###
@@ -89,7 +88,5 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
   |              ^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

@@ -58,4 +58,3 @@ Micros to millis
 print(convert_duration(2500, "micros").millis)
 ### STDOUT ###
 2.5
-

@@ -16,4 +16,3 @@ else:
     print("got stdin: {content}")
 ### STDOUT ###
 no stdin
-

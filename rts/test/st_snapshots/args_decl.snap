@@ -38,7 +38,6 @@ B: [50, 51] PS: [3,  4] PE: [3,  5]                         delegate: indexed_ex
 B: [50, 51] PS: [3,  4] PE: [3,  5]                           root: primary_expr
 B: [50, 51] PS: [3,  4] PE: [3,  5]                             literal
 B: [50, 51] PS: [3,  4] PE: [3,  5]                               int `2`
-
 ### STDERR ###
 PS: [0,  0] PE: [3,  5] SourceFile
 PS: [0,  0] PE: [2, 26]   ArgBlock
@@ -49,4 +48,3 @@ PS: [2, 14] PE: [2, 16]         LitInt 30
 PS: [3,  0] PE: [3,  5]   Assign
 PS: [3,  0] PE: [3,  1]     Identifier "a"
 PS: [3,  4] PE: [3,  5]     LitInt 2
-

@@ -21,10 +21,9 @@ error[RAD20001]: parse_int() failed to parse "asd"
   |     ^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Errors on float
 ### INPUT ###
@@ -37,10 +36,9 @@ error[RAD20001]: parse_int() failed to parse "2.4"
   |     ^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Can catch even if no error
 ### INPUT ###

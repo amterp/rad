@@ -28,10 +28,9 @@ error[RAD30001]: Argument type '(int|str)[]' is not assignable to expected type 
   |           ^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Sum returns int when all ints
 ### INPUT ###
@@ -45,4 +44,3 @@ Sum returns float when any float
 print(type_of(sum([1, 2.0, 3])))
 ### STDOUT ###
 float
-

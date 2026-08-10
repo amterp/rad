@@ -1,14 +1,12 @@
 ### TITLE ###
 Fmt_RejectsShellFlag
 ### INPUT ###
-
 ### ARGS ###
 fmt
 --check
 --shell
 ### STDOUT ###
 exit 1
-
 ### STDERR ###
 --shell only applies when running a Rad script; "fmt" is a built-in rad command.
 
@@ -30,13 +28,12 @@ Global options:
   -i, --interactive   Interactively prompt for script args not already provided, then run.
       --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet         Suppresses some output.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Fmt_RejectsSrcFlag
 ### INPUT ###
-
 ### ARGS ###
 fmt
 --src
@@ -61,13 +58,12 @@ Global options:
   -i, --interactive   Interactively prompt for script args not already provided, then run.
       --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet         Suppresses some output.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Fmt_RejectsVersionFlag
 ### INPUT ###
-
 ### ARGS ###
 fmt
 --version
@@ -92,13 +88,12 @@ Global options:
   -i, --interactive   Interactively prompt for script args not already provided, then run.
       --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet         Suppresses some output.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Fmt_RejectsVersionShorthand
 ### INPUT ###
-
 ### ARGS ###
 fmt
 -v
@@ -123,13 +118,12 @@ Global options:
   -i, --interactive   Interactively prompt for script args not already provided, then run.
       --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet         Suppresses some output.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Docs_RejectsMockResponse
 ### INPUT ###
-
 ### ARGS ###
 docs
 --mock-response
@@ -175,13 +169,12 @@ Global options:
   -i, --interactive   Interactively prompt for script args not already provided, then run.
       --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet         Suppresses some output.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Docs_RejectsConfirmShell
 ### INPUT ###
-
 ### ARGS ###
 docs
 --confirm-shell
@@ -226,13 +219,12 @@ Global options:
   -i, --interactive   Interactively prompt for script args not already provided, then run.
       --color mode    Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet         Suppresses some output.
-
 ### EXIT ###
 1
+
 ### TITLE ###
 Fmt_HelpHidesScriptOnlyFlags
 ### INPUT ###
-
 ### ARGS ###
 fmt
 -h
@@ -253,12 +245,10 @@ Arguments:
 ### TITLE ###
 Fmt_AcceptsUniversalQuietFlag
 ### INPUT ###
-
 ### ARGS ###
 fmt
 --quiet
 ### STDERR ###
 Error: provide at least one path to format (or pipe a script via stdin).
-
 ### EXIT ###
 1

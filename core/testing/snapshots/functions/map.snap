@@ -50,7 +50,5 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'fn(any)
   |       ^^^^^^^^^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

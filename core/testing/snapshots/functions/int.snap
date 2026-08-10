@@ -41,10 +41,9 @@ error[RAD20016]: Cannot cast "map" to int
   | ^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 int errors on positive Inf
 ### INPUT ###
@@ -57,10 +56,9 @@ error[RAD20016]: Cannot cast +Inf to int
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 int errors on negative Inf
 ### INPUT ###
@@ -73,10 +71,9 @@ error[RAD20016]: Cannot cast -Inf to int
   | ^^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 int errors on NaN
 ### INPUT ###
@@ -89,10 +86,9 @@ error[RAD20016]: Cannot cast NaN to int
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 int errors on string with details
 ### INPUT ###
@@ -105,7 +101,5 @@ error[RAD20016]: Cannot cast string to int. Did you mean to use 'parse_int' to p
   | ^^^^^^^^^
   |
    = info: rad docs RAD20016
-
-
 ### EXIT ###
 1

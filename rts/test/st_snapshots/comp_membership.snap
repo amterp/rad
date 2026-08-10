@@ -55,7 +55,6 @@ B: [16, 17] PS: [1,  9] PE: [1, 10]                     delegate: fallback_expr
 B: [16, 17] PS: [1,  9] PE: [1, 10]                       delegate: catch_expr
 B: [16, 17] PS: [1,  9] PE: [1, 10]                         delegate: var_path
 B: [16, 17] PS: [1,  9] PE: [1, 10]                           root: identifier `a`
-
 ### STDERR ###
 PS: [0,  0] PE: [1, 10] SourceFile
 PS: [0,  0] PE: [0,  6]   ExprStmt
@@ -66,4 +65,3 @@ PS: [1,  0] PE: [1, 10]   ExprStmt
 PS: [1,  0] PE: [1, 10]     OpBinary not in
 PS: [1,  0] PE: [1,  1]       LitInt 2
 PS: [1,  9] PE: [1, 10]       Identifier "a"
-

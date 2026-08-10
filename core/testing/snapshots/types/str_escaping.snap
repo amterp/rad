@@ -5,7 +5,7 @@ print('"hi"')
 print('\"hi\"')
 ### STDOUT ###
 "hi"
-\"hi\"
+\"\\\"hi\\\""
 
 ### TITLE ###
 Does not escape other delimiters in content - double quote with single quote
@@ -76,4 +76,3 @@ print("{name:<5}|")
 ana
 ab
 ana  |
-

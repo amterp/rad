@@ -81,10 +81,8 @@ if true:
 --mock-response
 .*:./responses/id_name.json
 ### STDOUT ###
-id  name  
-1   Alice  
-2   Bob    
-
+\"id  name  "
+\"1   Alice  "
+\"2   Bob    "
 ### STDERR ###
 Mocking response for url (matched ".*"): url
-

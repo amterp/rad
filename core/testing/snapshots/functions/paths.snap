@@ -62,7 +62,6 @@ print(join_paths())
 a/b
 a/c
 
-
 ### TITLE ###
 base_name errors on non-str
 ### INPUT ###
@@ -75,7 +74,5 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
   |                 ^^
   |
    = info: rad docs RAD30001
-
-
 ### EXIT ###
 1

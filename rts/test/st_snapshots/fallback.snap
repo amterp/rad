@@ -223,7 +223,6 @@ B: [90, 91] PS: [4, 20] PE: [4, 21]                                             
 B: [90, 91] PS: [4, 20] PE: [4, 21]                                                         literal
 B: [90, 91] PS: [4, 20] PE: [4, 21]                                                           int `2`
 B: [91, 92] PS: [4, 21] PE: [4, 22]                                 ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [4, 22] SourceFile
 PS: [0,  0] PE: [0, 14]   Assign
@@ -264,4 +263,3 @@ PS: [4,  7] PE: [4, 10]         Identifier "foo"
 PS: [4, 16] PE: [4, 22]       LitList (2 elements)
 PS: [4, 17] PE: [4, 18]         LitInt 1
 PS: [4, 20] PE: [4, 21]         LitInt 2
-

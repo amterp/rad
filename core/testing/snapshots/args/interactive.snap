@@ -15,10 +15,8 @@ down
 enter
 ### STDOUT ###
 env=staging
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --env staging
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --env: Environment to deploy to.
@@ -32,6 +30,7 @@ Equivalent: rad TestCase --color=never --env staging
   prod
 --- frame 2 (enter) ---
 --env staging
+
 ### TITLE ###
 BoolAnswerYesDefaultFalse
 ### DESCRIPTION ###
@@ -48,10 +47,8 @@ print("force={force}")
 enter
 ### STDOUT ###
 force=true
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --force
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --force: Skip confirmation. [y/N]
@@ -61,6 +58,7 @@ Equivalent: rad TestCase --color=never --force
 > y█
 --- frame 2 (enter) ---
 --force yes
+
 ### TITLE ###
 BoolAnswerNoDefaultTrue
 ### DESCRIPTION ###
@@ -77,10 +75,8 @@ print("cache={cache}")
 enter
 ### STDOUT ###
 cache=false
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --cache=false
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --cache: Use the cache. [Y/n]
@@ -90,6 +86,7 @@ Equivalent: rad TestCase --color=never --cache=false
 > n█
 --- frame 2 (enter) ---
 --cache no
+
 ### TITLE ###
 BoolEnterKeepsDefault
 ### DESCRIPTION ###
@@ -105,16 +102,15 @@ print("force={force}")
 enter
 ### STDOUT ###
 force=false
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --force: Skip confirmation. [y/N]
 > █
 --- frame 1 (enter) ---
 --force (default: no)
+
 ### TITLE ###
 IntRangeRevalidation
 ### DESCRIPTION ###
@@ -134,10 +130,8 @@ backspace
 enter
 ### STDOUT ###
 replicas=9
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --replicas 9
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --replicas: Number of replicas.
@@ -157,6 +151,7 @@ must be in range [1, 10]
 > 9█
 --- frame 5 (enter) ---
 --replicas 9
+
 ### TITLE ###
 RegexRevalidation
 ### DESCRIPTION ###
@@ -176,10 +171,8 @@ backspace
 enter
 ### STDOUT ###
 name=bob
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --name bob
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --name
@@ -205,6 +198,7 @@ must match regex: [a-z]+
 > bob█
 --- frame 7 (enter) ---
 --name bob
+
 ### TITLE ###
 OptionalInputSkippedOnEnter
 ### DESCRIPTION ###
@@ -220,16 +214,15 @@ print("replicas={replicas}")
 enter
 ### STDOUT ###
 replicas=3
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --replicas: Number of replicas.
 > █Default: 3
 --- frame 1 (enter) ---
 --replicas (skip - default: 3)
+
 ### TITLE ###
 OptionalEnumSkipRow
 ### DESCRIPTION ###
@@ -246,10 +239,8 @@ print("env={env}")
 enter
 ### STDOUT ###
 env=dev
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --env: Environment to deploy to.
@@ -259,6 +250,7 @@ Equivalent: rad TestCase --color=never
   prod
 --- frame 1 (enter) ---
 --env (skip - default: dev)
+
 ### TITLE ###
 CommandPickCascade
 ### DESCRIPTION ###
@@ -283,10 +275,8 @@ enter
 enter
 ### STDOUT ###
 Status 7
-
 ### STDERR ###
 Equivalent: rad TestCase status --color=never --code 7
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 Choose a command
@@ -306,6 +296,7 @@ Command: status
 > 7█
 --- frame 5 (enter) ---
 --code 7
+
 ### TITLE ###
 PartialCliArgsOnlyMissingPrompted
 ### DESCRIPTION ###
@@ -324,10 +315,8 @@ alpha
 enter
 ### STDOUT ###
 alpha beta
-
 ### STDERR ###
 Equivalent: rad TestCase alpha --color=never --second beta
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --second
@@ -346,6 +335,7 @@ Equivalent: rad TestCase alpha --color=never --second beta
 > beta█
 --- frame 5 (enter) ---
 --second beta
+
 ### TITLE ###
 VariadicOnePerLine
 ### DESCRIPTION ###
@@ -365,10 +355,8 @@ enter
 enter
 ### STDOUT ###
 [ "a.txt", "b 2.txt" ]
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --files a.txt 'b 2.txt'
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --files: Files to process. (one per line, empty line to finish)
@@ -419,6 +407,7 @@ Equivalent: rad TestCase --color=never --files a.txt 'b 2.txt'
 --- frame 16 (initial) ---
 --files: Files to process. (one per line, empty line to finish)
 > █
+
 ### TITLE ###
 RequiredListRejectsEmptyFirstEntry
 ### DESCRIPTION ###
@@ -437,10 +426,8 @@ enter
 enter
 ### STDOUT ###
 [ "a" ]
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --tags a
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --tags (one per line, empty line to finish)
@@ -457,6 +444,7 @@ at least one value required
 --- frame 4 (initial) ---
 --tags (one per line, empty line to finish)
 > █
+
 ### TITLE ###
 ExcludesSkipsPrompt
 ### DESCRIPTION ###
@@ -475,7 +463,6 @@ print("file={file} url={url}")
 in.txt
 ### STDOUT ###
 file=in.txt url=null
-
 ### STDERR ###
 Skipping --url (excluded by --file)
 Equivalent: rad TestCase --file in.txt --color=never
@@ -504,10 +491,8 @@ enter
 enter
 ### STDOUT ###
 user=alice pass=pw
-
 ### STDERR ###
 Equivalent: rad TestCase --username alice --color=never --password pw
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --password: Password.
@@ -524,6 +509,7 @@ required by --username
 > pw█
 --- frame 4 (enter) ---
 --password pw
+
 ### TITLE ###
 RequiresSatisfiedByDefault
 ### DESCRIPTION ###
@@ -544,16 +530,15 @@ alice
 enter
 ### STDOUT ###
 user=alice token=anon
-
 ### STDERR ###
 Equivalent: rad TestCase --username alice --color=never
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --token: Token.
 > █Default: anon
 --- frame 1 (enter) ---
 --token (skip - default: anon)
+
 ### TITLE ###
 FloatRangeRevalidation
 ### DESCRIPTION ###
@@ -574,10 +559,8 @@ backspace
 enter
 ### STDOUT ###
 ratio=0.5
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --ratio 0.5
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --ratio: Mix ratio.
@@ -603,6 +586,7 @@ must be in range [0, 1]
 > 0.5█
 --- frame 7 (enter) ---
 --ratio 0.5
+
 ### TITLE ###
 NegativeNumbersInIntList
 ### DESCRIPTION ###
@@ -622,10 +606,8 @@ enter
 enter
 ### STDOUT ###
 [ -5, 3 ]
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --nums=-5 --nums 3
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --nums (one per line, empty line to finish)
@@ -649,6 +631,7 @@ Equivalent: rad TestCase --color=never --nums=-5 --nums 3
 --- frame 7 (initial) ---
 --nums (one per line, empty line to finish)
 > █
+
 ### TITLE ###
 CancelExitsCleanly
 ### DESCRIPTION ###
@@ -663,13 +646,13 @@ print("name={name}")
 ctrl-c
 ### STDERR ###
 Interactive mode canceled
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --name
 > █
 ### EXIT ###
 1
+
 ### TITLE ###
 NoArgsDeclaredJustRuns
 ### DESCRIPTION ###
@@ -681,7 +664,6 @@ print("ran")
 -i
 ### STDOUT ###
 ran
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never
 
@@ -701,10 +683,8 @@ print("msg={msg}")
 enter
 ### STDOUT ###
 msg=hello world
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --msg 'hello world'
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --msg
@@ -744,6 +724,7 @@ Equivalent: rad TestCase --color=never --msg 'hello world'
 > hello world█
 --- frame 12 (enter) ---
 --msg 'hello world'
+
 ### TITLE ###
 BoolsGroupIntoMultipick
 ### DESCRIPTION ###
@@ -770,10 +751,8 @@ space
 enter
 ### STDOUT ###
 name=bob build=true lint=false cache=false
-
 ### STDERR ###
 Equivalent: rad TestCase --color=never --name bob --build --cache=false
-
 ### FRAMES ###
 --- frame 0 (initial) ---
 --name: Your name.

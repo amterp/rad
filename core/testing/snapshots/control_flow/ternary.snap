@@ -34,6 +34,7 @@ c = "charlie"
 print((c[0] == 'c' ? c : b)[(len(b) > 3 ? 1 : 2):5])
 ### STDOUT ###
 harl
+
 ### TITLE ###
 Ternary truthy
 ### INPUT ###
@@ -61,6 +62,7 @@ a = "blah"
 print(a)
 ### STDOUT ###
 not empty
+
 ### TITLE ###
 Can define across lines 2
 ### INPUT ###
@@ -80,6 +82,7 @@ a = "blah"
 print(a)
 ### STDOUT ###
 not empty
+
 ### TITLE ###
 Can define across lines 4
 ### SKIP ###
@@ -91,6 +94,7 @@ a = "blah"
 print(a)
 ### STDOUT ###
 not empty
+
 ### TITLE ###
 Can define across lines 5
 ### SKIP ###
@@ -103,6 +107,7 @@ a = "blah"
 print(a)
 ### STDOUT ###
 not empty
+
 ### TITLE ###
 Can define across lines 6 big space
 ### SKIP ###
@@ -121,6 +126,7 @@ a = "blah"
 print(a)
 ### STDOUT ###
 not empty
+
 ### TITLE ###
 Fails if whitespace abused
 ### INPUT ###
@@ -151,7 +157,5 @@ error[RAD20028]: Undefined identifier ''
   |
    = help: did you mean 'a'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1

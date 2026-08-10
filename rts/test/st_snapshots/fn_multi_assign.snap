@@ -97,7 +97,6 @@ B: [44, 49] PS: [3,  6] PE: [3, 11]                             call
 B: [44, 47] PS: [3,  6] PE: [3,  9]                               func: identifier `foo`
 B: [47, 48] PS: [3,  9] PE: [3, 10]                               ( `(`
 B: [48, 49] PS: [3, 10] PE: [3, 11]                               ) `)`
-
 ### STDERR ###
 PS: [0,  0] PE: [3, 11] SourceFile
 PS: [0,  0] PE: [0,  9]   Assign
@@ -118,4 +117,3 @@ PS: [3,  0] PE: [3, 11]   Assign unpack
 PS: [3,  1] PE: [3,  2]     Identifier "a"
 PS: [3,  6] PE: [3, 11]     Call
 PS: [3,  6] PE: [3,  9]       Identifier "foo"
-

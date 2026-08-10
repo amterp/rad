@@ -68,16 +68,11 @@ StrLexing Empty
 ### INPUT ###
 print("")
 print('')
-### STDOUT ###
-
-
 
 ### TITLE ###
 StrLexing EmptyBacktick
 ### INPUT ###
 print(``)
-### STDOUT ###
-
 
 ### TITLE ###
 StrLexing SeveralBackslashes
@@ -147,10 +142,6 @@ print("\\")
 print("\n\n\n")
 ### STDOUT ###
 \
-
-
-
-
 
 ### TITLE ###
 StrLexing EscapingIrrelevantCharsPrintsAsIs
@@ -227,10 +218,9 @@ error[RAD10009]: Unexpected 'r"\""'
   |       ^^^^^
   |
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 StrLexing Multiline Simple
 ### INPUT ###
@@ -257,7 +247,6 @@ print(text)
 
 Hi Alice
 How are you?
-
 
 ### TITLE ###
 StrLexing Multiline Indented
@@ -328,13 +317,14 @@ text = """
 print(text)
 ### STDOUT ###
  Hialice how are you?
+
 ### TITLE ###
 StrLexing Multiline CanEscapeTripleQuote
 ### INPUT ###
 name = "alice"
 text = """
 Text1
-\"""
+\"\\\"\"\""
 Text2
 """
 print(text)
@@ -359,6 +349,7 @@ print(text)
 Text1
 """
 Text2
+
 ### TITLE ###
 StrLexing Multiline ErrorIfAnythingAfterOpener
 ### INPUT ###
@@ -420,10 +411,9 @@ error[RAD10020]: Unterminated string literal (missing closing double quote)
   |
    = help: add closing " at end of string
    = info: rad docs RAD10020
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 StrLexing Multiline NoErrorIfCommentFollowsOpener
 ### INPUT ###
@@ -477,10 +467,9 @@ error[RAD20028]: Undefined identifier 'text'
   |
    = help: did you mean 'exit', 'ceil', or 'int'?
    = info: rad docs RAD20028
-
-
 ### EXIT ###
 1
+
 ### TITLE ###
 StrLexing Multiline ContentLessIndentedThanClosing
 ### DESCRIPTION ###
@@ -503,7 +492,5 @@ error[RAD10009]: Multi-line string content is indented less than its closing """
   |
    = help: indent every content line at least as much as the closing """ (or move the closing """ to column 0)
    = info: rad docs RAD10009
-
-
 ### EXIT ###
 1

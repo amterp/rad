@@ -75,4 +75,3 @@ a = ["1", "2"]
 print([parse_int(x) for x in a])
 ### STDOUT ###
 [ 1, 2 ]
-

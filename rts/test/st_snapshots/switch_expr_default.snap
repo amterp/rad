@@ -171,7 +171,6 @@ B: [86, 87] PS: [3, 18] PE: [3, 19]                               delegate: inde
 B: [86, 87] PS: [3, 18] PE: [3, 19]                                 root: primary_expr
 B: [86, 87] PS: [3, 18] PE: [3, 19]                                   literal
 B: [86, 87] PS: [3, 18] PE: [3, 19]                                     int `0`
-
 ### STDERR ###
 PS: [0,  0] PE: [3, 19] SourceFile
 PS: [0,  0] PE: [3, 19]   Assign unpack
@@ -194,4 +193,3 @@ PS: [2, 18] PE: [2, 20]           LitInt 40
 PS: [3, 12] PE: [3, 19]         CaseExpr
 PS: [3, 15] PE: [3, 16]           LitInt 0
 PS: [3, 18] PE: [3, 19]           LitInt 0
-

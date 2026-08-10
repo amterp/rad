@@ -31,7 +31,6 @@ B: [11, 12] PS: [0, 11] PE: [0, 12]                           . `.`
 B: [12, 15] PS: [0, 12] PE: [0, 15]                           indexing: identifier `bob`
 B: [15, 16] PS: [0, 15] PE: [0, 16]                           . `.`
 B: [16, 23] PS: [0, 16] PE: [0, 23]                           indexing: identifier `charlie`
-
 ### STDERR ###
 PS: [0,  0] PE: [0, 23] SourceFile
 PS: [0,  0] PE: [0, 23]   ExprStmt
@@ -43,4 +42,3 @@ PS: [0, 10] PE: [0, 23]       VarPath
 PS: [0, 10] PE: [0, 11]         Identifier "a"
                               .bob
                               .charlie
-

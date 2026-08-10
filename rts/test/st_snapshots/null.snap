@@ -157,7 +157,6 @@ B: [45, 46] PS: [2, 17] PE: [2, 18]                                             
 B: [45, 46] PS: [2, 17] PE: [2, 18]                                                         literal
 B: [45, 46] PS: [2, 17] PE: [2, 18]                                                           int `4`
 B: [46, 47] PS: [2, 18] PE: [2, 19]                                 ] `]`
-
 ### STDERR ###
 PS: [0,  0] PE: [2, 19] SourceFile
 PS: [0,  0] PE: [0,  8]   Assign
@@ -176,4 +175,3 @@ PS: [2,  5] PE: [2,  6]       LitInt 1
 PS: [2,  8] PE: [2,  9]       LitInt 2
 PS: [2, 11] PE: [2, 15]       LitNull
 PS: [2, 17] PE: [2, 18]       LitInt 4
-

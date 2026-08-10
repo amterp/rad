@@ -69,12 +69,6 @@ print(a[3:3])
 print(a[-3:-3])
 print(a[99:])
 print(a[:-99])
-### STDOUT ###
-
-
-
-
-
 
 ### TITLE ###
 Slice string partial slices
@@ -92,9 +86,6 @@ Slice string does not error on nonsense slices
 a = "alice"
 print(a[3:2])
 print(a[-2:-3])
-### STDOUT ###
-
-
 
 ### TITLE ###
 Slice string multi byte
@@ -122,7 +113,7 @@ print(a[1:4])
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31mell[0m
+\"\x1b[31mell\x1b[0m"
 
 ### TITLE ###
 Slice string preserves color across segments
@@ -132,5 +123,4 @@ print(a[1:4])
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[31me[0m[34mll[0m
-
+\"\x1b[31me\x1b[0m\x1b[34mll\x1b[0m"

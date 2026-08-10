@@ -7,8 +7,8 @@ rad:
     transpose
     fields Name, Age
 ### STDOUT ###
-Name  Alice  Bob  
-Age   30     40   
+\"Name  Alice  Bob  "
+\"Age   30     40   "
 
 ### TITLE ###
 Transpose with explicit true
@@ -19,8 +19,8 @@ rad:
     transpose true
     fields Name, Age
 ### STDOUT ###
-Name  Alice  Bob  Charlie  
-Age   30     40   25       
+\"Name  Alice  Bob  Charlie  "
+\"Age   30     40   25       "
 
 ### TITLE ###
 Transpose with explicit false
@@ -31,9 +31,9 @@ rad:
     transpose false
     fields Name, Age
 ### STDOUT ###
-Name   Age 
-Alice  30   
-Bob    40   
+\"Name   Age "
+\"Alice  30   "
+\"Bob    40   "
 
 ### TITLE ###
 Transpose with expression
@@ -45,8 +45,8 @@ rad:
     transpose should_transpose
     fields Name, Age
 ### STDOUT ###
-Name  Alice  Bob  
-Age   30     40   
+\"Name  Alice  Bob  "
+\"Age   30     40   "
 
 ### TITLE ###
 Transpose inside if block
@@ -59,8 +59,8 @@ rad:
     if do_transpose:
         transpose
 ### STDOUT ###
-Name  Alice  Bob  
-Age   30     40   
+\"Name  Alice  Bob  "
+\"Age   30     40   "
 
 ### TITLE ###
 Transpose with sort
@@ -72,8 +72,8 @@ rad:
     sort Name asc
     fields Name, Age
 ### STDOUT ###
-Name  Alice  Bob  Charlie  
-Age   30     40   25       
+\"Name  Alice  Bob  Charlie  "
+\"Age   30     40   25       "
 
 ### TITLE ###
 Transpose single row
@@ -84,8 +84,8 @@ rad:
     transpose
     fields Name, Age
 ### STDOUT ###
-Name  Alice  
-Age   30     
+\"Name  Alice  "
+\"Age   30     "
 
 ### TITLE ###
 Transpose with missing values
@@ -96,8 +96,8 @@ rad:
     transpose
     fields Name, Age
 ### STDOUT ###
-Name  Alice  Bob  Charlie  
-Age   30     40            
+\"Name  Alice  Bob  Charlie  "
+\"Age   30     40            "
 
 ### TITLE ###
 Transpose with color
@@ -110,8 +110,8 @@ rad:
     Name:
         color "red" ".*"
 ### STDOUT ###
-Name  Alice  Bob  
-Age   30     40   
+\"Name  Alice  Bob  "
+\"Age   30     40   "
 
 ### TITLE ###
 Transpose with noprint
@@ -139,8 +139,8 @@ rad:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[33mName[0m  [31mAlice[0m  [31mBob[0m  
-[33mAge[0m   30     40   
+\"\x1b[33mName\x1b[0m  \x1b[31mAlice\x1b[0m  \x1b[31mBob\x1b[0m  "
+\"\x1b[33mAge\x1b[0m   30     40   "
 
 ### TITLE ###
 Transpose with color on multiple columns
@@ -157,8 +157,8 @@ rad:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[33mName[0m  [31mAlice[0m  Bob  
-[33mAge[0m   30     [32m40[0m   
+\"\x1b[33mName\x1b[0m  \x1b[31mAlice\x1b[0m  Bob  "
+\"\x1b[33mAge\x1b[0m   30     \x1b[32m40\x1b[0m   "
 
 ### TITLE ###
 Transpose with color regex partial match
@@ -173,8 +173,8 @@ rad:
 ### ARGS ###
 --color=always
 ### STDOUT ###
-[33mName[0m  A[34mli[0mce  Bob  
-[33mAge[0m   30     40   
+\"\x1b[33mName\x1b[0m  A\x1b[34mli\x1b[0mce  Bob  "
+\"\x1b[33mAge\x1b[0m   30     40   "
 
 ### TITLE ###
 Transpose false with color
@@ -187,7 +187,6 @@ rad:
     Name:
         color "red" ".*"
 ### STDOUT ###
-Name   Age 
-Alice  30   
-Bob    40   
-
+\"Name   Age "
+\"Alice  30   "
+\"Bob    40   "

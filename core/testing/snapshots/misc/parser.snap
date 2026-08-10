@@ -103,4 +103,3 @@ names = {"alice": 1,
 print(names)
 ### STDOUT ###
 { "alice": 1, "bob": 2, "charlie": 3 }
-

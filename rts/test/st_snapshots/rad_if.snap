@@ -77,7 +77,6 @@ B: [103, 107] PS: [7,  8] PE: [7, 12]           sort `sort`
 B: [107, 116] PS: [7, 12] PE: [7, 21]           specifier: rad_sort_specifier
 B: [108, 111] PS: [7, 13] PE: [7, 16]             first: immediate_identifier `asc`
 B: [112, 116] PS: [7, 17] PE: [7, 21]             second: desc `desc`
-
 ### STDERR ###
 PS: [0,  0] PE: [7, 21] SourceFile
 PS: [0,  0] PE: [7, 21]   RadBlock "rad"
@@ -94,4 +93,3 @@ PS: [4, 12] PE: [4, 13]         Identifier "b"
 PS: [5,  8] PE: [5, 17]         RadSort
                             Branch 2 (else)
 PS: [7,  8] PE: [7, 21]         RadSort
-
