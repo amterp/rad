@@ -935,6 +935,19 @@ func (i *Interpreter) emitErrorWithSecondary(code rl.Error, primaryNode rl.Node,
 	i.emitDiagnostic(diag)
 }
 
+// emitErrorReRaised reports an error whose raise site differs from where it was
+// first created. Both locations matter and neither substitutes for the other:
+// the raise site is where execution actually stopped, the origin explains where
+// the error came from.
+func (i *Interpreter) emitErrorReRaised(code rl.Error, message string, raiseSpan, originSpan rl.Span) {
+	labels := []Label{
+		NewPrimaryLabel(raiseSpan, "re-raised here"),
+		NewSecondaryLabel(originSpan, "originally raised here"),
+	}
+	diag := NewDiagnosticWithLabels(SeverityError, code, message, i.GetSrc(), labels)
+	i.emitDiagnostic(diag)
+}
+
 // pushCallFrame pushes a new frame onto the call stack.
 func (i *Interpreter) pushCallFrame(name string, callSite, defSite *rl.Span) {
 	i.callStack = append(i.callStack, CallFrame{
@@ -1486,7 +1499,11 @@ func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode rl.Node, m
 		}
 		// Use err.Span if available, otherwise fall back to fallbackNode's span
 		if err.Span != nil {
-			i.emitErrorSpan(code, err.Span, msg)
+			if radPanic.RaiseSpan != nil {
+				i.emitErrorReRaised(code, msg, *radPanic.RaiseSpan, *err.Span)
+			} else {
+				i.emitErrorSpan(code, err.Span, msg)
+			}
 		} else {
 			i.emitError(code, fallbackNode, msg)
 		}

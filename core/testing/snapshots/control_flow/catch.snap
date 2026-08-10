@@ -463,3 +463,36 @@ print(outer("CCC"))
 ### STDOUT ###
 after catch, t0: CCC, secs: kaboom
 
+### TITLE ###
+Re-propagated error points at the re-raise site
+### INPUT ###
+
+fn fail():
+	return error("boom")
+
+stored = fail() catch:
+	pass
+
+fn relay(x):
+	return x
+
+result = relay(stored)
+### STDERR ###
+error[RAD20000]: boom
+  --> <script>:11:10
+   |
+ 4 |
+ 5 | stored = fail() catch:
+   |          ------ originally raised here
+ 6 | 	pass
+ 7 |
+...
+10 |
+11 | result = relay(stored)
+   |          ^^^^^^^^^^^^^ re-raised here
+   |
+   = info: rad docs RAD20000
+
+
+### EXIT ###
+1

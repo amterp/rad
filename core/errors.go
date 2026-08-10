@@ -31,15 +31,30 @@ func ErrIndexOutOfBounds(i *Interpreter, node rl.Node, idx int64, length int64) 
 type RadPanic struct {
 	ErrV        RadValue
 	ShellResult *shellResult // For shell command errors, contains exit code/stdout/stderr
+	// RaiseSpan records where this panic was raised, when that differs from
+	// where the error was first constructed. An error that was caught, bound to
+	// a variable, and later returned through another call re-arms at a new
+	// site; reporting only its origin sends the reader to a line they already
+	// handled. nil means the two coincide - the ordinary first-raise case.
+	RaiseSpan *rl.Span
 }
 
 func (i *Interpreter) NewRadPanic(node rl.Node, err RadValue) *RadPanic {
 	unwrapped := err.RequireError(i, node)
+	raiseSpan := nodeSpanPtr(node)
+
 	if unwrapped.Span == nil {
-		unwrapped.Span = nodeSpanPtr(node)
+		// First raise - this site becomes the error's origin, so there is no
+		// second location worth showing.
+		unwrapped.Span = raiseSpan
+		raiseSpan = nil
+	} else if raiseSpan != nil && *raiseSpan == *unwrapped.Span {
+		raiseSpan = nil
 	}
+
 	return &RadPanic{
-		ErrV: err,
+		ErrV:      err,
+		RaiseSpan: raiseSpan,
 	}
 }
 
