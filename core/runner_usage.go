@@ -43,7 +43,11 @@ func (r *RadRunner) printScriptlessUsage(isErr bool) {
 
 func (r *RadRunner) printScriptUsage(shortHelp, isErr bool) {
 	// Delegate to Ra for consistent help formatting
-	usageText := RRootCmd.GenerateUsage(!shortHelp)
+	cmd := RRootCmd
+	if r.usageCmd != nil {
+		cmd = r.usageCmd
+	}
+	usageText := cmd.GenerateUsage(!shortHelp)
 
 	buf := new(bytes.Buffer)
 	buf.WriteString(usageText)

@@ -112,11 +112,18 @@ func argBlockSymbol(snap *DocumentVersion, ab *rl.ArgBlock) lsp.DocumentSymbol {
 // renders with a distinct icon in most editors, and it more
 // closely tracks the mental model ("a command is a subcommand of
 // the script").
+// cmdBlockSymbol renders a command as a Module, with its args as Variable
+// children and its sub-commands nested beneath it - so the outline has the same
+// shape as the source, and a namespace can be collapsed to hide its whole
+// sub-tree.
 func cmdBlockSymbol(snap *DocumentVersion, cmd *rl.CmdBlock) lsp.DocumentSymbol {
-	children := make([]lsp.DocumentSymbol, 0, len(cmd.Decls))
+	children := make([]lsp.DocumentSymbol, 0, len(cmd.Decls)+len(cmd.SubCmds))
 	for i := range cmd.Decls {
 		decl := &cmd.Decls[i]
 		children = append(children, argDeclSymbol(snap, decl))
+	}
+	for _, sub := range cmd.SubCmds {
+		children = append(children, cmdBlockSymbol(snap, sub))
 	}
 	r := fromByteRange(spanToRange(cmd.Span()), snap)
 	return lsp.DocumentSymbol{

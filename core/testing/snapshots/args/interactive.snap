@@ -800,3 +800,78 @@ Flags
   space to toggle, enter to confirm
 --- frame 10 (enter) ---
 Flags: --build, --cache=false
+
+### TITLE ###
+CommandPickDescendsIntoNamespace
+### DESCRIPTION ###
+Choosing a namespace narrows the question rather than answering it, so -i keeps
+prompting until it reaches a leaf. Both tokens lead the equivalent invocation,
+and the namespace's shared arg is offered alongside the leaf's own.
+### INPUT ###
+command remote:
+    timeout int = 30
+    command add:
+        name str
+        calls fn():
+            print("add {name} timeout={timeout}")
+    command remove:
+        name str
+        calls fn():
+            print("remove {name}")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+-i
+### KEYS ###
+enter
+enter
+"origin"
+enter
+enter
+### STDOUT ###
+add origin timeout=30
+### STDERR ###
+Equivalent: rad TestCase remote add --color=never --name origin
+### FRAMES ###
+--- frame 0 (initial) ---
+Choose a command
+> remote
+  list
+--- frame 1 (enter) ---
+Command: remote
+--- frame 2 (initial) ---
+Choose a command
+> add
+  remove
+--- frame 3 (enter) ---
+Command: add
+--- frame 4 (initial) ---
+--name
+> █
+--- frame 5 (o) ---
+--name
+> o█
+--- frame 6 (r) ---
+--name
+> or█
+--- frame 7 (i) ---
+--name
+> ori█
+--- frame 8 (g) ---
+--name
+> orig█
+--- frame 9 (i) ---
+--name
+> origi█
+--- frame 10 (n) ---
+--name
+> origin█
+--- frame 11 (enter) ---
+--name origin
+--- frame 12 (initial) ---
+--timeout
+> █Default: 30
+--- frame 13 (enter) ---
+--timeout (skip - default: 30)

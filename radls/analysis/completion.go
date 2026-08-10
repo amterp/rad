@@ -513,7 +513,9 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion,
 			})
 		}
 	}
-	for _, cmd := range file.Cmds {
+	// WalkCmds: a command arg is a file-scope name wherever it is declared, so
+	// a flat loop would leave every nested command's args out of completion.
+	rl.WalkCmds(file.Cmds, func(cmd *rl.CmdBlock) {
 		for i := range cmd.Decls {
 			decl := &cmd.Decls[i]
 			*items = append(*items, lsp.CompletionItem{
@@ -523,7 +525,7 @@ func addFileScopeCompletions(items *[]lsp.CompletionItem, snap *DocumentVersion,
 				SortText: sortTierFile,
 			})
 		}
-	}
+	})
 	for _, stmt := range file.Stmts {
 		switch n := stmt.(type) {
 		case *rl.FnDef:

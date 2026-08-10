@@ -239,7 +239,10 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 			}
 		}
 	}
-	for _, cmd := range file.Cmds {
+	// WalkCmds, not a range over file.Cmds: args declared on a nested
+	// sub-command are file-scope names too, and a flat loop would leave every
+	// one of them undefined.
+	rl.WalkCmds(file.Cmds, func(cmd *rl.CmdBlock) {
 		for i := range cmd.Decls {
 			decl := &cmd.Decls[i]
 			sym := b.declare(decl.Name, SymCmdArg, decl.NameSpan, decl)
@@ -252,7 +255,7 @@ func (b *binder) bindFile(file *rl.SourceFile) {
 				sym.Declared = decl.Typing
 			}
 		}
-	}
+	})
 
 	// Visit arg-block default expressions now that every ambient name
 	// is declared - this surfaces any undefined references inside
@@ -750,13 +753,17 @@ func (b *binder) visitCmdBlock(c *rl.CmdBlock) {
 			b.visit(c.Decls[i].Default)
 		}
 	}
-	cb := c.Callback
-	if cb.IsLambda {
-		if cb.Lambda != nil {
-			b.visitLambda(cb.Lambda)
+	if cb := c.Callback; cb != nil {
+		if cb.IsLambda {
+			if cb.Lambda != nil {
+				b.visitLambda(cb.Lambda)
+			}
+		} else if cb.Identifier != nil {
+			b.visit(cb.Identifier)
 		}
-	} else if cb.Identifier != nil {
-		b.visit(cb.Identifier)
+	}
+	for _, sub := range c.SubCmds {
+		b.visitCmdBlock(sub)
 	}
 }
 

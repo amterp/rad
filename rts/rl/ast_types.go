@@ -807,7 +807,14 @@ type ArgRelation struct {
 	Related  []string // required or excluded arg names
 }
 
-// CmdBlock represents a command definition block.
+// CmdBlock represents a command definition block. A command is either a leaf
+// (has a Callback) or a namespace (has SubCmds), and args declared on a
+// namespace are shared with - inherited by - every descendant.
+//
+// The grammar permits neither, and permits both, so that the checker can
+// report those mistakes with a real message instead of leaving the parser to
+// say "Invalid syntax". Anything reading this type must therefore treat the
+// leaf/namespace split as a claim to verify, not an invariant.
 type CmdBlock struct {
 	span             Span
 	Name             string
@@ -818,7 +825,12 @@ type CmdBlock struct {
 	RangeConstraints map[string]*ArgRangeConstraint
 	Requirements     []ArgRelation
 	Exclusions       []ArgRelation
-	Callback         CmdCallback
+	Callback         *CmdCallback // nil for a namespace command
+	SubCmds          []*CmdBlock  // non-empty for a namespace command
+	// DefaultSpan locates the `default` keyword, and its presence is what
+	// marks this command as its level's default. Kept as a span rather than a
+	// bool because the duplicate-default diagnostic has to underline it.
+	DefaultSpan *Span
 }
 
 func NewCmdBlock(span Span, name string) *CmdBlock {
@@ -826,6 +838,24 @@ func NewCmdBlock(span Span, name string) *CmdBlock {
 }
 func (n *CmdBlock) Kind() NodeKind { return NCmdBlock }
 func (n *CmdBlock) Span() Span     { return n.span }
+
+// IsNamespace reports whether this command groups sub-commands rather than
+// dispatching to a callback.
+func (n *CmdBlock) IsNamespace() bool { return len(n.SubCmds) > 0 }
+
+// IsDefault reports whether this command runs when its level is invoked
+// without naming one of its children.
+func (n *CmdBlock) IsDefault() bool { return n.DefaultSpan != nil }
+
+// WalkCmds visits cmd and every descendant in pre-order. Use it anywhere
+// command blocks are iterated: a plain range over the top-level slice
+// compiles, passes shallow tests, and silently ignores everything nested.
+func WalkCmds(cmds []*CmdBlock, fn func(*CmdBlock)) {
+	for _, c := range cmds {
+		fn(c)
+		WalkCmds(c.SubCmds, fn)
+	}
+}
 
 // CmdCallback represents a command's callback - either a named
 // function reference or an inline lambda. For the named form, the

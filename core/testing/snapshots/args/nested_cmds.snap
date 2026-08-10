@@ -1,0 +1,281 @@
+### TITLE ###
+NestedLeafPositionalAndInheritedFlag
+### DESCRIPTION ###
+A leaf's own args are positional; a namespace's args and the script's args
+both reach it as flags, from anywhere on the path.
+### INPUT ###
+args:
+    verbose v bool
+
+command remote:
+    timeout int = 30
+    command add:
+        name str
+        url str
+        calls fn():
+            print("add name={name} url={url} timeout={timeout} verbose={verbose}")
+    command remove:
+        name str
+        calls fn():
+            print("remove name={name} timeout={timeout}")
+### ARGS ###
+remote
+add
+foo
+https://x
+--timeout=5
+--verbose
+### STDOUT ###
+add name=foo url=https://x timeout=5 verbose=true
+
+### TITLE ###
+NestedInheritedFlagBeforeSubcommand
+### DESCRIPTION ###
+An inherited flag is accepted before the sub-command that consumes it, not
+only after - it belongs to the namespace, which the user has already named.
+### INPUT ###
+args:
+    verbose v bool
+
+command remote:
+    timeout int = 30
+    command add:
+        name str
+        url str
+        calls fn():
+            print("add name={name} url={url} timeout={timeout} verbose={verbose}")
+    command remove:
+        name str
+        calls fn():
+            print("remove name={name} timeout={timeout}")
+### ARGS ###
+remote
+--timeout=9
+add
+bar
+https://y
+### STDOUT ###
+add name=bar url=https://y timeout=9 verbose=false
+
+### TITLE ###
+NestedInheritedDefault
+### DESCRIPTION ###
+A namespace arg's default reaches a descendant that never mentions it.
+### INPUT ###
+command remote:
+    timeout int = 30
+    command add:
+        name str
+        calls fn():
+            print("add name={name} timeout={timeout}")
+### ARGS ###
+remote
+add
+foo
+### STDOUT ###
+add name=foo timeout=30
+
+### TITLE ###
+ThreeLevelNestingInheritance
+### DESCRIPTION ###
+Inheritance accumulates root-to-leaf across more than one namespace.
+### INPUT ###
+command a:
+    one str = "1"
+    command b:
+        two str = "2"
+        command c:
+            three str
+            calls fn():
+                print("one={one} two={two} three={three}")
+### ARGS ###
+a
+b
+c
+foo
+--one=X
+--two=Y
+### STDOUT ###
+one=X two=Y three=foo
+
+### TITLE ###
+DeeperCommandWinsNameCollision
+### DESCRIPTION ###
+When a namespace and its descendant declare the same arg name, the deeper
+declaration wins - matching how Ra shadows inherited flags.
+### INPUT ###
+command outer:
+    shared str = "from-outer"
+    command inner:
+        shared str = "from-inner"
+        calls fn():
+            print("shared={shared}")
+### ARGS ###
+outer
+inner
+### STDOUT ###
+shared=from-inner
+
+### TITLE ###
+BareNamespaceErrors
+### DESCRIPTION ###
+A namespace has nothing of its own to run. The error names that namespace and
+lists ITS sub-commands - not the root's, which is a different question.
+### INPUT ###
+command remote:
+    timeout int = 30
+    command add:
+        name str
+        calls fn():
+            print("add")
+    command remove:
+        name str
+        calls fn():
+            print("remove")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+remote
+### STDERR ###
+Must specify a command for 'remote'
+
+Usage:
+  remote [command] [OPTIONS]
+
+Commands:
+  add
+  remove
+
+Global options:
+      --timeout int     (default 30)
+  -h, --help            Print usage string.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+      --src             Instead of running the target script, just print it out.
+### EXIT ###
+1
+
+### TITLE ###
+NamespaceHelpListsSubcommands
+### INPUT ###
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30
+    command add:
+        ---
+        Add a remote.
+        ---
+        name str
+        calls fn():
+            print("add")
+    command remove:
+        name str
+        calls fn():
+            print("remove")
+### ARGS ###
+remote
+--help
+### STDOUT ###
+Manage remotes.
+
+Usage:
+  remote [command] [OPTIONS]
+
+Commands:
+  add      Add a remote.
+  remove
+
+Global options:
+      --timeout int     (default 30)
+  -h, --help            Print usage string.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+NestedLeafHelpShowsOwnArgs
+### INPUT ###
+command remote:
+    timeout int = 30
+    command add:
+        ---
+        Add a remote.
+        ---
+        name str
+        url str
+        calls fn():
+            print("add")
+### ARGS ###
+remote
+add
+--help
+### STDOUT ###
+Add a remote.
+
+Usage:
+  add <name> <url> [OPTIONS]
+
+Command args:
+      --name str
+      --url str
+
+Global options:
+      --timeout int     (default 30)
+  -h, --help            Print usage string.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+TopLevelHelpListsNamespace
+### INPUT ###
+command remote:
+    ---
+    Manage remotes.
+    ---
+    command add:
+        name str
+        calls fn():
+            print("add")
+
+command list:
+    ---
+    List things.
+    ---
+    calls fn():
+        print("list")
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase [command] [OPTIONS]
+
+Commands:
+  list     List things.
+  remote   Manage remotes.
+
+Global options:
+  -h, --help            Print usage string.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+      --src             Instead of running the target script, just print it out.

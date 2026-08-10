@@ -199,11 +199,16 @@ func findASTMaxSpans(node Node) (maxRow, maxCol int) {
 		for i := range n.Decls {
 			children = append(children, &n.Decls[i])
 		}
-		if n.Callback.Identifier != nil {
-			children = append(children, n.Callback.Identifier)
+		if n.Callback != nil {
+			if n.Callback.Identifier != nil {
+				children = append(children, n.Callback.Identifier)
+			}
+			if n.Callback.Lambda != nil {
+				children = append(children, n.Callback.Lambda)
+			}
 		}
-		if n.Callback.Lambda != nil {
-			children = append(children, n.Callback.Lambda)
+		for _, sub := range n.SubCmds {
+			children = append(children, sub)
 		}
 
 	// Leaf nodes: Break, Continue, Pass, Identifier, LitInt, LitFloat,
@@ -292,15 +297,22 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 		if n.Description != nil {
 			fmt.Fprintf(sb, "%s%sDescription: %q\n", spacePad, indent, *n.Description)
 		}
+		if n.IsDefault() {
+			fmt.Fprintf(sb, "%s%sDefault\n", spacePad, indent)
+		}
 		for i := range n.Decls {
 			astDumpNode(sb, fmtStr, spacePad, &n.Decls[i], depth+1)
 		}
-		cb := n.Callback
-		if cb.Identifier != nil {
-			fmt.Fprintf(sb, "%s%sCallback: %s\n", spacePad, indent, cb.Identifier.Name)
-		} else if cb.Lambda != nil {
-			fmt.Fprintf(sb, "%s%sCallback: lambda\n", spacePad, indent)
-			astDumpNode(sb, fmtStr, spacePad, cb.Lambda, depth+2)
+		if cb := n.Callback; cb != nil {
+			if cb.Identifier != nil {
+				fmt.Fprintf(sb, "%s%sCallback: %s\n", spacePad, indent, cb.Identifier.Name)
+			} else if cb.Lambda != nil {
+				fmt.Fprintf(sb, "%s%sCallback: lambda\n", spacePad, indent)
+				astDumpNode(sb, fmtStr, spacePad, cb.Lambda, depth+2)
+			}
+		}
+		for _, sub := range n.SubCmds {
+			astDumpNode(sb, fmtStr, spacePad, sub, depth+1)
 		}
 
 	case *Assign:

@@ -925,16 +925,34 @@ func (c *converter) convertCmdBlock(node *ts.Node) *rl.CmdBlock {
 	cmd.Requirements = c.convertArgRelations(node, "requires_constraint", "required")
 	cmd.Exclusions = c.convertArgRelations(node, "excludes_constraint", "excluded")
 
-	// Callback
+	// The `default` marker. Note F_DEFAULT is also the field name an arg
+	// declaration uses for its default *value*; fields are scoped per node
+	// type, so on a cmd_block this only ever finds the marker keyword.
+	if defaultNode := node.ChildByFieldName(rl.F_DEFAULT); defaultNode != nil {
+		span := c.makeSpan(defaultNode)
+		cmd.DefaultSpan = &span
+	}
+
+	// Callback (leaf) - nil for a namespace command.
 	cmd.Callback = c.convertCmdCallback(node)
+
+	// Nested sub-commands (namespace). ChildrenByFieldName returns only direct
+	// children, so a namespace's own shared args stay separate from those of
+	// its descendants.
+	subNodes := node.ChildrenByFieldName(rl.F_COMMAND, node.Walk())
+	for _, subNode := range subNodes {
+		if sub := c.convertCmdBlock(&subNode); sub != nil {
+			cmd.SubCmds = append(cmd.SubCmds, sub)
+		}
+	}
 
 	return cmd
 }
 
-func (c *converter) convertCmdCallback(node *ts.Node) rl.CmdCallback {
+func (c *converter) convertCmdCallback(node *ts.Node) *rl.CmdCallback {
 	callsNode := node.ChildByFieldName(rl.F_CALLS)
 	if callsNode == nil {
-		return rl.CmdCallback{}
+		return nil
 	}
 
 	// Identifier callback. Build a real Identifier node (via the
@@ -948,7 +966,7 @@ func (c *converter) convertCmdCallback(node *ts.Node) rl.CmdCallback {
 		// and nuking the whole file's AST - matching safeConvertLambda
 		// on the lambda branch below.
 		ident, _ := c.safeConvertExpr(identifierNode).(*rl.Identifier)
-		return rl.CmdCallback{
+		return &rl.CmdCallback{
 			Span_:      c.makeSpan(callsNode),
 			Identifier: ident,
 		}
@@ -958,14 +976,14 @@ func (c *converter) convertCmdCallback(node *ts.Node) rl.CmdCallback {
 	lambdaNode := callsNode.ChildByFieldName(rl.F_CALLBACK_LAMBDA)
 	if lambdaNode != nil {
 		lambda := c.safeConvertLambda(lambdaNode)
-		return rl.CmdCallback{
+		return &rl.CmdCallback{
 			Span_:    c.makeSpan(callsNode),
 			IsLambda: true,
 			Lambda:   lambda,
 		}
 	}
 
-	return rl.CmdCallback{Span_: c.makeSpan(callsNode)}
+	return &rl.CmdCallback{Span_: c.makeSpan(callsNode)}
 }
 
 // safeConvertExpr converts a CST expression to AST, recovering from panics.
