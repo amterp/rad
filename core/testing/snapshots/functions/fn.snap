@@ -392,3 +392,23 @@ error[RAD30002]: Invalid operand type 'void' for unary '-'
 
 ### EXIT ###
 1
+### TITLE ###
+Compound assign in a nested fn stops at the nearest enclosing binding
+### INPUT ###
+
+n = 100
+
+fn outer():
+	n = 0
+	fn inner():
+		n += 1
+	inner()
+	inner()
+	return n
+
+print(outer())
+print(n)
+### STDOUT ###
+2
+100
+

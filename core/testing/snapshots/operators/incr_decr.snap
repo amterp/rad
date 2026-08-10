@@ -162,3 +162,50 @@ print(a)
 ### STDOUT ###
 0.5
 
+### TITLE ###
+Increment hits the fn local shadowing a module variable
+### INPUT ###
+counter = 0
+
+fn tick():
+	counter = 10
+	counter++
+	counter++
+	return counter
+
+print(tick())
+print(counter)
+### STDOUT ###
+12
+0
+
+### TITLE ###
+Decrement hits the fn local shadowing a module variable
+### INPUT ###
+lives = 3
+
+fn lose_one():
+	lives = 1
+	lives--
+	return lives
+
+print(lose_one())
+print(lives)
+### STDOUT ###
+0
+3
+
+### TITLE ###
+Without a fn local, increment still writes the enclosing binding
+### INPUT ###
+hits = 0
+
+fn record():
+	hits++
+
+record()
+record()
+print(hits)
+### STDOUT ###
+2
+

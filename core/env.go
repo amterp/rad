@@ -76,18 +76,34 @@ func (e *Env) GetJsonFieldVar(name string) (*JsonFieldVar, bool) {
 	return nil, false
 }
 
+// setVar writes name into the frame that owns it.
+//
+// With updateEnclosing - compound assigns and incr/decr, which the
+// converter desugars into `x = x <op> y` - that frame is the innermost
+// one declaring the name, found the same way GetVar finds it. The two
+// halves of `x += y` must resolve to the same binding: reading a
+// function-local while writing the module-level namesake means the
+// accumulator collects nothing and clobbers the outer value on its way
+// past. Builtins share the root frame with module-level variables, so
+// the same walk keeps `keys = []` inside a fn from replacing `keys`.
+//
+// Without it, the write always lands locally - that is how a plain `=`
+// shadows an enclosing binding rather than reassigning it.
 func (e *Env) setVar(name string, v RadValue, updateEnclosing bool) {
-	if e.Enclosing != nil && updateEnclosing {
-		if _, exists := e.Enclosing.Vars[name]; exists {
-			e.Enclosing.setVar(name, v, updateEnclosing)
-			return
+	target := e
+	if updateEnclosing {
+		for env := e; env != nil; env = env.Enclosing {
+			if _, exists := env.Vars[name]; exists {
+				target = env
+				break
+			}
 		}
 	}
 
 	if v == VOID_SENTINEL {
-		delete(e.Vars, name)
+		delete(target.Vars, name)
 	} else {
-		e.Vars[name] = v
+		target.Vars[name] = v
 	}
 }
 
