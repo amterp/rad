@@ -103,7 +103,8 @@
         "Catch Blocks",
         "The `??` Operator",
         "The `catch` Operator",
-        "Creating Your Own Errors"
+        "Creating Your Own Errors",
+        "Holding an Error"
       ]
     },
     {

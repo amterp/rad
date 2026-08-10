@@ -1246,6 +1246,30 @@ a, b = fallible_pair() catch:
     a, b = 0, 0
 ```
 
+#### Held errors stay live
+
+A `catch:` block that doesn't reassign leaves the error in the variable. Rad doesn't
+track that it was handled, so returning it from another function raises it again, at
+that call:
+
+```rad
+fn fail() -> str|error:
+    return error("boom")
+
+fn relay(x):
+    return x
+
+stored = fail() catch:
+    pass
+
+relay(stored)               // exits
+relay(stored) ?? "default"  // "default"
+```
+
+Assigning the value elsewhere and reading it are safe; only a call that returns it raises
+it. `??` and `catch` inspect the value the left side produced, so they fire on a held
+error too; a `catch:` block catches a failing operation, so it does not.
+
 ## Operators
 
 ### Arithmetic

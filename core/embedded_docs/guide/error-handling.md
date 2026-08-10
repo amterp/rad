@@ -244,6 +244,11 @@ age = parse_int(age_str) catch:
     Use `catch` when you only want to handle errors and null is a valid value.
     Use `catch:` when you need to log, inspect, or conditionally handle the error.
 
+The two operators look at the value the left side produced, so they also fire on an error
+you already hold - see Holding an Error. A `catch:` block instead
+catches an operation that failed, so a statement that merely assigns an error you already
+had doesn't trigger it.
+
 ## Creating Your Own Errors
 
 When writing your own functions, you can return errors using the `error(str)` function.
@@ -292,6 +297,51 @@ The error union makes your code self-documenting - anyone reading your function 
     We covered union types in detail in an earlier section: Type Annotations (rad docs guide/type-annotations).
     Error unions are just one application of Rad's union type system.
 
+## Holding an Error
+
+A `catch:` block that doesn't reassign leaves the error itself in the variable, where you
+can read it:
+
+```rad
+fn fail() -> str|error:
+    return error("boom")
+
+stored = fail() catch:
+    pass
+
+print(stored)           // boom
+print(type_of(stored))  // error
+```
+
+It is still live, though. Returning it from another function raises it again, and the
+script exits pointing at that second call rather than the original one:
+
+```rad
+fn fail() -> str|error:
+    return error("boom")
+
+fn relay(x):
+    return x
+
+stored = fail() catch:
+    pass
+
+result = relay(stored)  // exits: boom
+```
+
+Rad doesn't record whether an error has been handled before. A function that returns an
+error has failed, whatever that error's history, so guard the call like any other:
+
+```rad
+result = relay(stored) ?? "default"
+result = relay(stored) catch "default"
+```
+
+The alternative - marking an error handled so it never fires again - would make a real
+failure vanish the moment it passed through a function that returned it unchanged.
+Assigning the value elsewhere and reading it are both safe; only a call that returns it
+raises it.
+
 ## Summary
 
 Rad's error handling model gives you the tools to write robust scripts that handle failures gracefully:
@@ -310,6 +360,8 @@ Rad's error handling model gives you the tools to write robust scripts that hand
     - Useful when null is a meaningful value you want to preserve
 - **Create errors** with `error("message")` in your own functions
 - **Type unions** (`T|error`) make fallible operations explicit in function signatures
+- **A held error stays live** - returning it from another function raises it there, so
+  guard that call too
 
 ## Next
 
