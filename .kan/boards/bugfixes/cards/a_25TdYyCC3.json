@@ -1,0 +1,32 @@
+{
+  "_v": 3,
+  "alias": "re-propagated-errors",
+  "alias_explicit": false,
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): confirmed on the current build. The re-propagation from `relay(stored)` on line 9 is reported as `error[RAD20000]: boom --\u003e :4:10`, pointing at the `fail()` call inside the original catch line. The relay site appears nowhere in the output.",
+      "created_at_millis": 1786357827539,
+      "id": "c_25TgdVfa7"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Fixed 2026-08-10 in 68bb2791 (branch rad-sprint1).\n\nWent with \"both sites\", as the card proposed. `RadPanic` now carries a `RaiseSpan` recording where the panic fired when that differs from where the error was constructed; `NewRadPanic` sets it only when the error already had a span, so an ordinary first raise leaves it nil. `handlePanicRecovery` renders the two-span form via the existing `NewDiagnosticWithLabels` machinery - primary label \"re-raised here\", secondary \"originally raised here\".\n\nThe repro now renders:\n\n    error[RAD20000]: boom\n      --\u003e :11:10\n       |\n     5 | stored = fail() catch:\n       |          ------ originally raised here\n    ...\n    11 | result = relay(stored)\n       |          ^^^^^^^^^^^^^ re-raised here\n\nMulti-hop relays report the innermost re-arm point, which is where the panic actually fired.\n\nNo existing snapshot changed - origin and raise site coincide on a first raise, so single-span rendering is byte-identical. Regression test added to core/testing/snapshots/control_flow/catch.snap. Full suite green.",
+      "created_at_millis": 1786358056557,
+      "id": "c_25Tmat031"
+    }
+  ],
+  "created_at_millis": 1786357709410,
+  "creator": "Alexander Terp",
+  "description": "Split out of a_sBRDpFgU (2026-08-10). That card bundled a design question with a confirmed sub-bug; this is the sub-bug, which ships independently of whatever we decide about error defusal.\n\n**Repro:**\nfn fail():\n    return error(\"boom\")\n\nstored = fail() catch:\n    pass\n\nfn relay(x):\n    return x\n\nresult = relay(stored)  // crashes, and points at the fail() line, not relay()\n\n**Root cause:** `core/errors.go:36-44` - `NewRadPanic` fills the span only when it is nil:\n\n    unwrapped := err.RequireError(i, node)\n    if unwrapped.Span == nil {\n        unwrapped.Span = nodeSpanPtr(node)\n    }\n\nA stored error already carries the span from where it was first constructed, so re-panicking it at `core/type_fn.go:243-245` keeps the original attribution and the new call site is never recorded.\n\nThe intent to re-attribute already exists elsewhere: `core/type_fn.go:247-249` clears the span on the non-panicking propagate path, precisely so the next raise site can claim it. That just does not cover the panic path.\n\n**Decision:** report the new site, the original site, or both. Both reads best - \"raised at :3, re-raised at :9\" - and it is the only version that does not throw away information the interpreter has at hand.\n\n**Independent of the error-identity decision.** Whether or not `catch: pass` ends up defusing the value, blaming the wrong line is wrong.",
+  "id": "a_25TdYyCC3",
+  "position": "u8UUUUUU",
+  "severity": "medium",
+  "title": "Re-propagated errors are blamed on the original call site",
+  "updated_at_millis": 1786358056611,
+  "history": [
+    {"field":"column","value":"todo-hi","at":1786357709410},
+    {"field":"column","value":"done","at":1786358056611}
+  ]
+}

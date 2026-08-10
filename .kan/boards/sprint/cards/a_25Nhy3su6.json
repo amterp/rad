@@ -1,26 +1,49 @@
 {
   "_v": 3,
-  "alias": "add-escape-regex",
-  "alias_explicit": false,
-  "column": "p0-tier1",
+  "alias": "literal-string-defaults",
+  "alias_explicit": true,
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "thinking of instead adding a bool regex param to these functions",
+      "created_at_millis": 1786355812827,
+      "id": "c_25SqDyd7G"
+    }
+  ],
   "created_at_millis": 1786343579039,
   "creator": "Alexander Terp",
-  "description": "`replace()` and `split()` are regex-always while `count()` is literal, so each string function's semantics is a separate thing to memorize. The damage is worst when the pattern is spliced text rather than an author-written pattern: `$1` or `$$` inside relayed prose corrupts the result silently, which puts it in this column rather than in ergonomics.\n\n`split()` is sharper still. It picks regex or literal semantics based on whether the input parses:\n\n```rad\nsplit(\"a.b\", \".\")    // [\"\", \"\", \"\", \"\"]   \".\" is valid regex\nsplit(\"a(b\", \"(\")    // [\"a\", \"b\"]         \"(\" isn't, silent literal fallback\n```\n\nFor a user-supplied separator, the call's semantics get decided at runtime by the shape of the input - the worst case for a find-replace tool whose needle is an argument.\n\n`fr` ended up hand-rolling `escape_regex()` plus `text.split(escape_regex(needle)).join(replacement)`. Three sibling scripts hand-roll the same helper, `fr:26-52` with its reason documented at `fr:49-50`. The script review called this family the smallest cost-to-value ratio in its report, and self-contained with no interaction with existing syntax.\n\nAn `escape_regex()` builtin makes the regex-always world livable even if `literal=` kwargs never land, and it's step one for any tool that accepts patterns from its caller.\n\nOne thing to confirm while in here: with a fully escaped pattern and no capture groups, `$1` in the replacement empirically survives as literal text, so escaped-pattern `replace()` may already be a sound literal replace. Undocumented either way.\n\n---\n\n### Orientation\n\n- Self-contained builtin addition, docs-first. `docs/funcs/` is the source of truth for the signature, `core/funcs.go` holds the registration, and `rts/` picks the signature up through codegen.\n- No grammar or checker work. The checker learns the function from `rts/signatures_gen.go` and `rts/embedded/functions.txt`, both generated - do not hand-edit either.\n\n### Where to start\n\n- Write `docs/funcs/escape_regex.md` to the contract in `docs/funcs/README.md` (required sections in order; the `## Signature` line IS the type-checker's signature, there is no parallel Go definition). `escape_regex(_val: str) -\u003e str` is the obvious shape.\n- `make generate`.\n- Add `FUNC_ESCAPE_REGEX` to the const block in `core/funcs.go` (the string builtins sit around `core/funcs.go:38-64`) and register the `BuiltInFunc`. `core/funcs.go:536` (`FUNC_UPPER`) is the smallest inline form; `core/func_split.go` is the separate-file form. The implementation is `regexp.QuoteMeta`.\n- The split behavior the card describes is at `core/func_split.go:31` `regexSplit`: `regexp.Compile(sep)` and, on error, a silent fall back to `strings.Split` / `strings.SplitN`. `docs/funcs/split.md` documents it (\"treated as a regex pattern if valid, otherwise as literal string\"), so the runtime-decided semantics is deliberate rather than a defect - which is exactly why an escape helper is the contained fix rather than changing `split()`.\n- The `$1`-survives-escaping question is answered by reading `core/func_replace.go`, and the answer is \"partly\". `replace()` does not use `regexp`'s own `$N` expansion; it calls `ReplaceAllStringFunc` and hand-substitutes `$0`, `$1`, ... via `strings.ReplaceAll` for each submatch. With a fully escaped pattern and no capture groups, `submatches` holds only the whole match, so `$1` does survive as literal text - but `$0` does not, it expands to the whole match. Verified on v0.11.0: `replace(\"a.b\", \"\\\\.\", \"[$0]\")` gives `a[.]b` while `replace(\"a.b\", \"\\\\.\", \"[$1]\")` gives `a[$1]b`. Two further sharp edges fall out of the same loop: with ten or more groups the `$1` pass corrupts `$10`, and each pass rewrites the accumulated result, so a submatch whose own text contains `$2` gets substituted again by a later pass. Escaped-pattern `replace()` is therefore close to a literal replace but is not one. Whatever is decided, write it into `docs/funcs/replace.md`, which today says only that \"`_replace` can use regex capture groups like `$1`\".\n\n### How to verify\n\n- `make build`, then `./bin/radd script.rad` exercising `escape_regex(\"a.b\")`, `split(\"a.b\", escape_regex(\".\"))`, `split(\"a(b\", escape_regex(\"(\"))`, and `replace(s, escape_regex(needle), repl)` with a literal `$1` in `repl`.\n- Function snapshots go under `core/testing/snapshots/functions/`. Update with `go test ./core/testing/ -run TestSnapshots -update=functions` (the `=` is required; a bare `-update` swallows `-run`).\n- `make generate \u0026\u0026 make verify-generated`.\n- `make all`.\n\n### Done when\n\n- `docs/funcs/escape_regex.md` exists and `make generate` leaves no diff afterward, with `rts/signatures_gen.go`, `rts/embedded_funcs/`, `rts/embedded/functions.txt` and `docs-web/docs/reference/functions.md` all regenerated.\n- Snapshot cases cover the full metacharacter set, an already-escaped input, and the empty string.\n- `split(x, escape_regex(sep))` and `replace(x, escape_regex(needle), r)` are documented as the literal-semantics idiom, in `docs/funcs/escape_regex.md` and cross-referenced from `split.md` and `replace.md`.\n- The `$0` / `$1` / `$10` behavior of `replace()` under an escaped pattern is settled and written into `docs/funcs/replace.md` rather than left as folklore, with snapshot cases pinning it.\n\n### Watch out for\n\n- Generated and never hand-edited: `rts/signatures_gen.go`, `rts/embedded_funcs/`, `rts/embedded/functions.txt`, `docs-web/docs/reference/functions.md`, `core/embedded_docs/`. Edit the sources and run `make generate`.\n- Snippets in `docs-web/docs/` are executed by `core/testing/docs_snippets_test.go:102` `TestDocSnippets`, so any example added there has to check clean.\n- `regexp.QuoteMeta` escapes for Go's RE2. Rad's regex functions all route through `regexp`, so that is the right dialect - say so in the doc rather than leaving it implied.",
-  "effort": "s",
+  "description": "`split()` and `replace()` now match literally, with `regex=true` to opt into pattern matching. `matches()` is unchanged and stays regex-always.\n\nThis card started as \"add `escape_regex()`\". Its own diagnosis was that each string function's needle semantics is a separate thing to memorize - `count` and `index_of` literal, `replace` regex, `split` regex-if-it-compiles - and `escape_regex()` adds a fourth thing to memorize plus a ritual to remember at every call site. We fixed the default instead.\n\nA survey of every `split`/`replace` call with a string-literal pattern across the ~500 `.rad` scripts on this machine:\n\n|         | literal | regex |\n|---------|---------|-------|\n| replace | 158     | 25    |\n| split   | 10      | 1     |\n\n87% wanted literal. The failure is also asymmetric: literal-when-you-wanted-regex gives an obviously wrong answer, regex-when-you-wanted-literal corrupts silently. `docs-web/docs/examples/hm.md:61` already shipped `base_name.replace(\".txt\", \"\")` in our own docs, working only by luck.\n\nThree things fell out that `escape_regex()` could not have delivered:\n\n- `split()`'s runtime-decided semantics is gone. Under `regex=true` an uncompilable pattern errors instead of silently falling back to `strings.Split`.\n- `replace()`'s replacement string is literal by default, so `$1` or `$$` in relayed prose stops corrupting the result. That was the original card's headline failure mode.\n- The 87% path no longer compiles a regex at all and can no longer throw RAD20024.\n\n---\n\n### What shipped\n\n- `split(_val, _sep, *, limit, regex: bool = false)` and `replace(_original, _find, _replace, *, regex: bool = false)`.\n- `replace()`'s group expansion rewritten as a single left-to-right scan, fixing four latent bugs in the old per-group `strings.ReplaceAll` loop: `$10` corrupted by the `$1` pass, a submatch containing `$2` re-substituted by a later pass, no way to write a literal `$`, and groups read by re-running the pattern against the matched text in isolation, which came back empty whenever an assertion only held in context (`\\Bb(c)` inside `abc`). Rules are now `$$`, `${N}`, `$N` taking the longest digit run, and an out-of-range group left as written. Go's own `Regexp.Expand` was not used, because it reads `$name` as a run of word characters and would break the documented `\"$1o$1\"` -> `\"bob\"` case.\n- RAD40016, a checker warning flagging literal patterns that read as regexes with no `regex=`. Warning severity, on by default, handles UFCS call sites, and reads the literal segments of interpolated patterns. Deliberately quiet on a bare `.` and a lone `|`. Lives in its own file, `rts/check/check_regex_migration.go`, so it can be deleted whole in a release or two.\n- `docs-web/docs/migrations/v0.12.md`, `core/error_docs/40016.md`, and a new \"Patterns: Literal by Default\" section in the strings guide.\n\n### Verified\n\n`make all` green. On the real corpus the warning found 32 affected call sites with zero false positives and zero misses. Sharp edges exercised directly: `$10` with ten groups, a submatch whose text contains `$2`, `$$`, `${N}` (which needs a raw string or `$\\{1}` to survive Rad's own interpolation), an out-of-range `$99`, and both uncompilable-pattern error paths.\n\n### Follow-ups opened\n\n- `escape_regex()` demoted to p2. Still useful for *building* patterns (`\"^\" + escape_regex(prefix)`), but no longer the fix for this friction. `fr`'s hand-rolled helper disappears entirely.\n- `replace()` declares `-> str` while its `regex=true` path can error, unlike `matches()` (`bool|error`). Left alone here because widening it pushes an error union into every existing call site.",
+  "effort": "m",
   "id": "a_25Nhy3su6",
   "labels": [
-    "ai-hi"
+    "ai-hi",
+    "breaking"
   ],
-  "position": "UUUU",
+  "position": "UU",
   "source": [
     "friction-153",
-    "takehome",
-    "main-board"
+    "main-board",
+    "takehome"
   ],
-  "title": "Add escape_regex()",
+  "title": "Flip split() and replace() to literal-by-default",
   "type": "feature",
-  "updated_at_millis": 1786353848073,
+  "updated_at_millis": 1786357713884,
   "history": [
-    {"field":"column","value":"p0-tier1","at":1786343579039}
+    {
+      "field": "column",
+      "value": "p0-tier1",
+      "at": 1786343579039
+    },
+    {
+      "field": "column",
+      "value": "approved",
+      "at": 1786355800131
+    },
+    {
+      "field": "column",
+      "value": "done",
+      "at": 1786357509283
+    }
   ]
 }

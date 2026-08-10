@@ -1,0 +1,36 @@
+{
+  "_v": 3,
+  "alias": "release-tree-sitter",
+  "alias_explicit": false,
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Now blocking, not just tidying. Two features on `rad-sprint` need grammar commits that are not in v0.6.0: the signed operand after `??`/`catch` (649637a) and the literal brace (1e41475). Until v0.6.1 ships and go.mod moves onto it, those cases only pass with a local `replace` directive pointing at ~/src/tree-sitter-rad, so CI on this branch will be red.",
+      "created_at_millis": 1786370401908,
+      "id": "c_25YxkkXA3"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Released as **v0.7.0**, not v0.6.1. Both unreleased grammar commits are `feat:` - the signed operand after `??`/`catch` (649637a) and the literal brace (1e41475) - so a minor bump is the right semver read.\n\n`rad-sprint` is on it (`chore: move onto tree-sitter-rad v0.7.0`), the local `replace` directives are gone from all six worktrees, and the full suite is green without them.",
+      "created_at_millis": 1786371752882,
+      "id": "c_25ZWtkrkY"
+    }
+  ],
+  "created_at_millis": 1786359665644,
+  "creator": "Alexander Terp",
+  "description": "Blocks 9d180293 on branch rad-sprint1 (`x ?? -1` parses). That commit is landed but its two snapshot cases fail against tree-sitter-rad v0.6.0, because the grammar rule they exercise is committed upstream but unreleased.\n\n**Upstream state** (`~/src/tree-sitter-rad`, `main`, unpushed):\n\n- `4e554f2` chore: regenerate checked-in artifacts - NODES.md/FIELDS.md had been stale since ac743bd (missing the `group` field), plus tree-sitter runtime headers from CLI 0.23.2. Split out deliberately so the next commit reads clean.\n- `649637a` feat: allow a signed operand after ?? and catch - the actual change.\n\n**To land:**\n\n1. Push and release from `~/src/tree-sitter-rad` (`./dev -r 1` for a patch bump).\n2. `go mod edit -dropreplace github.com/amterp/tree-sitter-rad` in rad, then bump the require to v0.6.1.\n3. `cd bindings/go \u0026\u0026 go clean -cache` before rebuilding - cgo does not reliably pick up a regenerated `parser.c` otherwise, which is why `./dev` does this. Without it the grammar change appears to have silently not worked.\n4. `go test ./...` - the two cases in control_flow/fallback.snap and catch_expr.snap should pass.\n\n**Watch out for:** a local `replace` directive is currently in rad's go.mod, unstaged. `./dev --release` refuses to release with one present, so drop it rather than committing it.\n\nAlso: `stash@{0}` in `~/src/tree-sitter-rad` holds in-progress nested/sub-command grammar work (a_25Rcu72Hl). It predates these two commits and touches `grammar.js` in a different rule, so the source will merge, but the generated `parser.c` will conflict hard. Resolve `grammar.js` by hand and re-run `./dev -b` rather than merging generated files.",
+  "effort": "s",
+  "id": "a_25USSBSSk",
+  "position": "UUUUUUUUUUUU",
+  "source": [
+    "main-board"
+  ],
+  "title": "Release tree-sitter-rad v0.6.1 and bump rad onto it",
+  "type": "bug",
+  "updated_at_millis": 1786371752926,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786359665644},
+    {"field":"column","value":"done","at":1786371752926}
+  ]
+}

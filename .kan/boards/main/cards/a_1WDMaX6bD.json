@@ -3,6 +3,14 @@
   "alias": "docs-guarantee",
   "alias_explicit": false,
   "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Narrowed by the sprint-board brace work (a_25S3ICERd). The guarantee still holds for everything issue #139 hit - `\"{tokens.join(\" \")}\"` and the ternary form both still work - but a nested same-delimiter string is no longer allowed *immediately* after the `{`.\n\nReason: `\"{\"` is now also how a literal opening brace at the end of a string is written, and the two readings share that exact prefix. Alex's call was that `\"{\"ERROR\".red()}\"` should be unidiomatic anyway - switch quote types.\n\n`docs-web/docs/guide/strings-advanced.md` updated with the exception, since it stated the guarantee unconditionally.",
+      "created_at_millis": 1786359556635,
+      "id": "c_25UPcNOoX"
+    }
+  ],
   "created_at_millis": 1781147206818,
   "creator": "Alexander Terp",
   "description": "Nested double quotes inside interpolation (\"{tokens.join(sep=\" \")}\") works, but is undocumented - the #139 author nearly rewrote working code fearing it was accidental. Document it as guaranteed behavior in the strings docs (and ideally pin with a test if one does not exist).",
@@ -13,7 +21,7 @@
   "position": "yAUUUUUUUUUUUU",
   "title": "Docs: guarantee nested quotes inside interpolation",
   "type": "chore",
-  "updated_at_millis": 1781182679683,
+  "updated_at_millis": 1786359556635,
   "history": [
     {"field":"column","value":"next","at":1781147206818},
     {"field":"column","value":"done","at":1781182679683}

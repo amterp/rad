@@ -2,20 +2,29 @@
   "_v": 3,
   "alias": "nested-loops-with",
   "alias_explicit": false,
-  "column": "todo-hi",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Closed as a duplicate of a_sBRVjVvW (decided 2026-08-10). Same mechanism, already settled.\n\nBoth cards are the consequence of one deliberate design choice: for-loops do not open scopes, so `runForLoopList` writes iteration vars into the enclosing env via `SetVar` (core/interpreter.go:1132, :1150). The `with` context var in a_sBRVjVvW and the inner `for i` here hit the identical code path.\n\nThat choice is documented and tested:\n- docs/type_system.md:129-133 - \"For-loops, while-loops, and list comprehensions do NOT open scopes ... loop vars (and the optional `with` context) bind in the current scope.\"\n- core/testing/snapshots/misc/scoping.snap:30-59 - asserts iteration vars, unpacked k/v vars, and the `with` context var all persist after the loop.\n\nFixing this card IS option (B) \"scope all loop vars\", explicitly considered and rejected when a_sBRVjVvW was closed. There is no middle path: save/restoring the outer var means the inner loop's var stops persisting after the inner loop, which contradicts the documented model.\n\nThe live option remains (C) from that same comment - a check-time warning when an inner loop variable shadows an enclosing loop variable. rts/check already has the machinery (rts/check/check.go:133, :168-182; binder issues with IssueWarning). Not opened as a card yet; raise one if the footgun resurfaces in real scripts.",
+      "created_at_millis": 1786357682799,
+      "id": "c_25Tcs38Zc"
+    }
+  ],
   "created_at_millis": 1775232075591,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nWhen a nested for loop reuses the outer loop's iteration variable name, the inner loop overwrites the outer variable. After the inner loop completes, the outer variable holds the inner loop's final value.\n\n**Repro:**\nfor i in range(3):\n    for i in range(2):\n        pass\n    print(i)\n// Expected: 0, 1, 2\n// Actual:   1, 1, 1   (inner loop's final value)\n\nThe outer loop still iterates the right number of times (its internal index is separate), but any code referencing the variable after the inner loop sees the wrong value. Realistic with common names like i, x, item.\n\n**Design:** shadow inner loop vars in a child scope, or save/restore the outer var (same save/restore family as the loop-context bug).",
   "grammar": false,
   "id": "a_sBR0JLWj",
-  "position": "D!",
+  "position": "u8UUUUU",
   "severity": "high",
   "tags": [
     "design"
   ],
   "title": "Nested loops with same variable name clobber outer loop variable",
-  "updated_at_millis": 1781449711773,
+  "updated_at_millis": 1786357686342,
   "history": [
-    {"field":"column","value":"todo-hi","at":1775232075591}
+    {"field":"column","value":"todo-hi","at":1775232075591},
+    {"field":"column","value":"done","at":1786357686342}
   ]
 }

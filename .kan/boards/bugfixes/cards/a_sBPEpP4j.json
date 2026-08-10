@@ -2,20 +2,29 @@
   "_v": 3,
   "alias": "replace-and-split",
   "alias_explicit": false,
-  "column": "todo-lo",
+  "column": "done",
   "created_at_millis": 1775232007714,
   "creator": "Alexander Terp",
-  "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces; no literal-string variant or `escape_regex()` exists yet. Documented behavior (the find arg is a regex pattern), but there is no literal alternative for the most common use case.\n\n**The problem:**\n- `\"a.b.c\".replace(\".\", \"-\")` -\u003e \"-----\"  (`.` is regex \"any char\")\n- `\"a.b.c\".split(\".\")` -\u003e [\"\", \"\", \"\", \"\", \"\", \"\"]\n- Regex metacharacters like `(` raise error[RAD20024] \"Error compiling regex pattern\"\n- The replacement arg also uses regex semantics ($0, capture groups)\n\n**Source:** `core/func_replace.go:20`, `core/func_split.go:32` - both `regexp.Compile` user input.\n\n**Why it matters:** most users expect literal string ops by default; docs show `text.replace(\"hello\", \"hi\")` which looks literal. Users must hand-escape regex metacharacters.\n\n**Possible solutions:**\n1. Add `replace_literal()` / `split_literal()`\n2. Make replace/split literal by default, add `replace_regex()` / `split_regex()`\n3. Add an `escape_regex()` utility",
+  "description": "RESOLVED 2026-08-10 via option 2. `split()` and `replace()` now match literally, with a `regex: bool = false` parameter to opt into pattern matching. `matches()` is unchanged and stays regex-always, since a literal `matches()` would be `==` or a substring test.\n\nThe sibling of this card - \"Add escape_regex()\", option 3 - was repurposed into that work. See sprint card `literal-string-defaults`.\n\nEvery symptom listed below is gone:\n\n- `\"a.b.c\".replace(\".\", \"-\")` -> `\"a-b-c\"`\n- `\"a.b.c\".split(\".\")` -> `[\"a\", \"b\", \"c\"]`\n- `\"a(b\".split(\"(\")` -> `[\"a\", \"b\"]`, no RAD20024 and no silent literal fallback\n- `replace()`'s replacement string is literal by default, so `$0` and `$1` in relayed text pass through untouched\n\nMigration is carried by RAD40016, a checker warning that flags literal patterns reading as regexes with no `regex=`, plus `docs-web/docs/migrations/v0.12.md`.\n\n---\n\nOriginal report, re-verified 2026-06-14 (rad v0.10.1):\n\n**The problem:**\n- `\"a.b.c\".replace(\".\", \"-\")` -> \"-----\"  (`.` is regex \"any char\")\n- `\"a.b.c\".split(\".\")` -> [\"\", \"\", \"\", \"\", \"\", \"\"]\n- Regex metacharacters like `(` raise error[RAD20024] \"Error compiling regex pattern\"\n- The replacement arg also uses regex semantics ($0, capture groups)\n\n**Source:** `core/func_replace.go:20`, `core/func_split.go:32` - both `regexp.Compile` user input.\n\n**Why it matters:** most users expect literal string ops by default; docs show `text.replace(\"hello\", \"hi\")` which looks literal. Users must hand-escape regex metacharacters.\n\n**Possible solutions:**\n1. Add `replace_literal()` / `split_literal()`\n2. Make replace/split literal by default, add `replace_regex()` / `split_regex()`\n3. Add an `escape_regex()` utility",
   "grammar": false,
   "id": "a_sBPEpP4j",
-  "position": "6s",
+  "position": "u8UUUU",
   "severity": "high",
   "tags": [
     "design"
   ],
   "title": "replace() and split() treat first arg as regex, not literal string",
-  "updated_at_millis": 1781449638859,
+  "updated_at_millis": 1786357589385,
   "history": [
-    {"field":"column","value":"todo-lo","at":1775232007714}
+    {
+      "field": "column",
+      "value": "todo-lo",
+      "at": 1775232007714
+    },
+    {
+      "field": "column",
+      "value": "done",
+      "at": 1786357589384
+    }
   ]
 }

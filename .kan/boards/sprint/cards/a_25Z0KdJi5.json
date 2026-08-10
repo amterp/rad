@@ -1,0 +1,18 @@
+{
+  "_v": 3,
+  "alias": "retire-rad-s-snapshot-engine-in",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1786370501071,
+  "creator": "Alexander Terp",
+  "description": "Landed on `rad-sprint`; carded after the fact so the sprint has a record of it.\n\nrad had written the same snapshot harness five times: a kernel in `core/testing`, three suites each carrying their own copy of a walk-compare-rewrite loop, and a sixth minimal parser hand-rolled inside the formatter's structure test. go-snap is that kernel extracted into its own module, so roughly a thousand lines of parser, writer, update flags, diff rendering and file bookkeeping come out, replaced by four schema declarations and four runners.\n\nTwo things the module boundary buys:\n\n- The formatter's structure test reads snapshots with the real parser. The `core/testing -\u003e core -\u003e rts/radfmt` cycle that forced the hand-roll does not exist across modules.\n- Scripted-keystroke prompt testing comes from `go-snap/prompt` instead of a private copy of the same forty lines in `test_helpers.go`.\n\nEach suite now declares its own sections, so a reader no longer meets a concrete syntax tree under STDOUT in a suite that never runs a process: the tree suite writes CST and AST, the checker CHECK, the formatter FORMATTED. A header naming a section its suite never declared is a parse error rather than content.\n\nTwo update paths worth knowing. `SNAP_UPDATE=\u003csubstr\u003e go test ./...` reaches packages that never link go-snap and so would reject a `-update` flag. And an accepted update rewrites a file whenever canonical rendering differs from disk, not only when an expectation changed - which is how a format change migrates across every snapshot in one pass.\n\nThe port changes no expectation anywhere.",
+  "effort": "l",
+  "id": "a_25Z0KdJi5",
+  "position": "UUUUUUUUUUU",
+  "title": "Retire rad's snapshot engine in favour of go-snap",
+  "type": "chore",
+  "updated_at_millis": 1786370501071,
+  "history": [
+    {"field":"column","value":"done","at":1786370501071}
+  ]
+}

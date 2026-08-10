@@ -3,6 +3,20 @@
   "alias": "error-inline-not",
   "alias_explicit": false,
   "column": "todo-hi",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Blocked on a_25TdzYuMr (sprint board, p0-tier1) - \"Decide whether an error value stays armed once bound to a variable\".\n\nThis card and a_sBRDpFgU are the same question. `error()` is exempted from the panic-on-error-return rule at core/funcs.go:251, and `Fallback` never checks `IsError()` (core/interpreter.go:509) - so the asymmetry is structural, not accidental. Fixing it in isolation would settle the language's error model by accident. Decision card first, with a RED.",
+      "created_at_millis": 1786357734368,
+      "id": "c_25TeDEn4J"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): still reproduces. `error(\"test\") ?? \"fallback\"` prints `test`.",
+      "created_at_millis": 1786357827473,
+      "id": "c_25TgdP3fx"
+    }
+  ],
   "created_at_millis": 1775232063525,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. By design but counterintuitive: error() is a value constructor (not a panic thrower), so ?? and catch (which work by catching panics) do not intercept it inline.\n\n**The problem:**\nr = error(\"test\") ?? \"fallback\"\nprint(r)  // \"test\"     (NOT \"fallback\")\n\nfn fail():\n    return error(\"test\")\nr = fail() ?? \"fallback\"\nprint(r)  // \"fallback\" (returning an error from a function triggers a panic, which ?? catches)\n\nThe distinction between `error(\"test\") ?? \"fallback\"` and a function returning the error is deeply confusing.\n\n**Root cause:** the fallback checks `panicked || leftResult.Val.IsNull()` but not `leftResult.Val.IsError()`.\n\n**Design question:** should ?? also check IsError()? Should error() itself panic? Or should this asymmetry be documented?",
@@ -14,7 +28,7 @@
     "design"
   ],
   "title": "error() inline not caught by ?? or catch operators",
-  "updated_at_millis": 1781449711856,
+  "updated_at_millis": 1786357827473,
   "history": [
     {"field":"column","value":"todo-hi","at":1775232063525}
   ]

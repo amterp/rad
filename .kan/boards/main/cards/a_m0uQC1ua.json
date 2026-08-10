@@ -3,6 +3,14 @@
   "alias": "escaping-interpolation",
   "alias_explicit": false,
   "column": "",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Closing as a duplicate. Fixed on the sprint board by a_25S2bdrTD (the RAD40017 warning on interpolating a constant literal, which catches `\"\\\\d{4}\"` directly) and a_25S3ICERd (literal braces where an interpolation is impossible).\n\nOn the `{{` suggestion in this card: not taken. `\\{` already does the job and is documented, and `r\"...\"` is better for brace-dense text - adding `{{` would give two escapes for one job. `\\}` was added for symmetry instead.",
+      "created_at_millis": 1786359467204,
+      "id": "c_25UNI89Wy"
+    }
+  ],
   "created_at_millis": 1774320410205,
   "creator": "Alexander Terp",
   "description": "The biggest issue: no way to escape { in strings\n\n  The regex constraint \"\\\\d{4}-\\\\d{2}-\\\\d{2}\" silently interpreted {4}, {2}, {2} as string interpolation, producing the regex \\d-\\d-\\d. I had to write \"\\\\d\\\\d\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d\" instead. This would also bite\n  anyone trying to build a JSON string manually, write a format pattern, or any string containing literal braces. Most languages with interpolation use {{ for a literal { - that would solve it cleanly.",
@@ -10,5 +18,5 @@
   "position": "",
   "title": "escaping interpolation apparently unclear",
   "type": "enhancement",
-  "updated_at_millis": 1774320418731
+  "updated_at_millis": 1786359467204
 }

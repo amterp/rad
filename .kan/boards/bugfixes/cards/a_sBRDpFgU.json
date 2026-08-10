@@ -3,6 +3,20 @@
   "alias": "caught-errors-re",
   "alias_explicit": false,
   "column": "todo-hi",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Split 2026-08-10. This card bundled two separable things:\n\n1. **Span attribution** (confirmed sub-bug) - moved to its own card, a_25TdYyCC3. Ships independently; not blocked on any decision.\n2. **Should `catch: pass` defuse the error value?** (design) - rolled into a_25TdzYuMr on the sprint board, together with a_sBQgqO7u. Same question: does an error value stay armed once bound to a variable?\n\nThis card is now the record of the design half and is blocked on a_25TdzYuMr.",
+      "created_at_millis": 1786357734430,
+      "id": "c_25TeDLAYf"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Half of this landed on `rad-sprint`: a re-raised error now names the re-raise site as its primary span, with the origin kept as a secondary label. The other half - whether a caught error stays armed once bound to a variable, which is what makes it re-propagate at all - is a language design question tracked at a_25TdzYuMr. Staying open on that.",
+      "created_at_millis": 1786370401855,
+      "id": "c_25YxkfCQI"
+    }
+  ],
   "created_at_millis": 1775232083974,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces, including the sub-bug - re-propagation crashes AND the error is attributed to the ORIGINAL call site, not the re-propagation site.\n\n**The problem:**\nfn fail():\n    return error(\"boom\")\n\nstored = fail() catch:\n    pass\n// stored is error-typed but \"defused\"\n\nfn relay(x):\n    return x\n\nresult = relay(stored)  // CRASHES - the error re-propagates\n// the error points to the fail() line, NOT relay()\n\n**Two issues:**\n1. Design concern: a user who wrote `catch: pass` reasonably believes they handled the error; passing it through a transparent relay re-fires it.\n2. Confirmed sub-bug: the error message points to the original fail() call site, not relay(), making debugging hard.\n\nNote: `relay(stored) ?? \"fallback\"` DOES catch the re-propagation, so it is recoverable.",
@@ -14,7 +28,7 @@
     "design"
   ],
   "title": "Caught errors re-propagate when returned from user-defined functions",
-  "updated_at_millis": 1781449711943,
+  "updated_at_millis": 1786370401855,
   "history": [
     {"field":"column","value":"todo-hi","at":1775232083974}
   ]

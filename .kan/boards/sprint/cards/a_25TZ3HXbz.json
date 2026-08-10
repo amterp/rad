@@ -1,0 +1,28 @@
+{
+  "_v": 3,
+  "alias": "add-escape-regex-for",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1786357536000,
+  "creator": "Alexander Terp",
+  "description": "With `split()` and `replace()` literal by default (sprint card `literal-string-defaults`), `escape_regex()` is no longer the fix for the regex-always friction - the friction is gone. What survives is the narrower case of *building* a pattern from parts, where the fixed half is authored and the variable half is not:\n\n```rad\nmatches(name, \"^\" + escape_regex(prefix) + \".*\")\nreplace(text, escape_regex(needle) + \"\\s*$\", \"\", regex=true)\n```\n\n`regexp.QuoteMeta` is the implementation. Docs-first: `docs/funcs/escape_regex.md` to the contract in `docs/funcs/README.md`, then `make generate`, then register `FUNC_ESCAPE_REGEX` in `core/funcs.go` (`FUNC_UPPER` at `core/funcs.go:536` is the smallest inline form).\n\nWorth confirming there's real demand before building it. The original motivating consumer no longer needs it: `fr` hand-rolled the helper only to write `text.split(escape_regex(needle)).join(replacement)`, which is now just `text.replace(needle, replacement)`. If nothing else in the corpus wants pattern-building, this card can be closed unbuilt.",
+  "effort": "xs",
+  "id": "a_25TZ3HXbz",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "UUUUUUUUUUUUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Add escape_regex() for pattern-building",
+  "type": "feature",
+  "updated_at_millis": 1786357536000,
+  "history": [
+    {
+      "field": "column",
+      "value": "p2",
+      "at": 1786357536000
+    }
+  ]
+}

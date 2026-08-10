@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "shell-export-mode",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786375488447,
+  "creator": "Alexander Terp",
+  "description": "The second injection site, independent of the one RED-9 closed.\n\n`Env.PrintShellExports` (`core/env.go:159-186`) emits each variable as `NAME=\u003cvalue\u003e` using `ToPrintable`, which wraps strings in double quotes with no escaping at all. `core/utils.go:27` carries the acknowledgement: `// todo based on contents, should escape quotes`. Lists become `(a b c)` with no per-element quoting, so any element with a space splits into several. Maps get wrapped in single quotes with embedded quotes unescaped.\n\nThat output is `eval`'d by the calling Bash script - the embedding pattern RED-6 documents as the entire reason `--shell` exists:\n\n```bash\neval \"$(rad - --shell \"$@\" \u003c\u003c\u003c \"$rad_script\")\"\n```\n\nSo a script argument containing a `\"` breaks the caller, and one containing `\";cmd;\"` runs `cmd` in the caller's shell. Same class of bug as the interpolation one, reached through the arg parser rather than through a shell command.\n\n**Impact:** anyone using the hybrid Bash/Rad pattern gets arbitrary execution from their own script's CLI arguments. Narrow blast radius - RED-6 calls the feature semi-legacy - but it is the one code path whose whole purpose is feeding values into a shell.\n\n---\n\n### Orientation\n\n- `core/env.go:151` `PrintShellExports` is the entire surface. Its three branches (scalar, list, map) each need their own quoting.\n- `shellQuoteIfNeeded` (`core/interactive_args.go:979`) is the right primitive and is what RED-9's work uses for the same job. Don't hand-roll another quoter.\n- The list case wants Bash array syntax with each element quoted separately.\n- `ToPrintable` is a *display* helper used in many places. Fix the call site, not `ToPrintable`.\n- Existing coverage: `core/testing/shell_mode_test.go`.\n\n### Watch out for\n\nRED-6 records that this feature's future is undecided - keep, freeze, or retire. Worth confirming it should be fixed rather than retired before spending the time.",
+  "effort": "s",
+  "id": "a_25b64qwpt",
+  "labels": [
+    "security"
+  ],
+  "position": "UUUUUUUUUU",
+  "title": "🐚 --shell export mode emits unescaped values into an eval",
+  "type": "bug",
+  "updated_at_millis": 1786375488447,
+  "history": [
+    {"field":"column","value":"p1","at":1786375488447}
+  ]
+}
