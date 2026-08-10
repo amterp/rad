@@ -501,12 +501,17 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 		condition := i.eval(n.Condition).Val.TruthyFalsy()
 		return i.eval(lo.Ternary(condition, n.True, n.False))
 
+	// An error reaches these operators two ways: as a panic, when a call
+	// promoted it (core/type_fn.go), or as a plain value, from error() itself or
+	// from a variable an earlier catch bound. Both are the same failure to the
+	// reader, so both fire the fallback. Checking panicked first keeps
+	// leftResult unread when the left side never produced one.
 	case *rl.Fallback:
 		var leftResult EvalResult
 		panicked := i.evalCatchingPanic(func() {
 			leftResult = i.eval(n.Left)
 		})
-		if panicked || leftResult.Val.IsNull() {
+		if panicked || leftResult.Val.IsNull() || leftResult.Val.IsError() {
 			return i.eval(n.Right)
 		}
 		return leftResult
@@ -516,7 +521,8 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 		panicked := i.evalCatchingPanic(func() {
 			leftResult = i.eval(n.Left)
 		})
-		if panicked {
+		// Unlike ??, null passes through untouched.
+		if panicked || leftResult.Val.IsError() {
 			return i.eval(n.Right)
 		}
 		return leftResult

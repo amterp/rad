@@ -3868,22 +3868,26 @@ func (tc *typeChecker) synthTernary(n *rl.Ternary) rl.TypingT {
 	return tc.record(n, unionOf(whenTrue, whenFalse))
 }
 
-// synthFallback handles `left ?? right`. The fallback fires when
-// left is null, so the result is `(left - null) | right` - the
-// non-null portion of left, unioned with the fallback expression.
+// synthFallback handles `left ?? right`. The fallback fires when left
+// is null and when it is an error, so the result is
+// `(left - null - error) | right` - what survives both, unioned with
+// the fallback expression.
 //
-// When left has no null component, the fallback can never fire, but
-// we still union the two arms: the user wrote the fallback for a
-// reason and excluding right entirely would surprise them if our
-// nullability inference is wrong (and gradual typing means it
-// sometimes is).
+// When left has neither component the fallback can never fire, but we
+// still union the two arms: the user wrote the fallback for a reason
+// and excluding right entirely would surprise them if our inference is
+// wrong (and gradual typing means it sometimes is).
 func (tc *typeChecker) synthFallback(n *rl.Fallback) rl.TypingT {
 	left := tc.synth(n.Left)
 	right := tc.synth(n.Right)
-	if nonNull := stripNullFrom(left); nonNull != nil {
-		return tc.record(n, unionOf(nonNull, right))
+	narrowed := left
+	if nonNull := stripNullFrom(narrowed); nonNull != nil {
+		narrowed = nonNull
 	}
-	return tc.record(n, unionOf(left, right))
+	if nonErr := stripErrorFrom(narrowed); nonErr != nil {
+		narrowed = nonErr
+	}
+	return tc.record(n, unionOf(narrowed, right))
 }
 
 // synthCatchExpr handles `expr catch fallback`. Catch fires when
