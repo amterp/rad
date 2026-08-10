@@ -6,7 +6,7 @@ TypedLocalAssignmentNarrowsToRHS
 ### INPUT ###
 x: int? = 5
 y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   y @ 2:1 -> <no-type>
@@ -33,7 +33,7 @@ x: int? = 5
 if true:
     x = maybe_int()
 y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 4:1 -> <no-type>
   x @ 6:5 -> <no-type>
@@ -58,7 +58,7 @@ stays at Declared (so downstream reads don't cascade).
 ### INPUT ###
 x: int = "wrong"
 y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   y @ 2:1 -> <no-type>
@@ -81,7 +81,7 @@ symbol's declared type doesn't drift.
 ### INPUT ###
 bb: int = 5
 bb = 6
-### STDOUT ###
+### CHECK ###
 # Identifier types
   bb @ 1:1 -> <no-type>
   bb @ 2:1 -> <no-type>
@@ -103,7 +103,7 @@ line 2 stays clean; only line 3 is flagged.
 bb: int = 5
 bb = 6
 bb: str = "hi"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   bb @ 1:1 -> <no-type>
   bb @ 2:1 -> <no-type>
@@ -125,7 +125,7 @@ same keeps the rule simple to teach.
 ### INPUT ###
 bb: int = 5
 bb: int = 6
-### STDOUT ###
+### CHECK ###
 # Identifier types
   bb @ 1:1 -> <no-type>
   bb @ 2:1 -> <no-type>
@@ -145,7 +145,7 @@ different shape. Locks the new parens behavior.
 ### INPUT ###
 xs: (int|str)[] = [1, "two", 3]
 y = xs[0]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   y @ 2:1 -> <no-type>
@@ -167,7 +167,7 @@ fired a spurious RAD30001 because TypingListT used invariant
 element-type equality.
 ### INPUT ###
 xs: (int|str)[] = [1, 2, 3]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
 
@@ -183,7 +183,7 @@ ListCovarianceWidensStrElementToUnion
 Same as the int case, with a str[] source literal.
 ### INPUT ###
 xs: (int|str)[] = ["a", "b"]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
 
@@ -203,7 +203,7 @@ union vs flat) and IsAssignableFrom used invariant element
 equality. Locks the nested-paren-union bug fix.
 ### INPUT ###
 xs: ((int|str)|bool)[] = [1, "hi", true]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
 
@@ -219,7 +219,7 @@ ListCovarianceNestedParenUnionRightAssoc
 Mirror of the left-associative nested-paren-union case.
 ### INPUT ###
 xs: (int|(str|bool))[] = [1, "hi", true]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
 
@@ -237,7 +237,7 @@ elements are assignable to the target elements. `str[]` into
 `int[]` must still fire RAD30001.
 ### INPUT ###
 xs: int[] = ["a"]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
 
@@ -255,7 +255,7 @@ int, str, or null. Confirms `?` attaches to the whole group.
 ### INPUT ###
 x: (int|str)? = null
 y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   y @ 2:1 -> <no-type>
@@ -280,7 +280,7 @@ fn process(cb: fn(int) -> bool):
     print(cb(5))
 
 process(fn(x: int) -> bool: x > 0)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   cb @ 2:11 -> fn(int) -> bool

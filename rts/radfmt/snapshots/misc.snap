@@ -3,7 +3,7 @@
 ### INPUT ###
 return  1
 yield  2
-### STDOUT ###
+### FORMATTED ###
 return 1
 yield 2
 
@@ -12,7 +12,7 @@ yield 2
 ### INPUT ###
 x = ( 1 + 2 ) * 3
 y = a and ( b or c )
-### STDOUT ###
+### FORMATTED ###
 x = (1 + 2) * 3
 y = a and (b or c)
 
@@ -22,7 +22,7 @@ y = a and (b or c)
 a = 3.140
 b = 100
 c = true
-### STDOUT ###
+### FORMATTED ###
 a = 3.140
 b = 100
 c = true
@@ -32,7 +32,7 @@ c = true
 ### INPUT ###
 #!/usr/bin/env rad
 x=1
-### STDOUT ###
+### FORMATTED ###
 #!/usr/bin/env rad
 x = 1
 
@@ -43,7 +43,7 @@ x = 1
 A short description.
 ---
 x = 1
-### STDOUT ###
+### FORMATTED ###
 ---
 A short description.
 ---

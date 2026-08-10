@@ -6,7 +6,7 @@ the helpful "Rad spells nullable types as T?" suggestion.
 Regression lock for that path.
 ### INPUT ###
 a: int|null = null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
 
@@ -29,7 +29,7 @@ wrapping the union in a fn_param_or_return_type.
 ### INPUT ###
 fn f(x: int|null):
     print(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   x @ 2:11 -> int
@@ -50,7 +50,7 @@ the fn_lambda node when the param annotation has the bad
 `int|null` shape.
 ### INPUT ###
 f = fn(x: int|null): x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 1:1 -> <no-type>
   x @ 1:22 -> int
@@ -72,7 +72,7 @@ T? suggestion. Now the suggestion is attached.
 ### INPUT ###
 fn process(cb: fn(int|null) -> int):
     print(cb(1))
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   cb @ 2:11 -> fn(int) -> int
@@ -96,7 +96,7 @@ the user gets exactly one help hint.
 ### INPUT ###
 fn f() -> int|null:
     return null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -117,7 +117,7 @@ the in-union case above. Previously fired a generic
 users at the canonical nullable spelling.
 ### INPUT ###
 a: null = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
 
@@ -141,7 +141,7 @@ fn f(x: int?):
         a = x
     else:
         c: null = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   a @ 3:9 -> <no-type>
@@ -167,7 +167,7 @@ annotation) is fine and must not trigger the bare-null
 suggestion. The check is gated on type-annotation parents.
 ### INPUT ###
 x = null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
 

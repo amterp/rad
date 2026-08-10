@@ -9,7 +9,7 @@ fn f(x: ["a", "b", "c"]):
         a = x
     else:
         b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> ["a", "b", "c"]
   a @ 3:9 -> <no-type>
@@ -36,7 +36,7 @@ fn f(x: ["a", "b", "c"]):
         a = x
     else:
         b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> ["a", "b", "c"]
   a @ 3:9 -> <no-type>
@@ -64,7 +64,7 @@ fn f(x: ["a", "b", "c"]):
         a = x
     else:
         b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> ["a", "b", "c"]
   a @ 3:9 -> <no-type>
@@ -89,7 +89,7 @@ fn f(x: ["a", "b", "c"]):
         rest = x
     else:
         only_a = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> ["a", "b", "c"]
   rest @ 3:9 -> <no-type>
@@ -117,7 +117,7 @@ fn f(x: str):
         a = x
     else:
         b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> str
   a @ 3:9 -> <no-type>
@@ -149,7 +149,7 @@ fn open(mode: ["read", "write"]):
 open("read")
 open("write")
 open("append")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   mode @ 2:11 -> ["read", "write"]
@@ -175,7 +175,7 @@ fn f(x: str):
     if x in ["a", "b"]:
         a = x
     b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> str
   a @ 3:9 -> <no-type>
@@ -204,7 +204,7 @@ fn f(x: str):
         a = x
     else:
         b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> str
   a @ 3:9 -> <no-type>

@@ -10,7 +10,7 @@ x = parse_int("foo") catch:
     print(x)
     yield 0
 y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
@@ -35,7 +35,7 @@ error arm specifically.
 x: int|error = parse_int("hi") catch:
     print(x)
     yield 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   parse_int @ 1:16 -> dynamic
@@ -60,7 +60,7 @@ ast_checks.go walkASTForReturn gap.
 x = parse_int("foo") catch:
     yield 99
 print(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic

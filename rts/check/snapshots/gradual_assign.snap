@@ -9,7 +9,7 @@ fn collect() -> str[]:
     out = []
     out = out + ["a"]
     return out
-### STDOUT ###
+### CHECK ###
 # Identifier types
   out @ 2:5 -> <no-type>
   out @ 3:5 -> <no-type>
@@ -30,7 +30,7 @@ EmptyListIntoTypedLocal
 typed-list local without a seed value.
 ### INPUT ###
 xs: str[] = []
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
 
@@ -49,7 +49,7 @@ both fit `str?`).
 ### INPUT ###
 fn pick_or_none(s: str) -> str?:
     return s == "x" ? s : null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   s @ 2:12 -> str
   s @ 2:23 -> str
@@ -70,7 +70,7 @@ any-like, bare list is gradual).
 ### INPUT ###
 fn first_items(d) -> list:
     return d["items"] ?? []
-### STDOUT ###
+### CHECK ###
 # Identifier types
   d @ 2:12 -> dynamic
 
@@ -92,7 +92,7 @@ items = ["a,b", "c,d"]
 items = sort(items)
 for v in items:
     split(v, ",")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   items @ 1:1 -> <no-type>
   items @ 2:1 -> <no-type>
@@ -119,7 +119,7 @@ clean list append rather than a poisoned union op.
 defaults = ["a", "b"]
 acc = true ? defaults : []
 acc += "x,y".split(",")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   defaults @ 1:1 -> <no-type>
   acc @ 2:1 -> <no-type>

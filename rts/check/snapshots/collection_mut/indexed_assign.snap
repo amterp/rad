@@ -6,7 +6,7 @@ with no diagnostic. The element type matches.
 ### INPUT ###
 xs: int[] = [1, 2, 3]
 xs[0] = 99
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   xs @ 2:1 -> int[]
@@ -26,7 +26,7 @@ declared int element type.
 ### INPUT ###
 xs: int[] = [1, 2, 3]
 xs[0] = "wrong"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   xs @ 2:1 -> int[]
@@ -44,7 +44,7 @@ TypedMapIndexedAssignOk
 ### INPUT ###
 m: { str: int } = { "a": 1 }
 m["b"] = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   m @ 1:1 -> <no-type>
   m @ 2:1 -> { str: int }
@@ -63,7 +63,7 @@ to the map's int value type.
 ### INPUT ###
 m: { str: int } = { "a": 1 }
 m["b"] = "wrong"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   m @ 1:1 -> <no-type>
   m @ 2:1 -> { str: int }
@@ -82,7 +82,7 @@ to the assignment.
 ### INPUT ###
 fn f(xs: int[]):
     xs[0] = "wrong"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 2:5 -> int[]
 
@@ -103,7 +103,7 @@ intrusive for scripts that build mixed lists gradually.
 ### INPUT ###
 xs = [1, 2, 3]
 xs[0] = "anything"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   xs @ 2:1 -> int[]
@@ -122,7 +122,7 @@ distinct from `xs: int[]`. Indexed assign skips the check.
 ### INPUT ###
 xs: list = [1, 2, 3]
 xs[0] = "anything"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   xs @ 2:1 -> int[]
@@ -140,7 +140,7 @@ OpenMapAnnotationSkipsCheck
 ### INPUT ###
 m: map = { "a": 1 }
 m["b"] = "anything"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   m @ 1:1 -> <no-type>
   m @ 2:1 -> { str: int }
@@ -161,7 +161,7 @@ prefix type walker that's deferred.
 ### INPUT ###
 fn f(m: { "a": int[] }):
     m["a"][0] = "wrong"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   m @ 2:5 -> { "a": int[] }
 
@@ -180,7 +180,7 @@ surface and isn't part of Phase 6. No diagnostic.
 ### INPUT ###
 fn f(obj: { "x": int }):
     obj.x = "wrong"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   obj @ 2:5 -> { "x": int }
 
@@ -200,7 +200,7 @@ and skip the check.
 ### INPUT ###
 fn f(xs):
     xs[0] = "anything"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 2:5 -> dynamic
 
@@ -220,7 +220,7 @@ one diagnostic.
 ### INPUT ###
 xs: int[] = [1, 2, 3]
 xs[0] = 1 + "not a number"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   xs @ 2:1 -> int[]
@@ -242,7 +242,7 @@ precise than declared) so the mismatch still fires inside the guard.
 fn f(xs: int[]?):
     if xs != null:
         xs[0] = "wrong"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 2:8 -> int[]?
   xs @ 3:9 -> int[]

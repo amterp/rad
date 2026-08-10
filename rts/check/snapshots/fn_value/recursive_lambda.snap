@@ -12,7 +12,7 @@ fact = fn(n: int):
     if n <= 1:
         return 1
     return fact(n - 1) * n
-### STDOUT ###
+### CHECK ###
 # Identifier types
   fact @ 1:1 -> <no-type>
   n @ 2:8 -> int
@@ -36,7 +36,7 @@ hoisted fns.
 ### INPUT ###
 loop = fn(x: int):
     return loop(x + 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   loop @ 1:1 -> <no-type>
   loop @ 2:12 -> fn(int) -> never
@@ -61,7 +61,7 @@ pick = fn(x: int):
     if x == 0:
         return 0
     return pick(x - 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   pick @ 1:1 -> <no-type>
   x @ 2:8 -> int
@@ -89,7 +89,7 @@ fact = fn(n: int):
     return fact(n - 1) * n
 
 result = fact(5)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   fact @ 1:1 -> <no-type>
   n @ 2:8 -> int
@@ -118,7 +118,7 @@ fact: fn(int) -> int = fn(n: int):
     if n <= 1:
         return 1
     return fact(n - 1) * n
-### STDOUT ###
+### CHECK ###
 # Identifier types
   fact @ 1:1 -> <no-type>
   n @ 2:8 -> int

@@ -7,7 +7,7 @@ RAD10009 "Unexpected '# ...'".
 ### INPUT ###
 # helper for X
 print("hi")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -29,7 +29,7 @@ args:
     name str # the name to greet
 # helper comment
 print(name)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -47,7 +47,7 @@ Line-one shebang is grammar-handled and must produce no diagnostics.
 ### INPUT ###
 #!/usr/bin/env rad
 print("hi")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:1 -> dynamic
 
@@ -65,7 +65,7 @@ after `=`), the heuristic must not fire - we fall back to the generic
 diagnostics rather than risk a wrong RAD10023 span.
 ### INPUT ###
 x = 5 # trailing comment
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   comment @ 1:18 -> dynamic

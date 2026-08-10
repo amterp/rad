@@ -8,7 +8,7 @@ fn f(x: int?):
     if x != null:
         y = x
     z = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   y @ 3:9 -> <no-type>
@@ -35,7 +35,7 @@ fn f(x: int?):
     if x == null:
         return
     y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   y @ 4:5 -> <no-type>
@@ -60,7 +60,7 @@ fn f(x: int):
         y = x
     else:
         z = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int
   y @ 3:9 -> <no-type>
@@ -85,7 +85,7 @@ assignable to slots that admit null. A bare `a: int = null`
 fires a type-mismatch diagnostic.
 ### INPUT ###
 a: int = null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
 
@@ -102,7 +102,7 @@ NullLiteralAcceptedByOptionalSlot
 TypingNullT flows freely into T? slots.
 ### INPUT ###
 a: int? = null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
 
@@ -124,7 +124,7 @@ fn f(x: int?):
         a = x
     else:
         b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   a @ 3:9 -> <no-type>
@@ -153,7 +153,7 @@ fn maybe(b: bool):
     if b:
         return 5
     return null
-### STDOUT ###
+### CHECK ###
 # Identifier types
   b @ 2:8 -> bool
 
@@ -175,7 +175,7 @@ fn f(x: int?):
     if x:
         a = x
     b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   a @ 3:9 -> <no-type>
@@ -202,7 +202,7 @@ where there isn't one.
 fn f(x: int):
     if x:
         a = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int
   a @ 3:9 -> <no-type>
@@ -239,7 +239,7 @@ x = maybe(2)
 if x != null:
     a = x
 b = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   n @ 2:8 -> int
   n @ 4:8 -> int

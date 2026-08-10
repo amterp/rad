@@ -11,7 +11,7 @@ fn f(x: int?):
         print("missing")
         return
     y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   print @ 3:9 -> dynamic
@@ -40,7 +40,7 @@ fn f(x: int?):
         else:
             return
     y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   y @ 7:5 -> <no-type>
@@ -65,7 +65,7 @@ fn f(x: int?):
     if x == null:
         exit(1)
     y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   exit @ 3:9 -> dynamic
@@ -94,7 +94,7 @@ fn f(x: ["a", "b"]):
         case "b":
             return
     y = "unreachable"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> ["a", "b"]
   y @ 7:5 -> <no-type>
@@ -118,7 +118,7 @@ fn f():
         if true:
             break
     y = "ran"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   y @ 5:5 -> <no-type>
 

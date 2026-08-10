@@ -7,7 +7,7 @@ a = switch num:
         print(30, 40)
         yield 30
     default -> 50
-### STDOUT ###
+### CST ###
 B: [  0, 104] PS: [0,  0] PE: [5, 17] source_file
 B: [  0, 104] PS: [0,  0] PE: [5, 17]   assign
 B: [  0,   1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -173,7 +173,7 @@ B: [102, 104] PS: [5, 15] PE: [5, 17]                               delegate: in
 B: [102, 104] PS: [5, 15] PE: [5, 17]                                 root: primary_expr
 B: [102, 104] PS: [5, 15] PE: [5, 17]                                   literal
 B: [102, 104] PS: [5, 15] PE: [5, 17]                                     int `50`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [5, 17] SourceFile
 PS: [0,  0] PE: [5, 17]   Assign
 PS: [0,  0] PE: [0,  1]     Identifier "a"

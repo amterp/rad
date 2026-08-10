@@ -14,7 +14,7 @@ fn f(x: ["a", "b", "c"]):
         else:
             log = "CCC"
     after = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> ["a", "b", "c"]
   log @ 3:9 -> <no-type>
@@ -47,7 +47,7 @@ fn f(x: int?):
     else:
         log = "fail"
     after = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   log @ 3:9 -> <no-type>
@@ -80,7 +80,7 @@ fn f(x: ["a", "b", "c"]):
         case "c":
             log = 3
     after = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> ["a", "b", "c"]
   log @ 4:13 -> <no-type>

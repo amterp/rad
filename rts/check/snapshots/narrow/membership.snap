@@ -10,7 +10,7 @@ flag-parsing loop.
 fn g(xs: str[], f: str):
     if f in xs:
         n = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -37,7 +37,7 @@ receiver node for the UFCS form, so both paths have to resolve it.
 fn g(xs: str[], f: str):
     if f in xs:
         n = index_of(xs, f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -65,7 +65,7 @@ is null, so an empty search target loses this hint.
 fn g(s: str, sub: str):
     if sub in s:
         n = s.index_of(sub) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   sub @ 2:8 -> str
   s @ 2:15 -> str
@@ -93,7 +93,7 @@ between the operands, so nothing can invalidate the fact.
 fn g(xs: str[], f: str):
     if f in xs and xs.index_of(f) > 0:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -118,7 +118,7 @@ Baseline: without a guard the null is real and the hint is correct.
 ### INPUT ###
 fn g(xs: str[], f: str):
     n = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   n @ 2:5 -> <no-type>
   xs @ 2:9 -> str[]
@@ -144,7 +144,7 @@ fn g(xs: str[], f: str):
     if f in xs:
         n = 0
     m = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -180,7 +180,7 @@ fn g(xs: str[], f: str):
         return
     xs = []
     m = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -212,7 +212,7 @@ fn g(xs: str[], f: str):
         n = 0
     else:
         m = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -241,7 +241,7 @@ symbol pair, so this can't collide.
 fn g(xs: str[], ys: str[], f: str):
     if f in ys:
         n = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   ys @ 2:13 -> str[]
@@ -271,7 +271,7 @@ fn g(xs: str[], f: str):
     if f in xs:
         xs = []
         n = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -300,7 +300,7 @@ while `xs.index_of(f, n=1)` returns null.
 fn g(xs: str[], f: str):
     if f in xs:
         n = xs.index_of(f, n=1) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -329,7 +329,7 @@ fn g(xs: str[], f: str) -> fn() -> int:
     if f in xs:
         return fn() xs.index_of(f) + 1
     return fn() 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:13 -> str[]
@@ -356,7 +356,7 @@ of scope.
 fn g(xs: str[], f: str):
     if f not in xs:
         n = xs.index_of(f) + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   f @ 2:8 -> str
   xs @ 2:17 -> str[]

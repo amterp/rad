@@ -11,7 +11,7 @@ fn greet(label: int):
     print(label)
 
 greet(name)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 5:5 -> dynamic
   label @ 5:11 -> int
@@ -39,7 +39,7 @@ fn first(xs: str[]) -> str:
     return xs[0]
 
 print(first(names))
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 5:12 -> str[]
   print @ 7:1 -> dynamic
@@ -70,7 +70,7 @@ fn on_build():
 
 fn consume_int(label: int):
     print(label)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   on_build @ 3:11 -> fn() -> void
   consume_int @ 6:5 -> fn(int) -> void
@@ -107,7 +107,7 @@ fn maybe_str(s: str?):
 
 need_str(name)
 maybe_str(name)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 5:5 -> dynamic
   s @ 5:11 -> str
@@ -142,7 +142,7 @@ args:
 print(items.join(","))
 items = items.join(",")
 print(items.upper())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   items @ 4:7 -> str[]
@@ -169,7 +169,7 @@ Error. Only args-block (mandatory) types flow-type.
 ### INPUT ###
 x: int = 5
 x = "hi"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   x @ 2:1 -> <no-type>

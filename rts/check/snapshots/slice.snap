@@ -14,7 +14,7 @@ for w in tail:
     split(w, ",")
 rest = words[:1] + words[2:]
 rest += ["d"]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   words @ 1:1 -> <no-type>
   tail @ 2:1 -> <no-type>
@@ -45,7 +45,7 @@ Strings slice too, and to a str rather than a list of characters.
 name = "hello"
 head = name[:2]
 split(head, "e")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 1:1 -> <no-type>
   head @ 2:1 -> <no-type>
@@ -68,7 +68,7 @@ result stays permissive rather than being pinned to a guess.
 ### INPUT ###
 data = parse_json("[]")
 part = data[1:]
-### STDOUT ###
+### CHECK ###
 # Identifier types
   data @ 1:1 -> <no-type>
   parse_json @ 1:8 -> dynamic

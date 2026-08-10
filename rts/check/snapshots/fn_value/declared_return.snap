@@ -6,7 +6,7 @@ checked against it. Mismatch fires at the return statement.
 ### INPUT ###
 fn cb(x: int) -> bool:
     return "hi"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -26,7 +26,7 @@ fn cb(x: int) -> bool:
     if x > 0:
         return 1
     return "hi"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int
 
@@ -46,7 +46,7 @@ This is the happy path.
 ### INPUT ###
 fn cb(x: int) -> bool:
     return x > 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> int
 
@@ -69,7 +69,7 @@ fn dyn() -> any:
 
 fn cb(x: int) -> bool:
     return dyn()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   dyn @ 5:12 -> fn() -> any
 
@@ -91,7 +91,7 @@ rejected the generic list and fired a spurious mismatch.
 ### INPUT ###
 fn f() -> any[]:
     return []
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -112,7 +112,7 @@ the inner declaration, so no diagnostic.
 fn outer() -> bool:
     fn inner() -> int:
         return 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 

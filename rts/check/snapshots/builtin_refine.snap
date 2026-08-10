@@ -9,7 +9,7 @@ items = ["b", "a"]
 items = items.sort()
 for v in items:
     split(v, ",")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   items @ 1:1 -> <no-type>
   items @ 2:1 -> <no-type>
@@ -40,7 +40,7 @@ purely to satisfy the checker.
 xs = [3, 1, 2]
 ys = ["c", "a", "b"]
 a, b = sort(xs, ys)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   ys @ 2:1 -> <no-type>
@@ -70,7 +70,7 @@ wide `list|str`, which distributes as dynamic|str / dynamic|null.
 xs = [3, 1, 2]
 s = "cab"
 a, b = sort(xs, s)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   s @ 2:1 -> <no-type>
@@ -98,7 +98,7 @@ wrongly-collapsed int it would be if only the written args (0, 10) were seen.
 ### INPUT ###
 v = 1.5
 r = v.clamp(0, 10)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   v @ 1:1 -> <no-type>
   r @ 2:1 -> <no-type>
@@ -121,7 +121,7 @@ recovered for the UFCS form too.
 ### INPUT ###
 n = 5
 r = n.clamp(0, 10)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   n @ 1:1 -> <no-type>
   r @ 2:1 -> <no-type>
@@ -145,7 +145,7 @@ into str-typed parameters, instead of dragging an int[] arm nobody can hit.
 ### INPUT ###
 content = read_file("f.txt").content
 split(content, "\n")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   content @ 1:1 -> <no-type>
   read_file @ 1:11 -> dynamic
@@ -166,7 +166,7 @@ default to str. Reading the written kwarg (not just the signature default) is
 what makes the refinement honest rather than a blanket assumption.
 ### INPUT ###
 content = read_file("f.bin", mode="bytes").content
-### STDOUT ###
+### CHECK ###
 # Identifier types
   content @ 1:1 -> <no-type>
   read_file @ 1:11 -> dynamic
@@ -192,7 +192,7 @@ here only because it shares the snippet.
 ### INPUT ###
 m = "bytes"
 content = read_file("f.bin", mode=m).content
-### STDOUT ###
+### CHECK ###
 # Identifier types
   m @ 1:1 -> <no-type>
   content @ 2:1 -> <no-type>
@@ -218,7 +218,7 @@ pairs = [["a", "b"], ["c", "d"]]
 labels = pairs.map(fn(x) "{x[0]}/{x[1]}")
 for label in labels:
     split(label, "/")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   pairs @ 1:1 -> <no-type>
   labels @ 2:1 -> <no-type>
@@ -247,7 +247,7 @@ same key type to the lambda's return type.
 ### INPUT ###
 scores = {"a": 1, "b": 2}
 doubled = scores.map(fn(k, v) v * 2)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   scores @ 1:1 -> <no-type>
   doubled @ 2:1 -> <no-type>
@@ -271,7 +271,7 @@ to refine, so the signature's `map|list` stands.
 ### INPUT ###
 data = parse_json("[]")
 mapped = data.map(fn(x) x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   data @ 1:1 -> <no-type>
   parse_json @ 1:8 -> dynamic
@@ -297,7 +297,7 @@ is exact.
 ### INPUT ###
 nums = [1, 2, 3, 4]
 evens = nums.filter(fn(x) x % 2 == 0)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   nums @ 1:1 -> <no-type>
   evens @ 2:1 -> <no-type>
@@ -323,7 +323,7 @@ names = ["a", "b"]
 flipped = names.reverse()
 for n in flipped:
     split(n, ",")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   names @ 1:1 -> <no-type>
   flipped @ 2:1 -> <no-type>
@@ -351,7 +351,7 @@ omitted `_step` defaults to the int literal 1, so it needs no special care.
 xs = range(0, 10)
 for x in xs:
     abs(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   range @ 1:6 -> dynamic
@@ -373,7 +373,7 @@ Negative case: one float argument puts floats back in play, so the wide
 return stands.
 ### INPUT ###
 xs = range(0, 1, 0.25)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   range @ 1:6 -> dynamic
@@ -396,7 +396,7 @@ the unhandled-fallible warning must still fire on the refined call.
 content = read_file("f.txt").content
 ### ARGS ###
 --strict
-### STDOUT ###
+### CHECK ###
 # Identifier types
   content @ 1:1 -> <no-type>
   read_file @ 1:11 -> dynamic

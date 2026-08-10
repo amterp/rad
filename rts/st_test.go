@@ -14,7 +14,7 @@ import (
 var stSuite = snap.Suite{
 	Run:      runSTCase,
 	Inputs:   []snap.Input{{Name: "INPUT"}},
-	Outputs:  []snap.Output{{Name: "STDOUT"}, {Name: "STDERR"}},
+	Outputs:  []snap.Output{{Name: "CST"}, {Name: "AST"}},
 	Parallel: true,
 }
 
@@ -32,7 +32,7 @@ func runSTCase(t *testing.T, c *snap.Case) {
 	defer parser.Close()
 
 	tree := parser.Parse(input)
-	c.Out("STDOUT", tree.Dump())
+	c.Out("CST", tree.Dump())
 
 	// A tree with parse errors has no AST to dump, and conversion can panic on
 	// inputs the converter cannot represent (out-of-range numbers, say). Both
@@ -49,5 +49,5 @@ func runSTCase(t *testing.T, c *snap.Case) {
 			astDump = rl.AstDump(rts.ConvertCST(tree.Root(), input, "test.rad"))
 		}()
 	}
-	c.Out("STDERR", astDump)
+	c.Out("AST", astDump)
 }

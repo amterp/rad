@@ -11,7 +11,7 @@ fn f(name: ["alice", "bob", "charlie"]):
             b = name
         case "charlie":
             c = name
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["alice", "bob", "charlie"]
   a @ 4:13 -> <no-type>
@@ -43,7 +43,7 @@ fn f(name: ["a", "b", "c"]):
             ab = name
         case "c":
             c = name
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["a", "b", "c"]
   ab @ 4:13 -> <no-type>
@@ -69,7 +69,7 @@ fn f(name: ["a", "b"]):
             x = 1
         case "b":
             x = 2
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["a", "b"]
   x @ 4:13 -> <no-type>
@@ -92,7 +92,7 @@ fn f(name: ["a", "b", "c"]):
             x = 1
         case "b":
             x = 2
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["a", "b", "c"]
   x @ 4:13 -> <no-type>
@@ -115,7 +115,7 @@ fn f(name: ["a", "b", "c"]):
             x = 1
         default:
             x = 99
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["a", "b", "c"]
   x @ 4:13 -> <no-type>
@@ -136,7 +136,7 @@ fn f(name: str):
     switch name:
         case "a":
             x = 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> str
   x @ 4:13 -> <no-type>
@@ -164,7 +164,7 @@ fn classify(s: str):
             x = 2
         default:
             x = 99
-### STDOUT ###
+### CHECK ###
 # Identifier types
   s @ 2:12 -> str
   x @ 4:13 -> <no-type>
@@ -194,7 +194,7 @@ fn classify(s: str):
             x = 2
         default:
             x = 99
-### STDOUT ###
+### CHECK ###
 # Identifier types
   s @ 2:12 -> str
   x @ 4:13 -> <no-type>
@@ -224,7 +224,7 @@ fn classify(n: int):
             x = 2
         default:
             x = 99
-### STDOUT ###
+### CHECK ###
 # Identifier types
   n @ 2:12 -> int
   x @ 4:13 -> <no-type>
@@ -256,7 +256,7 @@ fn classify(s: str):
             x = 2
         default:
             x = 99
-### STDOUT ###
+### CHECK ###
 # Identifier types
   foo @ 1:1 -> <no-type>
   bar @ 2:1 -> <no-type>
@@ -297,7 +297,7 @@ fn f(name: ["a", "b", "c"]):
             x = 3
         case "wat":
             x = 4
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["a", "b", "c"]
   x @ 4:13 -> <no-type>
@@ -326,7 +326,7 @@ fn f(name: ["a", "b"]):
             x = 1
         case "b":
             x = 2
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> ["a", "b"]
   x @ 4:13 -> <no-type>
@@ -354,7 +354,7 @@ fn f(name: str):
             x = 1
         case "wat":
             x = 2
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 2:12 -> str
   x @ 4:13 -> <no-type>

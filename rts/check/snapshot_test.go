@@ -23,7 +23,7 @@ var checkSuite = snap.Suite{
 		{Name: "INPUT"},
 		{Name: "ARGS", List: true},
 	},
-	Outputs:  []snap.Output{{Name: "STDOUT"}},
+	Outputs:  []snap.Output{{Name: "CHECK"}},
 	Parallel: true,
 }
 
@@ -60,7 +60,7 @@ func runCheckCase(t *testing.T, c *snap.Case) {
 	// Resolved and Types may be nil when the converter bailed on malformed input;
 	// DumpForSnapshot tolerates that, which is what the parser-error heuristic
 	// cases exercise.
-	c.Out("STDOUT", check.DumpForSnapshot(file, result.Types, result.Resolved, result.Diagnostics))
+	c.Out("CHECK", check.DumpForSnapshot(file, result.Types, result.Resolved, result.Diagnostics))
 }
 
 // safeConvertCST wraps rts.ConvertCST with a panic recover, matching the

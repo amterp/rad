@@ -3,7 +3,7 @@ ForOverListBindsElement
 ### INPUT ###
 for i in [1, 2, 3]:
     a = i
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 2:5 -> <no-type>
   i @ 2:9 -> int
@@ -20,7 +20,7 @@ ForOverStringBindsChar
 ### INPUT ###
 for c in "hello":
     a = c
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 2:5 -> <no-type>
   c @ 2:9 -> str
@@ -37,7 +37,7 @@ ForOverMapBindsKey
 ### INPUT ###
 for k in {"a": 1, "b": 2}:
     a = k
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 2:5 -> <no-type>
   k @ 2:9 -> str
@@ -55,7 +55,7 @@ ForOverTypedListVarIsElement
 fn f(xs: int[]):
     for i in xs:
         a = i
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 2:14 -> int[]
   a @ 3:9 -> <no-type>
@@ -75,7 +75,7 @@ ForOverUnknownIterFallsBackDynamic
 ### INPUT ###
 for v in unknown_thing():
     a = v
-### STDOUT ###
+### CHECK ###
 # Identifier types
   unknown_thing @ 1:10 -> dynamic
   a @ 2:5 -> <no-type>
@@ -97,7 +97,7 @@ not Dynamic. Each arm contributes its element type and we union.
 fn iter(xs: int[]|str[]):
     for v in xs:
         a = v
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 2:14 -> int[]|str[]
   a @ 3:9 -> <no-type>
@@ -125,7 +125,7 @@ fn iter(xs: int[]|str[]):
 
 fn consume(x: int):
     print(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 2:14 -> int[]|str[]
   consume @ 3:9 -> fn(int) -> void
@@ -156,7 +156,7 @@ fn process(d: {str: int}):
 
 fn consume_str(s: str):
     print(s)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   d @ 2:17 -> { str: int }
   consume_str @ 3:9 -> fn(str) -> void
@@ -185,7 +185,7 @@ fn process(d: {str: int}):
     for k, v in d:
         a = k
         b = v
-### STDOUT ###
+### CHECK ###
 # Identifier types
   d @ 2:17 -> { str: int }
   a @ 3:9 -> <no-type>

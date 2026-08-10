@@ -6,7 +6,7 @@ inferred from the body's return statements.
 ### INPUT ###
 fn add_one(x: int):
     return x + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> int
 
@@ -25,7 +25,7 @@ the return type.
 ### INPUT ###
 fn say_hi(name: str):
     print("hi " + name)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   name @ 2:19 -> str
@@ -46,7 +46,7 @@ fn pick(flag: bool):
     if flag:
         return 1
     return "fallback"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   flag @ 2:8 -> bool
 
@@ -69,7 +69,7 @@ fn a():
 
 fn b():
     return 42
-### STDOUT ###
+### CHECK ###
 # Identifier types
   b @ 2:12 -> fn() -> int
 
@@ -90,7 +90,7 @@ a concrete type.
 ### INPUT ###
 fn loop_forever(x: int):
     return loop_forever(x + 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   loop_forever @ 2:12 -> fn(int) -> never
   x @ 2:25 -> int
@@ -113,7 +113,7 @@ fn factorial(n: int):
     if n <= 1:
         return 1
     return factorial(n - 1) * n
-### STDOUT ###
+### CHECK ###
 # Identifier types
   n @ 2:8 -> int
   factorial @ 4:12 -> fn(int) -> never
@@ -143,7 +143,7 @@ fn b(x: int):
     if x == 0:
         return "done"
     return a(x - 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int
   b @ 4:12 -> fn(int) -> never

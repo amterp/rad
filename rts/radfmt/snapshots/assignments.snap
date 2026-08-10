@@ -3,7 +3,7 @@
 ### INPUT ###
 x=1
 y   =   2
-### STDOUT ###
+### FORMATTED ###
 x = 1
 y = 2
 
@@ -11,7 +11,7 @@ y = 2
 [F13] Multi-assign
 ### INPUT ###
 a,b ,c = f()
-### STDOUT ###
+### FORMATTED ###
 a, b, c = f()
 
 ### TITLE ###
@@ -21,7 +21,7 @@ x  +=  1
 y -=2
 i++
 j  --
-### STDOUT ###
+### FORMATTED ###
 x += 1
 y -= 2
 i++
@@ -31,14 +31,14 @@ j--
 [F20] Arithmetic operators
 ### INPUT ###
 x = 1+2*3-4/5%6
-### STDOUT ###
+### FORMATTED ###
 x = 1 + 2 * 3 - 4 / 5 % 6
 
 ### TITLE ###
 [F20][F21] Boolean, comparison, and unary not
 ### INPUT ###
 ok = a>1 and b==2 or not c
-### STDOUT ###
+### FORMATTED ###
 ok = a > 1 and b == 2 or not c
 
 ### TITLE ###
@@ -46,6 +46,6 @@ ok = a > 1 and b == 2 or not c
 ### INPUT ###
 x:int=1
 msg : str = "hi"
-### STDOUT ###
+### FORMATTED ###
 x: int = 1
 msg: str = "hi"

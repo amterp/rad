@@ -6,7 +6,7 @@ fn myfoo(a) print("Hi, {a}")
 fn myfoo() 1 + 1
 fn myfoo(a):
     return a / 2
-### STDOUT ###
+### CST ###
 B: [ 0, 98] PS: [0,  0] PE: [4, 16] source_file
 B: [ 0, 22] PS: [0,  0] PE: [0, 22]   fn_named
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
@@ -163,7 +163,7 @@ B: [97, 98] PS: [4, 15] PE: [4, 16]                           delegate: indexed_
 B: [97, 98] PS: [4, 15] PE: [4, 16]                             root: primary_expr
 B: [97, 98] PS: [4, 15] PE: [4, 16]                               literal
 B: [97, 98] PS: [4, 15] PE: [4, 16]                                 int `2`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [4, 16] SourceFile
 PS: [0,  0] PE: [0, 22]   FnDef "myfoo" block=false
 PS: [0, 11] PE: [0, 22]     Call
