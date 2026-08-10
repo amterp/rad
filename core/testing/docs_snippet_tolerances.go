@@ -232,14 +232,14 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD20028"},
 		Reason:        "intermediate tutorial step: the script calls `parse_time` which the next step then defines. Demonstrates the build-up flow.",
 	},
-	"docs-web/docs/examples/epoch.md#bfc40cea": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "checker false positive: narrowing on conditional reassignment + list-of-pairs tuple unpacking type inference. The script is correct at runtime; the static checker's flow inference doesn't yet track the reassignment fully (commit-3-era narrowing has gaps for `if not x: x = ...` patterns) and treats `for tz, _ in tz_to_flag:` as if tz binds to the inner list rather than its first element.",
-	},
-	"docs-web/docs/examples/epoch.md#5706ef9d": {
-		ExpectedCodes: []string{"RAD30001"},
-		Reason:        "same checker false positive as #bfc40cea - this is the duplicated final-form snippet (preview + tutorial end).",
-	},
+	// #bfc40cea (the helper-fn step) and #5706ef9d (the final-form
+	// script + its preview duplicate) no longer need entries. Both
+	// carried a RAD30001 false positive from `for tz, _ in
+	// tz_to_flag:`, which the checker mistyped by assuming a two-var
+	// loop meant a map - so `tz` came out as the inner list rather
+	// than its first element, and failed parse_time's `tz: str`
+	// provably enough to gate. Multi-var loops now unpack the element
+	// across their targets, as the runtime always did.
 
 	// hm.md
 	// #4eb5a0f8 (the final-form script + its preview duplicate) no longer

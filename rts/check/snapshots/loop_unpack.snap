@@ -1,0 +1,116 @@
+### TITLE ###
+ListOfPairsUnpacksAcrossLoopVars
+### DESCRIPTION ###
+A multi-var for loop unpacks each element across its targets (runForLoopList),
+so iterating a list of pairs binds both vars to the inner element type. The
+checker used to assume two vars meant a map and fall back to binding the whole
+inner list to the first var, which made `tz` a str[] and turned any str-typed
+parameter it flowed into a provable - and therefore gating - mismatch. That
+false error is what `rad check` reported on the shipped epoch tutorial.
+### INPUT ###
+pairs = [["Europe/London", "GB"], ["Asia/Tokyo", "JP"]]
+for tz, flag in pairs:
+    split(tz, "/")
+    split(flag, "/")
+### STDOUT ###
+# Identifier types
+  pairs @ 1:1 -> <no-type>
+  pairs @ 2:17 -> str[][]
+  split @ 3:5 -> dynamic
+  tz @ 3:11 -> str
+  split @ 4:5 -> dynamic
+  flag @ 4:11 -> str
+
+# Symbol types
+  flag (loop): str
+  pairs (local): str[][]
+  tz (loop): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+ThreeLoopVarsUnpackToo
+### DESCRIPTION ###
+The old two-var-only branch bound nothing at all for three or more targets,
+leaving them untyped. Unpacking is arity-independent at runtime, so it is
+here too.
+### INPUT ###
+rows = [[1, 2, 3], [4, 5, 6]]
+for a, b, c in rows:
+    abs(a)
+    abs(b)
+    abs(c)
+### STDOUT ###
+# Identifier types
+  rows @ 1:1 -> <no-type>
+  rows @ 2:16 -> int[][]
+  abs @ 3:5 -> dynamic
+  a @ 3:9 -> int
+  abs @ 4:5 -> dynamic
+  b @ 4:9 -> int
+  abs @ 5:5 -> dynamic
+  c @ 5:9 -> int
+
+# Symbol types
+  a (loop): int
+  b (loop): int
+  c (loop): int
+  rows (local): int[][]
+
+# Diagnostics
+  (none)
+### TITLE ###
+MapStillIteratesAsKeyValue
+### DESCRIPTION ###
+The one shape where multiple vars don't unpack the element: a map iterates as
+(key, value) pairs. This is the case the old code was written for, and it must
+keep working - unpacking a map's keys across two vars would be wrong.
+### INPUT ###
+scores = {"a": 1, "b": 2}
+for name, score in scores:
+    split(name, ",")
+    abs(score)
+### STDOUT ###
+# Identifier types
+  scores @ 1:1 -> <no-type>
+  scores @ 2:20 -> { str: int }
+  split @ 3:5 -> dynamic
+  name @ 3:11 -> str
+  abs @ 4:5 -> dynamic
+  score @ 4:9 -> int
+
+# Symbol types
+  name (loop): str
+  score (loop): int
+  scores (local): { str: int }
+
+# Diagnostics
+  (none)
+### TITLE ###
+UnknownIterableStaysPermissive
+### DESCRIPTION ###
+Negative case: with nothing known about the element there is nothing to
+distribute, so every target stays permissive rather than being pinned to a
+guess the loop would then be diagnosed against.
+### INPUT ###
+data = parse_json("[]")
+for a, b in data:
+    abs(a)
+    abs(b)
+### STDOUT ###
+# Identifier types
+  data @ 1:1 -> <no-type>
+  parse_json @ 1:8 -> dynamic
+  data @ 2:13 -> any
+  abs @ 3:5 -> dynamic
+  a @ 3:9 -> dynamic
+  abs @ 4:5 -> dynamic
+  b @ 4:9 -> dynamic
+
+# Symbol types
+  a (loop): dynamic
+  b (loop): dynamic
+  data (local): any
+
+# Diagnostics
+  (none)
