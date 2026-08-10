@@ -42,7 +42,7 @@ Rad picks a shell to run your command in this order:
 
 ## Capturing Output
 
-Shell commands return three values: **exit code**, **stdout**, and **stderr**. You can capture anywhere from zero to all three of these values, depending on what you need.
+Shell commands produce three things: **stdout**, **stderr**, and an **exit code**. You can capture anywhere from zero to all three, depending on what you need.
 
 ### Capture Modes
 
@@ -56,36 +56,36 @@ When you don't assign any variables, all output goes to the terminal:
 $`ls -la`
 ```
 
-**2. Capture exit code only**
+**2. Capture stdout**
 
-Assign to one variable to capture just the exit code:
-
-```rad
-code = $`make test`
-```
-
-The exit code is captured as an `int`, but stdout and stderr still go to the terminal.
-
-**3. Capture exit code + stdout**
-
-Assign to two variables to capture the exit code and stdout:
+Assign to one variable to capture the command's output:
 
 ```rad
-code, stdout = $`git show 0dd21e6`
+stdout = $`git show 0dd21e6`
 ```
 
-The exit code and stdout are captured as an `int` and `str` respectively. Stderr still goes to the terminal.
-**Important:** When you capture stdout, it doesn't print to the terminal - it's redirected to your variable.
+Stdout is captured as a `str`. Stderr still goes to the terminal.
+**Important:** When you capture a stream, it stops printing to the terminal - it's redirected to your variable.
 
-**4. Capture all three**
+**3. Capture stdout + stderr**
 
-Assign to three variables to capture everything:
+Assign to two variables to capture both streams:
 
 ```rad
-code, stdout, stderr = $`npm install`
+stdout, stderr = $`npm install`
 ```
 
-All three values are captured. Nothing is printed to the terminal automatically.
+Both are captured as `str`. Nothing the command prints reaches the terminal.
+
+**4. Capture everything, including the exit code**
+
+Assign to three variables:
+
+```rad
+stdout, stderr, code = $`npm install`
+```
+
+The exit code is an `int`. It needs no capturing, so it comes last - and you often don't need it at all, because a non-zero exit already raises an error you handle with `catch:` (see [Error Handling](#error-handling) below).
 
 ### Named Assignment
 
@@ -102,21 +102,35 @@ stderr, stdout, code = $`ls`        // All three, any order
 ```
 
 This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
+It's also the only way to capture the exit code without also capturing the streams:
+`code = $cmd` leaves stdout and stderr going to the terminal.
 
 **The rule:** If ALL variables use exactly `code`, `stdout`, or `stderr`, assignment is by name. Otherwise, it's positional:
 
 ```rad
-// Positional - 'output' isn't a special name
-code, output = $`echo hi`           // output = stdout (by position)
-exit_code, out, err = $`ls`         // Assigned in order
+// Positional - neither name is reserved, so slots decide
+out, err = $`echo hi`               // out = stdout, err = stderr
+result, errors, status = $`ls`      // Assigned in (stdout, stderr, code) order
 ```
 
-This lets you write clear code like `stderr = $cmd` instead of `_, _, stderr = $cmd`.
+Note that the two rules agree as long as you keep to the canonical order - `stdout = $cmd` and
+`stdout, stderr = $cmd` mean the same thing whether Rad reads them by name or by position.
+
+!!! warning "Don't mix reserved and unreserved names"
+
+    One unreserved name drops the *whole* statement to positional, so a reserved name in the
+    wrong slot silently gets something else:
+
+    ```rad
+    code, output = $`echo hi`       // 'code' gets stdout!
+    ```
+
+    Rad warns about this ([RAD40018](../reference/errors.md)). Name them all, or name none.
 
 !!! tip "Silencing outputs"
 
-    You can use `_` to ignore specific outputs: `code, _ = $cmd` captures the code and ignores stdout.
-    For silent execution, capture everything: `_, _, _ = $cmd` - nothing will print to the terminal.
+    Use `_` to discard a stream you don't want printed: `_ = $cmd` swallows stdout,
+    and `_, _ = $cmd` swallows both streams for fully silent execution.
 
 ## Error Handling
 
@@ -407,7 +421,7 @@ Verifying that required tools are installed:
 tools = ["git", "docker", "make"]
 
 for tool in tools:
-    _, _, _ = $`which {tool}` catch:
+    _, _ = $`which {tool}` catch:
         print_err("Required tool not found: {tool}")
         print_err("Please install {tool} before running this script")
         exit(1)
@@ -421,13 +435,15 @@ print("All prerequisites installed ✅".green())
 - **Error handling:** Non-zero exit codes propagate errors unless handled with `catch:` blocks
 - **Capture modes:**
     - None: output goes to terminal
-    - Code only: `code = $cmd` (stdout/stderr to terminal)
-    - Code + stdout: `code, stdout = $cmd` (stderr to terminal)
-    - All three: `code, stdout, stderr = $cmd` (nothing to terminal)
+    - Stdout: `stdout = $cmd` (stderr to terminal)
+    - Stdout + stderr: `stdout, stderr = $cmd` (nothing to terminal)
+    - All three: `stdout, stderr, code = $cmd`
 - **Assignment semantics:**
     - **Named** when ALL variables are `code`, `stdout`, or `stderr` (order-independent)
-    - **Positional** otherwise (order matters)
+    - **Positional** otherwise, filling `(stdout, stderr, code)` in that order
+    - Mixing the two is the one trap: one unreserved name makes the whole statement positional
 - **Output routing:** Captured values don't print to the terminal (they're redirected to variables)
+- **The exit code comes last** because you rarely need it - a non-zero exit already raises an error
 - **Command forms:**
     - `` $`text {value}` ``: the text is shell, each interpolation is one argument, quoted for you
     - `$list`: an argument vector, run directly with no shell involved

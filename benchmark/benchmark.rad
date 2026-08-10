@@ -38,16 +38,16 @@ if skip_readme:
     $cmd
     exit()
 
-_, output = $cmd
-output = output[:-1]
+stdout = $cmd
+output = stdout[:-1]
 
 readme = read_file("README.md").content
 
-_, version = $`../bin/radd -v`
-version = replace(version, "\n", "")
+stdout = $`../bin/radd -v`
+version = replace(stdout, "\n", "")
 
-_, hash = $`git rev-parse --short HEAD`
-hash = replace(hash, "\n", "")
+stdout = $`git rev-parse --short HEAD`
+hash = replace(stdout, "\n", "")
 
 new_section = """
 ### {version} (Commit {hash}) ({now.date})

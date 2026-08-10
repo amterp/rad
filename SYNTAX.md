@@ -834,31 +834,34 @@ If an error propagates up to the root level of the script and doesn't get handle
 ```rad
 // Fails script if code != 0
 $`make build`
-code = $`cmd`
-code, stdout = $`cmd`
-code, stdout, stderr = $`cmd`
+stdout = $`cmd`
+stdout, stderr = $`cmd`
+stdout, stderr, code = $`cmd`
 ```
 
 ### Capture & assignment
 
-**Capture behavior** depends on how many variables you assign:
+**Capture behavior** depends on how many variables you assign. A stream you don't
+capture goes to the terminal; a stream you do capture goes only to your variable.
 
 ```rad
 $`cmd`                        // No capture, stdout/stderr → terminal
-code = $`cmd`                 // Capture code, stdout/stderr → terminal
-code, stdout = $`cmd`         // Capture code & stdout, stderr → terminal
-code, stdout, stderr = $`cmd` // Capture all
+stdout = $`cmd`               // Capture stdout, stderr → terminal
+stdout, stderr = $`cmd`       // Capture both
+stdout, stderr, code = $`cmd` // Capture both, plus the exit code
 ```
 
 **Assignment semantics** support both positional and *named* assignment.
 
-- Shell commands conceptually return **(code, stdout, stderr)** in that order.
+- Positional targets are filled **(stdout, stderr, code)** in that order. The exit
+  code is last: it needs no capturing, and a non-zero exit already raises a
+  catchable error, so it's the value you reach for least.
 - **Positional (default):** when variable names are arbitrary, assignment is by position.
 
 ```rad
-c, out = $`cmd`                     // c = code, out = stdout
-exit_code, output, err = $`cmd`     // exit_code = code, output = stdout, err = stderr
-myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional despite name)
+out = $`cmd`                        // out = stdout
+out, err = $`cmd`                   // out = stdout, err = stderr
+result, errors, status = $`cmd`     // result = stdout, errors = stderr, status = code
 ```
 
 - **Named:** if **all** variables are exactly `code`, `stdout`, or `stderr`, assignment is by name (order independent).
@@ -867,9 +870,19 @@ myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional
 stdout, code = $`cmd`     // stdout = stdout, code = code
 stderr = $`cmd`           // only capture stderr
 code, stderr = $`cmd`     // capture code and stderr
+code = $`cmd`             // only way to get the code without capturing a stream
 ```
 
 > **Rule:** If *all* variables use the exact names `code`, `stdout`, or `stderr`, uses named assignment. Otherwise, assignment is positional.
+
+The two rules agree on the canonical order, so `stdout = $cmd` and
+`stdout, stderr = $cmd` mean the same thing read either way. They disagree when
+you *mix* reserved and unreserved names, because one unreserved name makes the
+whole statement positional:
+
+```rad
+code, output = $`cmd`     // 'code' gets stdout! Warns: RAD40018
+```
 
 ### Handling failures with a `catch` block
 

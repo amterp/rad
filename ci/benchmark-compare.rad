@@ -15,8 +15,8 @@ print("🏃 Starting benchmark comparison...")
 print("Base branch: {base_ref}")
 
 // Get absolute path for PR directory
-_, pwd_output, _ = $`pwd`
-pr_dir = trim(pwd_output)
+stdout = $`pwd`
+pr_dir = trim(stdout)
 print("🔧 Working directory: {pr_dir}")
 
 // Install hyperfine if not available (CI only - assumes hyperfine available locally)

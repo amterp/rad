@@ -21,7 +21,9 @@ func Test_ShellCmd_NoModifiers(t *testing.T) {
 	assertNoErrors(t)
 }
 
-func Test_ShellCmd_SingleAssignment_CodeOnly(t *testing.T) {
+func Test_ShellCmd_SingleAssignment_NamedCodeCapturesNothing(t *testing.T) {
+	// `code` is a reserved name, so this is named assignment: the exit code
+	// needs no capture, and both streams still reach the terminal.
 	script := `code = $"echo test"`
 	setupAndRunCode(t, script, "--color=never")
 
@@ -35,8 +37,8 @@ func Test_ShellCmd_SingleAssignment_CodeOnly(t *testing.T) {
 	assertNoErrors(t)
 }
 
-func Test_ShellCmd_TwoAssignments_Positional(t *testing.T) {
-	script := `code, out = $"echo test"`
+func Test_ShellCmd_OneAssignment_Positional(t *testing.T) {
+	script := `out = $"echo test"`
 	setupAndRunCode(t, script, "--color=never")
 
 	assertShellInvoked(t, core.ShellInvocation{
@@ -49,8 +51,8 @@ func Test_ShellCmd_TwoAssignments_Positional(t *testing.T) {
 	assertNoErrors(t)
 }
 
-func Test_ShellCmd_ThreeAssignments_Positional(t *testing.T) {
-	script := `code, out, err = $"echo test"`
+func Test_ShellCmd_TwoAssignments_Positional(t *testing.T) {
+	script := `out, err = $"echo test"`
 	setupAndRunCode(t, script, "--color=never")
 
 	assertShellInvoked(t, core.ShellInvocation{
@@ -60,6 +62,79 @@ func Test_ShellCmd_ThreeAssignments_Positional(t *testing.T) {
 		IsQuiet:       false,
 		IsConfirm:     false,
 	})
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_ThreeAssignments_Positional(t *testing.T) {
+	script := `out, err, c = $"echo test"`
+	setupAndRunCode(t, script, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Command:       "echo test",
+		CaptureStdout: true,
+		CaptureStderr: true,
+		IsQuiet:       false,
+		IsConfirm:     false,
+	})
+	assertNoErrors(t)
+}
+
+// The next three tests pin the positional *order* - (stdout, stderr, code) -
+// rather than just which streams got captured. They need distinguishable
+// output, so they drive the shell mock instead of taking its empty default.
+func Test_ShellCmd_PositionalOrder_One(t *testing.T) {
+	script := `
+a = $"cmd"
+print("a={a}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT", "ERR", 0))
+	assertOnlyOutput(t, stdOutBuffer, "a=OUT\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_PositionalOrder_Two(t *testing.T) {
+	script := `
+a, b = $"cmd"
+print("a={a} b={b}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT", "ERR", 0))
+	assertOnlyOutput(t, stdOutBuffer, "a=OUT b=ERR\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_PositionalOrder_Three(t *testing.T) {
+	// Exit code last. It's 0 here because a non-zero exit would propagate
+	// before the print - see Test_ShellCmd_PositionalOrder_ThreeWithCatch.
+	script := `
+a, b, c = $"cmd"
+print("a={a} b={b} c={c} {type_of(c)}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT", "ERR", 0))
+	assertOnlyOutput(t, stdOutBuffer, "a=OUT b=ERR c=0 int\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_PositionalOrder_ThreeWithCatch(t *testing.T) {
+	// A `catch:` is the only way to observe a non-zero code: targets are
+	// assigned before the exit check, then the error propagates.
+	script := `
+a, b, c = $"cmd" catch:
+    print("a={a} b={b} c={c}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT", "ERR", 3))
+	assertOnlyOutput(t, stdOutBuffer, "a=OUT b=ERR c=3\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_NamedOrder_MatchesPositional(t *testing.T) {
+	// The canonical prefix reads the same either way - this is the property
+	// the (stdout, stderr, code) order buys us.
+	script := `
+stdout, stderr, code = $"cmd"
+print("{stdout} {stderr} {code}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT", "ERR", 0))
+	assertOnlyOutput(t, stdOutBuffer, "OUT ERR 0\n")
 	assertNoErrors(t)
 }
 
@@ -120,17 +195,23 @@ func Test_ShellCmd_NamedAssignment_StdoutAndStderr(t *testing.T) {
 }
 
 func Test_ShellCmd_MixedNaming_FallsBackToPositional(t *testing.T) {
-	script := `stderr, myvar = $"echo test"`
-	setupAndRunCode(t, script, "--color=never")
+	// Mixed naming falls back to positional, so the reserved name is bound by
+	// slot, not by meaning: `stderr` gets stdout and `myvar` gets stderr. The
+	// checker warns about exactly this shape (RAD40018).
+	script := `
+stderr, myvar = $"cmd"
+print("stderr={stderr} myvar={myvar}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT", "ERR", 0))
 
-	// Mixed naming falls back to positional: stderr gets code (0), myvar gets stdout
 	assertShellInvoked(t, core.ShellInvocation{
-		Command:       "echo test",
+		Command:       "cmd",
 		CaptureStdout: true,
-		CaptureStderr: false,
+		CaptureStderr: true,
 		IsQuiet:       false,
 		IsConfirm:     false,
 	})
+	assertOnlyOutput(t, stdOutBuffer, "stderr=OUT myvar=ERR\n")
 	assertNoErrors(t)
 }
 
@@ -272,8 +353,8 @@ confirm $"echo hi" catch:
 
 func Test_ShellCmd_Confirm_DeclineKeepsCaptures(t *testing.T) {
 	script := `
-code, out = confirm $"echo hi" catch:
-    print("code={code} out=[{out}]")
+out, err, code = confirm $"echo hi" catch:
+    print("code={code} out=[{out}] err=[{err}]")
 `
 	decline := func(title, prompt string) (bool, error) { return false, nil }
 	setupAndRun(t, NewTestParams(script, "--color=never").ConfirmResponder(decline))
@@ -283,7 +364,7 @@ code, out = confirm $"echo hi" catch:
 	// left undefined, blowing up the catch block with an undefined-variable error.
 	assertConfirmCount(t, 1)
 	assertShellNotInvoked(t)
-	assertOnlyOutput(t, stdOutBuffer, "code=1 out=[]\n")
+	assertOnlyOutput(t, stdOutBuffer, "code=1 out=[] err=[]\n")
 	assertNoErrors(t)
 }
 
@@ -482,12 +563,16 @@ func Test_ShellCmd_Argv_CoercesScalars(t *testing.T) {
 }
 
 func Test_ShellCmd_Argv_CapturesLikeTheStringForm(t *testing.T) {
-	script := "code, out = $[\"echo\", \"hi\"]"
+	// Positional, so it fills (stdout, stderr, code) - the same order the
+	// string form uses. Capture binding is a property of the assignment, not
+	// of how the command was spelled.
+	script := "out, err = $[\"echo\", \"hi\"]"
 	setupAndRunCode(t, script, "--color=never")
 
 	assertShellInvoked(t, core.ShellInvocation{
 		Argv:          []string{"echo", "hi"},
 		CaptureStdout: true,
+		CaptureStderr: true,
 	})
 	assertNoErrors(t)
 }

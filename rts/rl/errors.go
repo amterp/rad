@@ -134,6 +134,7 @@ const (
 	ErrIntLiteralOutOfRange             Error = "40015"
 	ErrRegexPatternWithoutRegexArg      Error = "40016"
 	ErrConstantInterpolation            Error = "40017"
+	ErrMisleadingShellCaptureName       Error = "40018"
 	ErrMultipleDefaultCommands          Error = "40019"
 	ErrCommandMissingCallback           Error = "40020"
 	ErrNamespaceHasCallback             Error = "40021"

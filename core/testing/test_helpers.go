@@ -90,7 +90,12 @@ var (
 	// confirmResponder lets a test drive the shell-confirmation prompt. nil
 	// means auto-confirm, so tests that don't care don't block on a prompt.
 	confirmResponder func(title, prompt string) (bool, error)
-	runnerInput      = newRunnerInput()
+	// shellResponder lets a test supply what a command "produced". nil means
+	// empty output and exit 0 - fine for tests that only assert which streams
+	// were captured, but a test asserting which *variable* got which stream
+	// needs distinguishable values.
+	shellResponder func(invocation core.ShellInvocation) (stdout, stderr string, exitCode int)
+	runnerInput    = newRunnerInput()
 )
 
 type ErrorOrExit struct {
@@ -118,6 +123,9 @@ func newRunnerInput() core.RunnerInput {
 	}
 	shellExec := func(ctx context.Context, invocation core.ShellInvocation) (string, string, int) {
 		shellInvocations = append(shellInvocations, invocation)
+		if shellResponder != nil {
+			return shellResponder(invocation)
+		}
 		// Return empty strings and exit code 0 for test mock
 		return "", "", 0
 	}
@@ -182,6 +190,7 @@ type TestParams struct {
 	args             []string
 	termWidth        int // 0 means not set
 	confirmResponder func(title, prompt string) (bool, error)
+	shellResponder   func(invocation core.ShellInvocation) (string, string, int)
 	keys             []string
 }
 
@@ -209,6 +218,24 @@ func (tp *TestParams) TermWidth(width int) *TestParams {
 func (tp *TestParams) ConfirmResponder(f func(title, prompt string) (bool, error)) *TestParams {
 	tp.confirmResponder = f
 	return tp
+}
+
+// ShellResponder supplies what each command "produced". Use it when a test
+// asserts which variable received which stream - the default mock returns empty
+// strings for both, which can't tell stdout and stderr apart.
+func (tp *TestParams) ShellResponder(
+	f func(invocation core.ShellInvocation) (stdout, stderr string, exitCode int),
+) *TestParams {
+	tp.shellResponder = f
+	return tp
+}
+
+// ShellOutput is the common ShellResponder case: a fixed stdout/stderr/exit code
+// for every command in the script.
+func (tp *TestParams) ShellOutput(stdout, stderr string, exitCode int) *TestParams {
+	return tp.ShellResponder(func(core.ShellInvocation) (string, string, int) {
+		return stdout, stderr, exitCode
+	})
 }
 
 // Keys scripts keystrokes for interactive prompts (pick, etc.). Each token is a
@@ -239,6 +266,10 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 
 	if tp.confirmResponder != nil {
 		confirmResponder = tp.confirmResponder
+	}
+
+	if tp.shellResponder != nil {
+		shellResponder = tp.shellResponder
 	}
 
 	args := tp.args
@@ -337,6 +368,7 @@ func resetTestState() {
 	httpInvocations = make([]core.HttpRequest, 0)
 	confirmInvocations = make([]string, 0)
 	confirmResponder = nil
+	shellResponder = nil
 	core.ResetGlobals()
 	// ResetGlobals sets color.NoColor = false (production default).
 	// Tests should default to no color; individual tests opt in via --color=always.
