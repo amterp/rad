@@ -9,7 +9,7 @@ panic-promotion model.
 ### INPUT ###
 a = parse_int("2")
 print(a + 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
@@ -33,7 +33,7 @@ a = parse_int("2")
 print(a + 1)
 ### ARGS ###
 --strict
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
@@ -55,7 +55,7 @@ hint fires and the result is int.
 ### INPUT ###
 a = parse_int("2") catch 0
 print(a + 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
@@ -76,7 +76,7 @@ as a guard: no hint, result is int.
 ### INPUT ###
 a = parse_int("2") ?? 0
 print(a + 1)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
@@ -102,7 +102,7 @@ genuinely unguarded.)
 ### INPUT ###
 r = (parse_int("2") + 1) catch 0
 print(r)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   r @ 1:1 -> <no-type>
   parse_int @ 1:6 -> dynamic
@@ -125,7 +125,7 @@ is int outside.
 a = parse_int("2") catch:
     print(a)
     yield 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic
@@ -147,7 +147,7 @@ hint fires.
 ### INPUT ###
 e = error("boom")
 print(e)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   e @ 1:1 -> <no-type>
   error @ 1:5 -> dynamic
@@ -175,7 +175,7 @@ x = maybe("2")
 print(x + 1)
 ### ARGS ###
 --strict
-### STDOUT ###
+### CHECK ###
 # Identifier types
   parse_int @ 2:12 -> dynamic
   s @ 2:22 -> str

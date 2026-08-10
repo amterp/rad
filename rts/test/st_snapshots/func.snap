@@ -5,7 +5,7 @@ a = myFunc()
 b = myFunc("hi")
 c = myFunc(reverse=true)
 d = myFunc("hello", nums=5)
-### STDOUT ###
+### CST ###
 B: [ 0, 82] PS: [0,  0] PE: [3, 27] source_file
 B: [ 0, 12] PS: [0,  0] PE: [0, 12]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -159,7 +159,7 @@ B: [80, 81] PS: [3, 25] PE: [3, 26]                                             
 B: [80, 81] PS: [3, 25] PE: [3, 26]                                                         literal
 B: [80, 81] PS: [3, 25] PE: [3, 26]                                                           int `5`
 B: [81, 82] PS: [3, 26] PE: [3, 27]                               ) `)`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3, 27] SourceFile
 PS: [0,  0] PE: [0, 12]   Assign
 PS: [0,  0] PE: [0,  1]     Identifier "a"

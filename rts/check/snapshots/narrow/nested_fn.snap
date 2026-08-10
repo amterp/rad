@@ -10,7 +10,7 @@ fn outer(x: int?):
         fn inner():
             y = x
         inner()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   y @ 4:13 -> <no-type>
@@ -38,7 +38,7 @@ fn f(x: int?):
             x = null
             y = x
         after_inner = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   x @ 4:13 -> <no-type>

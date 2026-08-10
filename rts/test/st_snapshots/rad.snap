@@ -14,7 +14,7 @@ rad:
     ID, Name:
         color "red" "^Alice$"
         map fn(v) upper(v)
-### STDOUT ###
+### CST ###
 B: [  0, 195] PS: [ 0,  0] PE: [12, 26] source_file
 B: [  0,  14] PS: [ 0,  0] PE: [ 0, 14]   assign
 B: [  0,   2] PS: [ 0,  0] PE: [ 0,  2]     left: var_path
@@ -165,7 +165,7 @@ B: [193, 194] PS: [12, 24] PE: [12, 25]                                         
 B: [193, 194] PS: [12, 24] PE: [12, 25]                                                         delegate: var_path
 B: [193, 194] PS: [12, 24] PE: [12, 25]                                                           root: identifier `v`
 B: [194, 195] PS: [12, 25] PE: [12, 26]                                     ) `)`
-### STDERR ###
+### AST ###
 PS: [ 0,  0] PE: [12, 26] SourceFile
 PS: [ 0,  0] PE: [ 0, 14]   Assign
 PS: [ 0,  0] PE: [ 0,  2]     Identifier "ID"

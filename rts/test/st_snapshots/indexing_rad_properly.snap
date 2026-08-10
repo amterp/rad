@@ -2,7 +2,7 @@
 Indexing read properly in a bool expression
 ### INPUT ###
 a > 1 or b[a] == 1
-### STDOUT ###
+### CST ###
 B: [ 0, 18] PS: [0,  0] PE: [0, 18] source_file
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]   expr_stmt
 B: [ 0, 18] PS: [0,  0] PE: [0, 18]     expr: expr
@@ -64,7 +64,7 @@ B: [17, 18] PS: [0, 17] PE: [0, 18]                         delegate: indexed_ex
 B: [17, 18] PS: [0, 17] PE: [0, 18]                           root: primary_expr
 B: [17, 18] PS: [0, 17] PE: [0, 18]                             literal
 B: [17, 18] PS: [0, 17] PE: [0, 18]                               int `1`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [0, 18] SourceFile
 PS: [0,  0] PE: [0, 18]   ExprStmt
 PS: [0,  0] PE: [0, 18]     OpBinary or

@@ -15,7 +15,7 @@ fn f(x: str):
             print("d")
         case "a":
             print("a")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -39,7 +39,7 @@ fn f(x: str):
             print("a")
         default:
             print("d")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> str
   print @ 4:13 -> dynamic

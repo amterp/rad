@@ -7,7 +7,7 @@ else if y:
     print(2)
 else:
     print(3)
-### STDOUT ###
+### FORMATTED ###
 if x > 1:
     print(1)
 else if y:
@@ -20,7 +20,7 @@ else:
 ### INPUT ###
 for i in range(3):
     print(i)
-### STDOUT ###
+### FORMATTED ###
 for i in range(3):
     print(i)
 
@@ -29,7 +29,7 @@ for i in range(3):
 ### INPUT ###
 for i,x in items:
     print(x)
-### STDOUT ###
+### FORMATTED ###
 for i, x in items:
     print(x)
 
@@ -38,7 +38,7 @@ for i, x in items:
 ### INPUT ###
 for x in [1,2,3]  with  loop:
     print(loop.idx)
-### STDOUT ###
+### FORMATTED ###
 for x in [1, 2, 3] with loop:
     print(loop.idx)
 
@@ -47,7 +47,7 @@ for x in [1, 2, 3] with loop:
 ### INPUT ###
 for k,v in m with loop:
     print(loop.idx, k, v)
-### STDOUT ###
+### FORMATTED ###
 for k, v in m with loop:
     print(loop.idx, k, v)
 
@@ -56,7 +56,7 @@ for k, v in m with loop:
 ### INPUT ###
 while x:
     x=x-1
-### STDOUT ###
+### FORMATTED ###
 while x:
     x = x - 1
 
@@ -67,7 +67,7 @@ if a:
     for i in xs:
         if i>0:
             print(i)
-### STDOUT ###
+### FORMATTED ###
 if a:
     for i in xs:
         if i > 0:

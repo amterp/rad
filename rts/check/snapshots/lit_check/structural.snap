@@ -9,7 +9,7 @@ fn f() -> [int, str]:
     return [1, "2"]
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> [int, str]
@@ -30,7 +30,7 @@ fn f() -> [int, str]:
     return [1, 2]
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> [int, str]
@@ -51,7 +51,7 @@ fn f() -> { "k": int }:
     return { "k": 10 }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "k": int }
@@ -71,7 +71,7 @@ fn f() -> { "k": int }:
     return { "k": "x" }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "k": int }
@@ -92,7 +92,7 @@ fn f() -> { "a": int, "b"?: str }:
     return { "a": 1 }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "a": int, "b"?: str }
@@ -113,7 +113,7 @@ fn f() -> { "a": int, "b": str }:
     return { "a": 1 }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "a": int, "b": str }
@@ -135,7 +135,7 @@ fn f() -> { "a": int }:
     return { "a": 1, "b": 2 }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "a": int }
@@ -156,7 +156,7 @@ fn pick(mode: ["read", "write"]):
     print(mode)
 
 pick("read")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   mode @ 2:11 -> ["read", "write"]
@@ -178,7 +178,7 @@ fn pick(mode: ["read", "write"]):
     print(mode)
 
 pick("delete")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   mode @ 2:11 -> ["read", "write"]
@@ -201,7 +201,7 @@ fn f() -> { "k": [int, str] }:
     return { "k": [1, "2"] }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "k": [int, str] }
@@ -222,7 +222,7 @@ fn f() -> { "k": [int, str] }:
     return { "k": [1, 2] }
 
 print(f())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 4:1 -> dynamic
   f @ 4:7 -> fn() -> { "k": [int, str] }
@@ -240,7 +240,7 @@ The declared-local assignment site runs through the same check.
 ### INPUT ###
 x: [int, str] = [1, "2"]
 print(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 1:1 -> <no-type>
   print @ 2:1 -> dynamic
@@ -261,7 +261,7 @@ declared element type via the same structural path.
 xs: int[] = [1]
 xs[0] = "x"
 print(xs)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   xs @ 1:1 -> <no-type>
   xs @ 2:1 -> int[]

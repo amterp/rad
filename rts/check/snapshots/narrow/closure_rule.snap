@@ -9,7 +9,7 @@ fn outer(x: int?):
     if x != null:
         cb = fn() x + 1
         result = cb()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   cb @ 3:9 -> <no-type>
@@ -41,7 +41,7 @@ fn outer():
         cb = fn() x
         x = null
         result = cb()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:5 -> <no-type>
   x @ 3:8 -> int
@@ -74,7 +74,7 @@ fn outer():
     if x != null:
         cb = fn() x
         result = cb()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:5 -> <no-type>
   x @ 3:5 -> <no-type>
@@ -105,7 +105,7 @@ fn outer():
     if x != null:
         cb = fn() x
         x += 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:5 -> <no-type>
   x @ 3:8 -> int
@@ -133,7 +133,7 @@ lambdas. Common case - lambdas as map / filter callbacks.
 fn outer(x: int?):
     if x != null:
         cb = fn() x + 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   cb @ 3:9 -> <no-type>

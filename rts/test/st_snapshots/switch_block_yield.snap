@@ -10,7 +10,7 @@ a, b = switch num:
     default:
         print('default, third')
         yield 0, 0
-### STDOUT ###
+### CST ###
 B: [  0, 174] PS: [0,  0] PE: [8, 18] source_file
 B: [  0, 174] PS: [0,  0] PE: [8, 18]   assign
 B: [  0,   1] PS: [0,  0] PE: [0,  1]     lefts: var_path
@@ -252,7 +252,7 @@ B: [173, 174] PS: [8, 17] PE: [8, 18]                                 delegate: 
 B: [173, 174] PS: [8, 17] PE: [8, 18]                                   root: primary_expr
 B: [173, 174] PS: [8, 17] PE: [8, 18]                                     literal
 B: [173, 174] PS: [8, 17] PE: [8, 18]                                       int `0`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [8, 18] SourceFile
 PS: [0,  0] PE: [8, 18]   Assign unpack
 PS: [0,  0] PE: [0,  1]     Identifier "a"

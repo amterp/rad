@@ -14,7 +14,7 @@ fn outer(x: list):
 
 fn want_ints(xs: int[]):
     print(xs)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   want_ints @ 2:5 -> fn(int[]) -> void
   x @ 2:15 -> list
@@ -43,7 +43,7 @@ fn pick(mode: ["read", "write"]):
 
 fn outer(s: str):
     pick(s)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   mode @ 2:11 -> ["read", "write"]
@@ -71,7 +71,7 @@ fn want_int(n: int):
 
 fn outer(x: int|str):
     want_int(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   n @ 2:11 -> int
@@ -99,7 +99,7 @@ fn want_str(s: str):
 
 fn outer(x: str?):
     want_str(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   s @ 2:11 -> str
@@ -126,7 +126,7 @@ fn want_str(s: str):
     print(s)
 
 want_str(42)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   print @ 2:5 -> dynamic
   s @ 2:11 -> str

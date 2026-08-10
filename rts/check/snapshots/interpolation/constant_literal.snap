@@ -7,7 +7,7 @@ anywhere. Multi-part quantifiers (`{2,3}`) are already a syntax error,
 so this single-number form is the only silent one.
 ### INPUT ###
 pattern = "\d{4}"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   pattern @ 1:1 -> <no-type>
 
@@ -28,7 +28,7 @@ a = "{0}"
 b = "{3.14}"
 c = "{true}"
 d = "{'s'}"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   b @ 2:1 -> <no-type>
@@ -65,7 +65,7 @@ fn four():
 x = "{digits}"
 y = "{2 + 2}"
 z = "{four()}"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   digits @ 1:1 -> <no-type>
   x @ 4:1 -> <no-type>
@@ -97,7 +97,7 @@ pi = 3.14
 a = "{name:<12}|"
 b = "{pi:.2}"
 c = "{name:*>8}"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   name @ 1:1 -> <no-type>
   pi @ 2:1 -> <no-type>
@@ -126,7 +126,7 @@ escapes the brace, and a raw string suppresses interpolation entirely.
 ### INPUT ###
 escaped = "\d\{4}"
 raw = r"\d{4}"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   escaped @ 1:1 -> <no-type>
   raw @ 2:1 -> <no-type>

@@ -70,7 +70,7 @@ type snapshotInput struct {
 // structuralDump, and so cannot see the external test package's variables.
 var inputSchema = snap.Suite{
 	Inputs:  []snap.Input{{Name: "INPUT"}},
-	Outputs: []snap.Output{{Name: "STDOUT"}},
+	Outputs: []snap.Output{{Name: "FORMATTED"}},
 }
 
 // collectSnapshotInputs reads the INPUT section of every case under snapshots/.

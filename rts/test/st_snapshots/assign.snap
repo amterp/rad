@@ -5,7 +5,7 @@ a = 1
 a[0] = 2
 a.b.c = 3
 a[0].b["c"] = 4
-### STDOUT ###
+### CST ###
 B: [ 0, 40] PS: [0,  0] PE: [3, 15] source_file
 B: [ 0,  5] PS: [0,  0] PE: [0,  5]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -137,7 +137,7 @@ B: [39, 40] PS: [3, 14] PE: [3, 15]                         delegate: indexed_ex
 B: [39, 40] PS: [3, 14] PE: [3, 15]                           root: primary_expr
 B: [39, 40] PS: [3, 14] PE: [3, 15]                             literal
 B: [39, 40] PS: [3, 14] PE: [3, 15]                               int `4`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3, 15] SourceFile
 PS: [0,  0] PE: [0,  5]   Assign
 PS: [0,  0] PE: [0,  1]     Identifier "a"

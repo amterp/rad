@@ -5,7 +5,7 @@ a = "hello"
 b = "there {1 + 1}"
 if true:
 	c = "world!"
-### STDOUT ###
+### CST ###
 B: [ 0, 54] PS: [0,  0] PE: [3, 13] source_file
 B: [ 0, 11] PS: [0,  0] PE: [0, 11]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -119,7 +119,7 @@ B: [46, 47] PS: [3,  5] PE: [3,  6]                                     start: s
 B: [47, 53] PS: [3,  6] PE: [3, 12]                                     contents: string_contents
 B: [47, 53] PS: [3,  6] PE: [3, 12]                                       content: string_content `world!`
 B: [53, 54] PS: [3, 12] PE: [3, 13]                                     end: string_end `"`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3, 13] SourceFile
 PS: [0,  0] PE: [0, 11]   Assign
 PS: [0,  0] PE: [0,  1]     Identifier "a"
@@ -144,7 +144,7 @@ Nested double quotes inside interpolation
 ### INPUT ###
 a = "x { "inner" + "!" } y"
 b = "{["a", "b"].join(" ")}"
-### STDOUT ###
+### CST ###
 B: [ 0, 56] PS: [0,  0] PE: [1, 28] source_file
 B: [ 0, 27] PS: [0,  0] PE: [0, 27]   assign
 B: [ 0,  1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -304,7 +304,7 @@ B: [52, 53] PS: [1, 24] PE: [1, 25]                                             
 B: [53, 54] PS: [1, 25] PE: [1, 26]                                                             ) `)`
 B: [54, 55] PS: [1, 26] PE: [1, 27]                                     } `}`
 B: [55, 56] PS: [1, 27] PE: [1, 28]                                 end: string_end `"`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [1, 28] SourceFile
 PS: [0,  0] PE: [0, 27]   Assign
 PS: [0,  0] PE: [0,  1]     Identifier "a"

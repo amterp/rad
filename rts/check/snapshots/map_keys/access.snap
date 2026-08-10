@@ -6,7 +6,7 @@ ErrUnknownMapKey - get_path has no 'nonsense' key.
 ### INPUT ###
 gp = get_path("f")
 print(gp.nonsense)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -27,7 +27,7 @@ A string-literal bracket index is checked the same as dot access.
 ### INPUT ###
 gp = get_path("f")
 print(gp["nonsense"])
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -48,7 +48,7 @@ A declared required key resolves cleanly, no diagnostic.
 ### INPUT ###
 gp = get_path("f")
 print(gp.full_path)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -69,7 +69,7 @@ An optional key (size_bytes?) resolves to its type with no
 ### INPUT ###
 gp = get_path("f")
 print(gp.size_bytes)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -90,7 +90,7 @@ fire ErrUnknownMapKey even though 'keys' isn't a declared key.
 ### INPUT ###
 gp = get_path("f")
 print(gp.keys())
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -112,7 +112,7 @@ write segment is exempt from the unknown-key check.
 ### INPUT ###
 gp = get_path("f")
 gp.newkey = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -132,7 +132,7 @@ intermediate key is still a read and fires ErrUnknownMapKey.
 ### INPUT ###
 gp = get_path("f")
 gp.nonsense.x = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic
@@ -154,7 +154,7 @@ existence check fires.
 gp = get_path("f")
 k = "full_path"
 print(gp[k])
-### STDOUT ###
+### CHECK ###
 # Identifier types
   gp @ 1:1 -> <no-type>
   get_path @ 1:6 -> dynamic

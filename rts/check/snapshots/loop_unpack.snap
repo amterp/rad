@@ -12,7 +12,7 @@ pairs = [["Europe/London", "GB"], ["Asia/Tokyo", "JP"]]
 for tz, flag in pairs:
     split(tz, "/")
     split(flag, "/")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   pairs @ 1:1 -> <no-type>
   pairs @ 2:17 -> str[][]
@@ -41,7 +41,7 @@ for a, b, c in rows:
     abs(a)
     abs(b)
     abs(c)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   rows @ 1:1 -> <no-type>
   rows @ 2:16 -> int[][]
@@ -72,7 +72,7 @@ scores = {"a": 1, "b": 2}
 for name, score in scores:
     split(name, ",")
     abs(score)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   scores @ 1:1 -> <no-type>
   scores @ 2:20 -> { str: int }
@@ -100,7 +100,7 @@ data = parse_json("[]")
 for a, b in data:
     abs(a)
     abs(b)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   data @ 1:1 -> <no-type>
   parse_json @ 1:8 -> dynamic

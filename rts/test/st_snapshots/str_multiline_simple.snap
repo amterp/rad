@@ -5,7 +5,7 @@ a = """
 hello
 friend
 """
-### STDOUT ###
+### CST ###
 B: [ 0, 24] PS: [0, 0] PE: [3, 3] source_file
 B: [ 0, 24] PS: [0, 0] PE: [3, 3]   assign
 B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
@@ -31,7 +31,7 @@ B: [ 8, 13] PS: [1, 0] PE: [1, 5]                                   content: str
 B: [13, 14] PS: [1, 5] PE: [2, 0]                                   content: string_content `\n`
 B: [14, 20] PS: [2, 0] PE: [2, 6]                                   content: string_content `friend`
 B: [20, 24] PS: [2, 6] PE: [3, 3]                                 end: string_end `\n"""`
-### STDERR ###
+### AST ###
 PS: [0, 0] PE: [3, 3] SourceFile
 PS: [0, 0] PE: [3, 3]   Assign
 PS: [0, 0] PE: [0, 1]     Identifier "a"

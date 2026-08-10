@@ -5,7 +5,7 @@ args:
     name str
     age int = 30 # An age.
 a = 2
-### STDOUT ###
+### CST ###
 B: [ 0, 51] PS: [0,  0] PE: [3,  5] source_file
 B: [ 0, 45] PS: [0,  0] PE: [2, 26]   arg_block
 B: [ 0,  4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -38,7 +38,7 @@ B: [50, 51] PS: [3,  4] PE: [3,  5]                         delegate: indexed_ex
 B: [50, 51] PS: [3,  4] PE: [3,  5]                           root: primary_expr
 B: [50, 51] PS: [3,  4] PE: [3,  5]                             literal
 B: [50, 51] PS: [3,  4] PE: [3,  5]                               int `2`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3,  5] SourceFile
 PS: [0,  0] PE: [2, 26]   ArgBlock
 PS: [1,  4] PE: [1, 12]     ArgDecl "name" type=str

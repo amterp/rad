@@ -5,7 +5,7 @@ FallbackStripsNullFromLeft
 ### INPUT ###
 fn f(x: int?):
     y = x ?? 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   y @ 2:5 -> <no-type>
   x @ 2:9 -> int?
@@ -25,7 +25,7 @@ When left has no nullable component, fallback can't fire - but we
 keep both arms as the conservative answer.
 ### INPUT ###
 y = 5 ?? "fallback"
-### STDOUT ###
+### CHECK ###
 # Identifier types
   y @ 1:1 -> <no-type>
 
@@ -42,7 +42,7 @@ CatchExprStripsErrorFromLeft
 result is int.
 ### INPUT ###
 y = parse_int("5") catch 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   y @ 1:1 -> <no-type>
   parse_int @ 1:5 -> dynamic

@@ -6,7 +6,7 @@ a -= 2
 a *= 3
 a /= 4
 a %= 5
-### STDOUT ###
+### CST ###
 B: [ 0, 34] PS: [0, 0] PE: [4, 6] source_file
 B: [ 0,  6] PS: [0, 0] PE: [0, 6]   compound_assign
 B: [ 0,  1] PS: [0, 0] PE: [0, 1]     left: var_path
@@ -98,7 +98,7 @@ B: [33, 34] PS: [4, 5] PE: [4, 6]                         delegate: indexed_expr
 B: [33, 34] PS: [4, 5] PE: [4, 6]                           root: primary_expr
 B: [33, 34] PS: [4, 5] PE: [4, 6]                             literal
 B: [33, 34] PS: [4, 5] PE: [4, 6]                               int `5`
-### STDERR ###
+### AST ###
 PS: [0, 0] PE: [4, 6] SourceFile
 PS: [0, 0] PE: [0, 6]   Assign
 PS: [0, 0] PE: [0, 1]     Identifier "a"

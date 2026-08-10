@@ -11,7 +11,7 @@ import (
 // FmtSuite declares the formatter surface: intentionally-messy Rad source in,
 // its canonical formatting out.
 //
-// A case marks INPUT and STDOUT `[raw]` when the rule under test is about bytes
+// A case marks INPUT and FORMATTED `[raw]` when the rule under test is about bytes
 // rather than lines - line endings, trailing whitespace, the exact newline at
 // end of file. Those sections are stored as Go-quoted strings and compared
 // byte-for-byte; everything else forgives a trailing newline, which a text file
@@ -22,7 +22,7 @@ import (
 var FmtSuite = snap.Suite{
 	Run:      runFmtCase,
 	Inputs:   []snap.Input{{Name: "INPUT"}},
-	Outputs:  []snap.Output{{Name: "STDOUT"}},
+	Outputs:  []snap.Output{{Name: "FORMATTED"}},
 	Parallel: true,
 }
 
@@ -35,7 +35,7 @@ func runFmtCase(t *testing.T, c *snap.Case) {
 	if !ok {
 		t.Fatalf("Format returned ok=false (parse error?) for input:\n%s", c.Text("INPUT"))
 	}
-	c.Out("STDOUT", out)
+	c.Out("FORMATTED", out)
 
 	// Idempotence: formatting already-formatted output is a no-op.
 	reformatted, changed, ok2 := radfmt.Format(out)

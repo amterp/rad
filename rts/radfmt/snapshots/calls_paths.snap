@@ -2,14 +2,14 @@
 [F24] Call argument spacing
 ### INPUT ###
 print(  a ,b )
-### STDOUT ###
+### FORMATTED ###
 print(a, b)
 
 ### TITLE ###
 [F24] Nested calls
 ### INPUT ###
 x = f(g(h( 1 )), 2)
-### STDOUT ###
+### FORMATTED ###
 x = f(g(h(1)), 2)
 
 ### TITLE ###
@@ -18,7 +18,7 @@ x = f(g(h(1)), 2)
 x = obj . method( 1 )
 y = a.b.c
 z = a[ 0 ]
-### STDOUT ###
+### FORMATTED ###
 x = obj.method(1)
 y = a.b.c
 z = a[0]
@@ -27,28 +27,28 @@ z = a[0]
 [F26] Slice
 ### INPUT ###
 s = data[ 1 : 2 ]
-### STDOUT ###
+### FORMATTED ###
 s = data[1:2]
 
 ### TITLE ###
 [F22] Ternary
 ### INPUT ###
 v = cond?a:b
-### STDOUT ###
+### FORMATTED ###
 v = cond ? a : b
 
 ### TITLE ###
 [F32] Named call arguments bind tight
 ### INPUT ###
 connect( host="localhost" ,port= 8080,retries =3 )
-### STDOUT ###
+### FORMATTED ###
 connect(host="localhost", port=8080, retries=3)
 
 ### TITLE ###
 [F5][F29] Long call wraps one argument per line
 ### INPUT ###
 result = compute(first_argument, second_argument, third_argument, fourth_argument, fifth_argument, sixth_argument, seventh)
-### STDOUT ###
+### FORMATTED ###
 result = compute(
     first_argument,
     second_argument,

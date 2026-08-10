@@ -11,7 +11,7 @@ args:
     age5 range (0,120]
     age6 range [0.1, 120.5]
     age7 range [,] // fails
-### STDOUT ###
+### CST ###
 B: [  0, 185] PS: [0,  0] PE: [9, 27] source_file
 B: [  0, 185] PS: [0,  0] PE: [9, 27]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`

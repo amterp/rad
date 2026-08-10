@@ -11,7 +11,7 @@ fn process(callback: fn(int) -> [int, str]):
 process(fn(x):
     return 1, "x"
 )
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> [int, str]
   process @ 4:1 -> fn(fn(int) -> [int, str]) -> void
@@ -36,7 +36,7 @@ fn process(callback: fn(int) -> [int, str]):
 process(fn(x):
     return 1, 2
 )
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> [int, str]
   process @ 4:1 -> fn(fn(int) -> [int, str]) -> void
@@ -61,7 +61,7 @@ fn process(callback: fn(int) -> [int, str]):
 process(fn(x):
     return 1, "x", true
 )
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> [int, str]
   process @ 4:1 -> fn(fn(int) -> [int, str]) -> void
@@ -88,7 +88,7 @@ fn process(callback: fn(int) -> [int, str]):
     callback(5)
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> int
   callback @ 5:5 -> fn(int) -> [int, str]

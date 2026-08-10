@@ -8,7 +8,7 @@ generic RAD10009 "Unexpected token".
 ### INPUT ###
 if x
     y = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -27,7 +27,7 @@ opening keyword (if/elif/else/for/while/fn/switch/case/defer).
 ### INPUT ###
 for i in [1, 2, 3]
     print(i)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -49,7 +49,7 @@ content directly.
 ### INPUT ###
 if true:
 y = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   (none)
 
@@ -70,7 +70,7 @@ one-char ERROR token by scanning forward in the source.
 ### INPUT ###
 a = "hello
 b = 5
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 1:1 -> <no-type>
   hello @ 1:6 -> dynamic

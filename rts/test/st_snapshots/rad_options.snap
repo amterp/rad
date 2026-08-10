@@ -6,7 +6,7 @@ rad:
     quiet
     noprint
     fields Name
-### STDOUT ###
+### CST ###
 B: [ 0, 55] PS: [0,  0] PE: [4, 15] source_file
 B: [ 0, 55] PS: [0,  0] PE: [4, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -23,7 +23,7 @@ B: [32, 39] PS: [3,  4] PE: [3, 11]         noprint `noprint`
 B: [44, 55] PS: [4,  4] PE: [4, 15]     stmt: rad_field_stmt
 B: [44, 50] PS: [4,  4] PE: [4, 10]       fields `fields`
 B: [51, 55] PS: [4, 11] PE: [4, 15]       identifier: identifier `Name`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [4, 15] SourceFile
 PS: [0,  0] PE: [4, 15]   RadBlock "rad"
 PS: [1,  4] PE: [1, 12]     <*rl.RadOption>
@@ -40,7 +40,7 @@ rad url:
     quiet
     noprint
     fields Name
-### STDOUT ###
+### CST ###
 B: [ 0, 59] PS: [0,  0] PE: [4, 15] source_file
 B: [ 0, 59] PS: [0,  0] PE: [4, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -69,7 +69,7 @@ B: [36, 43] PS: [3,  4] PE: [3, 11]         noprint `noprint`
 B: [48, 59] PS: [4,  4] PE: [4, 15]     stmt: rad_field_stmt
 B: [48, 54] PS: [4,  4] PE: [4, 10]       fields `fields`
 B: [55, 59] PS: [4, 11] PE: [4, 15]       identifier: identifier `Name`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [4, 15] SourceFile
 PS: [0,  0] PE: [4, 15]   RadBlock "rad"
 PS: [0,  4] PE: [0,  7]     Identifier "url"
@@ -85,7 +85,7 @@ Rad block with transpose option
 rad:
     transpose
     fields Name
-### STDOUT ###
+### CST ###
 B: [ 0, 34] PS: [0,  0] PE: [2, 15] source_file
 B: [ 0, 34] PS: [0,  0] PE: [2, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -96,7 +96,7 @@ B: [ 9, 18] PS: [1,  4] PE: [1, 13]         transpose `transpose`
 B: [23, 34] PS: [2,  4] PE: [2, 15]     stmt: rad_field_stmt
 B: [23, 29] PS: [2,  4] PE: [2, 10]       fields `fields`
 B: [30, 34] PS: [2, 11] PE: [2, 15]       identifier: identifier `Name`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [2, 15] SourceFile
 PS: [0,  0] PE: [2, 15]   RadBlock "rad"
 PS: [1,  4] PE: [1, 13]     <*rl.RadOption>
@@ -109,7 +109,7 @@ Rad block with transpose option explicit bool
 rad:
     transpose false
     fields Name
-### STDOUT ###
+### CST ###
 B: [ 0, 40] PS: [0,  0] PE: [2, 15] source_file
 B: [ 0, 40] PS: [0,  0] PE: [2, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -135,7 +135,7 @@ B: [19, 24] PS: [1, 14] PE: [1, 19]                                   false `fal
 B: [29, 40] PS: [2,  4] PE: [2, 15]     stmt: rad_field_stmt
 B: [29, 35] PS: [2,  4] PE: [2, 10]       fields `fields`
 B: [36, 40] PS: [2, 11] PE: [2, 15]       identifier: identifier `Name`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [2, 15] SourceFile
 PS: [0,  0] PE: [2, 15]   RadBlock "rad"
 PS: [1,  4] PE: [1, 19]     <*rl.RadOption>
@@ -149,7 +149,7 @@ rad url:
     quiet false
     noprint true
     fields Name
-### STDOUT ###
+### CST ###
 B: [ 0, 57] PS: [0,  0] PE: [3, 15] source_file
 B: [ 0, 57] PS: [0,  0] PE: [3, 15]   rad_block
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     rad_type: rad_keyword
@@ -205,7 +205,7 @@ B: [37, 41] PS: [2, 12] PE: [2, 16]                                   true `true
 B: [46, 57] PS: [3,  4] PE: [3, 15]     stmt: rad_field_stmt
 B: [46, 52] PS: [3,  4] PE: [3, 10]       fields `fields`
 B: [53, 57] PS: [3, 11] PE: [3, 15]       identifier: identifier `Name`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3, 15] SourceFile
 PS: [0,  0] PE: [3, 15]   RadBlock "rad"
 PS: [0,  4] PE: [0,  7]     Identifier "url"

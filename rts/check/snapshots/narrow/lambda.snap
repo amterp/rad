@@ -10,7 +10,7 @@ fn f(x: int?):
     if x != null:
         cb = fn():
             y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   cb @ 3:9 -> <no-type>
@@ -37,7 +37,7 @@ fn f(x: int?):
         if x != null:
             a = x
     z = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   cb @ 2:5 -> <no-type>
   x @ 3:12 -> int?
@@ -71,7 +71,7 @@ self_call = fn(n: int):
     return self_call(n-1), 2
 
 x: int = self_call(5)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   self_call @ 1:1 -> <no-type>
   n @ 2:8 -> int
@@ -102,7 +102,7 @@ self_call = fn(n: int) -> int:
     return self_call(n-1)
 
 x: int = self_call(5)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   self_call @ 1:1 -> <no-type>
   n @ 2:8 -> int

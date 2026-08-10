@@ -8,7 +8,7 @@ a
 file header
 ---
 a = fn() 2
-### STDOUT ###
+### CST ###
 B: [ 0, 41] PS: [0,  0] PE: [6, 10] source_file
 B: [ 0, 31] PS: [0,  0] PE: [6,  0]   file_header
 B: [ 0,  3] PS: [0,  0] PE: [0,  3]     --- `---`
@@ -44,7 +44,7 @@ B: [40, 41] PS: [6,  9] PE: [6, 10]                                           de
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                             root: primary_expr
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                               literal
 B: [40, 41] PS: [6,  9] PE: [6, 10]                                                 int `2`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [6, 10] SourceFile
 PS: [0,  0] PE: [6,  0]   FileHeader "This is\na\n\nfile header"
 PS: [6,  0] PE: [6, 10]   Assign

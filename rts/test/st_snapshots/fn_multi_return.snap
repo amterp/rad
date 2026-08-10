@@ -7,7 +7,7 @@ fn bar():
     return 1, 2
 fn quz():
     return [1, 2]
-### STDOUT ###
+### CST ###
 B: [ 0, 76] PS: [0,  0] PE: [5, 17] source_file
 B: [ 0, 22] PS: [0,  0] PE: [1, 12]   fn_named
 B: [ 0,  2] PS: [0,  0] PE: [0,  2]     keyword: fn `fn`
@@ -121,7 +121,7 @@ B: [74, 75] PS: [5, 15] PE: [5, 16]                                             
 B: [74, 75] PS: [5, 15] PE: [5, 16]                                                           literal
 B: [74, 75] PS: [5, 15] PE: [5, 16]                                                             int `2`
 B: [75, 76] PS: [5, 16] PE: [5, 17]                                   ] `]`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [5, 17] SourceFile
 PS: [0,  0] PE: [1, 12]   FnDef "foo" block=true
 PS: [1,  4] PE: [1, 12]     Return

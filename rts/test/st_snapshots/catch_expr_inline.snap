@@ -5,7 +5,7 @@ a = foo() catch 0
 b = 2 + bar() catch 0
 c = foo() catch bar() catch 0
 d = foo() catch null ?? "default"
-### STDOUT ###
+### CST ###
 B: [  0, 103] PS: [0,  0] PE: [3, 33] source_file
 B: [  0,  17] PS: [0,  0] PE: [0, 17]   assign
 B: [  0,   1] PS: [0,  0] PE: [0,  1]     left: var_path
@@ -140,7 +140,7 @@ B: [ 94,  95] PS: [3, 24] PE: [3, 25]                                 start: str
 B: [ 95, 102] PS: [3, 25] PE: [3, 32]                                 contents: string_contents
 B: [ 95, 102] PS: [3, 25] PE: [3, 32]                                   content: string_content `default`
 B: [102, 103] PS: [3, 32] PE: [3, 33]                                 end: string_end `"`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3, 33] SourceFile
 PS: [0,  0] PE: [0, 17]   Assign
 PS: [0,  0] PE: [0,  1]     Identifier "a"

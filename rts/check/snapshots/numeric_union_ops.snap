@@ -8,7 +8,7 @@ a numeric union over its arms rather than rejecting it.
 fn f(x: int|float):
     y = x - 1
     z = x * 2
-### STDOUT ###
+### CHECK ###
 # Identifier types
   y @ 2:5 -> <no-type>
   x @ 2:9 -> int|float
@@ -32,7 +32,7 @@ valid and yields bool.
 ### INPUT ###
 fn f(x: int|float):
     b = x > 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   b @ 2:5 -> <no-type>
   x @ 2:9 -> int|float
@@ -54,7 +54,7 @@ str arm has no `- int` overload - so it still flags, and as a Hint
 ### INPUT ###
 fn f(x: int|str):
     y = x - 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   y @ 2:5 -> <no-type>
   x @ 2:9 -> int|str
@@ -84,7 +84,7 @@ fn f(d):
         x = d.field
     b = x <= 5
     y = x - 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:5 -> <no-type>
   d @ 3:8 -> dynamic
@@ -119,7 +119,7 @@ fn f(d):
     if d.other:
         x = "s"
     y = x - 1
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:5 -> <no-type>
   d @ 3:8 -> dynamic

@@ -5,7 +5,7 @@ title, url = switch endpoint:
     case "cars", "automobiles" -> "Cars", "{base}/automobiles"
     case "books" -> "Books", "{base}/reading?type=books"
 a = 2
-### STDOUT ###
+### CST ###
 B: [  0, 155] PS: [0,  0] PE: [3,  5] source_file
 B: [  0, 149] PS: [0,  0] PE: [2, 56]   assign
 B: [  0,   5] PS: [0,  0] PE: [0,  5]     lefts: var_path
@@ -214,7 +214,7 @@ B: [154, 155] PS: [3,  4] PE: [3,  5]                         delegate: indexed_
 B: [154, 155] PS: [3,  4] PE: [3,  5]                           root: primary_expr
 B: [154, 155] PS: [3,  4] PE: [3,  5]                             literal
 B: [154, 155] PS: [3,  4] PE: [3,  5]                               int `2`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [3,  5] SourceFile
 PS: [0,  0] PE: [2, 56]   Assign unpack
 PS: [0,  0] PE: [0,  5]     Identifier "title"

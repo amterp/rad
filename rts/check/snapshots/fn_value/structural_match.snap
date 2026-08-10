@@ -13,7 +13,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> int
   callback @ 5:5 -> fn(int) -> bool
@@ -43,7 +43,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 5:5 -> fn(int) -> bool
   process @ 7:1 -> fn(fn(int) -> bool) -> void
@@ -71,7 +71,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> str
   callback @ 5:5 -> fn(int) -> bool
@@ -101,7 +101,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 5:5 -> fn(int) -> bool
   process @ 7:1 -> fn(fn(int) -> bool) -> void
@@ -129,7 +129,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> int
   y @ 2:16 -> int
@@ -161,7 +161,7 @@ fn process(callback):
     callback("hi")
 
 process(cb)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:12 -> str
   callback @ 5:5 -> dynamic
@@ -189,7 +189,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(fn(x) "hi")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
   process @ 4:1 -> fn(fn(int) -> bool) -> void
@@ -213,7 +213,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(fn(x) x > 0)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
   process @ 4:1 -> fn(fn(int) -> bool) -> void
@@ -242,7 +242,7 @@ process(fn(x):
         return 1
     return "hi"
 )
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
   process @ 4:1 -> fn(fn(int) -> bool) -> void
@@ -268,7 +268,7 @@ fn process(callback: fn(int) -> bool):
 process(fn(x):
     print(x)
 )
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
   process @ 4:1 -> fn(fn(int) -> bool) -> void
@@ -296,7 +296,7 @@ fn process(callback: fn(int) -> bool):
     callback(5)
 
 process(fn(x) -> bool: return "hi")
-### STDOUT ###
+### CHECK ###
 # Identifier types
   callback @ 2:5 -> fn(int) -> bool
   process @ 4:1 -> fn(fn(int) -> bool) -> void

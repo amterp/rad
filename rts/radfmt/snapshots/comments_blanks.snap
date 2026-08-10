@@ -3,7 +3,7 @@
 ### INPUT ###
 // leading
 x = 1 // trailing
-### STDOUT ###
+### FORMATTED ###
 // leading
 x = 1 // trailing
 
@@ -15,7 +15,7 @@ a = 1
 
 
 b = 2
-### STDOUT ###
+### FORMATTED ###
 a = 1
 
 b = 2
@@ -27,7 +27,7 @@ b = 2
 
 
 x = 1
-### STDOUT ###
+### FORMATTED ###
 x = 1
 
 ### TITLE ###
@@ -36,7 +36,7 @@ x = 1
 if x:
     // note
     print(1)
-### STDOUT ###
+### FORMATTED ###
 if x:
     // note
     print(1)
@@ -47,7 +47,7 @@ if x:
 a = 1
 // a section
 b = 2
-### STDOUT ###
+### FORMATTED ###
 a = 1
 // a section
 b = 2
@@ -59,7 +59,7 @@ if x: // why this
     a = 1
 for i in xs: // each item
     print(i)
-### STDOUT ###
+### FORMATTED ###
 if x: // why this
     a = 1
 for i in xs: // each item

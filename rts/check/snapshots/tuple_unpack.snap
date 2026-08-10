@@ -9,7 +9,7 @@ fn pair() -> [float, int]:
     return 1.5, 2
 
 x, y = pair()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 4:1 -> <no-type>
   y @ 4:4 -> <no-type>
@@ -37,7 +37,7 @@ fn make_pair(flag):
 
 x, y = make_pair(true)
 ep = parse_epoch(x)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   flag @ 2:8 -> dynamic
   x @ 6:1 -> <no-type>
@@ -71,7 +71,7 @@ fn get_pair() -> [int, str]:
 a: int = 0
 b: str = ""
 a, b = get_pair()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 4:1 -> <no-type>
   b @ 5:1 -> <no-type>
@@ -100,7 +100,7 @@ fn get_pair() -> [int, str]:
 a: str = ""
 b: str = ""
 a, b = get_pair()
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 4:1 -> <no-type>
   b @ 5:1 -> <no-type>
@@ -129,7 +129,7 @@ fn maybe_pair(b: bool) -> [int, str]?:
     return null
 
 x, y = maybe_pair(true)
-### STDOUT ###
+### CHECK ###
 # Identifier types
   b @ 2:8 -> bool
   x @ 6:1 -> <no-type>

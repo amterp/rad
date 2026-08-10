@@ -7,7 +7,7 @@ truthy branch narrows x to non-null.
 fn f(x: int?):
     if not (x == null):
         y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:13 -> int?
   y @ 3:9 -> <no-type>
@@ -32,7 +32,7 @@ fn f(x: int?, y: str?):
     if x != null and y != null:
         a = x
         b = y
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   y @ 2:22 -> str?
@@ -62,7 +62,7 @@ further refine within the non-null component).
 fn f(x: int?):
     if x != null and type_of(x) == "int":
         y = x
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   type_of @ 2:22 -> dynamic
@@ -91,7 +91,7 @@ fn f(x: int?, y: str?):
     else:
         b = x
         c = y
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:8 -> int?
   y @ 2:21 -> str?
@@ -123,7 +123,7 @@ fn f(x: int?, y: str?):
     if not (x == null or y == null):
         a = x
         b = y
-### STDOUT ###
+### CHECK ###
 # Identifier types
   x @ 2:13 -> int?
   y @ 2:26 -> str?
@@ -153,7 +153,7 @@ false positive on provably-safe code.
 fn f(a: str?):
     if a != null and len(a) > 3:
         n = a
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 2:8 -> str?
   len @ 2:22 -> dynamic
@@ -178,7 +178,7 @@ the left was falsy, so `b == null` being false makes b a str there.
 fn f(b: str?):
     if b == null or len(b) > 3:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   b @ 2:8 -> str?
   len @ 2:21 -> dynamic
@@ -203,7 +203,7 @@ was the single biggest source of checker noise on real scripts - one
 fn f(c: str|int):
     if type_of(c) != "str" or len(c) > 3:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   type_of @ 2:8 -> dynamic
   c @ 2:16 -> str|int
@@ -228,7 +228,7 @@ left operand is evaluated before anything is known. Must still report.
 fn f(a: str?):
     if len(a) > 3 and a != null:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   len @ 2:8 -> dynamic
   a @ 2:12 -> str?
@@ -254,7 +254,7 @@ would leave every positive case green.
 fn f(a: str?):
     if a == null and len(a) > 3:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 2:8 -> str?
   len @ 2:22 -> dynamic
@@ -278,7 +278,7 @@ what lets the right operand run, so a is definitely null there.
 fn f(a: str?):
     if a != null or len(a) > 3:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   a @ 2:8 -> str?
   len @ 2:21 -> dynamic
@@ -304,7 +304,7 @@ but it means an `and` can now suppress a diagnostic it used to emit.
 fn f(x: int):
     if type_of(x) != "int" and x + 1 > 0:
         n = 0
-### STDOUT ###
+### CHECK ###
 # Identifier types
   type_of @ 2:8 -> dynamic
   x @ 2:16 -> int

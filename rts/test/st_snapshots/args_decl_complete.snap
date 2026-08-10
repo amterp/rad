@@ -7,7 +7,7 @@ args:
     lastName str = r"ali\\c\ne"
     age "AGE" a int = 30 # An age.
 a = 2
-### STDOUT ###
+### CST ###
 B: [  0, 126] PS: [0,  0] PE: [5,  5] source_file
 B: [  0, 120] PS: [0,  0] PE: [4, 34]   arg_block
 B: [  0,   4] PS: [0,  0] PE: [0,  4]     args `args`
@@ -72,7 +72,7 @@ B: [125, 126] PS: [5,  4] PE: [5,  5]                         delegate: indexed_
 B: [125, 126] PS: [5,  4] PE: [5,  5]                           root: primary_expr
 B: [125, 126] PS: [5,  4] PE: [5,  5]                             literal
 B: [125, 126] PS: [5,  4] PE: [5,  5]                               int `2`
-### STDERR ###
+### AST ###
 PS: [0,  0] PE: [5,  5] SourceFile
 PS: [0,  0] PE: [4, 34]   ArgBlock
 PS: [1,  4] PE: [1, 26]     ArgDecl "name" type=str
