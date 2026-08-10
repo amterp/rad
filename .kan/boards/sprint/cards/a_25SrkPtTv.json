@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "flag-calls-to-a",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1786355871381,
+  "creator": "Alexander Terp",
+  "description": "Split out of a_25NhxlPan (`+=` reading the function-local but writing the enclosing binding). That card fixed the runtime half; this is the checker half, reshaped.\n\nShadowing a builtin is now harmless on its own - `count = 0` binds a local and leaves `count` callable everywhere else. What still bites is *calling* the name afterwards in the same scope:\n\n```rad\nkeys = []\n// ...\nprint(keys({\"a\": 1}))   // error[RAD30001]: Cannot invoke 'keys' as a function: it is a list\n```\n\nThe UFCS form is the expensive one, because the call site doesn't look like it reads a variable at all:\n\n```rad\nlower = word.lower()\n// ...\nx.lower()               // error[RAD30001]: Cannot invoke 'lower' as a function: it is a str\n```\n\nThat cost an hour once. Nothing in `x.lower()` suggests it resolves through a binding named `lower`, so the failure reads as a bug in the language rather than in the script.\n\nThe original card proposed flagging the *declaration* instead. Rejected: `rts/embedded/functions.txt` holds 127 builtins including `count`, `sum`, `filter`, `keys`, `map`, `max`, `min`, `str`, `int`, `input`, `error`, `red`, `green`, `bold`. A rule firing on every `count = 0` is noise, and after the runtime fix the declaration on its own is correct code.\n\nThe call site is where the rule has no false positives. A local that genuinely holds a function - `sort = fn(x) ...` then `sort(xs)` - is fine and must stay quiet, which is what makes this a type-checker rule rather than a binder rule.\n\n### Orientation\n\n- The binder already resolves the callee correctly. `resolveIdentifier` (`rts/check/binder.go:129`) prefers `b.current.Lookup` over the builtin scope, so a shadowed name resolves to the local symbol. \"This call names a builtin but resolved to a local\" is available there for free.\n- What the binder does not know is whether that local holds a function. `rts/check/type_check.go` and `narrow.go` do. There is no static \"calling a non-function\" check today - the only diagnostic is the runtime's RAD30001 (`core/func_helpers.go:101`).\n- Worth deciding whether this ships narrow (shadowed builtins only) or general (calling any non-function value). The general rule subsumes this one and also catches `x = 5` then `x()`; it is the better product if the type info supports it.\n- UFCS calls reach the runtime through `seg.IsUFCS` in `evaluatePathSegment` (`core/interpreter.go:1259`). The static side needs equivalent handling or it misses the form that actually hurts.\n- A new code goes in the 4xxxx band in `rts/rl/errors.go` (highest in use: `ErrIntLiteralOutOfRange = \"40015\"`; numbers are never reused), with a doc at `core/error_docs/\u003ccode\u003e.md`, `make generate`, and a case under `rts/check/snapshots/`.\n- `rts` must not import `core`, so the builtin name list comes from `rts/embedded/functions.txt`, not `core.FunctionsByName`.",
+  "effort": "m",
+  "id": "a_25SrkPtTv",
+  "position": "UUUUUUUUUUUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Flag calls to a builtin that a non-function local shadows",
+  "type": "enhancement",
+  "updated_at_millis": 1786355871381,
+  "history": [
+    {"field":"column","value":"p2","at":1786355871381}
+  ]
+}

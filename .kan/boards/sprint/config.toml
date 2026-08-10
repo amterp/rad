@@ -46,10 +46,16 @@ default_column = "p2"
   limit = 0
 
 [[columns]]
+  name = "approved"
+  color = "#0d9488"
+  description = "Checked and ready for an agent to pick up. The premise holds and the scope is agreed, so what's left is the work itself. Vetted, not frozen - if something stops making sense once you are in the code, say so rather than pushing through."
+  limit = 0
+
+[[columns]]
   name = "doing"
   color = "#ec4899"
   description = "Currently being worked on."
-  limit = 2
+  limit = 0
 
 [[columns]]
   name = "done"

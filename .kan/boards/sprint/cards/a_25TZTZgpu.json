@@ -1,0 +1,28 @@
+{
+  "_v": 3,
+  "alias": "replace-declares-str-but",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1786357552302,
+  "creator": "Alexander Terp",
+  "description": "`replace()` declares `-> str`, but its `regex=true` path raises RAD20024 on an uncompilable pattern. `matches()` is honest about the same situation with `bool|error`. The checker therefore can't warn anyone that `replace(s, pat, r, regex=true)` is fallible.\n\nDeliberately left alone when the literal-default flip landed: widening it to `str|error` pushes an error union into every existing `replace()` call site, and expressions like `replace(a, b, c) + \"!\"` would stop type-checking. The unhandled-fallible hint is strict-only (`strictOnlyCodes` in `rts/check/check.go`), so the noise is bounded, but the type change itself is not.\n\nThe flip did shrink the exposure - the default path can no longer fail at all - so the honest signature only matters for `regex=true` calls. Worth deciding whether that's enough to justify the churn, or whether the answer is a different shape entirely.",
+  "effort": "s",
+  "id": "a_25TZTZgpu",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUUUUUUUUUUUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "replace() declares -> str but can error",
+  "type": "decision",
+  "updated_at_millis": 1786357566372,
+  "history": [
+    {
+      "field": "column",
+      "value": "p2",
+      "at": 1786357552302
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "decide-whether-an",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786357725890,
+  "creator": "Alexander Terp",
+  "description": "Two bugs on the `bugfixes` board are the same question wearing different clothes, and neither can be fixed until it is answered:\n\n- a_sBQgqO7u - `error(\"x\") ?? fallback` yields the error, not the fallback\n- a_sBRDpFgU - an error stored via `catch: pass` re-fires when returned from a later function\n\n**The question:** does an error value stay armed once it is bound to a variable?\n\n### Why they are one question\n\n- `core/funcs.go:251` - `panicIfError: !(funcName == FUNC_ERROR \u0026\u0026 isBuiltIn)`. Every call panics on an error return *except* the `error()` builtin itself. That single exemption is what makes `error(\"x\") ?? y` behave differently from `fail() ?? y`.\n- `core/interpreter.go:509` - `Fallback` fires on `panicked || leftResult.Val.IsNull()`, never `IsError()`. So an error that arrives as a *value* rather than a panic passes straight through.\n- `core/interpreter.go:358-375` - assign-with-`catch:` binds `rp.ErrV` to the target, so the variable holds a live error. Any later call returning it re-arms at `core/type_fn.go:243-245`.\n\nAnswer them together or the answers will drift apart.\n\n### The alternatives\n\n1. `??` and `catch` also check `IsError()` - the error value is caught wherever it surfaces.\n2. `error()` panics like everything else - collapses the asymmetry at the source.\n3. Document the asymmetry and change nothing - errors-as-values is the model, and a value that has not been *called* has not failed yet.\n\n### Watch out for\n\n- This is a breaking change under options 1 and 2, carrying the three-layer obligation from AGENTS.md:181-193 - a migration diagnostic, a `core/error_docs/\u003ccode\u003e.md` entry, and a section in `docs-web/docs/migrations/v0.X.md`. Commit prefix `fix!:`.\n- It contradicts or refines what the guide states outright - `core/embedded_docs/guide/error-handling.md:315`, \"errors are values that propagate by default, unless handled\".\n- **Write a RED.** It clears the bar in docs/red/0001-red-process.md:43-56 on both counts: the choice is hard to undo (breaking change to established semantics), and the interesting part is why this and not the obvious alternative. `docs/red/` has no error-model record today, which is its own gap. Option 3 still wants a RED - a `Rejected` one, which RED-1 explicitly keeps, so the question does not come back in six months with no record of why we left the asymmetry alone.\n- The span-attribution sub-bug that used to live on a_sBRDpFgU is now a_25TdYyCC3 and is NOT blocked on this - it ships either way.",
+  "effort": "m",
+  "id": "a_25TdzYuMr",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUUUU",
+  "source": [
+    "main-board"
+  ],
+  "title": "Decide whether an error value stays armed once bound to a variable",
+  "type": "bug",
+  "updated_at_millis": 1786357725890,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786357725890}
+  ]
+}

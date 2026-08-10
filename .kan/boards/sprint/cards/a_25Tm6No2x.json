@@ -1,0 +1,25 @@
+{
+  "_v": 3,
+  "alias": "short-circuit-and-or",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1786358037641,
+  "creator": "Alexander Terp",
+  "description": "The canonical null-guard fires a false positive:\n\n    if a != null and len(a) \u003e 3:      // RAD30001 on `a`: str? into str|list|map\n    if b == null or len(b) \u003e 3:       // same\n    if type_of(c) != \"str\" or len(c) \u003e 3:   // same\n\nIn each case the left operand proves the right operand safe, which is the\nwhole point of writing it that way. `x != null and \u003cuse x\u003e` is about the\nmost common defensive idiom there is, so this is a steady source of noise\non correct code.\n\nFound while landing `stop-the-checker` (a_25Nhy9Un4). After that card's\nfixes, a sweep of 62 real scripts had 11 diagnostics left - 9 of them were\nthis, all in one script, all from one `or` chain. It is now the single\nbiggest remaining source of checker noise on real code.\n\n### Root cause\n\nThe narrowing logic is already correct; the synthesis pass just doesn't\nuse it. Two passes run over an if-condition, and only one of them knows\nabout short-circuiting:\n\n- `interpretAnd` / `interpretOr` (`rts/check/narrow.go:220`, `:237`)\n  build the right-hand frame properly - `frame.WithMany(leftRef.WhenTrue)`\n  for `and`, `.WhenFalse` for `or` - and the doc comment there spells the\n  intent out: \"in `x != null and x \u003e 5`, the `x \u003e 5` is evaluated knowing\n  x is non-null\".\n- `synthOpBinary` (`rts/check/type_check.go:3502`) does\n  `left := tc.synth(n.Left); right := tc.synth(n.Right)` - both under the\n  same `tc.frame`, with no notion of short-circuiting.\n\n`walkIf` (`type_check.go:859-860`) synths the whole condition first and\ninterprets it second. Diagnostics come from synthesis, so the narrowing\nthat interpretation computes never reaches the operand that needed it.\n\n### Likely shape of the fix\n\nSpecial-case `rl.OpAnd` / `rl.OpOr` in `synthOpBinary`: interpret the left operand, then synth the right under\nthe left's WhenTrue (and) / WhenFalse (or) frame, restoring after. That\nmirrors `interpretAnd`/`interpretOr` rather than inventing a second rule,\nand the two should probably share a helper so they can't drift.\n\nWatch for the ordering: `interpretCondition` calls `synth` on sub-nodes in\nplaces, so check there's no re-entrancy problem between the two passes,\nand that `ExprTypes` ends up recording the narrowed type (hover should\nshow `str`, not `str?`, over the `a` in `len(a)`).\n\n### Done when\n\n- All three shapes above check clean.\n- Negative case pinned: the narrowing must NOT leak to the operand that\n  doesn't get it - `if len(a) \u003e 3 and a != null:` (guard written second)\n  still reports, because there the use genuinely isn't protected.\n- A case under `rts/check/snapshots/narrow/`.",
+  "effort": "m",
+  "id": "a_25Tm6No2x",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "UUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Short-circuit and/or doesn't narrow its later operands",
+  "type": "bug",
+  "updated_at_millis": 1786370374956,
+  "history": [
+    {"field":"column","value":"approved","at":1786358037641},
+    {"field":"column","value":"done","at":1786370374956}
+  ]
+}

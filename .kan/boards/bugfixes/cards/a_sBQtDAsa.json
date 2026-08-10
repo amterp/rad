@@ -2,20 +2,35 @@
   "_v": 3,
   "alias": "mutating-collections",
   "alias_explicit": false,
-  "column": "todo-hi",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): unchanged from the 2026-06-14 finding. The list repro still prints 1, 2, 4, 5, 5 (3 skipped, 5 duplicated). The map repro still traverses cleanly (a 1 / b 2 / c 3) - the map half remains not-reproducing, so the two collection types still disagree with each other.",
+      "created_at_millis": 1786357827412,
+      "id": "c_25TgdJmYz"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Fixed 2026-08-10 in ccc16900 (branch rad-sprint1).\n\n**Decision: live, bounds-checked - matching Python.** Not the snapshot option the card leaned toward. Reasoning below.\n\nInvestigating turned up two tangled defects, not one:\n\n1. The traversal ran *past the list end*, re-reading a slot the list no longer held (the duplicated 5). Wrong under any semantics.\n2. It skipped element 3. That is inherent to walking a live list by index - Python does the same and prints 1, 2, 4, 5.\n\nOnly (1) is a defect. `runForLoopList` now indexes the live list and re-reads length and element each iteration instead of `range`-ing over a captured slice header. `del items[1]` now gives 1, 2, 4, 5.\n\n**Why not snapshot.** Verified the current behaviors first:\n\n| mid-loop mutation | before | after |\n|---|---|---|\n| `del items[1]` | 1, 2, 4, 5, 5 | 1, 2, 4, 5 |\n| `items[2] = 99` | visible to loop | visible to loop |\n| rebinding `items = items + [4]` | not seen | not seen |\n\nSnapshotting fixes row 1 but silently kills row 2 - the loop would read its own copy, so element assignment would stop being visible. That is a behavior change well beyond the reported bug, and nobody asked for it.\n\n**Maps stay as they are.** They snapshot keys, and that asymmetry is now deliberate and documented: list order is positional, so a live traversal has a well-defined place to resume after a deletion; map iteration order does not.\n\nVerified: `del` mid-loop, deleting the head each iteration (gives 1, 3, 5 leaving [4,5] - identical to Python), element assignment, rebinding, string iteration, list comprehensions, map iteration. Full suite green, no existing snapshot changed. Three cases added to control_flow/for.snap; semantics written up in docs/type_system.md beside the loop scoping rules.",
+      "created_at_millis": 1786359222766,
+      "id": "c_25UGvsZUY"
+    }
+  ],
   "created_at_millis": 1775232071191,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): LIST iteration still corrupts; the MAP case does NOT corrupt in current rad (a change from the original report - the map repro now traverses cleanly). Re-verify the map path before fixing.\n\n**Repro (list - still broken):**\nitems = [1, 2, 3, 4, 5]\nfor item in items:\n    if item == 2:\n        del items[1]\n    print(item)\n// prints 1, 2, 4, 5, 5   (3 skipped, 5 duplicated)\n\n**Repro (map - now fine):**\nm = {\"a\": 1, \"b\": 2, \"c\": 3}\nfor k, v in m:\n    if k == \"b\":\n        del m[\"b\"]\n    print(k, v)\n// prints a 1 / b 2 / c 3   (all entries, no corruption)\n\nThe list iterator does not snapshot the collection, so structural mutation during iteration corrupts the traversal. The map path appears to snapshot keys.\n\n**Design:** snapshot iterators (safe, copy cost) vs live iterators with structural-mutation guards.",
   "grammar": false,
   "id": "a_sBQtDAsa",
-  "position": "6!",
+  "position": "u8UUUUUUU",
   "severity": "high",
   "tags": [
     "design"
   ],
   "title": "Mutating collections during iteration causes skipped/duplicated elements",
-  "updated_at_millis": 1781449711688,
+  "updated_at_millis": 1786359222818,
   "history": [
-    {"field":"column","value":"todo-hi","at":1775232071191}
+    {"field":"column","value":"todo-hi","at":1775232071191},
+    {"field":"column","value":"done","at":1786359222818}
   ]
 }

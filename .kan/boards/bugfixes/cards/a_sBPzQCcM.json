@@ -2,20 +2,35 @@
   "_v": 3,
   "alias": "and-catch-cannot",
   "alias_explicit": false,
-  "column": "todo-hi",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): still reproduces. Both forms error RAD10009 (`?? -1` at col 23, `catch -1` at col 26); the `?? (-1)` workaround still returns -1 correctly.",
+      "created_at_millis": 1786357827350,
+      "id": "c_25TgdD5Ex"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Implemented 2026-08-10 in 9d180293 (branch rad-sprint1). NOT yet landable - see the blocker at the end.\n\nWent with the narrow fix, as planned: a signed operand is now admitted in the right-hand position of `??` and `catch`, rather than moving unary below `??` in the precedence cascade. Reordering would be the more principled precedence (every other language with a coalescing operator binds unary tighter), but it silently reinterprets `-a ?? b` and `not a ?? b`, making it a breaking change owing the three-layer migration. The narrow fix is purely additive.\n\n**Widened slightly from the card.** The card proposed allowing a negative *literal*. I allowed any signed postfix operand, so `?? -n`, `?? -get()` and `?? -xs[0]` all work too. Restricting to literals would have traded one confusing parse error for another - `?? -1` working while `?? -count` failed.\n\n**Grammar (~/src/tree-sitter-rad, uncommitted):**\n\n    _signed_operand: $ =\u003e alias($._signed_postfix, $.unary_expr),\n    _signed_postfix: $ =\u003e prec(PREC.unary, seq(\n      field(\"op\", $._unary_op_sign),\n      field(\"arg\", $._postfix_expr),\n    )),\n\nThe `alias` to `unary_expr` is the load-bearing part: the new syntax produces a node kind consumers already handle, so `rts/converter.go`, `rts/check/` and `rts/radfmt/` all needed **zero changes** - `convertFallback`/`convertCatchExpr` already delegate generically on the right field, and `rad fmt` round-trips the new forms untouched. No new node kinds or field names, so `rl/consts.go` needs no update either (per tree-sitter-rad AGENTS.md).\n\nVerified: all repro forms work, `rad check` clean, `rad fmt` round-trips, full rad suite green, no existing snapshot changed. Snapshot cases added to control_flow/fallback.snap and catch_expr.snap.\n\nAlso removed the `?? (-1)` workaround from the index_of docs, which were teaching the idiom this fix removes.\n\n**Blocked on release.** The grammar change is unreleased, so the two new snapshot cases fail against tree-sitter-rad v0.6.0. To land: release tree-sitter-rad (v0.6.1), bump go.mod, drop the local replace directive (currently unstaged).\n\nNote for whoever releases: regenerating in that repo also picked up two changes that are not part of this fix - FIELDS.md/NODES.md were stale since ac743bd (missing the `group` field), and src/tree_sitter/alloc.h + array.h drifted because the local tree-sitter CLI is 0.23.2. Decide whether those ride along.",
+      "created_at_millis": 1786358758652,
+      "id": "c_25U4rJWoB"
+    }
+  ],
   "created_at_millis": 1775232036608,
   "creator": "Alexander Terp",
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces (both forms error RAD10009; the `?? (-1)` workaround works).\n\nWriting a negative number literal as the fallback value for ?? or catch causes a parse error.\n\n**Repro:**\nr = parse_int(\"x\") ?? -1      // error[RAD10009]: Unexpected '-'\nr = risky() catch -1          // error[RAD10009]: Unexpected '-'\n\n**Workarounds:**\n- Parentheses: `?? (-1)`  (confirmed working)\n- A variable: `fallback = -1; r = parse_int(\"x\") ?? fallback`\n- Arithmetic: `?? (0 - 1)`\n\nThe parser does not recognize unary minus in this position. Natural to write - any user using ?? / catch with negative defaults hits it.\n\n**Fix (slam dunk):** allow a unary-minus literal as the RHS of `??` / `catch` in the parser. The parens workaround proves it is purely a parsing gap.",
   "grammar": true,
   "id": "a_sBPzQCcM",
-  "position": "m!",
+  "position": "u8UUUUUUUU",
   "severity": "medium",
   "tags": [
     "quick-win"
   ],
   "title": "?? and catch cannot parse negative literal on right side",
-  "updated_at_millis": 1781449592005,
+  "updated_at_millis": 1786370378214,
   "history": [
-    {"field":"column","value":"todo-hi","at":1775232036608}
+    {"field":"column","value":"todo-hi","at":1775232036608},
+    {"field":"column","value":"done","at":1786370378214}
   ]
 }

@@ -3,6 +3,14 @@
   "alias": "rad-387-regex-constraint",
   "alias_explicit": false,
   "column": "low",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Closing against the sprint board. `a_25S2bdrTD` adds RAD40017, a warning when an interpolation holds a constant literal - which is exactly the `\"\\\\d{4}\"` regex-constraint case this card describes. The escape hatches are `\\{` and `r\"...\"`, both named in the diagnostic's help line.\n\nNote the warning is only surfaced by `rad check` and the editor; running a script filters diagnostics to errors only (`core/script_meta.go:113`).",
+      "created_at_millis": 1786359556737,
+      "id": "c_25UPcXNXG"
+    }
+  ],
   "created_at_millis": 1767762151126,
   "creator": "Alexander Terp",
   "description": "regex constraint interpolation exception panic",
@@ -13,7 +21,7 @@
   "position": "t!",
   "title": "RAD-387: regex constraint interpolation exception",
   "type": "bug",
-  "updated_at_millis": 1770438170911,
+  "updated_at_millis": 1786359556737,
   "history": [
     {"field":"column","value":"low","at":1767762151126}
   ]

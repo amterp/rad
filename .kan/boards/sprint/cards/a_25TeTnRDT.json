@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "build-the-property",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1786357744637,
+  "creator": "Alexander Terp",
+  "description": "Tracks GitHub #140. Not a gate on the current bugfix work - raised here so it stops living only as an issue.\n\nThe current suite in `core/testing` is example-based and good at what it covers. What it cannot cover is the combinatorial space where evaluator-semantics bugs live: scoping x call depth x error paths x closures. #137 was exactly that shape - invisible until someone writes the precise program, trivial for a generator to find.\n\nThe invariants #140 names map directly onto bugs we are working right now: a handler evaluates in the scope of the catch site at any propagation depth; locals never leak across frames; an unhandled error from depth N surfaces with message and stack intact; closures see the environment they captured.\n\nIts metamorphic oracles are the interesting part - inlining a call must not change output, wrapping an expression in an identity fn must not change scoping, adding an unused local must change nothing. Each would have caught #137 alone. They are also the only cheap way to *prove* whatever we decide in a_25TdzYuMr (error value identity) holds at depths example tests never reach.\n\nOpen questions live on the issue: CI budget and whether to split nightly-deep from shallow-on-PR; whether the generator targets the AST (shrinks better) or source text (also exercises the parser); how much of this `rad check` should catch statically instead.\n\n`pgregory.net/rapid` does generation and shrinking well; `testing/quick` is the stdlib fallback.",
+  "effort": "l",
+  "id": "a_25TeTnRDT",
+  "position": "UUUUUUUUUUUUUUUUUUU",
+  "source": [
+    "main-board"
+  ],
+  "title": "Build the property-based harness for evaluator semantics (GH #140)",
+  "type": "enhancement",
+  "updated_at_millis": 1786357744637,
+  "history": [
+    {"field":"column","value":"p2","at":1786357744637}
+  ]
+}

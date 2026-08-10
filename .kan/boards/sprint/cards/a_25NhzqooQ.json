@@ -2,23 +2,24 @@
   "_v": 3,
   "alias": "decide-the-shell",
   "alias_explicit": false,
-  "column": "stretch",
+  "column": "done",
   "created_at_millis": 1786343580141,
   "creator": "Alexander Terp",
-  "description": "Five reports converged on shell safety with five different spellings: `{x:q}`, `shell_quote()`, `{title!q}`, argv-form `$[...]`, and list-form `$cmd_list`. The review is explicit that they reduce to two orthogonal features and must not be averaged:\n\n1. A quoting mechanism usable inside command strings. This is the p0-tier1 `shell_escape()` card and ships independently.\n2. A shell-free argv form - safe by construction, but it gives up pipes, redirection, and everything else the shell provides.\n\nThe agent-facing report argues argv-form is the only option safe by construction; dev-longtail attaches the lost-shell-features caveat. `principles.md` (\"no cryptic symbols\") weighs against the `!q` spelling.\n\nIf a lint comes with it, taint-scope it. As sketched, \"any interpolation inside `$` without `:q`\" fires on nearly every shell command in the corpus - its critic called it a false-positive generator. Scope it to values from args, `input()`, HTTP, files, and subprocesses, or ship the primitive with no lint.",
+  "description": "Decided and shipped as RED-9 (`docs/red/0009-shell-interpolation.md`), commit `f799ba47`.\n\nThe card framed this as two orthogonal features that must not be averaged: a quoting mechanism, and a shell-free argv form. Both shipped, plus a third form that was already there.\n\n| Form | Meaning |\n|---|---|\n| `` $`literal {x}` `` | literal text is shell, interpolations are data |\n| `$list` | argv - one word per element, exec`d directly, no shell |\n| `$str_var` | raw - you built the string, you own it |\n\n**Spellings rejected:** `{x:q}` and `{x!q}` (cryptic per `principles.md:7`, needs a grammar release, and puts escaping in a display-formatting slot); `shell_quote()` as the primary mechanism (see the superseded p0 card).\n\n**The argv form cost nothing.** `grammar.js:1231` already has `$.list` under `literal` -\u003e `primary_expr` -\u003e `expr`, and `shell_cmd` takes `field(\"command\", $.expr)` - a list command just errored at runtime. No new syntax, no tree-sitter release. It also runs on Windows, where `` $`...` `` does not.\n\n**On the lint the card warned about:** no taint-scoped lint shipped, and the card`s concern was right - a warning on every interpolation would have landed where RAD30011 did (~73% of all hints, demoted to `--strict`). Instead RAD40018 fires only on interpolations wrapped in quotes the script wrote, which is a bounded migration set: 45 sites across 15 files in `~/src/scripts/bin`.\n\nImplicit list splatting was chosen over an explicit spread (Nushell`s `...list`) because a list command was a hard error before, so there is no ambiguity to resolve and no behavior to preserve.",
   "effort": "l",
   "id": "a_25NhzqooQ",
   "labels": [
     "needs-decision"
   ],
-  "position": "U",
+  "position": "UUUUUUUUUUUUUU",
   "source": [
     "takehome"
   ],
   "title": "Decide the shell execution model: quoting primitive, argv form, or both",
   "type": "decision",
-  "updated_at_millis": 1786343580141,
+  "updated_at_millis": 1786375448611,
   "history": [
-    {"field":"column","value":"stretch","at":1786343580141}
+    {"field":"column","value":"stretch","at":1786343580141},
+    {"field":"column","value":"done","at":1786375448611}
   ]
 }

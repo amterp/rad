@@ -1,0 +1,25 @@
+{
+  "_v": 3,
+  "alias": "index-of-isn-t",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1786357469017,
+  "creator": "Alexander Terp",
+  "description": "Split off from `stop-the-checker` (a_25Nhy9Un4), which landed the other\nfalse positives in that cluster. Deferred deliberately: it is a different\nsize class from the rest.\n\n`index_of` returns `int?`, and an `in` membership guard doesn't narrow it:\n\n    if flag in args:\n        idx = args.index_of(flag)\n        use(idx + 1)          // RAD30002 on code that provably can't be null\n\nOne real script hit this ~10 times from a single flag-parsing idiom.\n\n### Why it was deferred\n\nNarrowing is keyed on `*Symbol` pointer identity and nothing else -\n`Frame.bindings` is `map[*Symbol]rl.TypingT` (`rts/check/narrow.go:18`).\nThere is no expression key, no place key, no container/index relation\nanywhere in the narrower. Every predicate handler starts by resolving an\n`*rl.Identifier` to a Symbol, so `if x.foo != null:` and `if xs[0] != null:`\ndon't narrow either. Generalizing the key type means changing `With`,\n`WithMany`, `Lookup`, `joinFrames`, `dropNarrowings` and\n`closureOverridesForLambda` together.\n\nNote the plain form already works, because there IS a symbol to key on:\n\n    idx = args.index_of(flag)\n    if idx != null:\n        use(idx + 1)          // clean\n\nSo the gap is specifically a guard whose subject is a *different\nexpression* than the thing being refined.\n\n### A cheaper design worth trying first\n\nRather than generalizing `Frame`, keep a stack of active guard condition\nnodes: `walkIf` pushes the branch condition for the duration of the truthy\nbody. `refineBuiltinReturn` then strips the null from `index_of`'s `int?`\nwhen an active guard is syntactically `\u003ctarget\u003e in \u003csubject\u003e` matching this\ncall's own arguments.\n\nThat reuses the extension point the sibling card already leaned on, and it\nis shape-driven in the same way `typeOfCallOfIdent` (`narrow.go:382`)\nalready pattern-matches an exact call shape. It does not generalize to\n`x.foo` narrowing - if that's wanted too, the expensive path is the honest\none.\n\n### Watch out for\n\n- The guard must not survive into a lambda defined in the body and called\n  later; see `closureOverridesForLambda` for the existing analogue.\n- `args.index_of(flag)` is a `*rl.VarPath` with a UFCS segment, not a\n  `*rl.Call`, so the syntactic match has to handle both call forms.\n- Needs a negative snapshot: a guard on a *different* container\n  (`if flag in other: args.index_of(flag)`) must NOT narrow.",
+  "effort": "m",
+  "id": "a_25TXJFFzQ",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "UUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "index_of isn't narrowed by an 'in' membership guard",
+  "type": "bug",
+  "updated_at_millis": 1786370374910,
+  "history": [
+    {"field":"column","value":"approved","at":1786357469017},
+    {"field":"column","value":"done","at":1786370374910}
+  ]
+}
