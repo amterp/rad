@@ -501,7 +501,7 @@ func (r *RadRunner) registerCommands() error {
 		}
 	}
 
-	return nil
+	return setDefaultCmd(RRootCmd, r.scriptData.Commands)
 }
 
 // raCmdFor returns the Ra command mirroring a script command, or nil if it was
@@ -656,6 +656,37 @@ func buildRaCmdTree(
 		}
 	}
 
+	return setDefaultCmd(raCmd, scriptCmd.SubCmds)
+}
+
+// setDefaultCmd points a Ra command at whichever of its children is marked
+// default. Called after the children are registered, since Ra refuses a name it
+// hasn't seen.
+//
+// RAD40019 reports a second default with a span and an error code, and the
+// interpreter does run the checker (ExtractMetadata -> validateSyntax exits on
+// any Error diagnostic), so on the normal path this never fires. It stays as a
+// backstop for any caller that builds a command tree without that validation,
+// rather than silently letting declaration order decide which of two defaults
+// wins.
+func setDefaultCmd(raCmd *ra.Cmd, subCmds []*ScriptCommand) error {
+	var chosen *ScriptCommand
+	for _, sub := range subCmds {
+		if !sub.IsDefault {
+			continue
+		}
+		if chosen != nil {
+			return fmt.Errorf("commands '%s' and '%s' are both marked default; only one can be",
+				chosen.ExternalName, sub.ExternalName)
+		}
+		chosen = sub
+	}
+	if chosen == nil {
+		return nil
+	}
+	if err := raCmd.SetDefaultCmd(chosen.ExternalName); err != nil {
+		return fmt.Errorf("failed to set default command '%s': %w", chosen.ExternalName, err)
+	}
 	return nil
 }
 

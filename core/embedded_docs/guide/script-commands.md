@@ -279,11 +279,144 @@ Environment healthy
 **Note: Shared args are flag-only**
 
     When commands exist, shared args can only be passed as flags (like `--verbose`, `-v`, or `--config=value`), not
-    positionally. This keeps the invocation clear: the first positional argument is always the command name.
+    positionally. That keeps the first positional argument free to name a command - or, if you declare a
+    default command, to be that command's first argument.
 
     Both long form (`--verbose`) and short form (`-v`) work for shared args.
 
     Command-specific args can be positional or flags, just like regular script args.
+
+## Nested Commands
+
+Larger tools group related commands under a namespace, like `git remote add`. A command that **contains other commands** becomes one: it has no `calls` of its own, and routes to its sub-commands instead.
+
+```rad
+#!/usr/bin/env rad
+
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        # shared with every sub-command
+
+    command add:
+        ---
+        Add a remote.
+        ---
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print("Adding {name} -> {url} (timeout {timeout})")
+
+fn do_remove():
+    print("Removing {name}")
+```
+
+Name the full path to reach the command you want:
+
+```
+> ./tool.rad remote add origin https://github.com/me/repo.git
+> ./tool.rad remote remove origin
+```
+
+Args declared directly on a namespace are **shared with every descendant**. They behave like the script-level `args:` block, just scoped to that sub-tree - flag-only, and accepted at any point along the path:
+
+```
+> ./tool.rad remote add origin https://... --timeout 5
+> ./tool.rad remote --timeout 5 add origin https://...
+```
+
+Namespaces nest as deep as you like. Only the terminal command's callback runs; an intermediate namespace exists to group and to share args, not to execute.
+
+## Default Commands
+
+Most tools have one thing they mostly do. Marking a command `default` means the user doesn't have to type its name:
+
+```rad
+#!/usr/bin/env rad
+
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str     # Time spec followed by message.
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print("Adding: {tokens}")
+
+fn do_list():
+    print("Listing")
+```
+
+```
+> ./remind.rad 15m standup
+```
+
+```
+Adding: [ "15m", "standup" ]
+```
+
+`./remind.rad add 15m standup` does exactly the same thing. The default keeps its own name, and that matters more than it looks.
+
+### When A Value Looks Like A Command
+
+A named command always wins. So if you want to add a reminder that says "list", the short form won't do it - `list` is a command:
+
+```
+> ./remind.rad list          # runs do_list, no reminder added
+```
+
+Two ways to say you meant the value. Name the default explicitly, or use `--`:
+
+```
+> ./remind.rad add list      # adds a reminder saying "list"
+> ./remind.rad -- list       # same
+```
+
+**Note: Which command runs, exactly**
+
+    Routing happens at the first token the level can't consume itself. A command name appearing *after* one of those goes to the default as data, not as a command. If a flag is needed by the default but rejected elsewhere, declare it as a shared arg so it's consumed before routing.
+
+### Defaults And Namespaces
+
+The rule is the same at every level, so a namespace's default is what runs when you name the namespace and stop:
+
+```rad
+#!/usr/bin/env rad
+
+command remote:
+    command list:
+        default
+        calls do_list
+
+    command add:
+        name str
+        calls do_add
+
+fn do_list():
+    print("Listing remotes")
+
+fn do_add():
+    print("Adding {name}")
+```
+
+`./tool.rad remote` lists remotes, exactly as `./tool.rad remote list` would.
+
+Only leaf commands can be marked. A namespace routes rather than runs, so marking one would leave the question unanswered - mark one of its sub-commands instead.
 
 ## Command Callbacks
 

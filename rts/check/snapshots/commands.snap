@@ -1,0 +1,169 @@
+### TITLE ###
+NestedCommandArgsAreFileScope
+### DESCRIPTION ###
+An arg declared on a nested sub-command is a file-scope name like any other
+command arg, so its callback can reference it.
+### INPUT ###
+command remote:
+    timeout int = 30
+    command add:
+        name str
+        calls fn():
+            print(name)
+            print(timeout)
+### CHECK ###
+# Identifier types
+  print @ 6:13 -> dynamic
+  name @ 6:19 -> str
+  print @ 7:13 -> dynamic
+  timeout @ 7:19 -> int
+
+# Symbol types
+  name (cmdarg): str
+  timeout (cmdarg): int
+
+# Diagnostics
+  (none)
+
+### TITLE ###
+DefaultMarkerIsNotADiagnostic
+### DESCRIPTION ###
+One default per level is the ordinary case and reports nothing.
+### INPUT ###
+command add:
+    tokens str
+    default
+    calls fn():
+        print(tokens)
+
+command list:
+    calls fn():
+        print("list")
+### CHECK ###
+# Identifier types
+  print @ 5:9 -> dynamic
+  tokens @ 5:15 -> str
+  print @ 9:9 -> dynamic
+
+# Symbol types
+  tokens (cmdarg): str
+
+# Diagnostics
+  (none)
+
+### TITLE ###
+TwoDefaultsAtOneLevel
+### INPUT ###
+command add:
+    tokens str
+    default
+    calls fn():
+        print(tokens)
+
+command edit:
+    tokens str
+    default
+    calls fn():
+        print(tokens)
+### CHECK ###
+# Identifier types
+  print @ 5:9 -> dynamic
+  tokens @ 5:15 -> str
+  print @ 11:9 -> dynamic
+  tokens @ 11:15 -> str
+
+# Symbol types
+  tokens (cmdarg): str
+
+# Diagnostics
+  [error] RAD40019 @ 9:5 - 'add' is already the default at this level, so 'edit' cannot be. Only one command per level runs when none is named.
+
+### TITLE ###
+DefaultsAreScopedPerLevel
+### DESCRIPTION ###
+Each namespace picks its own default, so two defaults in different sub-trees
+are fine.
+### INPUT ###
+command remote:
+    command add:
+        name str
+        default
+        calls fn():
+            print(name)
+
+command image:
+    command build:
+        tag str
+        default
+        calls fn():
+            print(tag)
+### CHECK ###
+# Identifier types
+  print @ 6:13 -> dynamic
+  name @ 6:19 -> str
+  print @ 13:13 -> dynamic
+  tag @ 13:19 -> str
+
+# Symbol types
+  name (cmdarg): str
+  tag (cmdarg): str
+
+# Diagnostics
+  (none)
+
+### TITLE ###
+CommandWithNothingToRun
+### INPUT ###
+command deploy:
+    env str
+### CHECK ###
+# Identifier types
+  (none)
+
+# Symbol types
+  env (cmdarg): str
+
+# Diagnostics
+  [error] RAD40020 @ 1:1 - Command 'deploy' does nothing: it needs a 'calls' line naming what to run, or nested command blocks to route to.
+
+### TITLE ###
+NamespaceCarryingACallback
+### INPUT ###
+command remote:
+    calls fn():
+        print("remote")
+    command add:
+        name str
+        calls fn():
+            print(name)
+### CHECK ###
+# Identifier types
+  print @ 3:9 -> dynamic
+  print @ 7:13 -> dynamic
+  name @ 7:19 -> str
+
+# Symbol types
+  name (cmdarg): str
+
+# Diagnostics
+  [error] RAD40021 @ 2:5 - 'remote' contains sub-commands, so it routes to them rather than running itself. Remove 'calls', or move it to a sub-command.
+
+### TITLE ###
+DefaultOnANamespace
+### INPUT ###
+command remote:
+    default
+    command add:
+        name str
+        calls fn():
+            print(name)
+### CHECK ###
+# Identifier types
+  print @ 6:13 -> dynamic
+  name @ 6:19 -> str
+
+# Symbol types
+  name (cmdarg): str
+
+# Diagnostics
+  [error] RAD40022 @ 2:5 - 'remote' contains sub-commands, so it cannot be the default. Mark one of its sub-commands instead.

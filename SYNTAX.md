@@ -733,10 +733,91 @@ command greet:
         print("Hello, {name}!")
 ```
 
+### Nested Commands
+
+Group related commands under a namespace, like `git remote add`. A command that
+contains other commands is a *namespace*: it has no `calls` of its own and routes
+to its sub-commands instead. Args declared on it are shared - inherited by every
+descendant, and accepted anywhere on the path.
+
+```rad
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        // shared with every sub-command
+
+    command add:
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print("Adding {name} -> {url} (timeout {timeout})")
+
+fn do_remove():
+    print("Removing {name}")
+```
+
+`./tool.rad remote add origin https://... --timeout 5` runs `do_add`, and
+`--timeout` is equally valid before the sub-command. Namespaces nest as deep as
+you like; only the terminal command's `calls` runs.
+
+### Default Commands
+
+Mark one command per level `default` and it runs when the user names none, so a
+tool's primary action doesn't have to be typed:
+
+```rad
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print("Adding {tokens}")
+
+fn do_list():
+    print("Listing")
+```
+
+`./tool.rad 15m standup` and `./tool.rad add 15m standup` both run `do_add`.
+
+A named command always wins, so a value that happens to match one goes to that
+command instead. Two ways to say you meant the value: name the default
+explicitly, or use `--`.
+
+```
+./tool.rad list            # runs do_list
+./tool.rad add list        # adds a reminder saying "list"
+./tool.rad -- list         # same
+```
+
+The rule applies at every level, so a namespace's default is what `./tool.rad
+remote` runs. Only leaf commands can be marked - a namespace routes rather than
+runs, so marking one would leave the question unanswered.
+
 ### Automatic Help
 
 - `./tool.rad -h` — lists all commands with descriptions
 - `./tool.rad deploy -h` — shows command-specific arguments
+- `./tool.rad remote -h` — lists a namespace's sub-commands and shared args
+
+When a default exists, `-h` marks it and shows a second usage line spelling out
+the shorter invocation it enables.
 
 
 ## Shell Commands
