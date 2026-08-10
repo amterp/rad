@@ -989,21 +989,22 @@ func (tc *typeChecker) walkForLoop(n *rl.ForLoop) {
 
 	vars := tc.resolved.ForLoopVars[n]
 	switch {
-	case len(vars) == 2:
-		// Two-var shape only makes sense over a map (k, v). For any
-		// other iterable, fall back to typing the first var as the
-		// element type and leaving the second at Dynamic - the
-		// runtime would reject the loop anyway, but we shouldn't
-		// silently mistype.
-		keyT, valT := mapKeyValTypes(iterType)
-		if keyT == nil || valT == nil {
-			keyT = loopElementType(iterType)
-			valT = rl.NewDynamicType()
-		}
-		tc.bindLoopVar(vars[0], keyT)
-		tc.bindLoopVar(vars[1], valT)
 	case len(vars) == 1:
 		tc.bindLoopVar(vars[0], loopElementType(iterType))
+	case len(vars) == 2 && isMapIteration(iterType):
+		// The one shape where multiple vars don't unpack the element:
+		// a map iterates as (key, value) pairs.
+		keyT, valT := mapKeyValTypes(iterType)
+		tc.bindLoopVar(vars[0], keyT)
+		tc.bindLoopVar(vars[1], valT)
+	case len(vars) >= 2:
+		// Every other iterable unpacks each element across the targets
+		// (runForLoopList), exactly as a multi-target assignment does -
+		// so `for tz, flag in [['a', 'b']]` binds both to str, not the
+		// inner list to the first var.
+		for i, t := range distributeUnpack(loopElementType(iterType), len(vars)) {
+			tc.bindLoopVar(vars[i], t)
+		}
 	}
 
 	tc.walkStmts(n.Body)
@@ -1032,6 +1033,13 @@ func mapKeyValTypes(iter rl.TypingT) (rl.TypingT, rl.TypingT) {
 		return rl.NewAnyType(), rl.NewAnyType()
 	}
 	return nil, nil
+}
+
+// isMapIteration reports whether `iter` iterates as (key, value) pairs,
+// the one shape where a multi-var loop doesn't unpack the element.
+func isMapIteration(iter rl.TypingT) bool {
+	keyT, valT := mapKeyValTypes(iter)
+	return keyT != nil && valT != nil
 }
 
 // walkWhileLoop handles `while [cond]:`. Inside the body the
@@ -2727,7 +2735,7 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int, recvT
 	tc.checkCall(call, typing, implicitReceiverCount)
 
 	if typing.ReturnT != nil {
-		ret := tc.refineBuiltinReturn(call, recvType, *typing.ReturnT)
+		ret := tc.refineBuiltinReturn(call, typing, recvType, *typing.ReturnT)
 		return tc.record(call, tc.maybeStripFallible(call, ret))
 	}
 	return tc.record(call, rl.NewDynamicType())
@@ -2741,7 +2749,25 @@ func (tc *typeChecker) synthCall(call *rl.Call, implicitReceiverCount int, recvT
 // otherwise leaks downstream (`sort(str[])` iterating to `any|str`, `clamp` of
 // ints widening `n-1` to `int|float`). This is a deliberately tight allow-list,
 // not a general mechanism - resist growing it without a concrete need.
-func (tc *typeChecker) refineBuiltinReturn(call *rl.Call, recvType rl.TypingT, ret rl.TypingT) rl.TypingT {
+//
+// Two invariants bind every arm below:
+//
+//   - Refinement runs BEFORE maybeStripFallible, so `ret` still carries its
+//     error arm. Preserve it, or fallible detection (RAD30011) and the
+//     error-strip silently stop firing for that builtin.
+//   - Never mutate a type reached from the signature. TypingStructT.Fields()
+//     hands back its live backing map and FnSignaturesByName is shared across
+//     every call site in every script, so build fresh types instead.
+//
+// Growth note: four of these arms say "returns its argument's type". If this
+// list keeps growing, the honest fix is element-type variables in the
+// signature DSL (`sort(_primary: T) -> T`) rather than an eighth arm here.
+func (tc *typeChecker) refineBuiltinReturn(
+	call *rl.Call,
+	typing *rl.TypingFnT,
+	recvType rl.TypingT,
+	ret rl.TypingT,
+) rl.TypingT {
 	ident, ok := call.Func.(*rl.Identifier)
 	if !ok {
 		return ret
@@ -2759,16 +2785,17 @@ func (tc *typeChecker) refineBuiltinReturn(call *rl.Call, recvType rl.TypingT, r
 	}
 	switch ident.Name {
 	case "sort":
-		// Single-list/str sort returns its argument unchanged in shape, so the
-		// element type survives. Parallel sort (`sort(xs, ys)`) returns a
-		// list-of-lists, not args[0], so only refine the single-arg form;
-		// otherwise keep the signature's wide type.
-		if len(args) == 1 {
-			switch args[0].(type) {
-			case *rl.TypingListT, *rl.TypingAnyListT, *rl.TypingStrT:
-				return args[0]
-			}
-		}
+		return refineSort(args, ret)
+	case "reverse":
+		return refineSameShape(args, ret)
+	case "map":
+		return refineMap(args, ret)
+	case "filter":
+		return refineFilter(args, ret)
+	case "range":
+		return refineRange(args, ret)
+	case "read_file":
+		return refineReadFile(call, typing, ret)
 	case "clamp", "min", "max", "abs":
 		// These select/transform among numeric inputs without changing
 		// int-ness, so all-int scalar args produce an int result. The
@@ -2780,6 +2807,186 @@ func (tc *typeChecker) refineBuiltinReturn(call *rl.Call, recvType rl.TypingT, r
 		}
 	}
 	return ret
+}
+
+// refineSort types `sort`'s two distinct shapes. Single-list/str sort returns
+// its argument unchanged in shape, so the element type survives. Lockstep sort
+// (`sort(xs, ys, zs)`) reorders every list by the primary's ordering and
+// returns them as a list-of-lists, so the result is precisely a tuple of the
+// argument types - which distributeUnpack then lands element-wise on a
+// destructuring capture. A str argument in the lockstep form isn't a
+// reorderable column, so anything but all-lists keeps the wide type.
+func refineSort(args []rl.TypingT, ret rl.TypingT) rl.TypingT {
+	if len(args) < 2 {
+		return refineSameShape(args, ret)
+	}
+	for _, a := range args {
+		if !isListLike(a) {
+			return ret
+		}
+	}
+	return rl.NewTupleType(args...)
+}
+
+// refineSameShape types the builtins that hand back a rearrangement of their
+// sole argument - same kind, same elements, so the argument's own type is
+// exact. Only a concretely-known list/str qualifies; a union or dynamic
+// argument leaves us no better off than the signature.
+func refineSameShape(args []rl.TypingT, ret rl.TypingT) rl.TypingT {
+	if len(args) != 1 {
+		return ret
+	}
+	switch args[0].(type) {
+	case *rl.TypingListT, *rl.TypingAnyListT, *rl.TypingStrT:
+		return args[0]
+	}
+	return ret
+}
+
+// refineMap types `map`, whose signature can only say `map|list` because the
+// result kind follows the collection it was handed. A list maps to a list of
+// the callee's return type; a map maps to a map with its keys preserved and
+// its values replaced. When the callee's return isn't known (an unannotated
+// named fn, a dynamic value) we still pin the *kind*, which is what stops the
+// `map|list` union leaking into a `list`-typed parameter.
+func refineMap(args []rl.TypingT, ret rl.TypingT) rl.TypingT {
+	if len(args) != 2 {
+		return ret
+	}
+	elemT := fnReturnType(args[1])
+	switch coll := args[0].(type) {
+	case *rl.TypingListT, *rl.TypingAnyListT:
+		if elemT == nil {
+			return rl.NewAnyListType()
+		}
+		return rl.NewListType(elemT)
+	case *rl.TypingMapT:
+		if elemT == nil {
+			return rl.NewAnyMapType()
+		}
+		return rl.NewMapType(coll.KeyT(), elemT)
+	case *rl.TypingAnyMapT:
+		return rl.NewAnyMapType()
+	}
+	return ret
+}
+
+// refineFilter types `filter`, which keeps a subset of its collection. Both
+// the kind and the element type survive untouched, so the collection's own
+// type is exact - only the length changes, which types don't track.
+func refineFilter(args []rl.TypingT, ret rl.TypingT) rl.TypingT {
+	if len(args) != 2 {
+		return ret
+	}
+	switch args[0].(type) {
+	case *rl.TypingListT, *rl.TypingAnyListT, *rl.TypingMapT, *rl.TypingAnyMapT:
+		return args[0]
+	}
+	return ret
+}
+
+// refineRange collapses `float[]|int[]` to `int[]` when every written argument
+// is an int - the list counterpart of the clamp/min/max/abs rule. An omitted
+// `_step` defaults to the int literal 1, so absent args need no special care.
+func refineRange(args []rl.TypingT, ret rl.TypingT) rl.TypingT {
+	if len(args) == 0 || !allIntScalar(args) {
+		return ret
+	}
+	return rl.NewListType(rl.NewIntType())
+}
+
+// refineReadFile resolves `content`'s `str|int[]` union using the `mode`
+// argument, which decides it outright: "text" yields a str, "bytes" a byte
+// list. mode is named-only and defaults to "text", so the overwhelmingly
+// common `read_file(p)` refines too. A mode we can't read statically (a
+// variable, an interpolated string) keeps the wide union.
+//
+// The error arm is rebuilt around the narrowed struct rather than dropped -
+// read_file is fallible, and losing that arm here would silence RAD30011.
+func refineReadFile(call *rl.Call, typing *rl.TypingFnT, ret rl.TypingT) rl.TypingT {
+	mode, ok := effectiveStrLiteralArg(call, typing, "mode")
+	if !ok {
+		return ret
+	}
+	var contentT rl.TypingT
+	switch mode {
+	case "text":
+		contentT = rl.NewStrType()
+	case "bytes":
+		contentT = rl.NewListType(rl.NewIntType())
+	default:
+		return ret
+	}
+
+	arms := unionArms(ret)
+	out := make([]rl.TypingT, 0, len(arms))
+	refined := false
+	for _, arm := range arms {
+		st, isStruct := arm.(*rl.TypingStructT)
+		if !isStruct {
+			out = append(out, arm)
+			continue
+		}
+		fields := make(map[rl.MapNamedKey]rl.TypingT, len(st.Fields()))
+		for k, v := range st.Fields() {
+			if k.Name == "content" {
+				v = contentT
+				refined = true
+			}
+			fields[k] = v
+		}
+		out = append(out, rl.NewStructType(fields))
+	}
+	if !refined {
+		return ret
+	}
+	if len(out) == 1 {
+		return out[0]
+	}
+	return rl.NewUnionType(out...)
+}
+
+// fnReturnType returns a callee's declared-or-inferred return type, or nil
+// when the value isn't a function we have a return type for.
+func fnReturnType(t rl.TypingT) rl.TypingT {
+	fn, ok := t.(*rl.TypingFnT)
+	if !ok || fn.ReturnT == nil {
+		return nil
+	}
+	return *fn.ReturnT
+}
+
+// isListLike reports whether t is a concretely-known list (typed or open).
+func isListLike(t rl.TypingT) bool {
+	switch t.(type) {
+	case *rl.TypingListT, *rl.TypingAnyListT:
+		return true
+	}
+	return false
+}
+
+// effectiveStrLiteralArg resolves a named parameter's statically-known string
+// value at a call site: the written literal if present, otherwise the
+// signature's default. ok is false when the argument is written but isn't a
+// simple literal (a variable, an interpolated string) - the checker does no
+// constant folding - or when the parameter has no literal default to fall
+// back on.
+func effectiveStrLiteralArg(call *rl.Call, typing *rl.TypingFnT, param string) (string, bool) {
+	for _, na := range call.NamedArgs {
+		if na.Name == param {
+			return simpleStringValue(na.Value)
+		}
+	}
+	if typing == nil {
+		return "", false
+	}
+	for _, p := range typing.Params {
+		if p.Name != param || p.DefaultAST == nil {
+			continue
+		}
+		return simpleStringValue(p.DefaultAST.Node)
+	}
+	return "", false
 }
 
 // positionalArgTypes returns the synthesized types of a call's positional
@@ -2920,10 +3127,25 @@ func (tc *typeChecker) synthVarPath(v *rl.VarPath, asTarget bool) rl.TypingT {
 			if seg.End != nil {
 				_ = tc.synth(seg.End)
 			}
-			cur = rl.NewDynamicType()
+			cur = sliceResultType(cur)
 		}
 	}
 	return tc.record(v, cur)
+}
+
+// sliceResultType types `recv[a:b]`. A slice takes a contiguous run of the
+// receiver and yields the same kind - only the length changes, which types
+// don't track - so a str slices to a str and a T[] to a T[]. Typing every
+// slice as dynamic (as this used to) erased the element type, which then
+// blocked the collection refinements downstream: `xs[1:].filter(...)` fell
+// back to the wide `map|list` and hinted on a subsequent append. Anything
+// not sliceable stays dynamic; the runtime owns that error.
+func sliceResultType(recv rl.TypingT) rl.TypingT {
+	switch recv.(type) {
+	case *rl.TypingListT, *rl.TypingAnyListT, *rl.TypingStrT:
+		return recv
+	}
+	return rl.NewDynamicType()
 }
 
 // synthMemberAccess resolves a dot access (`recv.name`) against the

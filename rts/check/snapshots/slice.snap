@@ -1,0 +1,81 @@
+### TITLE ###
+SlicePreservesTheCollectionType
+### DESCRIPTION ###
+A slice takes a contiguous run of its receiver and yields the same kind -
+only the length changes, and types don't track length. Slices used to type
+as dynamic outright, which erased the element type and blocked every
+collection refinement downstream: `xs[1:].filter(...)` fell back to the wide
+`map|list` and then hinted on an append. The flag-parsing idiom
+`args = args[:i] + args[i + 1:]` made this common in real scripts.
+### INPUT ###
+words = ["a", "b", "c"]
+tail = words[1:]
+for w in tail:
+    split(w, ",")
+rest = words[:1] + words[2:]
+rest += ["d"]
+### STDOUT ###
+# Identifier types
+  words @ 1:1 -> <no-type>
+  tail @ 2:1 -> <no-type>
+  words @ 2:8 -> str[]
+  tail @ 3:10 -> str[]
+  split @ 4:5 -> dynamic
+  w @ 4:11 -> str
+  rest @ 5:1 -> <no-type>
+  words @ 5:8 -> str[]
+  words @ 5:20 -> str[]
+  rest @ 6:1 -> <no-type>
+  rest @ 6:1 -> list
+
+# Symbol types
+  rest (local): list
+  tail (local): str[]
+  w (loop): str
+  words (local): str[]
+
+# Diagnostics
+  (none)
+### TITLE ###
+SliceOfAStrIsAStr
+### DESCRIPTION ###
+Strings slice too, and to a str rather than a list of characters.
+### INPUT ###
+name = "hello"
+head = name[:2]
+split(head, "e")
+### STDOUT ###
+# Identifier types
+  name @ 1:1 -> <no-type>
+  head @ 2:1 -> <no-type>
+  name @ 2:8 -> str
+  split @ 3:1 -> dynamic
+  head @ 3:7 -> str
+
+# Symbol types
+  head (local): str
+  name (local): str
+
+# Diagnostics
+  (none)
+### TITLE ###
+SliceOfUnknownStaysDynamic
+### DESCRIPTION ###
+Negative case: nothing is known about what a dynamic value slices to, so the
+result stays permissive rather than being pinned to a guess.
+### INPUT ###
+data = parse_json("[]")
+part = data[1:]
+### STDOUT ###
+# Identifier types
+  data @ 1:1 -> <no-type>
+  parse_json @ 1:8 -> dynamic
+  part @ 2:1 -> <no-type>
+  data @ 2:8 -> any
+
+# Symbol types
+  data (local): any
+  part (local): dynamic
+
+# Diagnostics
+  (none)
