@@ -1,0 +1,244 @@
+### TITLE ###
+DefaultRunsWhenNoCommandNamed
+### DESCRIPTION ###
+The point of the feature: the primary action is reachable without naming it.
+### INPUT ###
+command add:
+    *tokens str
+    default
+    calls fn():
+        print("add {tokens}")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+15m
+standup
+### STDOUT ###
+add [ "15m", "standup" ]
+
+### TITLE ###
+NamedSiblingWinsOverDefault
+### INPUT ###
+command add:
+    *tokens str
+    default
+    calls fn():
+        print("add {tokens}")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+list
+### STDOUT ###
+list
+
+### TITLE ###
+DefaultStillInvokableByName
+### DESCRIPTION ###
+The default keeps its own name, which is what makes it usable as an escape
+hatch when a value would otherwise be read as a sibling command.
+### INPUT ###
+command add:
+    *tokens str
+    default
+    calls fn():
+        print("add {tokens}")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+add
+list
+### STDOUT ###
+add [ "list" ]
+
+### TITLE ###
+DashDashEscapesSiblingCollision
+### DESCRIPTION ###
+The conventional escape. `--` suppresses command lookup without suppressing
+the routing, so the colliding value reaches the default as data.
+### INPUT ###
+command add:
+    *tokens str
+    default
+    calls fn():
+        print("add {tokens}")
+
+command list:
+    calls fn():
+        print("list")
+### RAW_ARGS ###
+--color=never
+--
+list
+### STDOUT ###
+add [ "list" ]
+
+### TITLE ###
+SharedFlagBeforeDefaultValues
+### DESCRIPTION ###
+A shared arg is registered on the commands, not the root, so it reaches the
+root as an unrecognized flag and has to route along with everything after it.
+### INPUT ###
+args:
+    repeat r str?
+
+command add:
+    *tokens str
+    default
+    calls fn():
+        print("add {tokens} repeat={repeat}")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+--repeat
+1d
+8:45
+standup
+### STDOUT ###
+add [ "8:45", "standup" ] repeat=1d
+
+### TITLE ###
+DefaultInsideNamespace
+### DESCRIPTION ###
+The rule is the same at every level, so a bare namespace runs its own default
+rather than erroring.
+### INPUT ###
+command remote:
+    timeout int = 30
+
+    command add:
+        name str
+        default
+        calls fn():
+            print("add {name} timeout={timeout}")
+
+    command remove:
+        name str
+        calls fn():
+            print("remove {name}")
+### ARGS ###
+remote
+origin
+### STDOUT ###
+add origin timeout=30
+
+### TITLE ###
+NoDefaultStillErrors
+### DESCRIPTION ###
+The regression guard: without a default, naming no command is still an error.
+Pairs with ErrorsIfCommandNotSpecified in cmds.snap.
+### INPUT ###
+command add:
+    *tokens str
+    calls fn():
+        print("add {tokens}")
+
+command list:
+    calls fn():
+        print("list")
+### ARGS ###
+15m
+standup
+### STDERR ###
+Too many positional arguments. Unused: [15m, standup]
+
+Usage:
+  TestCase [command] [OPTIONS]
+
+Commands:
+  add
+  list
+
+Global options:
+  -h, --help            Print usage string.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+      --src             Instead of running the target script, just print it out.
+### EXIT ###
+1
+
+### TITLE ###
+HelpShowsDefaultAndItsEquivalent
+### INPUT ###
+args:
+    repeat r str?   # Repeat interval.
+
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str     # Time spec followed by message.
+    default
+    calls fn():
+        print("add")
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls fn():
+        print("list")
+### ARGS ###
+--help
+### STDOUT ###
+Usage:
+  TestCase [command] [OPTIONS]
+  TestCase [tokens...] [OPTIONS]   (same as: TestCase add)
+
+Commands:
+  add    Add a reminder. (default)
+  list   Show upcoming reminders.
+
+Args for default command 'add':
+      --tokens [strs...]   Time spec followed by message.
+  -r, --repeat str         (optional) Repeat interval.
+
+Global options:
+  -h, --help            Print usage string.
+  -i, --interactive     Interactively prompt for script args not already provided, then run.
+  -d, --debug           Enables debug output. Intended for Rad script developers.
+      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet           Suppresses some output.
+      --confirm-shell   Confirm all shell commands before running them.
+      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
+      --src             Instead of running the target script, just print it out.
+
+### TITLE ###
+BareInvocationWithRequiredDefaultShowsHelp
+### DESCRIPTION ###
+Routing a bare invocation would answer "missing required argument" and never
+mention that other commands exist. Help answers both questions. RAW_ARGS with
+nothing in it because --color=never would itself count as an argument.
+### INPUT ###
+command add:
+    tokens str
+    default
+    calls fn():
+        print("add {tokens}")
+
+command list:
+    calls fn():
+        print("list")
+### RAW_ARGS ###
+### STDOUT ###
+Usage:
+  TestCase [command] [OPTIONS]
+  TestCase <tokens> [OPTIONS]   (same as: TestCase add)
+
+Commands:
+  add    (default)
+  list
+
+Args for default command 'add':
+      --tokens str

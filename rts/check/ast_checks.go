@@ -390,3 +390,56 @@ func (c *RadCheckerImpl) validateAssignmentTargetAST(node rl.Node, d *[]Diagnost
 		*d = append(*d, NewDiagnosticErrorFromSpan(node.Span(), c.src, msg, rl.ErrInvalidAssignmentTarget))
 	}
 }
+
+// Check 13: command block coherence.
+//
+// The grammar deliberately accepts shapes that mean nothing - a command with no
+// `calls` and no sub-commands, one with both, `default` on a namespace, two
+// defaults among siblings - so that these can be reported here with a span and
+// a message rather than as "Invalid syntax" at a dedent. Forgetting `calls` is
+// the likeliest first mistake anyone writing a command makes, and the parser
+// has nothing useful to say about it.
+//
+// Sibling context is what makes this a level-aware recursion rather than a
+// WalkCmds: whether a `default` is a duplicate cannot be told from the block
+// itself.
+func (c *RadCheckerImpl) addCommandBlockErrors(d *[]Diagnostic) {
+	if c.ast == nil {
+		return
+	}
+
+	var checkLevel func(cmds []*rl.CmdBlock)
+	checkLevel = func(cmds []*rl.CmdBlock) {
+		var firstDefault *rl.CmdBlock
+		for _, cmd := range cmds {
+			switch {
+			case cmd.IsNamespace() && cmd.Callback != nil:
+				*d = append(*d, NewDiagnosticErrorFromSpan(cmd.Callback.Span_, c.src,
+					"'"+cmd.Name+"' contains sub-commands, so it routes to them rather than running itself. Remove 'calls', or move it to a sub-command.",
+					rl.ErrNamespaceHasCallback))
+			case !cmd.IsNamespace() && cmd.Callback == nil:
+				*d = append(*d, NewDiagnosticErrorFromSpan(cmd.Span(), c.src,
+					"Command '"+cmd.Name+"' does nothing: it needs a 'calls' line naming what to run, or nested command blocks to route to.",
+					rl.ErrCommandMissingCallback))
+			}
+
+			if cmd.IsDefault() {
+				switch {
+				case cmd.IsNamespace():
+					*d = append(*d, NewDiagnosticErrorFromSpan(*cmd.DefaultSpan, c.src,
+						"'"+cmd.Name+"' contains sub-commands, so it cannot be the default. Mark one of its sub-commands instead.",
+						rl.ErrDefaultOnNamespace))
+				case firstDefault != nil:
+					*d = append(*d, NewDiagnosticErrorFromSpan(*cmd.DefaultSpan, c.src,
+						"'"+firstDefault.Name+"' is already the default at this level, so '"+cmd.Name+"' cannot be. Only one command per level runs when none is named.",
+						rl.ErrMultipleDefaultCommands))
+				default:
+					firstDefault = cmd
+				}
+			}
+
+			checkLevel(cmd.SubCmds)
+		}
+	}
+	checkLevel(c.ast.Cmds)
+}

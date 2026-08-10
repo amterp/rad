@@ -2571,6 +2571,203 @@ print("{2 + 2}")       // no warning
 print("{name:<12}|")   // no warning - 12 is a format width, not the value
 ```
 
+### RAD40019: Two Default Commands At One Level
+
+Only one command per level runs when the user names none, so two `default`
+markers among siblings leave nothing to decide between them.
+
+```rad
+command add:
+    tokens str
+    default
+    calls do_add
+
+command edit:
+    tokens str
+    default          // Error: 'add' is already the default here
+    calls do_edit
+```
+
+#### How to Fix
+
+Keep the marker on whichever command should run when none is named, and drop
+the other:
+
+```rad
+command add:
+    tokens str
+    default
+    calls do_add
+
+command edit:
+    tokens str
+    calls do_edit
+```
+
+Nesting scopes this: each namespace picks its own default independently, so
+`remote` and `image` can each have one.
+
+```rad
+command remote:
+    command add:
+        name str
+        default
+        calls do_remote_add
+
+command image:
+    command build:
+        tag str
+        default
+        calls do_image_build
+```
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40020: Command Does Nothing
+
+A command either runs something or routes to sub-commands. This one does
+neither: it has no `calls` line and no nested command blocks, so invoking it
+could only ever do nothing.
+
+```rad
+command deploy:
+    env str          // Error: nothing to run
+```
+
+#### How to Fix
+
+Add a `calls` line naming the function to run:
+
+```rad
+command deploy:
+    env str
+    calls do_deploy
+
+fn do_deploy():
+    print("Deploying to {env}...")
+```
+
+For a short body, an inline lambda avoids naming a function you only use once:
+
+```rad
+command deploy:
+    env str
+    calls fn():
+        print("Deploying to {env}...")
+```
+
+Or nest command blocks inside it, which makes it a namespace that routes to
+them instead of running itself:
+
+```rad
+command deploy:
+    timeout int = 30     // shared with every sub-command
+
+    command staging:
+        calls do_staging
+
+    command prod:
+        calls do_prod
+```
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40021: Namespace Has A Callback
+
+A command containing sub-commands is a namespace: it groups them and shares its
+args with them, and the sub-command the user names is what runs. So a `calls`
+line on it would never fire.
+
+```rad
+command remote:
+    calls do_remote      // Error: 'remote' routes to its sub-commands
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### How to Fix
+
+Drop the `calls` line. Args declared on the namespace still reach every
+descendant, which is usually what the callback was reaching for:
+
+```rad
+command remote:
+    timeout int = 30     // inherited by add, and by anything nested deeper
+
+    command add:
+        name str
+        calls do_add
+```
+
+If you wanted `tool remote` on its own to do something, mark one of its
+sub-commands `default` - that is the command it runs when none is named:
+
+```rad
+command remote:
+    command list:
+        default
+        calls do_list
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### Why Rad Works This Way
+
+Shape decides role, so there is no keyword to remember and no way for the
+declaration and the behavior to disagree. A block with `calls` runs; a block
+with commands inside routes.
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40022: Default On A Namespace
+
+`default` marks the command to run when the user names none. A namespace does
+not run - it routes - so marking one leaves the question unanswered.
+
+```rad
+command remote:
+    default              // Error: 'remote' contains sub-commands
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### How to Fix
+
+Mark the sub-command that should run:
+
+```rad
+command remote:
+    command add:
+        name str
+        default
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+```
+
+`tool remote origin` now runs `do_add`, and so does `tool remote add origin`.
+The full form stays available, which is how you pass a value that happens to
+match a sibling's name - `tool remote add remove` adds a remote called
+"remove". `tool remote -- remove` does the same.
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
 ### RAD40023: Quoted Interpolation In A Shell Command
 
 An interpolated value in a shell command is wrapped in quotes the script wrote

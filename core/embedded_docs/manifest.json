@@ -131,6 +131,8 @@
         "Adding Descriptions",
         "Command Arguments",
         "Shared Args",
+        "Nested Commands",
+        "Default Commands",
         "Command Callbacks",
         "Shared Logic",
         "Getting Help",

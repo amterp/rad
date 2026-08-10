@@ -558,12 +558,60 @@ var docSnippetTolerances = map[string]Tolerance{
 		Reason: "rad-block fragment: placeholder 'url' source + multi-field modifier.",
 	},
 
+	// ---- core/error_docs (command block coherence) ------------------
+	// Each of these docs demonstrates the mistake it is about, so it must
+	// produce its own code. The RAD20028s are the callbacks the fragments
+	// name but do not define - spelling them out would bury the point.
+	"core/error_docs/40019.md#a51b206a": {
+		ExpectedCodes: []string{"RAD40019", "RAD20028"},
+		Reason:        "demonstrates two defaults at one level; callbacks are placeholders.",
+	},
+	"core/error_docs/40019.md#0a71be65": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the fixed form; callbacks are placeholders.",
+	},
+	"core/error_docs/40019.md#6c61636d": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "shows defaults scoped per namespace; callbacks are placeholders.",
+	},
+	"core/error_docs/40020.md#99ed1b61": {
+		ExpectedCodes: []string{"RAD40020"},
+		Reason:        "demonstrates a command with nothing to run.",
+	},
+	"core/error_docs/40020.md#08643eb7": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the namespace fix; callbacks are placeholders.",
+	},
+	"core/error_docs/40021.md#33f439f8": {
+		ExpectedCodes: []string{"RAD40021", "RAD20028"},
+		Reason:        "demonstrates a namespace carrying a callback; callbacks are placeholders.",
+	},
+	"core/error_docs/40021.md#2891e5b4": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the fixed form; callbacks are placeholders.",
+	},
+	"core/error_docs/40021.md#c7e01411": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the default-marker alternative; callbacks are placeholders.",
+	},
+	"core/error_docs/40022.md#0e9c1483": {
+		ExpectedCodes: []string{"RAD40022", "RAD20028"},
+		Reason:        "demonstrates 'default' on a namespace; callbacks are placeholders.",
+	},
+	"core/error_docs/40022.md#de2ce1c6": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the fixed form; callbacks are placeholders.",
+	},
+
 	// ---- docs-web/docs/guide/script-commands.md ---------------------
-	// The multi-line-description fragment (#3e824696) used to need a
-	// RAD10001 tolerance: a command block without `calls` was a syntax
-	// error. The grammar is now permissive so the checker can give that
-	// mistake a real message, and the fragment parses clean. It will need
-	// an entry again once RAD40020 (command missing a callback) lands.
+	// The multi-line-description fragment shows description syntax only, so
+	// it has no `calls` and trips the command-coherence check. It used to
+	// need a RAD10001 tolerance instead, back when the grammar rejected the
+	// shape outright and the parser was the one complaining.
+	"docs-web/docs/guide/script-commands.md#3e824696": {
+		ExpectedCodes: []string{"RAD40020"},
+		Reason:        "guide fragment: shows multi-line descriptions, so it omits 'calls' deliberately.",
+	},
 
 	// ---- docs-web/docs/guide/stashes.md -----------------------------
 	// load_state() snippets no longer need entries: load_state() strips
