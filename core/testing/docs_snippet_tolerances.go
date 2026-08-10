@@ -145,6 +145,10 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD40008"},
 		Reason:        "demo: deprecated `request`/`display` block keywords (removed in v0.9).",
 	},
+	"core/error_docs/40024.md#5ef68089": {
+		ExpectedCodes: []string{"RAD40024"},
+		Reason:        "demo: an enum constraint on an int list - the mismatch the doc teaches.",
+	},
 	"docs-web/docs/migrations/v0.12.md#8f8368df": {
 		ExpectedCodes: []string{"RAD40016"},
 		Reason:        "demo: the v0.11 escaping the migration guide tells you to drop.",
@@ -511,7 +515,7 @@ var docSnippetTolerances = map[string]Tolerance{
 		Reason: "guide fragment: ?? chaining with placeholder 'user' / 'config_path'.",
 	},
 	"docs-web/docs/guide/error-handling.md#81807434": {
-		Skip:   true,
+		Skip: true,
 		Reason: "guide fragment: guarding a re-raise, continuing the 'relay' / 'stored' " +
 			"example the preceding snippet sets up in full.",
 	},

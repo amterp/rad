@@ -59,6 +59,7 @@ func FromCmdBlock(cmdBlock *rl.CmdBlock, src string) (*ScriptCommand, error) {
 		enumConstraint := cmdBlock.EnumConstraints[argName]
 		regexConstraint := cmdBlock.RegexConstraints[argName]
 		rangeConstraint := cmdBlock.RangeConstraints[argName]
+		lenConstraint := cmdBlock.LenConstraints[argName]
 		requiresConstraint := extractRelationsForArg(argName, cmdBlock.Requirements)
 		excludesConstraint := extractRelationsForArg(argName, cmdBlock.Exclusions)
 
@@ -68,6 +69,7 @@ func FromCmdBlock(cmdBlock *rl.CmdBlock, src string) (*ScriptCommand, error) {
 			enumConstraint,
 			regexConstraint,
 			rangeConstraint,
+			lenConstraint,
 			requiresConstraint,
 			excludesConstraint,
 		)

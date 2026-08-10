@@ -500,6 +500,7 @@ func (c *converter) convertArgBlock(node *ts.Node) *rl.ArgBlock {
 	ab.EnumConstraints = c.convertArgEnumConstraints(node)
 	ab.RegexConstraints = c.convertArgRegexConstraints(node)
 	ab.RangeConstraints = c.convertArgRangeConstraints(node)
+	ab.LenConstraints = c.convertArgLenConstraints(node)
 	ab.Requirements = c.convertArgRelations(node, "requires_constraint", "required")
 	ab.Exclusions = c.convertArgRelations(node, "excludes_constraint", "excluded")
 	return ab
@@ -866,6 +867,45 @@ func (c *converter) convertArgRangeConstraints(node *ts.Node) map[string]*rl.Arg
 	return constraints
 }
 
+func (c *converter) convertArgLenConstraints(node *ts.Node) map[string]*rl.ArgLenConstraint {
+	constraints := make(map[string]*rl.ArgLenConstraint)
+	lenNodes := node.ChildrenByFieldName("len_constraint", node.Walk())
+	for _, lc := range lenNodes {
+		nameNode := lc.ChildByFieldName("arg_name")
+		name := c.src[nameNode.StartByte():nameNode.EndByte()]
+
+		openerNode := lc.ChildByFieldName("opener")
+		closerNode := lc.ChildByFieldName("closer")
+		minNode := lc.ChildByFieldName("min")
+		maxNode := lc.ChildByFieldName("max")
+
+		opener := c.src[openerNode.StartByte():openerNode.EndByte()]
+		closer := c.src[closerNode.StartByte():closerNode.EndByte()]
+
+		var minV *int64
+		if minNode != nil {
+			str := c.src[minNode.StartByte():minNode.EndByte()]
+			v, _ := ParseInt(str)
+			minV = &v
+		}
+		var maxV *int64
+		if maxNode != nil {
+			str := c.src[maxNode.StartByte():maxNode.EndByte()]
+			v, _ := ParseInt(str)
+			maxV = &v
+		}
+
+		constraints[name] = &rl.ArgLenConstraint{
+			Span_:       c.makeSpan(&lc),
+			OpenerToken: opener,
+			CloserToken: closer,
+			Min:         minV,
+			Max:         maxV,
+		}
+	}
+	return constraints
+}
+
 func (c *converter) convertArgRelations(node *ts.Node, constraintField, relatedField string) []rl.ArgRelation {
 	constraintNodes := node.ChildrenByFieldName(constraintField, node.Walk())
 	if len(constraintNodes) == 0 {
@@ -922,6 +962,7 @@ func (c *converter) convertCmdBlock(node *ts.Node) *rl.CmdBlock {
 	cmd.EnumConstraints = c.convertArgEnumConstraints(node)
 	cmd.RegexConstraints = c.convertArgRegexConstraints(node)
 	cmd.RangeConstraints = c.convertArgRangeConstraints(node)
+	cmd.LenConstraints = c.convertArgLenConstraints(node)
 	cmd.Requirements = c.convertArgRelations(node, "requires_constraint", "required")
 	cmd.Exclusions = c.convertArgRelations(node, "excludes_constraint", "excluded")
 

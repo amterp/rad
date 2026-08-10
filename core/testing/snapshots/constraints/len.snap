@@ -1,32 +1,57 @@
 ### TITLE ###
-Valid
+Help
 ### INPUT ###
 args:
-	name str
-	name enum ["alice", "bob", "charlie"]
-print("Hi", name)
+    pair str[]        # Exactly two.
+    sample int[]
+    ports int[]
+    trailing str[]
+
+    pair len [2,2]
+    sample len [3,5)
+    ports len [1,]
+    trailing len (,4]
 ### ARGS ###
-alice
+--help
 ### STDOUT ###
-Hi alice
-
-### TITLE ###
-ErrorsOnInvalid
-### INPUT ###
-args:
-	name str
-	name enum ["alice", "bob", "charlie"]
-print("Hi", name)
-### ARGS ###
-david
-### STDERR ###
-Invalid 'name' value: david (valid values: alice, bob, charlie)
-
 Usage:
-  TestCase <name> [OPTIONS]
+  TestCase <pair...> [OPTIONS]
 
 Script args:
-      --name str   Valid values: [alice, bob, charlie]
+      --pair string,string       Exactly two. Length: [2, 2]
+      --sample ints              Length: [3, 5)
+      --ports ints               Length: [1, )
+      --trailing string,string   Length: (, 4]
+
+Global options:
+  -h, --help               Print usage string.
+  -i, --interactive        Interactively prompt for script args not already provided, then run.
+  -d, --debug              Enables debug output. Intended for Rad script developers.
+      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
+  -q, --quiet              Suppresses some output.
+      --confirm-shell      Confirm all shell commands before running them.
+      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
+      --src                Instead of running the target script, just print it out.
+      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
+
+### TITLE ###
+Too few values
+### INPUT ###
+args:
+    pair str[]
+    pair len [2,2]
+print(pair)
+### ARGS ###
+a
+### STDERR ###
+'pair' takes at least 2 values, got 1
+
+Usage:
+  TestCase <pair...> [OPTIONS]
+
+Script args:
+      --pair string,string   Length: [2, 2]
 
 Global options:
   -h, --help               Print usage string.
@@ -43,107 +68,36 @@ Global options:
 1
 
 ### TITLE ###
-ErrorsIfNonStringEnum
+Exact count passes
 ### INPUT ###
 args:
-    name str
-    name enum ["alice", 2]
-print("Hi", name)
+    pair str[]
+    pair len [2,2]
+print(pair)
 ### ARGS ###
-david
-### STDERR ###
-error[RAD10009]: Unexpected '2'
-  --> <script>:3:25
-  |
-2 |     name str
-3 |     name enum ["alice", 2]
-  |                         ^
-4 | print("Hi", name)
-  |
-   = info: rad docs RAD10009
-### EXIT ###
-1
-
-### TITLE ###
-CanHaveArgNamedEnum
-### INPUT ###
-args:
-	enum str
-	enum enum ["alice", "bob", "charlie"]
-print("Hi", enum)
-### ARGS ###
-alice
+a
+b
 ### STDOUT ###
-Hi alice
+[ "a", "b" ]
 
 ### TITLE ###
-List elements are each checked
+Len and range together
 ### INPUT ###
 args:
-    envs str[]
-    envs enum ["dev", "stg", "prd"]
-print(envs)
+    scores int[]
+    scores range [0, 100]
+    scores len [2,]
+print(scores)
 ### ARGS ###
---envs
-dev
---envs
-nope
+50
 ### STDERR ###
-Invalid 'envs' value: nope (valid values: dev, stg, prd)
+'scores' takes at least 2 values, got 1
 
 Usage:
-  TestCase <envs...> [OPTIONS]
+  TestCase <scores...> [OPTIONS]
 
 Script args:
-      --envs string,string   Valid values: [dev, stg, prd]
-
-Global options:
-  -h, --help               Print usage string.
-  -i, --interactive        Interactively prompt for script args not already provided, then run.
-  -d, --debug              Enables debug output. Intended for Rad script developers.
-      --color mode         Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet              Suppresses some output.
-      --confirm-shell      Confirm all shell commands before running them.
-      --tls-insecure       Skip TLS certificate verification for all HTTP requests.
-      --src                Instead of running the target script, just print it out.
-      --reply line:value   Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
-      --reply-na line      Assert a prompt won't be reached on this run; rad fails cleanly if it is.
-### EXIT ###
-1
-
-### TITLE ###
-Valid list elements pass
-### INPUT ###
-args:
-    envs str[]
-    envs enum ["dev", "stg", "prd"]
-print(envs)
-### ARGS ###
---envs
-dev
---envs
-prd
-### STDOUT ###
-[ "dev", "prd" ]
-
-### TITLE ###
-Enum on a variadic
-### INPUT ###
-args:
-    *envs str
-    envs enum ["dev", "stg", "prd"]
-print(envs)
-### ARGS ###
-dev
-nope
-### STDERR ###
-Invalid 'envs' value: nope (valid values: dev, stg, prd)
-
-Usage:
-  TestCase [envs...] [OPTIONS]
-
-Script args:
-      --envs string,string   Valid values: [dev, stg, prd]
+      --scores ints   Range: [0, 100]. Length: [2, )
 
 Global options:
   -h, --help               Print usage string.

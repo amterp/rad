@@ -21,6 +21,7 @@ type ScriptArg struct {
 	EnumConstraint     *[]string
 	RegexConstraint    *regexp.Regexp
 	RangeConstraint    *ArgRangeConstraint
+	LenConstraint      *ArgLenConstraint
 	RequiresConstraint []string
 	ExcludesConstraint []string
 	// first check the Type and HasDefaultValue, then get the value
@@ -41,12 +42,22 @@ type ArgRangeConstraint struct {
 	MaxInclusive bool
 }
 
+// ArgLenConstraint bounds how many values a list or variadic arg takes, as
+// opposed to what each value may be.
+type ArgLenConstraint struct {
+	Min          *int64
+	MinInclusive bool
+	Max          *int64
+	MaxInclusive bool
+}
+
 func FromArgDecl(
 	decl rl.ArgDecl,
 	src string,
 	enumConstraint *rl.ArgEnumConstraint,
 	regexConstraint *rl.ArgRegexConstraint,
 	rangeConstraint *rl.ArgRangeConstraint,
+	lenConstraint *rl.ArgLenConstraint,
 	requiresConstraint []string,
 	excludesConstraint []string,
 ) *ScriptArg {
@@ -67,6 +78,7 @@ func FromArgDecl(
 		EnumConstraint:     convertEnumConstraint(enumConstraint),
 		RegexConstraint:    convertRegexConstraint(regexConstraint, src),
 		RangeConstraint:    convertRangeConstraint(rangeConstraint),
+		LenConstraint:      convertLenConstraint(lenConstraint),
 		RequiresConstraint: requiresConstraint,
 		ExcludesConstraint: excludesConstraint,
 	}
@@ -100,6 +112,19 @@ func convertRegexConstraint(constraint *rl.ArgRegexConstraint, src string) *rege
 		RP.CtxErrorExit(NewCtxFromSpan(src, constraint.Span_, fmt.Sprintf("Invalid regex '%s': %s", regexStr, err.Error()), ""))
 	}
 	return compiled
+}
+
+func convertLenConstraint(constraint *rl.ArgLenConstraint) *ArgLenConstraint {
+	if constraint == nil {
+		return nil
+	}
+
+	return &ArgLenConstraint{
+		Min:          constraint.Min,
+		MinInclusive: constraint.OpenerToken == "[",
+		Max:          constraint.Max,
+		MaxInclusive: constraint.CloserToken == "]",
+	}
 }
 
 func convertRangeConstraint(constraint *rl.ArgRangeConstraint) *ArgRangeConstraint {

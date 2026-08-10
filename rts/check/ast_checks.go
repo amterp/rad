@@ -1,6 +1,9 @@
 package check
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/amterp/rad/rts/rl"
 )
 
@@ -442,4 +445,124 @@ func (c *RadCheckerImpl) addCommandBlockErrors(d *[]Diagnostic) {
 		}
 	}
 	checkLevel(c.ast.Cmds)
+}
+
+// Check 14: constraints an arg's type cannot honor.
+//
+// The grammar accepts any constraint on any arg, so `scores int[]` can carry an
+// `enum` and `age int` can carry a `regex`. Until now those were parsed, stored
+// and then silently dropped - the script looked like it validated its input and
+// did not. Rejecting the declaration is the honest answer: a constraint that
+// cannot be applied is a mistake in the script, not a preference.
+//
+// Command blocks carry their own copies of these maps, so this recurses rather
+// than only reading the top-level args block.
+func (c *RadCheckerImpl) addArgConstraintErrors(d *[]Diagnostic) {
+	if c.ast == nil {
+		return
+	}
+
+	if c.ast.Args != nil {
+		c.checkArgConstraints(c.ast.Args.Decls, c.ast.Args.EnumConstraints,
+			c.ast.Args.RegexConstraints, c.ast.Args.RangeConstraints,
+			c.ast.Args.LenConstraints, d)
+	}
+
+	var walk func(cmds []*rl.CmdBlock)
+	walk = func(cmds []*rl.CmdBlock) {
+		for _, cmd := range cmds {
+			c.checkArgConstraints(cmd.Decls, cmd.EnumConstraints,
+				cmd.RegexConstraints, cmd.RangeConstraints,
+				cmd.LenConstraints, d)
+			walk(cmd.SubCmds)
+		}
+	}
+	walk(c.ast.Cmds)
+}
+
+func (c *RadCheckerImpl) checkArgConstraints(
+	decls []rl.ArgDecl,
+	enums map[string]*rl.ArgEnumConstraint,
+	regexes map[string]*rl.ArgRegexConstraint,
+	ranges map[string]*rl.ArgRangeConstraint,
+	lens map[string]*rl.ArgLenConstraint,
+	d *[]Diagnostic,
+) {
+	typeByName := make(map[string]string, len(decls))
+	declByName := make(map[string]rl.ArgDecl, len(decls))
+	for _, decl := range decls {
+		typeByName[decl.Name] = baseArgTypeName(decl.TypeName)
+		declByName[decl.Name] = decl
+	}
+
+	// Collected rather than appended directly: these come from maps, so without
+	// a sort the diagnostics would come out in a different order run to run.
+	var found []Diagnostic
+
+	// A constraint naming an arg that was never declared is a separate problem,
+	// already reported elsewhere - say nothing about its type here.
+	report := func(name string, span rl.Span, constraint, article, wants string) {
+		base, declared := typeByName[name]
+		if !declared || base == "" {
+			return
+		}
+		if constraintSuitsType(constraint, base) {
+			return
+		}
+		found = append(found, NewDiagnosticErrorFromSpan(span, c.src,
+			"'"+name+"' is "+base+", so "+article+" "+constraint+" constraint cannot apply to it. "+wants,
+			rl.ErrConstraintTypeMismatch))
+	}
+
+	for name, con := range enums {
+		report(name, con.Span_, "enum", "an", "Enum constraints need a str arg.")
+	}
+	for name, con := range regexes {
+		report(name, con.Span_, "regex", "a", "Regex constraints need a str arg.")
+	}
+	for name, con := range ranges {
+		report(name, con.Span_, "range", "a", "Range constraints need an int or float arg.")
+	}
+
+	// len counts values, so unlike the others it turns on how many the arg can
+	// hold rather than what type it holds.
+	for name, con := range lens {
+		decl, declared := declByName[name]
+		if !declared || decl.IsVariadic || strings.HasSuffix(decl.TypeName, "[]") {
+			continue
+		}
+		found = append(found, NewDiagnosticErrorFromSpan(con.Span_, c.src,
+			"'"+name+"' holds one value, so a len constraint cannot apply to it. "+
+				"Len constraints need a list ("+decl.TypeName+"[]) or a variadic (*"+name+").",
+			rl.ErrConstraintTypeMismatch))
+	}
+
+	sort.Slice(found, func(i, j int) bool {
+		a, b := found[i].Range.Start, found[j].Range.Start
+		if a.Line != b.Line {
+			return a.Line < b.Line
+		}
+		return a.Character < b.Character
+	})
+	*d = append(*d, found...)
+}
+
+// baseArgTypeName reduces a declared type to the element type its constraints
+// apply to: "int[]" and "int?" are both "int", because a constraint on a list
+// constrains each element.
+func baseArgTypeName(typeName string) string {
+	base := strings.TrimSuffix(typeName, "[]")
+	base = strings.TrimSuffix(base, "?")
+	base = strings.TrimSuffix(base, "[]")
+	return base
+}
+
+func constraintSuitsType(constraint, base string) bool {
+	switch constraint {
+	case "enum", "regex":
+		return base == rl.T_STR
+	case "range":
+		return base == rl.T_INT || base == rl.T_FLOAT
+	}
+	return true
 }

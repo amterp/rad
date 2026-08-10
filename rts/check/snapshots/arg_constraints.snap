@@ -1,0 +1,53 @@
+### TITLE ###
+ConstraintsMatchingTheirArgTypeAreFine
+### DESCRIPTION ###
+The ordinary case: a list takes the same constraints as the type it holds,
+because the constraint describes each element rather than the list.
+### INPUT ###
+args:
+    envs str[]
+    scores int[]
+    tags str[]
+    envs enum ["dev", "prd"]
+    scores range [0, 100]
+    tags regex "^[a-z]+$"
+### CHECK ###
+# Identifier types
+  (none)
+
+# Symbol types
+  envs (arg): str[]
+  scores (arg): int[]
+  tags (arg): str[]
+
+# Diagnostics
+  (none)
+
+### TITLE ###
+ConstraintThatCannotApplyIsReported
+### DESCRIPTION ###
+These declarations used to parse, reach the arg parser and be dropped there, so
+a script looked like it validated its input and did not. Reporting them is the
+point of RAD40024 - and it catches the scalar spelling too, which had the same
+silent drop.
+### INPUT ###
+args:
+    scores int[]
+    names str[]
+    age int
+    scores enum ["a", "b"]
+    names range [0, 10]
+    age regex "[0-9]+"
+### CHECK ###
+# Identifier types
+  (none)
+
+# Symbol types
+  age (arg): int
+  names (arg): str[]
+  scores (arg): int[]
+
+# Diagnostics
+  [error] RAD40024 @ 5:5 - 'scores' is int, so an enum constraint cannot apply to it. Enum constraints need a str arg.
+  [error] RAD40024 @ 6:5 - 'names' is str, so a range constraint cannot apply to it. Range constraints need an int or float arg.
+  [error] RAD40024 @ 7:5 - 'age' is int, so a regex constraint cannot apply to it. Regex constraints need a str arg.

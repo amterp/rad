@@ -14,6 +14,8 @@ github.com/amterp/jsoncolor v0.4.0 h1:X8QegRunhKC0HZ4PBQbUsSa5mfMqMIai9a3ipQbi+u
 github.com/amterp/jsoncolor v0.4.0/go.mod h1:/tXCJaCsrNNd8QpW/hqc0uz1yT2VzzaTbk9svkczlDM=
 github.com/amterp/ra v0.9.0 h1:vEg6+xgaJYAzxn4Ws6OIDVpwU1CA8I17SPmND85V57c=
 github.com/amterp/ra v0.9.0/go.mod h1:qJArkWMZ8kLiC1a4uavxpWlqvuUSopSmY8GZBLhwdP8=
+github.com/amterp/ra v0.10.0 h1:0oPnPrGIonc/FKdK/7NcPz7E3/pzRQpmwu7lrhCje3g=
+github.com/amterp/ra v0.10.0/go.mod h1:qJArkWMZ8kLiC1a4uavxpWlqvuUSopSmY8GZBLhwdP8=
 github.com/amterp/radish v0.2.0 h1:5Pzx26JJpL22hvKDkc6RS+oefV+bhs6Q6UJOolsu/9k=
 github.com/amterp/radish v0.2.0/go.mod h1:thDlYBM/Qlf+yu4ZikU6AQikmlczNIWvAwr1mcQPFog=
 github.com/amterp/tree-sitter-rad v0.8.0 h1:PsnT3h4fqBhhyZenenQdwMjON/8QoaB0g/ibG3vLprc=

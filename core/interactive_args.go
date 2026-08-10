@@ -847,6 +847,13 @@ func validatorFor(arg *ScriptArg, required bool, requiredReason string) func(str
 // type, or nil when anything goes. The synthesized argv carries the raw string,
 // so validators must only accept what the final Ra parse will: e.g. bool list
 // elements are "true"/"false", not "y"/"n".
+//
+// This is a prompt-time convenience, not the enforcing layer: Ra checks the
+// same constraints when it parses the argv this builds. It exists so a bad
+// value is rejected while the user is still typing, rather than after the whole
+// prompt sequence completes. It used to be the *only* check - the non-interactive
+// path dropped list constraints entirely - which is why `rad -i` rejected input
+// that plain `rad` accepted.
 func elementValidatorFor(arg *ScriptArg) func(string) error {
 	switch elementType(arg.Type) {
 	case ArgIntT:
