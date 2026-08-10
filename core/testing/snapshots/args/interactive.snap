@@ -802,6 +802,69 @@ Flags
 Flags: --build, --cache=false
 
 ### TITLE ###
+NegativeNumberScalarUsesEqualsForm
+### DESCRIPTION ###
+A negative number answered to a scalar number arg rides the =-form, same as the
+list case. Ra rejects a "-"-prefixed token in a value position, so the space
+form would fail on an answer its own validator accepted.
+### INPUT ###
+args:
+    count int
+print(count)
+### ARGS ###
+-i
+### KEYS ###
+"-5"
+enter
+### STDOUT ###
+-5
+### STDERR ###
+Equivalent: rad TestCase --color=never --count=-5
+### FRAMES ###
+--- frame 0 (initial) ---
+--count
+> █
+--- frame 1 (-) ---
+--count
+> -█
+--- frame 2 (5) ---
+--count
+> -5█
+--- frame 3 (enter) ---
+--count=-5
+
+### TITLE ###
+DashStringAnswerUsesEqualsForm
+### DESCRIPTION ###
+A string arg is where the =-form matters most: Ra's negative-number carve-out is
+typed, so a "-"-prefixed answer to a str arg has no space form that parses.
+### INPUT ###
+args:
+    name str
+print(name)
+### ARGS ###
+-i
+### KEYS ###
+"-x"
+enter
+### STDOUT ###
+-x
+### STDERR ###
+Equivalent: rad TestCase --color=never --name=-x
+### FRAMES ###
+--- frame 0 (initial) ---
+--name
+> █
+--- frame 1 (-) ---
+--name
+> -█
+--- frame 2 (x) ---
+--name
+> -x█
+--- frame 3 (enter) ---
+--name=-x
+
+### TITLE ###
 CommandPickDescendsIntoNamespace
 ### DESCRIPTION ###
 Choosing a namespace narrows the question rather than answering it, so -i keeps

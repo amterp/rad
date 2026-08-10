@@ -614,6 +614,27 @@ func requiredBy(arg *ScriptArg, all []*ScriptArg, st *walkState) string {
 	return ""
 }
 
+// flagValueTokens encodes one value as argv tokens for the final parse. A value
+// starting with "-" rides the =-form (--name=-5): as a bare token Ra reads it as
+// a flag rather than a value, and for a variadic it would also end the greedy
+// run. Every other value stays its own token, unambiguous regardless of commas
+// or spaces.
+func flagValueTokens(flagToken, value string) []string {
+	if strings.HasPrefix(value, "-") {
+		return []string{flagToken + "=" + value}
+	}
+	return []string{flagToken, value}
+}
+
+// flagValueSummary renders a value the way flagValueTokens encodes it, so the
+// equivalent invocation shown to the user is the one that actually parses.
+func flagValueSummary(flagToken, value string) string {
+	if strings.HasPrefix(value, "-") {
+		return com.CyanS(flagToken+"=") + com.GreenS(shellQuoteIfNeeded(value))
+	}
+	return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(value))
+}
+
 // promptForArg runs the prompt matching the arg's type and returns the argv
 // tokens encoding the answer. An empty slice means the arg was skipped, so the
 // final parse applies its default (or null). requiredReason, when non-empty,
@@ -638,7 +659,7 @@ func promptForArg(arg *ScriptArg, required bool, requiredReason string, prompter
 			if skip != "" && choice == skip {
 				return com.CyanS(flagToken) + " " + skipSummary(arg)
 			}
-			return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(choice))
+			return flagValueSummary(flagToken, choice)
 		}
 		choice, err := prompter.Select(title, options, summarize)
 		if err != nil {
@@ -647,7 +668,7 @@ func promptForArg(arg *ScriptArg, required bool, requiredReason string, prompter
 		if skip != "" && choice == skip {
 			return nil, nil
 		}
-		return []string{flagToken, choice}, nil
+		return flagValueTokens(flagToken, choice), nil
 	}
 
 	if arg.Type == ArgBoolT {
@@ -658,7 +679,7 @@ func promptForArg(arg *ScriptArg, required bool, requiredReason string, prompter
 		if value == "" {
 			return com.CyanS(flagToken) + " " + skipSummary(arg)
 		}
-		return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(value))
+		return flagValueSummary(flagToken, value)
 	}
 	answer, err := prompter.Input(title, defaultPlaceholder(arg), validatorFor(arg, required, requiredReason), summarize)
 	if err != nil {
@@ -667,7 +688,7 @@ func promptForArg(arg *ScriptArg, required bool, requiredReason string, prompter
 	if answer == "" {
 		return nil, nil
 	}
-	return []string{flagToken, answer}, nil
+	return flagValueTokens(flagToken, answer), nil
 }
 
 // promptBool asks y/n with Enter meaning the default, and only emits tokens
@@ -724,9 +745,7 @@ func boolValidator(s string) error {
 // promptList collects values one per line until an empty line. Variadic args
 // are encoded greedily (--name a b c), the form Ra parses for them; plain list
 // args take one value per flag occurrence (--name a --name b). Either way each
-// value stays its own argv token, unambiguous regardless of commas or spaces.
-// A value starting with "-" rides the =-form (--name=-5) instead: as a bare
-// token it could end a variadic collection or read as a flag.
+// value is encoded by flagValueTokens, which handles the "-" case.
 func promptList(arg *ScriptArg, required bool, requiredReason, title, flagToken string, prompter ArgPrompter) ([]string, error) {
 	title += " (one per line, empty line to finish)"
 	elemValidate := elementValidatorFor(arg)
@@ -750,14 +769,10 @@ func promptList(arg *ScriptArg, required bool, requiredReason, title, flagToken 
 			return nil
 		}
 		// One transcript line per value; the empty terminator collapses silently,
-		// except when it's the first entry (the whole arg was skipped). Dash
-		// values show the =-form they ride in the equivalent invocation.
+		// except when it's the first entry (the whole arg was skipped).
 		summarize := func(value string) string {
 			if value != "" {
-				if strings.HasPrefix(value, "-") {
-					return com.CyanS(flagToken+"=") + com.GreenS(shellQuoteIfNeeded(value))
-				}
-				return com.CyanS(flagToken) + " " + com.GreenS(shellQuoteIfNeeded(value))
+				return flagValueSummary(flagToken, value)
 			}
 			if first {
 				return com.CyanS(flagToken) + " " + skipSummary(arg)
@@ -786,7 +801,7 @@ func promptList(arg *ScriptArg, required bool, requiredReason, title, flagToken 
 		inGreedyRun := false
 		for _, v := range values {
 			if strings.HasPrefix(v, "-") {
-				tokens = append(tokens, flagToken+"="+v)
+				tokens = append(tokens, flagValueTokens(flagToken, v)...)
 				inGreedyRun = false
 				continue
 			}
@@ -800,11 +815,7 @@ func promptList(arg *ScriptArg, required bool, requiredReason, title, flagToken 
 	}
 	tokens := make([]string, 0, len(values)*2)
 	for _, v := range values {
-		if strings.HasPrefix(v, "-") {
-			tokens = append(tokens, flagToken+"="+v)
-		} else {
-			tokens = append(tokens, flagToken, v)
-		}
+		tokens = append(tokens, flagValueTokens(flagToken, v)...)
 	}
 	return tokens, nil
 }
