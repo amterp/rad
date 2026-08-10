@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "rad-build-and-red-d",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580520,
+  "creator": "Alexander Terp",
+  "description": "Quarter-scale, and VISION.md's Moment 2 rather than an engineering-week item.\n\nNote for whoever picks it up: `docs/thinking/bundling.md` is stale. It's written against `.rsl` file extensions, a `rad bundle --entry` shape, and the `$!` shell syntax that has since been removed (see `dae8dfa0`). RED-D itself doesn't exist despite the index claiming it does - see the REDs card in p2.",
+  "effort": "xl",
+  "id": "a_25Ni0R0wn",
+  "position": "UU",
+  "source": [
+    "vision"
+  ],
+  "title": "rad build and RED-D",
+  "type": "feature",
+  "updated_at_millis": 1786343580520,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580520}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "http-stop-headers",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786343579255,
+  "creator": "Alexander Terp",
+  "description": "Passing `headers=` alongside `json=` drops the automatic `Content-Type: application/json`, so Jira answers 415. One condition at `core/funcs.go:1951-1953`: `if headersArg.IsNull()` wants to be \"unless Content-Type is already set\".\n\nDocumented as a wart twice in live scripts - `raiselog:120-121` (\"it must be given explicitly - Jira 415s otherwise\") and `snapstore-push:29` - and `work:274` pays the same tax. The review called it the clearest single fix in its report.\n\n---\n\n### Orientation\n- Confirmed: the condition is exactly where the card says. `core/funcs.go:1951-1953` is `if headersArg.IsNull() { headers[\"Content-Type\"] = ... }`, inside the shared `Execute` closure that all nine `http_*` builtins are built from by `createHttpFunctions()` (`core/funcs.go:1890-1966`).\n- One edit fixes all nine methods.\n- The user's `headers=` map is flattened into the Go `headers` map just above, at `core/funcs.go:1917-1932`.\n\n### Where to start\n- `core/funcs.go:1946-1954` - the `json=` branch. Replace the `headersArg.IsNull()` test with \"unless a Content-Type is already present in `headers`\".\n- The lookup has to be case-insensitive. `headers` is keyed by the user's literal string (`keyStr` at `core/funcs.go:1922`), so a script writing `content-type` produces a different Go map key than `Content-Type`. Walk the keys and compare with `strings.EqualFold` rather than indexing.\n- All nine `docs/funcs/http_*.md` carry the same sentence on line 32: \"sets `Content-Type: application/json` when no headers are supplied\". That is now wrong and must be reworded in every file, then `make generate`.\n\n### How to verify\n```sh\nmake build\ngo test ./core/testing/ -run TestSnapshots -update=functions/http\ngo test ./core/testing/\nmake generate \u0026\u0026 make verify-generated\n```\nSnapshot suite is `core/testing/snapshots/functions/` (`http_get.snap`, `http_post.snap`). Tests capture outgoing requests through a callback registered at `core/testing/test_helpers.go:136`, accumulating into `httpInvocations`.\n\n### Done when\n- `json=` plus an unrelated `headers=` (e.g. only `Authorization`) still sends `Content-Type: application/json`.\n- An explicit `Content-Type` in `headers=` still wins, in any letter case.\n- All nine doc files reworded and `make verify-generated` clean.\n- Snapshot cases cover: json alone, json plus unrelated headers, json plus explicit Content-Type, json plus lowercase `content-type`.\n\n### Watch out for\n- There is no existing helper that asserts on request headers - `core/testing/test_helpers.go` only has `assertHttpInvocationUrls` (:568) and `assertHttpInsecure` (:590). Either add a header assert helper next to them or read `httpInvocations[i].RequestDef.Headers` directly.\n- `core/requester.go:178-182` applies headers with `req.Header.Add`, which canonicalizes the key. If the map ends up holding both `content-type` and `Content-Type`, both get added under the same canonical name and the request goes out with a duplicated Content-Type. The case-insensitive check above is what prevents that.\n- Stay behind the `RReq` seam (`core/global.go:44`) - `core/testing/` injects a Requester with mocked responses.",
+  "effort": "xs",
+  "id": "a_25NhyP93i",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "UU",
+  "source": [
+    "takehome"
+  ],
+  "title": "http: stop headers= suppressing the json= Content-Type",
+  "type": "bug",
+  "updated_at_millis": 1786353833529,
+  "history": [
+    {"field":"column","value":"p1","at":1786343579255}
+  ]
+}

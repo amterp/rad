@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "yaml-parsing",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580685,
+  "creator": "Alexander Terp",
+  "description": "VISION.md Phase 0 sizes it at a week and calls it the most-requested format and a current disqualifier (\"no YAML? not for ops\").\n\nParked on a tension worth resolving before building it: the review of ~195 real scripts and 41k invocations surfaced **zero** YAML demand. The vision's case rests on GitHub issue #72 and on ops perception; the corpus's case is silence. Those aren't contradictory - the corpus can only contain what Rad could already express - but a week is too much to spend without knowing which signal is load-bearing.\n\nIf it does get built, the vision's own note applies: TOML and CSV follow only as demand appears, and each is real work rather than a checkbox.",
+  "effort": "l",
+  "id": "a_25Ni0i5Ki",
+  "position": "UUUUU",
+  "source": [
+    "vision"
+  ],
+  "title": "YAML parsing",
+  "type": "feature",
+  "updated_at_millis": 1786343580685,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580685}
+  ]
+}

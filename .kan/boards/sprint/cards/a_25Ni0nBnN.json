@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "bundle-radls-into",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580741,
+  "creator": "Alexander Terp",
+  "description": "`core/cmds.go:43` registers eight embedded commands - `new`, `docs`, `check`, `fmt`, `home`, `gen-id`, `stash`, `explain`. There is no `lsp`, so `radls` remains a separate install that's easy to miss, and missing it silently disables all editor intelligence.\n\nGenuinely engineering work, and it was on the table for this sprint. Parked because the value it unlocks is funnel value - it fixes a silent-degradation trap for new users - and this week is pointed at correctness for the people already writing Rad. It should lead the next sprint that has any adoption goal.",
+  "effort": "l",
+  "id": "a_25Ni0nBnN",
+  "position": "UUUUUU",
+  "source": [
+    "vision"
+  ],
+  "title": "Bundle radls into the rad binary",
+  "type": "feature",
+  "updated_at_millis": 1786343580741,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580741}
+  ]
+}

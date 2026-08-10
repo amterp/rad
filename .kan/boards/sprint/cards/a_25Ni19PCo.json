@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "columnar-struct-of",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580959,
+  "creator": "Alexander Terp",
+  "description": "Filed by the review as a design input rather than a proposal, on its own assessment that it would serve exactly three scripts. Recorded here only so it isn't rediscovered from scratch.",
+  "effort": "l",
+  "id": "a_25Ni19PCo",
+  "position": "UUUUUUUUUU",
+  "source": [
+    "takehome"
+  ],
+  "title": "Columnar struct-of-arrays rad block source",
+  "type": "feature",
+  "updated_at_millis": 1786343580959,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580959}
+  ]
+}

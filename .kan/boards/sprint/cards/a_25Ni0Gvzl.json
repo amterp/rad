@@ -1,0 +1,23 @@
+{
+  "_v": 3,
+  "alias": "add-iterators-and",
+  "alias_explicit": false,
+  "column": "stretch",
+  "created_at_millis": 1786343580411,
+  "creator": "Alexander Terp",
+  "description": "Main board `high` as RAD-354 (range, streaming stdin, generator fn); GitHub #70; VISION.md Phase 3.\n\n`$` buffers to completion - `core/shell.go` returns after `Wait`. What that forces:\n\n- `kwatch` is a bash file with an embedded Rad script for this reason alone, and says so at `kwatch:5-8`: \"Rad can't drive the streaming loop itself... The split is deliberate.\"\n- `star:180-189` builds four `while IFS= read -r line` shell pipelines as strings.\n- `mci:61` needs `set -o pipefail; {cmd} | tee {log}`; `dklogs:31-32` appends `| less`.\n- `argus:107-170` re-fetches in a `while:` loop instead of tailing.\n\nThe review states its own blind spot here: the corpus only contains what Rad could already express, so tools that needed streaming were never written in Rad at all. `kwatch` is the one observed instance of the migration away. Treat the evidence as a floor, not a ceiling.",
+  "effort": "xl",
+  "id": "a_25Ni0Gvzl",
+  "position": "UUUUUU",
+  "source": [
+    "main-board",
+    "takehome",
+    "vision"
+  ],
+  "title": "Add iterators and streaming",
+  "type": "feature",
+  "updated_at_millis": 1786343580411,
+  "history": [
+    {"field":"column","value":"stretch","at":1786343580411}
+  ]
+}

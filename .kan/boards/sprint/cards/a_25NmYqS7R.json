@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "widen-what-parse",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786343755606,
+  "creator": "Alexander Terp",
+  "description": "443 of `promq`'s 732 runs pass a time flag that routes through a hand-rolled `parse_time_arg` (`promq:199-210`), because `parse_date` can't take bare `HH:MM` and auto-detection requires seconds.\n\nThe sharper case is silent: `work:327-343` can't parse Jira's `2026-05-04T23:35:52.000+0000` - the offset has no colon and there is no offset format token, so `format=` can't rescue it either. The script truncates to `[:19]` and hardcodes `tz=\"UTC\"`, which is **quietly wrong for any non-UTC offset**.\n\nAccept minute precision, RFC-822 style offsets, and bare time-of-day.\n\n---\n\n### Orientation\n- `parse_date` lives in its own file, `core/func_parse_date.go`, registered as the `FuncParseDate` var (`core/func_parse_date.go:49`) and pulled into the registry at `core/funcs.go:326`.\n- Docs-first flow applies: `docs/funcs/parse_date.md` holds the `## Signature` line that the type checker enforces, plus the user-facing auto-detect list and format-token table that both go stale with this change.\n\n### Where to start\n- `core/func_parse_date.go:30-38` - `autoDetectFormats`, the ordered list tried when `format=` is omitted. Confirmed: five entries, none with minute precision and none time-only. This is where bare `HH:MM` and minute-precision datetimes get added.\n- `core/func_parse_date.go:12-22` - `dateFormatTokens`. Confirmed: only `YYYY`, `MM`, `DD`, `HH`, `mm`, `ss`. There is genuinely no offset token, so the card's Jira case (`2026-05-04T23:35:52.000+0000`) cannot be rescued by `format=` either. Adding one means a new token mapping to Go's `-0700` (and probably a separate one for `-07:00`).\n- `core/func_parse_date.go:40-46` - `convertFormatToGoLayout`.\n- `core/func_parse_date.go:88-118` - the auto-detect branch and the failure message at :109-116, which enumerates supported formats and must be kept in sync with whatever is added.\n- `docs/funcs/parse_date.md` - the `## Notes` auto-detected list and the format-token table.\n\n### How to verify\n```sh\nmake build\ngo test ./core/testing/ -run TestSnapshots -update=functions\ngo test ./core/testing/\nmake generate \u0026\u0026 make verify-generated\n```\nThere is no `parse_date.snap` today - `parse_date` currently has no dedicated snapshot file (the nearest neighbors are `core/testing/snapshots/functions/format_epoch.snap` and `time.snap`). Create `core/testing/snapshots/functions/parse_date.snap` and scope the update to `-update=functions/parse_date` once it exists.\n\n### Done when\n- `2026-05-04T23:35:52.000+0000` parses with its offset honored, so a non-UTC offset is no longer silently wrong.\n- Minute-precision datetimes and bare time-of-day both auto-detect.\n- An offset format token exists and is documented in the token table.\n- The failure message at `core/func_parse_date.go:109-116` lists the newly supported shapes.\n- `docs/funcs/parse_date.md` updated and `make verify-generated` clean.\n- Snapshot cases in `core/testing/snapshots/functions/parse_date.snap`.\n\n### Watch out for\n- `convertFormatToGoLayout` is a naive `strings.ReplaceAll` chain, ordered longest-first with a comment saying why. A new token has to be checked against two collisions: against other tokens, and against the *substituted output* of an earlier replacement (Go layouts are themselves digit strings, so e.g. a token containing `07` or `01` can be eaten by a later pass). Order matters and the existing comment at `core/func_parse_date.go:11` is the contract.\n- Bare time-of-day needs a date to attach to. Whatever \"today\" means must come from `RClock` (`core/global.go`), never `time.Now()` - `core/testing/` injects a fake clock and a real clock read makes the test non-deterministic. `RClock.Local()` is already used at `core/func_parse_date.go:57`.\n- Auto-detect order is load-bearing: the list is ordered most-specific-first so a datetime isn't matched as a bare date (comment at `core/func_parse_date.go:24-28`). A bare `HH:MM` pattern inserted carelessly can start swallowing strings that used to match something else - add regression cases for the existing formats, not just the new ones.\n- Widening auto-detect is a compatibility surface: a string that used to error now parses. That is the intent, but check nothing that previously matched now matches a *different* entry.",
+  "effort": "m",
+  "id": "a_25NmYqS7R",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "UUUUUUUUE",
+  "source": [
+    "takehome"
+  ],
+  "title": "Widen what parse_date accepts",
+  "type": "enhancement",
+  "updated_at_millis": 1786353834270,
+  "history": [
+    {"field":"column","value":"p1","at":1786343755606}
+  ]
+}

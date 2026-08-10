@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "decide-the-table",
+  "alias_explicit": false,
+  "column": "stretch",
+  "created_at_millis": 1786343580251,
+  "creator": "Alexander Terp",
+  "description": "The capability mostly exists and almost nobody found it: local list-of-maps sources, json-path columns, declarative multi-column sort and variable-name headers all work today, and there are two uses in roughly 195 scripts while the author's own 2026 code accumulates parallel lists. One part docs, one part residual gaps.\n\nThree reports proposed three *alternative* surface syntaxes (`fields rows` plus `title`; `filter fn(row)` plus wildcard; `as \"...\"` plus computed fields). The synthesis called them compatible, which its critic flagged as quietly dissolving the fork. They are alternatives.\n\nRequirements union from the adversary round:\n\n- dynamic or runtime field sets (`fields \u003cmap\u003e` / `fields *`) - `feedmbean2:76` abandons the script mid-file at a commented-out display block\n- per-field defaults (`?? \"-\"`)\n- row-level cross-column OR filters - verified inexpressible today, since per-column lambdas AND together (`conf:41-57`, `owl:90-130`, `work:637-651`)\n- header text decoupled from identifiers - `pilot:57` wants to name a column \"problems\"; headers with spaces or parens are impossible\n- derived cross-field columns - column `map` lambdas see one column\n- hidden sort keys - may already work, see the verify-first card\n- json-path set parameterization - `snapstore:39-49` and `58-68` re-declare ten paths twice, differing only in a `json.` vs `json[].` prefix\n\nFour \"todo rad\" comments in the corpus predate this review and ask for exactly this family: `feedmbean2:76`, `fvf:44-46`, `pilot:57`, `feedmbean:89`.\n\nWhat it's worth: roughly 15-40 lines per script across at least seven scripts, plus workarounds like `work:618-666`'s seven-way lockstep sort with a hand-rolled composite key and `rdaudit:47-57`'s `id_to_idx` map for recovering row identity.\n\nThe `colorize` column modifier in p2 is the cheap slice and doesn't wait on this.",
+  "effort": "l",
+  "id": "a_25Ni00cAk",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUU",
+  "source": [
+    "takehome"
+  ],
+  "title": "Decide the table-from-records syntax",
+  "type": "decision",
+  "updated_at_millis": 1786343580251,
+  "history": [
+    {"field":"column","value":"stretch","at":1786343580251}
+  ]
+}

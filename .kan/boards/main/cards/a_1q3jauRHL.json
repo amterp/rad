@@ -1,0 +1,17 @@
+{
+  "_v": 3,
+  "alias": "close-clig-dev-gaps",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1784079525575,
+  "creator": "Alexander Terp",
+  "description": "Evaluated Rad and Ra against https://clig.dev/ (2026-07-14). Overall strongly aligned - errors, help, color/NO_COLOR/TTY handling, signals, and migration machinery all meet or exceed the guidelines. This card captures the gaps found; split into individual cards later.\n\nPriority-ordered gaps:\n\n1. No did-you-mean suggestions for CLI typos, in either layer. 'rad chek' gives a bare 'Unknown file or command'; misspelled flags get a bare 'unknown flag: --frmat' from ra. We already have Levenshtein machinery (core/fuzzy.go) for in-script identifiers, and ra exposes ParseHooks.ErrorHint (Rad wires it only for the too-many-positionals case, core/runner.go:276). Fix in ra benefits every consumer.\n\n2. Global flags only parse after the script path. 'rad --color never script.rad' fails with 'Unknown arguments'; same flag after the path works. clig.dev favors order-independence and 'tool --flag arg' is muscle memory. Accept both positions, or at least make the error teach the rule.\n\n3. Not XDG. Config and stashes live under ~/.rad (RAD_HOME override; core/global.go:231, core/home_stash.go:11) rather than XDG base dirs. Defensible (cargo-style) but should be a deliberate decision - consider XDG fallback or a RED documenting the choice.\n\n4. --quiet silences the script's own print() output (core/printer.go:151 via core/func_print.go), not just rad chatter. clig.dev's -q means suppress non-essential output; a script's primary output is essential. Confirm intended or split channels.\n\n5. Ra library gaps: no built-in --version (Rad wires its own), no --no-\u003cflag\u003e negation for bools defaulting true, no examples section in generated help.\n\n6. Minor/defensible: usage errors exit 1 rather than conventional 2; no --json for rad's own output; no --no-input-style flag (default is already non-interactive).",
+  "id": "a_1q3jauRHL",
+  "position": "xRUUUUUUUU",
+  "title": "Close clig.dev gaps in Rad and Ra",
+  "type": "excellence",
+  "updated_at_millis": 1784079525575,
+  "history": [
+    {"field":"column","value":"low","at":1784079525575}
+  ]
+}

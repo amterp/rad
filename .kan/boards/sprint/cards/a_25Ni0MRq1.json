@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "imports-implementation",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580466,
+  "creator": "Alexander Terp",
+  "description": "VISION.md sizes it at \"a quarter, not a sprint\" and calls it the single biggest engineering bet in the plan - it touches the checker, LSP cross-file resolution, the formatter, and namespacing. Starting it in a one-week sprint buys an unfinished quarter.\n\nThe RED is in stretch and is the part that fits.",
+  "effort": "xl",
+  "id": "a_25Ni0MRq1",
+  "position": "U",
+  "source": [
+    "vision"
+  ],
+  "title": "Imports implementation",
+  "type": "feature",
+  "updated_at_millis": 1786343580466,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580466}
+  ]
+}

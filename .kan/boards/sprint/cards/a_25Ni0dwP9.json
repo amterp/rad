@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "all-launch-and",
+  "alias_explicit": false,
+  "column": "parked",
+  "created_at_millis": 1786343580631,
+  "creator": "Alexander Terp",
+  "description": "Scoped out by decision at sprint planning: this is an engineering week.\n\nWhat's excluded, all still genuinely undone: positioning convergence across seven surfaces (README.md:9, docs-web/docs/index.md:19, guide/getting-started.md:9, docs-web/docs/status.md:60, hooks/generate_llms_txt.py:19, vsc-extension/package.json:4, extras/skill/SKILL.md:15 - VISION.md says four, it's seven, and the llms.txt one is a Python hook rather than Markdown); ROADMAP.md and published 1.0 criteria; the stability reframe; VS Code Marketplace publishing in CI (still v0.5.0, manual, so the entire type-checker era has never shipped to users); mise distribution; the GIF and comparison pages; linking `extras/skill/` and llms.txt from the README.\n\nOne correction for whenever this comes back: **dynamic shell completions already ship.** `core/completion.go` implements `rad completion bash|zsh`, genuinely dynamic via a `__complete` callback, documented at `docs-web/docs/guide/shell-completion.md`. VISION.md §6 sizes it at \"weeks\" as the headline differentiator. It has no snapshot test coverage, which is the one piece of that item worth engineering time.",
+  "effort": "xl",
+  "id": "a_25Ni0dwP9",
+  "position": "UUUU",
+  "source": [
+    "vision"
+  ],
+  "title": "All launch and funnel work",
+  "type": "chore",
+  "updated_at_millis": 1786343580631,
+  "history": [
+    {"field":"column","value":"parked","at":1786343580631}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "decide-the-shell",
+  "alias_explicit": false,
+  "column": "stretch",
+  "created_at_millis": 1786343580141,
+  "creator": "Alexander Terp",
+  "description": "Five reports converged on shell safety with five different spellings: `{x:q}`, `shell_quote()`, `{title!q}`, argv-form `$[...]`, and list-form `$cmd_list`. The review is explicit that they reduce to two orthogonal features and must not be averaged:\n\n1. A quoting mechanism usable inside command strings. This is the p0-tier1 `shell_escape()` card and ships independently.\n2. A shell-free argv form - safe by construction, but it gives up pipes, redirection, and everything else the shell provides.\n\nThe agent-facing report argues argv-form is the only option safe by construction; dev-longtail attaches the lost-shell-features caveat. `principles.md` (\"no cryptic symbols\") weighs against the `!q` spelling.\n\nIf a lint comes with it, taint-scope it. As sketched, \"any interpolation inside `$` without `:q`\" fires on nearly every shell command in the corpus - its critic called it a false-positive generator. Scope it to values from args, `input()`, HTTP, files, and subprocesses, or ship the primitive with no lint.",
+  "effort": "l",
+  "id": "a_25NhzqooQ",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "U",
+  "source": [
+    "takehome"
+  ],
+  "title": "Decide the shell execution model: quoting primitive, argv form, or both",
+  "type": "decision",
+  "updated_at_millis": 1786343580141,
+  "history": [
+    {"field":"column","value":"stretch","at":1786343580141}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "let-an-unambiguous",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786353931892,
+  "creator": "Alexander Terp",
+  "description": "`print(\"{\")` is a syntax error. It shouldn't be - there is no interpolation there to fail at.\n\n```\nprint(\"{\")     -\u003e  error[RAD10009]: Unexpected '\"{\"'\nprint(\"{}\")    -\u003e  error[RAD10001]: Expected identifier\nprint(\"{ }\")   -\u003e  error[RAD10001]: Expected identifier\n```\n\n**Recommended rule, and the reason it is narrow.** Treat `{` as a literal only where it *cannot* open an interpolation: immediately followed by the string terminator, or containing nothing but whitespace. Everything else keeps erroring.\n\nThe tempting wider rule - fall back to literal whenever the interpolation fails to parse - is a trap. `print(\"{name\")` is a forgotten closing brace. Under the wider rule it silently prints `{name`, which converts a loud parse error into #153's own Tier 1 category. `{` followed by an identifier should stay an error precisely because it looks like an interpolation someone didn't finish.\n\nCases this fixes, all from #153:\n\n| Case | Today | After |\n|---|---|---|\n| `print(\"{\")` | error | prints `{` |\n| `t.starts_with(\"{\")` | error | works |\n| `` `\\.+*?()[]{}\\|^$` `` | error | works, the pair is empty |\n| `print(\"{name\")` | error | error, unchanged and deliberate |\n| `print(\"\\d{4}\")` | prints `\\d4` | unchanged - see the constant-literal lint card in p0-tier1 |\n\n**`{{` was considered and is not recommended.** It doesn't work today (`print(\"{{\")` errors), `\\{` already does the job and is documented at `SYNTAX.md:913`, and for brace-dense text `r\"...\"` beats both. Adding `{{` gives two escapes for one job.\n\n**The finding underneath this.** `\\{` works and is documented, and the author reached for `r`-strings twice without finding it. The escape isn't the gap - discovery is. That is the sibling card in this column, and it stays worth doing for the cases that remain errors after this one lands.\n\nMarked needs-decision because it changes what the grammar accepts. The recommendation above is the proposal, not a settled call.\n\n---\n\n### Orientation\n- The grammar lives in the separate `tree-sitter-rad` repo, checked out at `~/src/tree-sitter-rad`. Interpolation is a grammar-level construct, so this change likely starts there rather than in this repo.\n- `rts/` wraps that grammar and converts the CST to the AST in `rts/rl/`. `core/` then evaluates.\n- Per AGENTS.md, iterate on the grammar with a temporary `replace github.com/amterp/tree-sitter-rad =\u003e \u003clocal path\u003e` in go.mod, and remove it before committing - `./dev --release` refuses to release with one present.\n\n### Where to start\n- Confirm first whether this is fixable in the grammar or needs handling at CST-to-AST conversion. Read the interpolation rule in the tree-sitter-rad grammar before choosing.\n- `rts/test/st_snapshots/` holds syntax-tree snapshots and will show exactly how the parse changes.\n\n### How to verify\n- `make build`, then `./bin/radd` over scratch scripts for every row of the table above, including the negative cases that must keep erroring.\n- Syntax-tree snapshots: `go test ./rts -run TestSTSnapshots -update=\u003cpath substring\u003e`.\n- End-to-end: `core/testing/snapshots/` - look for the existing string-lexing cases, e.g. `-update=types/str_lexing`.\n- Formatter round-trip: a literal brace must survive `rad fmt` unchanged. `rts/radfmt/snapshots/`.\n- Editor path: `radls/lstesting/snapshots/` - highlighting should not mark a literal brace as an interpolation.\n\n### Done when\n- The three literal forms parse and print their braces.\n- `print(\"{name\")` still errors, with the improved message from the sibling card.\n- All five snapshot suites updated and reviewed by diff.\n- `SYNTAX.md` updated - it currently documents `\\{` as the only answer.\n- If the grammar changed: the tree-sitter-rad change is committed and tagged upstream, the go.mod `replace` is gone, and `make verify-generated` passes.\n\n### Watch out for\nGrammar changes ripple into all five snapshot suites plus the VS Code extension's highlighting. Scope creep risk: it is tempting to also \"fix\" `\"\\d{4}\"` here. Don't - that is a valid interpolation, and it belongs to the lint card in p0-tier1.",
+  "effort": "m",
+  "id": "a_25S3ICERd",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUE",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Let an unambiguous literal brace parse",
+  "type": "enhancement",
+  "updated_at_millis": 1786354284649,
+  "history": [
+    {"field":"column","value":"p1","at":1786353931892}
+  ]
+}

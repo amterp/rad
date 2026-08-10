@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "add-url-encode",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786343579561,
+  "creator": "Alexander Terp",
+  "description": "For URLs that never pass through `http_*` and so never reach `sanitizeUrlString`. `vul:39-42` hand-encodes `%40` for a URL it hands to `open`; `hub:43` does the same kind of thing.\n\n---\n\n### Orientation\n- Ordinary built-in function, so the docs-first flow applies in full: the `## Signature` line in `docs/funcs/\u003cname\u003e.md` IS the type checker's signature. There is no parallel definition in Go.\n- The encoder already exists in the repo: `safeQueryEscape` (`core/requester.go:271-275`) is `url.QueryEscape` with `+` normalized to `%20`. Matching its behavior keeps `url_encode()` output consistent with what `sanitizeUrlString` produces for URLs that do go through `http_*`.\n\n### Where to start\n1. Write `docs/funcs/url_encode.md` following the contract in `docs/funcs/README.md` - required sections in order: `# url_encode`, description paragraph, `## Signature` (exactly one line of inline code), `## Parameters`, `## Examples` (rad code block), `## Category`. `docs/funcs/encode_base64.md` is a good same-shape example to copy.\n2. Run `make generate`. This mirrors the file into `rts/embedded_funcs/` and regenerates `docs-web/docs/reference/functions.md`.\n3. Add the `FUNC_URL_ENCODE` const in `core/funcs.go` (the const block runs from around `core/funcs.go:47` through `:150`) and a `BuiltInFunc{Name, Execute}` entry in the registry. `FUNC_ENCODE_BASE64` at `core/funcs.go:130` / its registration at `core/funcs.go:1516` is the closest existing pattern.\n4. Add `core/testing/snapshots/functions/url_encode.snap`.\n\n### How to verify\n```sh\nmake build\ngo test ./core/testing/ -run TestSnapshots -update=functions/url_encode\ngo test ./core/testing/\nmake generate \u0026\u0026 make verify-generated\n```\n`core/testing/funcdocs_test.go` runs on every test invocation and will fail if the doc is malformed, if the signature doesn't parse, if `docs/funcs/` and `rts/embedded_funcs/` have drifted, or if a registered builtin has no `.md`.\n\n### Done when\n- `docs/funcs/url_encode.md` exists and `make verify-generated` is clean.\n- The function is registered and callable from `bin/radd`.\n- Snapshot cases cover the characters that motivate the card - `@`, space, `\u0026`, `=`, `?`, `/`, `#`, and non-ASCII.\n- The `## Category` chosen is one of the values `docs/funcs/README.md` lists (`encode_base64` sits under `crypto`; a `strings` or `http` grouping may fit better - pick deliberately, it drives the public docs page grouping).\n\n### Watch out for\n- Decide up front whether this encodes a query *component* or a whole *path* segment - they differ on `/` and `+`. `safeQueryEscape` is component-flavored. If both are wanted, a named argument beats two functions, but say which is the default in the doc.\n- Round-tripping matters: output from `url_encode()` fed into an `http_*` url goes through `sanitizeUrlString`, which decodes with `PathUnescape` and re-encodes (`core/requester.go:281-321`). Confirm the pair is idempotent rather than double-encoding.",
+  "effort": "xs",
+  "id": "a_25NhyuSXu",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "UUUUUUUU",
+  "source": [
+    "takehome"
+  ],
+  "title": "Add url_encode()",
+  "type": "feature",
+  "updated_at_millis": 1786353834169,
+  "history": [
+    {"field":"column","value":"p1","at":1786343579561}
+  ]
+}
