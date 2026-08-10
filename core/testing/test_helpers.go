@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -504,6 +505,9 @@ func assertShellInvoked(t *testing.T, expected ...core.ShellInvocation) {
 		}
 		if actual.IsConfirm != exp.IsConfirm {
 			t.Errorf("Invocation %d: Expected IsConfirm=%v, but got %v", i, exp.IsConfirm, actual.IsConfirm)
+		}
+		if !slices.Equal(actual.Argv, exp.Argv) {
+			t.Errorf("Invocation %d: Expected argv %#v, but got %#v", i, exp.Argv, actual.Argv)
 		}
 	}
 }

@@ -1478,6 +1478,88 @@ and separator characters (e.g. `DD/MM/YYYY`, `YYYY-MM-DD HH:mm:ss`).
 - Ensure the format tokens match the structure of your date string
 - Use `catch` to handle the error if the input is dynamic
 
+### RAD20045: Invalid Shell Command Value
+
+A value used as a shell command, or interpolated into one, has no form Rad can
+safely pass to a program.
+
+Inside a shell command, the text you write is shell and the interpolations are
+data. Rad quotes each interpolated value so it arrives as exactly one argument.
+That only works for values with an obvious one-argument spelling: strings,
+numbers and booleans. A map has none, and a null has one that is silently wrong
+- it would become the four-character word `null`.
+
+#### Examples
+
+```rad
+tag = null
+$`git tag {tag}`        // Error: nothing sensible to pass
+
+config = { "depth": 2 }
+$`git clone {config}`   // Error: a map is not an argument
+```
+
+A list *is* allowed - it expands to one argument per element - but it has to
+stand alone as its own argument, because there's no single obvious meaning for
+gluing several arguments onto a prefix:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`rm {files}`           // Fine: rm a.txt b.txt
+$`rm --file={files}`    // Error: which element gets the prefix?
+```
+
+The same rules apply when the whole command is a list:
+
+```rad
+$["git", "commit", "-m", null]   // Error
+$[]                              // Error: no program to run
+```
+
+#### How to Fix
+
+Give a null an explicit fallback, or leave the argument out entirely:
+
+```rad
+tag = null
+
+$`git tag {tag ?? "untagged"}`
+```
+
+Build up the arguments as a list when some are conditional. Each element is one
+argument, so nothing needs quoting:
+
+```rad
+message = "fix the parser"
+
+cmd = ["git", "commit"]
+if message:
+    cmd += ["-m", message]
+$cmd
+```
+
+Join a list yourself when you really do want one argument:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`tar -czf out.tgz {files}`             // three arguments
+$`echo --files={files.join(",")}`       // one argument
+```
+
+#### Why Rad Works This Way
+
+Bash's defining hazard is that a value carrying a space, a quote or a `$` stops
+being a value and becomes syntax. Rad removes that by quoting interpolations for
+you - but quoting only has an answer for things that *are* one argument. Rather
+than invent a rendering for the rest and let it fail silently at runtime, Rad
+asks you to say what you meant.
+
+#### See Also
+
+- `rad docs guide/shell-commands` - the three command forms and when to use each
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch
@@ -2488,3 +2570,65 @@ print("{digits}")      // no warning
 print("{2 + 2}")       // no warning
 print("{name:<12}|")   // no warning - 12 is a format width, not the value
 ```
+
+### RAD40023: Quoted Interpolation In A Shell Command
+
+An interpolated value in a shell command is wrapped in quotes the script wrote
+itself. Rad already quotes interpolated values, so these quotes are no longer
+protecting anything - they end up inside the argument as literal characters.
+
+```rad
+message = "hello"
+
+$`git commit -m "{message}"`   // Error: the quotes land in the message
+```
+
+#### How to Fix
+
+Delete the quotes. Rad quotes the value for you, whatever it contains:
+
+```rad
+message = "hello"
+
+$`git commit -m {message}`
+```
+
+When the argument is literal text plus a value, build the string first and
+interpolate that. The quotes were holding the two halves together as one
+argument; a single interpolation does that on its own:
+
+```rad
+version = "1.2.3"
+
+// Wrong - the quotes become part of the commit message
+$`git commit -m "Bump to {version}"`
+
+// Correct
+message = "Bump to {version}"
+$`git commit -m {message}`
+```
+
+#### Why Rad Works This Way
+
+Hand-written quotes could never be correct for every value. Double quotes still
+expand `$HOME` and `$(whoami)`; single quotes cannot contain an apostrophe at
+all. So a command that worked for `hello` would break, or worse silently
+misbehave, on `it's` or `100% of $USERS`.
+
+Rad quotes each interpolated value at the point it knows what the value is, so
+the argument the program receives is exactly the value you had:
+
+```rad
+message = "it's fine"
+
+$`git commit -m {message}`
+// runs: git commit -m 'it'\''s fine'
+```
+
+The rule is that the text you write is shell - pipes, redirects, `&&` and all -
+and interpolations are data.
+
+#### See Also
+
+- `rad docs guide/shell-commands` - the three command forms
+- `rad docs RAD20045` - values that have no single-argument form

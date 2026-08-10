@@ -189,6 +189,81 @@ func (c *RadCheckerImpl) addDeprecatedBlockKeywordErrors(d *[]Diagnostic) {
 	})
 }
 
+// Check 12: Hand-written quotes around an interpolation in a shell command.
+//
+// Rad quotes interpolated values itself, so quotes the script adds around one
+// are no longer doing the job they were added for - they now land in the
+// argument as literal characters. This fires on the pre-quoting idiom so a
+// migrating script gets told rather than discovering it in output.
+//
+// We only look at command *literals*. A `$cmd` built up elsewhere is the raw
+// form by design, and we have no interpolation to point at anyway.
+func (c *RadCheckerImpl) addShellInterpolationQuoteErrors(d *[]Diagnostic) {
+	if c.ast == nil {
+		return
+	}
+
+	walkAST(c.ast, func(node rl.Node) {
+		shell, ok := node.(*rl.Shell)
+		if !ok {
+			return
+		}
+		lit, ok := shell.Cmd.(*rl.LitString)
+		if !ok || lit.Simple {
+			return
+		}
+
+		for _, seg := range quotedInterpolations(lit) {
+			msg := "This value is inside quotes, but Rad already quotes interpolated values in " +
+				"shell commands - these quotes will end up in the argument itself. Remove them. " +
+				"If the argument is literal text plus a value, build it as a string first and " +
+				"interpolate that."
+			*d = append(*d, NewDiagnosticErrorFromSpan(seg.Span(), c.src, msg, rl.ErrShellInterpolationQuoted))
+		}
+	})
+}
+
+// quotedInterpolations returns the interpolation segments of a command literal
+// that sit inside a shell quote the script wrote itself.
+//
+// This tracks quote state across the literal text rather than only checking the
+// characters either side, so it also catches `"some text {x}"`, where the value
+// is quoted along with a literal prefix.
+func quotedInterpolations(lit *rl.LitString) []rl.StringSegment {
+	var found []rl.StringSegment
+	var quote byte // 0, '\'' or '"'
+
+	for _, seg := range lit.Segments {
+		if !seg.IsLiteral {
+			if quote != 0 {
+				found = append(found, seg)
+			}
+			continue
+		}
+
+		for k := 0; k < len(seg.Text); k++ {
+			ch := seg.Text[k]
+			switch {
+			case quote == '\'':
+				// Nothing is special inside single quotes except the closer.
+				if ch == '\'' {
+					quote = 0
+				}
+			case ch == '\\':
+				// Escapes the next character, in double quotes and bare alike.
+				k++
+			case quote == '"':
+				if ch == '"' {
+					quote = 0
+				}
+			case ch == '\'' || ch == '"':
+				quote = ch
+			}
+		}
+	}
+	return found
+}
+
 // Check 11: Rad block options that have no effect in certain contexts.
 //   - 'insecure' and 'quiet' only apply to URL sources (string); they have no
 //     effect on list/map or no-source rad blocks.

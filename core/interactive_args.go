@@ -976,8 +976,15 @@ func argDefaultDisplay(arg *ScriptArg) string {
 	return ""
 }
 
-// shellQuoteIfNeeded leaves shell-inert tokens bare and single-quotes the rest,
-// so the printed equivalent invocation is paste-safe without being noisy.
+// shellQuoteIfNeeded leaves shell-inert tokens bare and single-quotes the rest.
+// Two callers with different stakes: the printed equivalent invocation, where
+// this is about being paste-safe without being noisy, and interpolation into a
+// shell command, where it is the only thing keeping a value from being read as
+// syntax. Widening the inert set to print less noise would weaken the second
+// silently. The output is POSIX sh quoting, verified on sh/bash/zsh/dash/ksh and
+// wrong on cmd.exe, PowerShell, csh and tcsh (where ! expands for history even
+// inside single quotes) and xonsh (which rejects the embedded-quote escape
+// idiom outright); see RED-9.
 func shellQuoteIfNeeded(s string) string {
 	if s == "" {
 		return "''"

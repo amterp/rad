@@ -101,6 +101,7 @@ const (
 	ErrInternalBug                = "20042"
 	ErrParseDuration              = "20043"
 	ErrParseDate                  = "20044"
+	ErrShellCmdValue              = "20045"
 
 	// 3xxxx Type Errors
 	ErrTypeMismatch              Error = "30001"
@@ -133,6 +134,7 @@ const (
 	ErrIntLiteralOutOfRange             Error = "40015"
 	ErrRegexPatternWithoutRegexArg      Error = "40016"
 	ErrConstantInterpolation            Error = "40017"
+	ErrShellInterpolationQuoted         Error = "40023"
 )
 
 func (e Error) String() string {

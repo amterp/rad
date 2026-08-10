@@ -82,8 +82,9 @@ args:
     version str
 
 path = "VERSION"
+expr = "s/Version = .*/Version = {version}/"
 
-$`sed -i '' "s/Version = .*/Version = {version}/" {path}`
+$`sed -i '' {expr} {path}`
 errdefer:
     print("Undoing bump...")
     $`git checkout -- {path}`
@@ -101,7 +102,8 @@ if false:  // failure simulation point 2
     print("Bah! ERROR!")
     exit(1)
 
-$`git commit -m "Bump version to {version}"`
+message = "Bump version to {version}"
+$`git commit -m {message}`
 print("Done!")
 ```
 
