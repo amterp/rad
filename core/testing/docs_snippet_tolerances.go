@@ -157,6 +157,42 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD40023"},
 		Reason:        "demo: the before/after pair for a quoted literal-plus-value argument; the 'before' half is the point.",
 	},
+	"docs-web/docs/migrations/v0.12.md#4c4627d7": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "migration demo: the before-half of the mixed-naming fix has to warn.",
+	},
+	"docs-web/docs/migrations/v0.12.md#d0f815b3": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "migration demo: the before-half of the discard-then-capture fix has to warn.",
+	},
+	"docs-web/docs/migrations/v0.12.md#fe0b0657": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "migration demo: the before-half of the three-target fix has to warn.",
+	},
+	"core/error_docs/40018.md#3b498203": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "demo: the warning's own wrong-then-right pair; the wrong half has to warn.",
+	},
+	"core/error_docs/40018.md#70ec2b38": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "demo: the wrong-then-right pair for the named-assignment fix.",
+	},
+	"core/error_docs/40018.md#dbdd1d29": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "demo: the wrong-then-right pair for the all-positional fix.",
+	},
+	"core/error_docs/40018.md#dca64230": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "demo: the silent variable swap a v0.11 script gets after the capture reorder.",
+	},
+	"docs-web/docs/guide/shell-commands.md#f5fd38c8": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "demo: the guide's mixed-naming trap, shown precisely because it warns.",
+	},
+	"docs-web/docs/reference/syntax.md#f70ea90b": {
+		ExpectedCodes: []string{"RAD40018"},
+		Reason:        "demo: the syntax reference's mixed-naming trap, shown because it warns.",
+	},
 	"core/error_docs/40016.md#fc33b11a": {
 		ExpectedCodes: []string{"RAD40016"},
 		Reason:        "demo: the warning's own wrong-then-right pair; the wrong half has to warn.",
@@ -168,6 +204,51 @@ var docSnippetTolerances = map[string]Tolerance{
 	"core/error_docs/40009.md#ad4b7b09": {
 		ExpectedCodes: []string{"RAD40009"},
 		Reason:        "demo: duplicate parameter name in a fn signature.",
+	},
+
+	// ---- core/error_docs (command block coherence) ------------------
+	// Each of these docs demonstrates the mistake it is about, so it must
+	// produce its own code. The RAD20028s are the callbacks the fragments
+	// name but do not define - spelling them out would bury the point.
+	"core/error_docs/40019.md#a51b206a": {
+		ExpectedCodes: []string{"RAD40019", "RAD20028"},
+		Reason:        "demonstrates two defaults at one level; callbacks are placeholders.",
+	},
+	"core/error_docs/40019.md#0a71be65": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the fixed form; callbacks are placeholders.",
+	},
+	"core/error_docs/40019.md#6c61636d": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "shows defaults scoped per namespace; callbacks are placeholders.",
+	},
+	"core/error_docs/40020.md#99ed1b61": {
+		ExpectedCodes: []string{"RAD40020"},
+		Reason:        "demonstrates a command with nothing to run.",
+	},
+	"core/error_docs/40020.md#08643eb7": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the namespace fix; callbacks are placeholders.",
+	},
+	"core/error_docs/40021.md#33f439f8": {
+		ExpectedCodes: []string{"RAD40021", "RAD20028"},
+		Reason:        "demonstrates a namespace carrying a callback; callbacks are placeholders.",
+	},
+	"core/error_docs/40021.md#2891e5b4": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the fixed form; callbacks are placeholders.",
+	},
+	"core/error_docs/40021.md#c7e01411": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the default-marker alternative; callbacks are placeholders.",
+	},
+	"core/error_docs/40022.md#0e9c1483": {
+		ExpectedCodes: []string{"RAD40022", "RAD20028"},
+		Reason:        "demonstrates 'default' on a namespace; callbacks are placeholders.",
+	},
+	"core/error_docs/40022.md#de2ce1c6": {
+		ExpectedCodes: []string{"RAD20028"},
+		Reason:        "the fixed form; callbacks are placeholders.",
 	},
 	"core/error_docs/40010.md#78dda972": {
 		ExpectedCodes: []string{"RAD40010"},
@@ -556,51 +637,6 @@ var docSnippetTolerances = map[string]Tolerance{
 	"docs-web/docs/guide/rad-blocks.md#f0668f92": {
 		Skip:   true,
 		Reason: "rad-block fragment: placeholder 'url' source + multi-field modifier.",
-	},
-
-	// ---- core/error_docs (command block coherence) ------------------
-	// Each of these docs demonstrates the mistake it is about, so it must
-	// produce its own code. The RAD20028s are the callbacks the fragments
-	// name but do not define - spelling them out would bury the point.
-	"core/error_docs/40019.md#a51b206a": {
-		ExpectedCodes: []string{"RAD40019", "RAD20028"},
-		Reason:        "demonstrates two defaults at one level; callbacks are placeholders.",
-	},
-	"core/error_docs/40019.md#0a71be65": {
-		ExpectedCodes: []string{"RAD20028"},
-		Reason:        "the fixed form; callbacks are placeholders.",
-	},
-	"core/error_docs/40019.md#6c61636d": {
-		ExpectedCodes: []string{"RAD20028"},
-		Reason:        "shows defaults scoped per namespace; callbacks are placeholders.",
-	},
-	"core/error_docs/40020.md#99ed1b61": {
-		ExpectedCodes: []string{"RAD40020"},
-		Reason:        "demonstrates a command with nothing to run.",
-	},
-	"core/error_docs/40020.md#08643eb7": {
-		ExpectedCodes: []string{"RAD20028"},
-		Reason:        "the namespace fix; callbacks are placeholders.",
-	},
-	"core/error_docs/40021.md#33f439f8": {
-		ExpectedCodes: []string{"RAD40021", "RAD20028"},
-		Reason:        "demonstrates a namespace carrying a callback; callbacks are placeholders.",
-	},
-	"core/error_docs/40021.md#2891e5b4": {
-		ExpectedCodes: []string{"RAD20028"},
-		Reason:        "the fixed form; callbacks are placeholders.",
-	},
-	"core/error_docs/40021.md#c7e01411": {
-		ExpectedCodes: []string{"RAD20028"},
-		Reason:        "the default-marker alternative; callbacks are placeholders.",
-	},
-	"core/error_docs/40022.md#0e9c1483": {
-		ExpectedCodes: []string{"RAD40022", "RAD20028"},
-		Reason:        "demonstrates 'default' on a namespace; callbacks are placeholders.",
-	},
-	"core/error_docs/40022.md#de2ce1c6": {
-		ExpectedCodes: []string{"RAD20028"},
-		Reason:        "the fixed form; callbacks are placeholders.",
 	},
 
 	// ---- docs-web/docs/guide/script-commands.md ---------------------

@@ -1296,3 +1296,99 @@ func TestTypeCheck_IfDoesNotLeakNarrowingAfter(t *testing.T) {
 	assert.Contains(t, []string{"int?", "int|int?", "int?|int"}, name,
 		"x after if (no else) should not stay narrowed to int")
 }
+
+// --- Shell capture targets ---
+//
+// Positional targets are filled (stdout, stderr, code); named targets go by
+// their own name. Before walkShell existed these bound as Dynamic, so nothing
+// downstream was checkable.
+
+func shellTargetType(t *testing.T, src string, targetIdx int) rl.TypingT {
+	t.Helper()
+	file, info, resolved := typeInfoFromSrc(t, src)
+	shell, ok := file.Stmts[0].(*rl.Shell)
+	require.True(t, ok, "stmt 0 should be a Shell, got %T", file.Stmts[0])
+	require.Greater(t, len(shell.Targets), targetIdx)
+	ident, ok := shell.Targets[targetIdx].(*rl.Identifier)
+	require.True(t, ok, "target %d should be an Identifier", targetIdx)
+	sym, ok := resolved.Uses[ident]
+	require.True(t, ok, "target %d should resolve to a symbol", targetIdx)
+	typ, ok := info.SymbolTypes[sym]
+	require.True(t, ok, "target %d should have a recorded type", targetIdx)
+	return typ
+}
+
+func TestTypeCheck_ShellPositionalTargetTypes(t *testing.T) {
+	src := "a, b, c = $`cmd`\n"
+	assert.Equal(t, rl.T_STR, shellTargetType(t, src, 0).Name(), "slot 0 is stdout")
+	assert.Equal(t, rl.T_STR, shellTargetType(t, src, 1).Name(), "slot 1 is stderr")
+	assert.Equal(t, rl.T_INT, shellTargetType(t, src, 2).Name(), "slot 2 is the exit code")
+}
+
+func TestTypeCheck_ShellSinglePositionalTargetIsStdout(t *testing.T) {
+	assert.Equal(t, rl.T_STR, shellTargetType(t, "out = $`cmd`\n", 0).Name())
+}
+
+func TestTypeCheck_ShellNamedTargetTypesIgnoreOrder(t *testing.T) {
+	// Named assignment binds by name, so the reversed order still types
+	// each variable by what it asked for.
+	src := "code, stderr, stdout = $`cmd`\n"
+	assert.Equal(t, rl.T_INT, shellTargetType(t, src, 0).Name())
+	assert.Equal(t, rl.T_STR, shellTargetType(t, src, 1).Name())
+	assert.Equal(t, rl.T_STR, shellTargetType(t, src, 2).Name())
+}
+
+func TestTypeCheck_ShellNamedCodeAloneIsInt(t *testing.T) {
+	assert.Equal(t, rl.T_INT, shellTargetType(t, "code = $`cmd`\n", 0).Name())
+}
+
+func TestTypeCheck_ShellTooManyTargetsEmitsError(t *testing.T) {
+	// There are only three streams, so a fourth target has nothing to bind.
+	// The interpreter refuses this; the checker has to agree, or `rad check`
+	// passes a script that cannot run.
+	_, info, _ := typeInfoFromSrc(t, "a, b, c, d = $`cmd`\n")
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrInvalidSyntax && i.Severity == check.IssueError {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "expected an Error-severity issue for a fourth capture target")
+}
+
+func TestTypeCheck_ShellThreeTargetsIsSilent(t *testing.T) {
+	_, info, _ := typeInfoFromSrc(t, "a, b, c = $`cmd`\n")
+	for _, i := range info.Issues {
+		assert.NotEqual(t, rl.ErrInvalidSyntax, i.Code,
+			"unexpected arity complaint on a valid three-target capture: %s", i.Message)
+	}
+}
+
+func TestTypeCheck_ShellExitCodeUsedAsStrIsAnError(t *testing.T) {
+	// The payoff: `trim` wants a str and the exit code is an int, so this is
+	// caught at check time instead of at runtime.
+	_, info, _ := typeInfoFromSrc(t, "code = $`cmd`\nprint(trim(code))\n")
+	found := false
+	for _, i := range info.Issues {
+		if i.Code == rl.ErrTypeMismatch && i.Severity == check.IssueError {
+			found = true
+		}
+	}
+	assert.True(t, found, "expected an Error-severity type mismatch, got %v", info.Issues)
+}
+
+func TestTypeCheck_ShellCatchBodyReadsTargetsAtNormalTypes(t *testing.T) {
+	// A shell catch block exists to inspect stderr/code after a non-zero
+	// exit, where they hold real values. Typing them as unions with the rare
+	// command-expression-failure case would hint on both lines here.
+	_, info, _ := typeInfoFromSrc(t, "stdout, stderr, code = $`cmd` catch:\n"+
+		"    if code > 1:\n"+
+		"        print(len(stderr))\n")
+	assert.Empty(t, info.Issues)
+}
+
+func TestTypeCheck_ShellTargetsSurviveTheCatchBlock(t *testing.T) {
+	_, info, _ := typeInfoFromSrc(t, "out = $`cmd` catch:\n    pass\nprint(trim(out))\n")
+	assert.Empty(t, info.Issues)
+}

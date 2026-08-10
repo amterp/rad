@@ -768,6 +768,8 @@ func (tc *typeChecker) walkStmt(n rl.Node) {
 	switch v := n.(type) {
 	case *rl.Assign:
 		tc.walkAssign(v)
+	case *rl.Shell:
+		tc.walkShell(v)
 	case *rl.ExprStmt:
 		_ = tc.synth(v.Expr)
 	case *rl.If:
@@ -2340,6 +2342,68 @@ func (tc *typeChecker) walkAssign(a *rl.Assign) {
 		tc.walkStmts(a.Catch.Stmts)
 		tc.frame = savedFrame
 	}
+}
+
+// walkShell types the capture targets of `out = $`cmd“ and friends. Which
+// stream each target receives comes from rl.ShellStreamForTarget, shared with
+// the interpreter: stdout and stderr are strings, the exit code is an int.
+//
+// Without this the targets bind but stay Dynamic, so `out.trim()` on an exit
+// code only fails at runtime. With it, the existing argument-type machinery
+// catches the mismatch at check time and hover reports real types.
+func (tc *typeChecker) walkShell(s *rl.Shell) {
+	_ = tc.synth(s.Cmd)
+
+	// A shell command has three streams, so a fourth target has nothing to
+	// bind to. The interpreter already refuses it (core/shell.go,
+	// executeShellStmt); saying so here too is the point of sharing the
+	// capture rules, and it moves the report from a run to `rad check` and
+	// the editor.
+	if len(s.Targets) > 3 {
+		tc.info.Issues = append(tc.info.Issues, BindIssue{
+			Span:     s.Span(),
+			Severity: IssueError,
+			Code:     rl.ErrInvalidSyntax,
+			Message:  "At most 3 assignments allowed with shell commands",
+		})
+	}
+
+	isNamed := rl.IsNamedShellAssignment(s.Targets)
+	for i, target := range s.Targets {
+		tc.bindAssignTarget(target, nil, shellStreamType(rl.ShellStreamForTarget(s.Targets, i, isNamed)), true)
+	}
+
+	// The catch body reads the targets at these same types, which is the
+	// point of shell catch blocks: `stderr` and `code` are there to be
+	// inspected after a non-zero exit, and they hold real values then.
+	//
+	// This is deliberately not the treatment walkAssign gives its catch
+	// blocks. There, the catch fires *only* because the RHS errored, so the
+	// target definitely holds an error. A shell catch has two entrances: the
+	// common one (command ran, exited non-zero, targets hold real output) and
+	// a rare one (the command *expression* itself errored, so target 0 holds
+	// the error and the rest hold null - core/shell.go, executeShellStmt).
+	//
+	// Typing for the second entrance means `str|error` and `int|null` inside
+	// every catch body, which hints on `if code > 1` and `len(stderr)` -
+	// exactly the idiomatic shapes catch blocks exist for. We take the common
+	// entrance instead and accept missing the rare one: a missed hint costs
+	// less than a hint tier nobody trusts.
+	if s.Catch != nil {
+		tc.walkStmts(s.Catch.Stmts)
+	}
+}
+
+// shellStreamType maps a captured stream to its static type. An unrecognized
+// stream can't arise from a well-formed statement; Dynamic keeps it harmless.
+func shellStreamType(stream rl.ShellStream) rl.TypingT {
+	switch stream {
+	case rl.ShellStdout, rl.ShellStderr:
+		return rl.NewStrType()
+	case rl.ShellCode:
+		return rl.NewIntType()
+	}
+	return rl.NewDynamicType()
 }
 
 // bindAssignTarget records the type flowing into one assignment target. Shared

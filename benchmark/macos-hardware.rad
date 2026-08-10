@@ -1,17 +1,17 @@
 #!/usr/bin/env rad
 
-_, cpu = quiet $`sysctl -n machdep.cpu.brand_string`
-cpu = replace(cpu, "\n", "")
+stdout = quiet $`sysctl -n machdep.cpu.brand_string`
+cpu = replace(stdout, "\n", "")
 
-_, ram = quiet $`sysctl -n hw.memsize`
-ram = replace(ram, "\n", "")
+stdout = quiet $`sysctl -n hw.memsize`
+ram = replace(stdout, "\n", "")
 ram = parse_int(ram) / 1024 / 1024 / 1024
 
 
-_, cores = quiet $`sysctl -n hw.ncpu`
-cores = replace(cores, "\n", "")
+stdout = quiet $`sysctl -n hw.ncpu`
+cores = replace(stdout, "\n", "")
 
-_, macos_vers = quiet $`sw_vers -productVersion`
-macos_vers = replace(macos_vers, "\n", "")
+stdout = quiet $`sw_vers -productVersion`
+macos_vers = replace(stdout, "\n", "")
 
 print("{cpu} ({cores} cores) {ram} GB macOS {macos_vers}")

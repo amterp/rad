@@ -103,6 +103,7 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addCommandBlockErrors(&diagnostics)
 	c.addRegexPatternWithoutRegexArgWarnings(resolved, &diagnostics)
 	c.addConstantInterpolationWarnings(&diagnostics)
+	c.addMisleadingShellCaptureNameWarnings(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 		Resolved:    resolved,

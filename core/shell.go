@@ -78,7 +78,7 @@ func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 	}
 
 	// Determine if using named assignment (all vars are code/stdout/stderr)
-	isNamedAssignment := isNamedShellAssignment(targets)
+	isNamedAssignment := rl.IsNamedShellAssignment(targets)
 
 	// Helper to assign shell results to variables
 	assignResults := func(result shellResult) {
@@ -122,32 +122,10 @@ func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 	})
 }
 
-func positionalCaptureMode(numVars int) (captureStdout bool, captureStderr bool) {
-	captureStdout = numVars >= 2
-	captureStderr = numVars >= 3
-	return
-}
-
-func namedCaptureMode(targets []rl.Node) (captureStdout bool, captureStderr bool) {
-	for _, target := range targets {
-		name := extractRootName(target)
-		switch name {
-		case "stdout":
-			captureStdout = true
-		case "stderr":
-			captureStderr = true
-		}
-	}
-	return
-}
-
 func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 	command, argv := i.evalShellCommand(shell)
 
-	captureStdout, captureStderr := namedCaptureMode(shell.Targets)
-	if !isNamedShellAssignment(shell.Targets) {
-		captureStdout, captureStderr = positionalCaptureMode(len(shell.Targets))
-	}
+	captureStdout, captureStderr := rl.ShellCaptures(shell.Targets)
 
 	invocation := ShellInvocation{
 		Command:       command,
@@ -554,67 +532,31 @@ func buildCmd(shellStr string, flag string, cmdStr string) *exec.Cmd {
 	return cmd
 }
 
-// extractRootName gets the identifier name from a VarPath or Identifier AST node.
-func extractRootName(node rl.Node) string {
-	switch n := node.(type) {
-	case *rl.VarPath:
-		if ident, ok := n.Root.(*rl.Identifier); ok {
-			return ident.Name
-		}
-	case *rl.Identifier:
-		return n.Name
-	}
-	return ""
-}
-
-// isNamedShellAssignment checks if ALL variables are named exactly "code", "stdout", or "stderr"
-func isNamedShellAssignment(targets []rl.Node) bool {
-	if len(targets) == 0 {
-		return false
-	}
-
-	for _, target := range targets {
-		name := extractRootName(target)
-		if name != "code" && name != "stdout" && name != "stderr" {
-			return false
-		}
-	}
-
-	return true
-}
-
-// assignShellResults assigns shell command results to variables
+// assignShellResults binds each target to the stream it asked for. Which
+// stream that is - by name or by position - is decided by rl.ShellStreamForTarget,
+// shared with the checker so the two can't drift.
+//
+// A stream that wasn't captured has a nil pointer here and leaves its target
+// unassigned. That only happens in named mode (positional always captures every
+// stream it has a target for), where e.g. `code = $cmd` captures nothing.
 func (i *Interpreter) assignShellResults(
 	shell *rl.Shell,
 	targets []rl.Node,
 	result shellResult,
 	isNamedAssignment bool,
 ) {
-	if isNamedAssignment {
-		for _, target := range targets {
-			name := extractRootName(target)
-			switch name {
-			case "code":
-				i.doVarPathAssign(target, newRadValue(i, shell, int64(result.exitCode)), false)
-			case "stdout":
-				if result.stdout != nil {
-					i.doVarPathAssign(target, newRadValue(i, shell, *result.stdout), false)
-				}
-			case "stderr":
-				if result.stderr != nil {
-					i.doVarPathAssign(target, newRadValue(i, shell, *result.stderr), false)
-				}
+	for idx, target := range targets {
+		switch rl.ShellStreamForTarget(targets, idx, isNamedAssignment) {
+		case rl.ShellCode:
+			i.doVarPathAssign(target, newRadValue(i, shell, int64(result.exitCode)), false)
+		case rl.ShellStdout:
+			if result.stdout != nil {
+				i.doVarPathAssign(target, newRadValue(i, shell, *result.stdout), false)
 			}
-		}
-	} else {
-		if len(targets) >= 1 {
-			i.doVarPathAssign(targets[0], newRadValue(i, shell, int64(result.exitCode)), false)
-		}
-		if len(targets) >= 2 && result.stdout != nil {
-			i.doVarPathAssign(targets[1], newRadValue(i, shell, *result.stdout), false)
-		}
-		if len(targets) >= 3 && result.stderr != nil {
-			i.doVarPathAssign(targets[2], newRadValue(i, shell, *result.stderr), false)
+		case rl.ShellStderr:
+			if result.stderr != nil {
+				i.doVarPathAssign(target, newRadValue(i, shell, *result.stderr), false)
+			}
 		}
 	}
 }
