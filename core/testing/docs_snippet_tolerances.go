@@ -510,6 +510,11 @@ var docSnippetTolerances = map[string]Tolerance{
 		Skip:   true,
 		Reason: "guide fragment: ?? chaining with placeholder 'user' / 'config_path'.",
 	},
+	"docs-web/docs/guide/error-handling.md#81807434": {
+		Skip:   true,
+		Reason: "guide fragment: guarding a re-raise, continuing the 'relay' / 'stored' " +
+			"example the preceding snippet sets up in full.",
+	},
 	// #82491324 no longer needs an entry: `parse_float(...)` now strips
 	// its error arm at the call (Gap 2), so `price` is `float` and the
 	// old `float|error * float` RAD30002 hint is gone - the very false
