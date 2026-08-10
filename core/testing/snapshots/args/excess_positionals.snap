@@ -29,53 +29,40 @@ Global options:
 1
 
 ### TITLE ###
-NonVariadicListArgHintsVariadicForm
+ListArgCollectsAllPositionals
 ### INPUT ###
 args:
 	targets str[]
+print(targets)
 ### ARGS ###
 a
 b
 c
+### STDOUT ###
+[ "a", "b", "c" ]
+
+### TITLE ###
+ListArgStopsAtFlagAndReportsRest
+### INPUT ###
+args:
+	targets str[]
+	verbose v bool
+print(targets)
+### ARGS ###
+a
+b
+-v
+c
+d
 ### STDERR ###
-Too many positional arguments. Unused: [b, c]
-Note: "targets" is a list arg, which takes a single positional value (lists are built by repeating the flag).
-      To accept multiple positional values, declare it variadic: '*targets'
+Too many positional arguments. Unused: [c, d]
 
 Usage:
-  TestCase <targets> [OPTIONS]
+  TestCase <targets...> [OPTIONS]
 
 Script args:
       --targets strs
-
-Global options:
-  -h, --help            Print usage string.
-  -i, --interactive     Interactively prompt for script args not already provided, then run.
-  -d, --debug           Enables debug output. Intended for Rad script developers.
-      --color mode      Control output colorization. Valid values: [auto, always, never] (default auto)
-  -q, --quiet           Suppresses some output.
-      --confirm-shell   Confirm all shell commands before running them.
-      --tls-insecure    Skip TLS certificate verification for all HTTP requests.
-      --src             Instead of running the target script, just print it out.
-### EXIT ###
-1
-
-### TITLE ###
-NoHintWithoutListArg
-### INPUT ###
-args:
-	name str
-### ARGS ###
-alice
-bob
-### STDERR ###
-Too many positional arguments. Unused: [bob]
-
-Usage:
-  TestCase <name> [OPTIONS]
-
-Script args:
-      --name str
+  -v, --verbose
 
 Global options:
   -h, --help            Print usage string.

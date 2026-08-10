@@ -327,7 +327,7 @@ args:
 -h
 ### STDOUT ###
 Usage:
-  TestCase [stringArg] [intArg] [floatArg] [stringListArg] [intListArg] [floatListArg] [boolListArg] [OPTIONS]
+  TestCase [stringArg] [intArg] [floatArg] [stringListArg...] [OPTIONS]
 
 Script args:
       --stringArg str         (default alice)
