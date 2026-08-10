@@ -142,6 +142,7 @@ const (
 	ErrNamespaceHasCallback             Error = "40021"
 	ErrDefaultOnNamespace               Error = "40022"
 	ErrShellInterpolationQuoted         Error = "40023"
+	ErrConstraintTypeMismatch           Error = "40024"
 )
 
 func (e Error) String() string {

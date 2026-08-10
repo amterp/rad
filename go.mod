@@ -9,7 +9,7 @@ require (
 	github.com/amterp/go-delta v0.1.5
 	github.com/amterp/go-tbl v0.13.0
 	github.com/amterp/jsoncolor v0.4.0
-	github.com/amterp/ra v0.9.0
+	github.com/amterp/ra v0.10.0
 	github.com/amterp/radish v0.2.0
 	github.com/amterp/tree-sitter-rad v0.9.0
 	github.com/dustin/go-humanize v1.0.1

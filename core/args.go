@@ -355,6 +355,8 @@ func (f *BoolListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		arg = arg.SetVariadic(true)
 	}
 
+	arg = applyLenConstraint(arg, f.scriptArg)
+
 	err := arg.
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
 
@@ -477,33 +479,61 @@ func (f *StringRadArg) SetValue(arg string) {
 	f.Value = arg
 }
 
-func (f *StringRadArg) GetDescription() string {
-	var sb strings.Builder
-
-	sb.WriteString(f.Description)
-
-	if f.EnumConstraint != nil {
-		if sb.Len() > 0 {
-			sb.WriteString(" ")
-		}
-		sb.WriteString("Valid values: [")
-		sb.WriteString(strings.Join(*f.EnumConstraint, ", "))
-		sb.WriteString("].")
-	}
-
-	if f.RegexConstraint != nil {
-		if sb.Len() > 0 {
-			sb.WriteString(" ")
-		}
-		sb.WriteString("Regex: ")
-		sb.WriteString((*f.RegexConstraint).String())
-	}
-
-	return sb.String()
-}
-
 func (f *StringRadArg) GetType() RadArgTypeT {
 	return ArgStringT
+}
+
+// Per-element constraints reach ra from the ScriptArg rather than through the
+// list constructors. Every CreateFlag branch already attaches the ScriptArg
+// before Register runs, so reading it here means one forwarding site per
+// element type instead of one per construction site - which is how these got
+// dropped in the first place.
+//
+// Each helper forwards only what its element type can honor. ra would reject a
+// mismatch, and rad's checker rejects it earlier still (RAD40024), so applying
+// them blindly would just turn a clear diagnostic into a registration failure.
+
+func applyStringElementConstraints(arg *ra.StringSliceFlag, sa *ScriptArg) *ra.StringSliceFlag {
+	if sa == nil {
+		return arg
+	}
+	if sa.EnumConstraint != nil {
+		arg = arg.SetEnumConstraint(*sa.EnumConstraint)
+	}
+	if sa.RegexConstraint != nil {
+		arg = arg.SetRegexConstraint(sa.RegexConstraint)
+	}
+	return arg
+}
+
+// applyLenConstraint bounds the number of values. Unlike the element
+// constraints this suits every list element type, bools included.
+func applyLenConstraint[T any](arg *ra.SliceFlag[T], sa *ScriptArg) *ra.SliceFlag[T] {
+	if sa == nil || sa.LenConstraint == nil {
+		return arg
+	}
+	lc := sa.LenConstraint
+	if lc.Min != nil {
+		arg = arg.SetMinLen(int(*lc.Min), lc.MinInclusive)
+	}
+	if lc.Max != nil {
+		arg = arg.SetMaxLen(int(*lc.Max), lc.MaxInclusive)
+	}
+	return arg
+}
+
+func applyRangeElementConstraints[T int64 | float64](arg *ra.SliceFlag[T], sa *ScriptArg) *ra.SliceFlag[T] {
+	if sa == nil || sa.RangeConstraint == nil {
+		return arg
+	}
+	rc := sa.RangeConstraint
+	if rc.Min != nil {
+		arg = arg.SetMin(*rc.Min, rc.MinInclusive)
+	}
+	if rc.Max != nil {
+		arg = arg.SetMax(*rc.Max, rc.MaxInclusive)
+	}
+	return arg
 }
 
 // --- string array
@@ -579,6 +609,9 @@ func (f *StringListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 	if f.scriptArg != nil && f.scriptArg.IsVariadic {
 		arg = arg.SetVariadic(true)
 	}
+
+	arg = applyStringElementConstraints(arg, f.scriptArg)
+	arg = applyLenConstraint(arg, f.scriptArg)
 
 	err := arg.
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
@@ -725,15 +758,6 @@ func (f *IntRadArg) SetValue(arg string) {
 	f.Value = val
 }
 
-func (f *IntRadArg) GetDescription() string {
-	var sb strings.Builder
-
-	sb.WriteString(f.Description)
-	addRangeDescriptionIfPresent(&sb, f.RangeConstraint)
-
-	return sb.String()
-}
-
 func (f *IntRadArg) GetType() RadArgTypeT {
 	return ArgIntT
 }
@@ -806,6 +830,9 @@ func (f *IntListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 	if f.scriptArg != nil && f.scriptArg.IsVariadic {
 		arg = arg.SetVariadic(true)
 	}
+
+	arg = applyRangeElementConstraints(arg, f.scriptArg)
+	arg = applyLenConstraint(arg, f.scriptArg)
 
 	err := arg.
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
@@ -935,15 +962,6 @@ func (f *FloatRadArg) SetValue(arg string) {
 	f.Value = parsed
 }
 
-func (f *FloatRadArg) GetDescription() string {
-	var sb strings.Builder
-
-	sb.WriteString(f.Description)
-	addRangeDescriptionIfPresent(&sb, f.RangeConstraint)
-
-	return sb.String()
-}
-
 func (f *FloatRadArg) GetType() RadArgTypeT {
 	return ArgFloatT
 }
@@ -1015,6 +1033,9 @@ func (f *FloatListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 	if f.scriptArg != nil && f.scriptArg.IsVariadic {
 		arg = arg.SetVariadic(true)
 	}
+
+	arg = applyRangeElementConstraints(arg, f.scriptArg)
+	arg = applyLenConstraint(arg, f.scriptArg)
 
 	err := arg.
 		RegisterWithPtr(cmd, &f.Value, ra.WithGlobal(asRaGlobal))
@@ -1303,24 +1324,6 @@ func convertToInterfaceArr[T any](i []T) []interface{} {
 		converted[j] = v
 	}
 	return converted
-}
-
-func addRangeDescriptionIfPresent(sb *strings.Builder, rangeConstraint *ArgRangeConstraint) {
-	if rangeConstraint != nil {
-		if sb.Len() > 0 {
-			sb.WriteString(" ")
-		}
-		sb.WriteString("Range: ")
-		sb.WriteString(lo.Ternary(rangeConstraint.MinInclusive, "[", "("))
-		if rangeConstraint.Min != nil {
-			sb.WriteString(fmt.Sprintf("%v", *rangeConstraint.Min))
-		}
-		sb.WriteString(", ")
-		if rangeConstraint.Max != nil {
-			sb.WriteString(fmt.Sprintf("%v", *rangeConstraint.Max))
-		}
-		sb.WriteString(lo.Ternary(rangeConstraint.MaxInclusive, "]", ")"))
-	}
 }
 
 func (f *BaseRadArg) missingRequirement(required string) error {

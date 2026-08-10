@@ -161,6 +161,7 @@ func extractArgsFromAST(argBlock *rl.ArgBlock, src string) []*ScriptArg {
 			argBlock.EnumConstraints[decl.Name],
 			argBlock.RegexConstraints[decl.Name],
 			argBlock.RangeConstraints[decl.Name],
+			argBlock.LenConstraints[decl.Name],
 			requires[decl.Name],
 			excludes[decl.Name],
 		))

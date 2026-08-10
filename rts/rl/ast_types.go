@@ -711,6 +711,7 @@ type ArgBlock struct {
 	EnumConstraints  map[string]*ArgEnumConstraint
 	RegexConstraints map[string]*ArgRegexConstraint
 	RangeConstraints map[string]*ArgRangeConstraint
+	LenConstraints   map[string]*ArgLenConstraint
 	Requirements     []ArgRelation
 	Exclusions       []ArgRelation
 }
@@ -799,6 +800,17 @@ type ArgRangeConstraint struct {
 	Max         *float64
 }
 
+// ArgLenConstraint restricts how many values a list or variadic arg takes.
+// Same interval notation as ArgRangeConstraint, but the bounds are counts, so
+// they are whole numbers.
+type ArgLenConstraint struct {
+	Span_       Span
+	OpenerToken string // "[" or "("
+	CloserToken string // "]" or ")"
+	Min         *int64
+	Max         *int64
+}
+
 // ArgRelation represents a requires or excludes relation between args.
 type ArgRelation struct {
 	Span_    Span
@@ -823,6 +835,7 @@ type CmdBlock struct {
 	EnumConstraints  map[string]*ArgEnumConstraint
 	RegexConstraints map[string]*ArgRegexConstraint
 	RangeConstraints map[string]*ArgRangeConstraint
+	LenConstraints   map[string]*ArgLenConstraint
 	Requirements     []ArgRelation
 	Exclusions       []ArgRelation
 	Callback         *CmdCallback // nil for a namespace command

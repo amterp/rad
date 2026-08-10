@@ -101,6 +101,7 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addRadOptionNoEffectWarnings(&diagnostics)
 	c.addShellInterpolationQuoteErrors(&diagnostics)
 	c.addCommandBlockErrors(&diagnostics)
+	c.addArgConstraintErrors(&diagnostics)
 	c.addRegexPatternWithoutRegexArgWarnings(resolved, &diagnostics)
 	c.addConstantInterpolationWarnings(&diagnostics)
 	c.addMisleadingShellCaptureNameWarnings(&diagnostics)
