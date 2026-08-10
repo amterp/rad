@@ -230,6 +230,66 @@ func (c *RadCheckerImpl) addRadOptionNoEffectWarnings(d *[]Diagnostic) {
 	})
 }
 
+// Check 13: Interpolation of a constant literal.
+//
+// `{4}` interpolates the integer literal 4, which is exactly what the
+// author would have written anyway - so the interpolation carries no
+// information. The reason this earns a warning rather than a style hint
+// is `"\d{4}"`: a regex quantifier is a valid interpolation, so it
+// silently becomes `\d4` with no error anywhere. Multi-part quantifiers
+// (`{2,3}`) already fail to parse, so flagging the single-token form
+// closes the last silent hole in that family.
+//
+// The rule is deliberately syntactic: we fire when the expression *node*
+// is a literal, not when it merely evaluates to a constant. `{x}` with
+// `x = 4` stays quiet. Anything wider needs const-folding, which buys
+// false positives in a diagnostic tier that is already fighting for
+// trust.
+func (c *RadCheckerImpl) addConstantInterpolationWarnings(d *[]Diagnostic) {
+	if c.ast == nil {
+		return
+	}
+
+	walkAST(c.ast, func(node rl.Node) {
+		str, ok := node.(*rl.LitString)
+		if !ok || str.Simple {
+			return
+		}
+
+		// Iterate Segments rather than Children(): the child list also
+		// carries Format.Padding and Format.Precision, which are int
+		// literals on every padded format spec ("{v:<12}").
+		for _, seg := range str.Segments {
+			if seg.IsLiteral || !isConstantScalarLiteral(seg.Expr) {
+				continue
+			}
+			literal := safeSlice(c.src, seg.Expr.Span().StartByte, seg.Expr.Span().EndByte)
+			msg := "Interpolating the literal " + truncate(literal, 20) + " has no effect"
+			suggestion := "Write the value directly. For a literal brace, escape it as '\\{' or use a raw string: r\"...\""
+			*d = append(*d, NewDiagnosticWarnFromSpanWithSuggestion(
+				seg.Span(), c.src, msg, rl.ErrConstantInterpolation, suggestion))
+		}
+	})
+}
+
+// isConstantScalarLiteral reports whether node is a literal whose value
+// is fixed at parse time. Collections are excluded: their elements need
+// not be constant. An interpolated string is excluded for the same
+// reason - only `Simple` strings have a parse-time value.
+//
+// The switch-case analysis has two cousins of this test that carry
+// per-kind payloads rather than a bare bool: caseLiteralKey and
+// caseKeyDisplayText, both in type_check.go.
+func isConstantScalarLiteral(node rl.Node) bool {
+	switch v := node.(type) {
+	case *rl.LitInt, *rl.LitFloat, *rl.LitBool:
+		return true
+	case *rl.LitString:
+		return v.Simple
+	}
+	return false
+}
+
 func (c *RadCheckerImpl) validateAssignmentTargetAST(node rl.Node, d *[]Diagnostic) {
 	if node == nil {
 		return

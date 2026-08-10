@@ -155,6 +155,18 @@ func NewDiagnosticWarnFromSpan(span rl.Span, originalSrc string, msg string, cod
 	return NewDiagnosticFromSpan(span, originalSrc, Warning, msg, &code)
 }
 
+func NewDiagnosticWarnFromSpanWithSuggestion(
+	span rl.Span,
+	originalSrc string,
+	msg string,
+	code rl.Error,
+	suggestion string,
+) Diagnostic {
+	diag := NewDiagnosticFromSpan(span, originalSrc, Warning, msg, &code)
+	diag.Suggestion = &suggestion
+	return diag
+}
+
 // Result is the output of a check pass. Diagnostics is the
 // user-visible product; Resolved and Types are the supporting
 // indexes the LSP layer leans on for hover, goto-def, find-refs,

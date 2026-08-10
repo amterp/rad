@@ -233,6 +233,56 @@ with_decimals = "{big_num:,.2}"          // "1,234,567.00"
 padded_thousands = "{big_num:>15,}"      // "      1,234,567"
 ```
 
+### Braces in Strings
+
+A `{` opens an interpolation. Rad never silently re-reads a broken
+interpolation as ordinary text, so a brace you meant literally either
+falls under one of the narrow exemptions below or has to be escaped.
+
+1. `{expr}`, optionally with a format specifier, interpolates.
+2. A `{` is literal where an interpolation is impossible: the string ends
+   immediately after it, or the `{...}` pair holds only ASCII spaces or tabs.
+   Other Unicode whitespace does not count - `{` followed by U+00A0 is an
+   error, not a literal brace.
+3. A `}` with no interpolation open is literal.
+4. `\{` and `\}` are literal braces. A raw string (`r"..."`) disables
+   interpolation and escapes for the whole string.
+5. Anything else that opens like an interpolation and isn't one is an
+   error.
+
+```rad
+print("{")             // {        -- string ends after the brace
+print("{}")            // {}       -- pair holds nothing
+print("{ }")           // { }      -- pair holds only whitespace
+print("}")             // }        -- no interpolation open
+print("\{a\}")         // {a}      -- both escapes
+print(r"\d{4}")        // \d{4}    -- raw string, nothing interpolates
+```
+
+The rule that catches people is the regex quantifier. `"\d{4}"` is a valid
+interpolation of the number 4, so it produces `\d4`:
+
+```rad
+pattern = "\d\{4}"     // \d{4}   -- escape the brace
+pattern = r"\d{4}"     // \d{4}   -- or use a raw string
+```
+
+Rad warns (`RAD40017`) when an interpolation holds a literal, since that is
+almost always this mistake.
+
+Exemption 2 is deliberately narrow. `"{name"` stays an error rather than
+printing itself, because a forgotten closing brace should be loud.
+
+An interpolation must not open with a same-delimiter string, since `"{"` is
+then indistinguishable from a literal brace at the end of a string. Reach
+for a different quote type:
+
+```rad
+print("{'ERROR'.red()}")     // use a different delimiter
+print("{ "ERROR".red() }")   // or separate the braces from the quotes
+print("{"ERROR".red()}")     // error - reads as the literal brace "{"
+```
+
 ## Ternary Operator
 
 ```rad
@@ -910,6 +960,7 @@ newline = "Line 1\nLine 2"         // Newline
 tab = "Column1\tColumn2"           // Tab
 backslash = "Path\\to\\file"       // Literal backslash
 brace = "Not interpolated: \{var}" // Escaped brace (literal {)
+close = "Escaped: \}"              // Escaped brace (literal })
 ```
 
 ### Defer and Error Defer Blocks

@@ -53,6 +53,7 @@ const (
 	K_ESC_NEWLINE              = "esc_newline"
 	K_ESC_TAB                  = "esc_tab"
 	K_ESC_OPEN_BRACKET         = "esc_open_bracket"
+	K_ESC_CLOSE_BRACKET        = "esc_close_bracket"
 	K_INTERPOLATION            = "interpolation"
 	K_FILL_ALIGNMENT           = "fill_alignment"
 	K_MAP                      = "map"

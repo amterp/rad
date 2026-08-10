@@ -473,7 +473,7 @@ tokens = ["Hello", "World"]
 print("{tokens.join(" ")}")
 print("{tokens.join(sep=" + ")}")
 print("Count: {tokens.len() > 1 ? "several" : "just one"}")
-print("x {"inner" + "!"} y")
+print("x { "inner" + "!" } y")
 ### STDOUT ###
 Hello World
 Hello + World

@@ -132,6 +132,7 @@ const (
 	ErrUnknownMapKey                    Error = "40014"
 	ErrIntLiteralOutOfRange             Error = "40015"
 	ErrRegexPatternWithoutRegexArg      Error = "40016"
+	ErrConstantInterpolation            Error = "40017"
 )
 
 func (e Error) String() string {

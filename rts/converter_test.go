@@ -215,6 +215,38 @@ func TestConvert_String_EscapedBrace(t *testing.T) {
 	assert.Equal(t, "use {braces}", lit.Value)
 }
 
+func TestConvert_String_EscapedClosingBrace(t *testing.T) {
+	stmt := firstStmt(t, `a = "\{a\} \}"`)
+	assign := stmt.(*rl.Assign)
+	lit := assign.Values[0].(*rl.LitString)
+	assert.True(t, lit.Simple)
+	assert.Equal(t, "{a} }", lit.Value)
+}
+
+// A brace that cannot open an interpolation is content, not a parse
+// error: nothing follows it before the string ends, or the pair holds
+// only whitespace.
+func TestConvert_String_LiteralBrace(t *testing.T) {
+	tests := []struct {
+		src      string
+		expected string
+	}{
+		{`a = "{"`, "{"},
+		{`a = "{}"`, "{}"},
+		{`a = "{ }"`, "{ }"},
+		{"a = `[]{}`", "[]{}"},
+		{`a = "prefix {"`, "prefix {"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.expected, func(t *testing.T) {
+			stmt := firstStmt(t, tc.src)
+			lit := stmt.(*rl.Assign).Values[0].(*rl.LitString)
+			assert.True(t, lit.Simple)
+			assert.Equal(t, tc.expected, lit.Value)
+		})
+	}
+}
+
 // --- Compound assign desugaring ---
 
 func TestConvert_CompoundAssign_Plus(t *testing.T) {

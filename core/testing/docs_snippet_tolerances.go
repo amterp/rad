@@ -109,7 +109,7 @@ var docSnippetTolerances = map[string]Tolerance{
 		ExpectedCodes: []string{"RAD20031"},
 		Reason:        "demo: continue outside a loop. (Old incidental RAD30002 gone now that numeric-union comparisons type-check.)",
 	},
-	"core/error_docs/30002.md#39029f35": {
+	"core/error_docs/30002.md#f81555f7": {
 		ExpectedCodes: []string{"RAD30002"},
 		Reason:        "demo: `str + int` invalid operand types.",
 	},
@@ -186,6 +186,16 @@ var docSnippetTolerances = map[string]Tolerance{
 	"core/error_docs/40015.md#94f07ed8": {
 		ExpectedCodes: []string{"RAD40015"},
 		Reason:        "demo: int literal one past the int64 max.",
+	},
+
+	"core/error_docs/40017.md#ac15e0b4": {
+		ExpectedCodes: []string{"RAD40017"},
+		Reason:        "demo: `\"\\d{4}\"`, the regex quantifier that silently interpolates.",
+	},
+
+	"docs-web/docs/reference/syntax.md#bbfe1bbd": {
+		ExpectedCodes: []string{"RAD10020"},
+		Reason:        "demo: an interpolation opening with a same-delimiter string is indistinguishable from a literal brace at end-of-string, so it is not legal; the doc shows the failing form beside the two idiomatic ones.",
 	},
 
 	"core/error_docs/20028.md#a34c5fb8": {

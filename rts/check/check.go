@@ -100,6 +100,7 @@ func (c *RadCheckerImpl) Check() (Result, error) {
 	c.addDeprecatedBlockKeywordErrors(&diagnostics)
 	c.addRadOptionNoEffectWarnings(&diagnostics)
 	c.addRegexPatternWithoutRegexArgWarnings(resolved, &diagnostics)
+	c.addConstantInterpolationWarnings(&diagnostics)
 	return Result{
 		Diagnostics: diagnostics,
 		Resolved:    resolved,
