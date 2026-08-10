@@ -3,6 +3,14 @@
   "alias": "add-a-min-version",
   "alias_explicit": false,
   "column": "p2",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "I have this idea, not sure if documented anywhere, of allowing Rad to behind the scenes lazily download specific binaries as needed if a script declares it needs a certain version. Rad can know the breaking semantics between versions and decide if a nearby version is also compatible with the declared version of Rad according to the script's macro.\nMaybe that would be a better design here",
+      "created_at_millis": 1786379997749,
+      "id": "c_25czNuEjA"
+    }
+  ],
   "created_at_millis": 1786343579665,
   "creator": "Alexander Terp",
   "description": "From #153, batch 4. `peer` was written against v0.11.0 and shipped to a machine running v0.10.1, where it fails at load:\n\n```\nerror[RAD20028]: Undefined identifier 'get_os'\n  --\u003e peer:92:10\n   = help: did you mean 'get_args', 'get_env', or 'get_pid'?\n```\n\nSame for `mkdir` and `format_epoch`. The diagnostic is right-shaped for a typo and wrong-shaped for the actual cause: nothing says the interpreter predates the function. For scripts synced across machines, version skew is a normal state of the world.\n\n`@min_version` in the file header - the `@enable_args_block` shape already exists - turns three misleading errors into one true one.\n\nCalibration positive worth keeping: running the *old* machine's `rad check` against the script produced the complete skew report in one shot, did-you-mean hints included. That's accidentally a good cross-version workflow and could be advertised as the pre-ship check. It depends on the over-arity destructuring hole in p0-tier1 being closed.\n\n---\n\n### Orientation\n\n- Header macros live in the `--- ... ---` file header, parsed into `rl.FileHeader.MetadataEntries` (a `map[string]string`, `rts/rl/ast_types.go:694-706`).\n- There are already three macros, all consts in `core/consts.go`: `MACRO_ENABLE_ARGS_BLOCK` (line 15), plus `MACRO_ENABLE_GLOBAL_OPTIONS` and `MACRO_STASH_ID`. They are read in one place - `core/script_meta.go:40-47` - via `defaultTruthyMacroToggle`.\n- Enforcement for `enable_args_block` happens in `core/runner.go:303`, in `registerScript`. That is the shape to copy, but not the timing (see below).\n- The running version is `core.Version` at `core/version.go:4` (currently `v0.11.0`).\n\n### Watch out for\n\n`AGENTS.md` says to prefer static detection in `rts/check/` so editors surface it too - but **rts must not import core**, and `Version` lives in core. Either thread the running version into the checker as an input, or accept a runtime-only check and note why. Decide this before writing code; retrofitting is the expensive direction.\n\nThe card's dependency on the over-arity destructuring hole (p0-tier1) is about the *calibration workflow* it praises, not about this macro. `@min_version` itself is independent - do not block on it.\n",
@@ -17,7 +25,7 @@
   ],
   "title": "Add a @min_version header macro",
   "type": "feature",
-  "updated_at_millis": 1786355431053,
+  "updated_at_millis": 1786379997749,
   "history": [
     {"field":"column","value":"p2","at":1786343579665}
   ]

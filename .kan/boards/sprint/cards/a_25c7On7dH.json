@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "add-a-len-constraint",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786377922543,
+  "creator": "Alexander Terp",
+  "description": "Falls out of the model settled in `collect-bare`: `targets str[]` means \"at least one value\", `targets str[] = []` means \"may be empty\". That rule is real but a script can't state it, and can't ask for anything else.\n\n`len` would make it sayable, reusing the interval notation `range` already uses:\n\n```rad\nargs:\n    pair str[] len [2,2]      // exactly two\n    sample len [3,5)          // three or four\n    *ports int len [1,]       // at least one\n```\n\nleaving `targets str[]` and `targets str[] = []` as the implicit `[1,]` and `[0,]` cases.\n\nWanted for `str[]`/`int[]`/`float[]`/`bool[]` and `*name`. Should render in usage and in the validation error the way `range` does - scalar `range` prints `Range: [0, 100]` in the args block and fails with `'score' value 500 is \u003e maximum 100`.\n\nA new constraint keyword means a `tree-sitter-rad` grammar rule alongside the existing `arg_enum_constraint` / `arg_regex_constraint` / `arg_range_constraint`, so this reaches grammar, converter, `ra` and usage rendering rather than being a Rad-only change.\n\nPairs with `scalar-arg`: `len` bounds how many values, the scalar constraints bound each one.",
+  "effort": "l",
+  "id": "a_25c7On7dH",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "UUUUUUUUUUUU",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Add a len constraint for list and variadic args",
+  "type": "feature",
+  "updated_at_millis": 1786377922543,
+  "history": [
+    {"field":"column","value":"p1","at":1786377922543}
+  ]
+}
