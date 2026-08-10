@@ -92,3 +92,31 @@ print(parse_int("9") catch -1)
 -1
 -7
 9
+
+### TITLE ###
+Inline error value is caught
+### INPUT ###
+print(error("boom") catch "caught")
+### STDOUT ###
+caught
+
+### TITLE ###
+Error held in a variable is caught
+### INPUT ###
+e = error("boom")
+print(e catch "caught")
+### STDOUT ###
+caught
+
+### TITLE ###
+Error bound by a catch block is caught
+### INPUT ###
+fn fail():
+	return error("boom")
+
+stored = fail() catch:
+	pass
+
+print(stored catch "caught")
+### STDOUT ###
+caught

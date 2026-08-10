@@ -486,3 +486,22 @@ error[RAD20000]: boom
    = info: rad docs RAD20000
 ### EXIT ###
 1
+
+### TITLE ###
+Re-propagated error is handled at the re-raise site
+### INPUT ###
+
+fn fail():
+	return error("boom")
+
+stored = fail() catch:
+	pass
+
+fn relay(x):
+	return x
+
+print(relay(stored) ?? "handled")
+print(relay(stored) catch "handled")
+### STDOUT ###
+handled
+handled

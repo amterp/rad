@@ -267,3 +267,44 @@ print(parse_int("9") ?? -1)
 -20
 5
 9
+
+### TITLE ###
+Inline error value falls back
+### INPUT ###
+
+print(error("boom") ?? "fallback")
+### STDOUT ###
+fallback
+
+### TITLE ###
+Error held in a variable falls back
+### INPUT ###
+
+e = error("boom")
+print(e ?? "fallback")
+### STDOUT ###
+fallback
+
+### TITLE ###
+Error bound by a catch block falls back
+### INPUT ###
+
+fn fail():
+	return error("boom")
+
+stored = fail() catch:
+	pass
+
+print(stored ?? "fallback")
+### STDOUT ###
+fallback
+
+### TITLE ###
+Error value does not shadow a null fallback
+### INPUT ###
+
+print(null ?? "fallback")
+print(error("boom") ?? null)
+### STDOUT ###
+fallback
+null
