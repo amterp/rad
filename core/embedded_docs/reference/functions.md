@@ -2026,7 +2026,7 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 "hello world hello".index_of("hello", n=1)      // -> 12
 "hello world hello".index_of("hello", n=-1)     // -> 12
 "hello".index_of("xyz")                         // -> null
-"hello".index_of("xyz") ?? (-1)                 // -> -1
+"hello".index_of("xyz") ?? -1                   // -> -1
 "hello".index_of("")                             // -> null (empty target)
 
 // List search

@@ -244,3 +244,27 @@ print(outer("AAA"))
 ### STDOUT ###
 fallback AAA
 
+### TITLE ###
+Fallback accepts a signed operand on the right
+### INPUT ###
+
+n = 7
+xs = [10, 20]
+
+fn get():
+	return 3
+
+print(parse_int("x") ?? -1)
+print(parse_int("x") ?? -n)
+print(parse_int("x") ?? -get())
+print(parse_int("x") ?? -xs[1])
+print(parse_int("x") ?? +5)
+print(parse_int("9") ?? -1)
+### STDOUT ###
+-1
+-7
+-3
+-20
+5
+9
+
