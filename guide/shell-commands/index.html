@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -704,6 +704,34 @@
     <span class="md-ellipsis">
       
         String Interpolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="String Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lists-become-several-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lists Become Several Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commands-as-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands As Lists
       
     </span>
   </a>
@@ -1447,6 +1475,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -1690,6 +1746,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="String Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lists-become-several-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lists Become Several Arguments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commands-as-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands As Lists
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1828,7 +1912,9 @@
 <p>The shell offers a wide range of utilities and is essential for CLI scripting - from file operations to invoking
 installed programs like git, make, or docker.</p>
 <p>Rad has rich built-in functionality (<code>http_get</code>, <code>read_file</code>, <code>write_file</code>, etc.), but sometimes you need to invoke
-system tools or installed programs. Rad makes this safe and ergonomic through first-class shell command support.</p>
+system tools or installed programs. Rad makes this ergonomic through first-class shell command support, and quotes
+the values you interpolate so a filename with a space - or a string from somewhere you don't control - can't turn
+into shell syntax.</p>
 <h2 id="invoking-commands">Invoking Commands<a class="headerlink" href="#invoking-commands" title="Permanent link">&para;</a></h2>
 <p>Shell commands are invoked by prefixing a string with <code>$</code>:</p>
 <div class="highlight"><pre><span></span><code>$`ls -la`
@@ -1851,29 +1937,29 @@ However, you can use any string delimiter.</p>
 <li><strong>On Linux/macOS</strong> (when <code>SHELL</code> is unset): <code>/bin/sh</code>.</li>
 </ol>
 <h2 id="capturing-output">Capturing Output<a class="headerlink" href="#capturing-output" title="Permanent link">&para;</a></h2>
-<p>Shell commands return three values: <strong>exit code</strong>, <strong>stdout</strong>, and <strong>stderr</strong>. You can capture anywhere from zero to all three of these values, depending on what you need.</p>
+<p>Shell commands produce three things: <strong>stdout</strong>, <strong>stderr</strong>, and an <strong>exit code</strong>. You can capture anywhere from zero to all three, depending on what you need.</p>
 <h3 id="capture-modes">Capture Modes<a class="headerlink" href="#capture-modes" title="Permanent link">&para;</a></h3>
 <p>There are four levels of capture:</p>
 <p><strong>1. No capture - output goes to terminal</strong></p>
 <p>When you don't assign any variables, all output goes to the terminal:</p>
 <div class="highlight"><pre><span></span><code>$`ls -la`
 </code></pre></div>
-<p><strong>2. Capture exit code only</strong></p>
-<p>Assign to one variable to capture just the exit code:</p>
-<div class="highlight"><pre><span></span><code>code = $`make test`
+<p><strong>2. Capture stdout</strong></p>
+<p>Assign to one variable to capture the command's output:</p>
+<div class="highlight"><pre><span></span><code>stdout = $`git show 0dd21e6`
 </code></pre></div>
-<p>The exit code is captured as an <code>int</code>, but stdout and stderr still go to the terminal.</p>
-<p><strong>3. Capture exit code + stdout</strong></p>
-<p>Assign to two variables to capture the exit code and stdout:</p>
-<div class="highlight"><pre><span></span><code>code, stdout = $`git show 0dd21e6`
+<p>Stdout is captured as a <code>str</code>. Stderr still goes to the terminal.
+<strong>Important:</strong> When you capture a stream, it stops printing to the terminal - it's redirected to your variable.</p>
+<p><strong>3. Capture stdout + stderr</strong></p>
+<p>Assign to two variables to capture both streams:</p>
+<div class="highlight"><pre><span></span><code>stdout, stderr = $`npm install`
 </code></pre></div>
-<p>The exit code and stdout are captured as an <code>int</code> and <code>str</code> respectively. Stderr still goes to the terminal.
-<strong>Important:</strong> When you capture stdout, it doesn't print to the terminal - it's redirected to your variable.</p>
-<p><strong>4. Capture all three</strong></p>
-<p>Assign to three variables to capture everything:</p>
-<div class="highlight"><pre><span></span><code>code, stdout, stderr = $`npm install`
+<p>Both are captured as <code>str</code>. Nothing the command prints reaches the terminal.</p>
+<p><strong>4. Capture everything, including the exit code</strong></p>
+<p>Assign to three variables:</p>
+<div class="highlight"><pre><span></span><code>stdout, stderr, code = $`npm install`
 </code></pre></div>
-<p>All three values are captured. Nothing is printed to the terminal automatically.</p>
+<p>The exit code is an <code>int</code>. It needs no capturing, so it comes last - and you often don't need it at all, because a non-zero exit already raises an error you handle with <code>catch:</code> (see <a href="#error-handling">Error Handling</a> below).</p>
 <h3 id="named-assignment">Named Assignment<a class="headerlink" href="#named-assignment" title="Permanent link">&para;</a></h3>
 <p>Rad supports a special form of assignment when working with shell commands. When <strong>all</strong> your variables are named
 exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, then assignment happens by name rather than by position.
@@ -1884,17 +1970,28 @@ stderr = $`bad-command`             // Just capture stderr
 code, stderr = $`make format`       // code=1, stderr=&quot;&quot;
 stderr, stdout, code = $`ls`        // All three, any order
 </code></pre></div>
-<p>This improves readability - you can capture exactly what you need with clear, self-documenting variable names.</p>
+<p>This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
+It's also the only way to capture the exit code without also capturing the streams:
+<code>code = $cmd</code> leaves stdout and stderr going to the terminal.</p>
 <p><strong>The rule:</strong> If ALL variables use exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, assignment is by name. Otherwise, it's positional:</p>
-<div class="highlight"><pre><span></span><code>// Positional - &#39;output&#39; isn&#39;t a special name
-code, output = $`echo hi`           // output = stdout (by position)
-exit_code, out, err = $`ls`         // Assigned in order
+<div class="highlight"><pre><span></span><code>// Positional - neither name is reserved, so slots decide
+out, err = $`echo hi`               // out = stdout, err = stderr
+result, errors, status = $`ls`      // Assigned in (stdout, stderr, code) order
 </code></pre></div>
-<p>This lets you write clear code like <code>stderr = $cmd</code> instead of <code>_, _, stderr = $cmd</code>.</p>
+<p>Note that the two rules agree as long as you keep to the canonical order - <code>stdout = $cmd</code> and
+<code>stdout, stderr = $cmd</code> mean the same thing whether Rad reads them by name or by position.</p>
+<div class="admonition warning">
+<p class="admonition-title">Don't mix reserved and unreserved names</p>
+<p>One unreserved name drops the <em>whole</em> statement to positional, so a reserved name in the
+wrong slot silently gets something else:</p>
+<div class="highlight"><pre><span></span><code>code, output = $`echo hi`       // &#39;code&#39; gets stdout!
+</code></pre></div>
+<p>Rad warns about this (<a href="../../reference/errors/">RAD40018</a>). Name them all, or name none.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Silencing outputs</p>
-<p>You can use <code>_</code> to ignore specific outputs: <code>code, _ = $cmd</code> captures the code and ignores stdout.
-For silent execution, capture everything: <code>_, _, _ = $cmd</code> - nothing will print to the terminal.</p>
+<p>Use <code>_</code> to discard a stream you don't want printed: <code>_ = $cmd</code> swallows stdout,
+and <code>_, _ = $cmd</code> swallows both streams for fully silent execution.</p>
 </div>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Now that you understand how to capture output, let's talk about error handling.</p>
@@ -1927,7 +2024,8 @@ version = stdout.trim()
 </code></pre></div>
 <p>This uses the same error model covered in <a href="../error-handling/">Error Handling</a> - errors propagate by default, so you need <code>catch:</code> blocks to handle them.</p>
 <h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
-<p>You can build commands dynamically using string interpolation:</p>
+<p>The text you write in a shell command is shell - pipes, redirects, <code>&amp;&amp;</code>, all of it. Interpolations are data. Each
+one becomes exactly one argument, whatever it contains:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1938,21 +2036,92 @@ version = stdout.trim()
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
     version str
     message str
 
-// Interpolate variables into commands
 $`git tag v{version}` catch:
     print_err(&quot;Failed to create tag&quot;)
     exit(1)
 
-$`git commit -m &quot;{message}&quot;` catch:
+$`git commit -m {message}` catch:
     print_err(&quot;Commit failed&quot;)
     exit(1)
 </code></pre></div></td></tr></table></div>
-<p>This is particularly useful for constructing commands based on script arguments or other runtime values.</p>
+<p>Note that <code>{message}</code> has no quotes around it. Rad quotes it for you, at the point it knows what the value is.
+A message of <code>it's fine</code> reaches git as <code>it's fine</code>; one containing <code>$HOME</code>, <code>*</code> or <code>;</code> arrives with those
+characters intact rather than being expanded or run.</p>
+<div class="admonition warning">
+<p class="admonition-title">Don't add your own quotes</p>
+<p>Writing <code>$`git commit -m "{message}"`</code> puts the quote characters <em>into</em> the message. Rad flags this as
+<a href="../../reference/errors/">RAD40023</a>. If your argument is literal text plus a value, build the string first:</p>
+<div class="highlight"><pre><span></span><code>version = &quot;1.2.3&quot;
+
+message = &quot;Bump to {version}&quot;
+$`git commit -m {message}`
+</code></pre></div>
+</div>
+<p>Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:</p>
+<div class="highlight"><pre><span></span><code>name = &quot;My Notes.txt&quot;
+version = &quot;1.2.3&quot;
+
+$`cp {name} backup/{name}`      // two arguments, spaces and all
+$`docker build -t app:{version} .`
+</code></pre></div>
+<h3 id="lists-become-several-arguments">Lists Become Several Arguments<a class="headerlink" href="#lists-become-several-arguments" title="Permanent link">&para;</a></h3>
+<p>A list expands to one argument per element, each quoted separately. An empty list contributes nothing, which
+makes conditional flags straightforward:</p>
+<div class="highlight"><pre><span></span><code>args:
+    all bool
+
+flags = all ? [&quot;--hidden&quot;, &quot;--no-ignore&quot;] : []
+needle = &quot;two words&quot;
+
+$`rg {flags} -- {needle}` catch:
+    pass
+</code></pre></div>
+<p>A list has to stand alone as its own argument - <code>--file={files}</code> is an error, because there is no obvious answer
+to which element gets the prefix. Join it yourself when you want a single argument:</p>
+<div class="highlight"><pre><span></span><code>files = [&quot;a.txt&quot;, &quot;b.txt&quot;]
+
+$`tar -czf out.tgz {files}`          // three arguments
+$`echo --files={files.join(&quot;,&quot;)}`    // one argument
+</code></pre></div>
+<h2 id="commands-as-lists">Commands As Lists<a class="headerlink" href="#commands-as-lists" title="Permanent link">&para;</a></h2>
+<p>When a command is a list rather than a string, Rad runs the program directly and skips the shell entirely. Each
+element is one argument:</p>
+<div class="highlight"><pre><span></span><code>message = &quot;it&#39;s fine&quot;
+
+$[&quot;git&quot;, &quot;commit&quot;, &quot;-m&quot;, message]
+</code></pre></div>
+<p>This is the form to reach for when you're assembling a command piece by piece. Nothing needs quoting, because
+nothing is ever parsed as shell:</p>
+<div class="highlight"><pre><span></span><code>args:
+    start str?
+    end str?
+
+path = &quot;clip.mp4&quot;
+
+cmd = [&quot;ffmpeg&quot;, &quot;-i&quot;, path]
+if start:
+    cmd += [&quot;-ss&quot;, start]
+if end:
+    cmd += [&quot;-to&quot;, end]
+cmd += [&quot;-c&quot;, &quot;copy&quot;, &quot;out.mp4&quot;]
+
+$cmd catch:
+    print_err(&quot;ffmpeg failed&quot;)
+    exit(1)
+</code></pre></div>
+<p>The trade-off is that you give up everything the shell provides: no pipes, no redirects, no globs, no <code>$VAR</code>
+expansion, and no shell builtins such as <code>cd</code>. Use a command string when you need those, and a list when you
+don't.</p>
+<div class="admonition note">
+<p class="admonition-title">A command that is already a string runs verbatim</p>
+<p><code>$cmd</code> where <code>cmd</code> is a <em>string</em> is the raw form: you assembled the text, so you own its quoting. Rad has no
+interpolation to protect at that point - the interpolation already happened when the string was built. Prefer
+a list.</p>
+</div>
 <h2 id="modifiers">Modifiers<a class="headerlink" href="#modifiers" title="Permanent link">&para;</a></h2>
 <p>Rad provides two modifiers that can be applied to shell commands.</p>
 <h3 id="the-quiet-modifier">The <code>quiet</code> Modifier<a class="headerlink" href="#the-quiet-modifier" title="Permanent link">&para;</a></h3>
@@ -2030,20 +2199,21 @@ if push:
 print(&quot;✅ Done!&quot;.green())
 </code></pre></div>
 <h3 id="conditional-construction">Conditional Construction<a class="headerlink" href="#conditional-construction" title="Permanent link">&para;</a></h3>
-<p>Building commands dynamically based on script arguments:</p>
+<p>Building commands dynamically based on script arguments. Collect the arguments in a list so each one stays a
+single argument no matter what it contains:</p>
 <div class="highlight"><pre><span></span><code>args:
     verbose v bool
     output o str?
 
-cmd = &quot;docker build .&quot;
+cmd = [&quot;docker&quot;, &quot;build&quot;, &quot;.&quot;]
 
 if verbose:
-    cmd += &quot; --progress=plain&quot;
+    cmd += [&quot;--progress=plain&quot;]
 
 if output:
-    cmd += &quot; -t {output}&quot;
+    cmd += [&quot;-t&quot;, output]
 
-$`{cmd}` catch:
+$cmd catch:
     print_err(&quot;Docker build failed&quot;)
     exit(1)
 
@@ -2054,7 +2224,7 @@ print(&quot;Docker image built successfully&quot;.green())
 <div class="highlight"><pre><span></span><code>tools = [&quot;git&quot;, &quot;docker&quot;, &quot;make&quot;]
 
 for tool in tools:
-    _, _, _ = $`which {tool}` catch:
+    _, _ = $`which {tool}` catch:
         print_err(&quot;Required tool not found: {tool}&quot;)
         print_err(&quot;Please install {tool} before running this script&quot;)
         exit(1)
@@ -2067,18 +2237,27 @@ print(&quot;All prerequisites installed ✅&quot;.green())
 <li><strong>Error handling:</strong> Non-zero exit codes propagate errors unless handled with <code>catch:</code> blocks</li>
 <li><strong>Capture modes:</strong><ul>
 <li>None: output goes to terminal</li>
-<li>Code only: <code>code = $cmd</code> (stdout/stderr to terminal)</li>
-<li>Code + stdout: <code>code, stdout = $cmd</code> (stderr to terminal)</li>
-<li>All three: <code>code, stdout, stderr = $cmd</code> (nothing to terminal)</li>
+<li>Stdout: <code>stdout = $cmd</code> (stderr to terminal)</li>
+<li>Stdout + stderr: <code>stdout, stderr = $cmd</code> (nothing to terminal)</li>
+<li>All three: <code>stdout, stderr, code = $cmd</code></li>
 </ul>
 </li>
 <li><strong>Assignment semantics:</strong><ul>
 <li><strong>Named</strong> when ALL variables are <code>code</code>, <code>stdout</code>, or <code>stderr</code> (order-independent)</li>
-<li><strong>Positional</strong> otherwise (order matters)</li>
+<li><strong>Positional</strong> otherwise, filling <code>(stdout, stderr, code)</code> in that order</li>
+<li>Mixing the two is the one trap: one unreserved name makes the whole statement positional</li>
 </ul>
 </li>
 <li><strong>Output routing:</strong> Captured values don't print to the terminal (they're redirected to variables)</li>
-<li>String interpolation works in commands for dynamic construction</li>
+<li><strong>The exit code comes last</strong> because you rarely need it - a non-zero exit already raises an error</li>
+<li><strong>Command forms:</strong><ul>
+<li><code>$`text {value}`</code>: the text is shell, each interpolation is one argument, quoted for you</li>
+<li><code>$list</code>: an argument vector, run directly with no shell involved</li>
+<li><code>$str</code>: a string you assembled yourself, run verbatim</li>
+</ul>
+</li>
+<li>Interpolate a list to get one argument per element; an empty list contributes none</li>
+<li>Don't put your own quotes around an interpolation - Rad already quotes it</li>
 <li>Backticks are preferred for shell command strings to avoid delimiter conflicts</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
@@ -2180,7 +2359,7 @@ operations - like <code>git commit</code>, <code>docker build</code>, or <code>k
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

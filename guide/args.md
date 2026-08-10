@@ -78,7 +78,7 @@ If we run `-h` on this one:
 Given some words, joins them together, and optionally capitalizes them.
 
 Usage:
-  wordjoin <words> [joiner] [OPTIONS]
+  wordjoin <words...> [OPTIONS]
 
 Script args:
       --words strs   Words to join together.
@@ -96,6 +96,7 @@ Let's break down each declaration to see what's going on here.
 2. `joiner j str = "-"  # Joiner for the words.`
     - We declare a second argument, this one a string called `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
     - After that, we define a **default** value `-` for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.
+    - Notice `joiner` doesn't appear in the usage line. `words` is a list, so it collects *every* bare value the user types - there's nothing left for a later positional slot. Users set `joiner` with `-j` instead.
 
 3. `should_capitalize "capitalize" c bool  # If true, capitalize the words.`
     - We declare our final argument `should_capitalize`. We rename it with `"capitalize"`, which will be what users see exposed to them, instead of the initial variable name.
@@ -160,8 +161,9 @@ users who want clarity can use flags; and anyone can mix and match as needed.
 Rad processes arguments left-to-right. The rules are simple:
 
 1. If an argument starts with `--` or `-`, it's matched as a flag by name (or short name).
-2. If an argument is a bare value (no `-` prefix), it's assigned to the next unfilled positional slot, in the order you declared your args.
+2. If an argument is a bare value (no `-` prefix), it's assigned to the next unfilled positional slot, in the order you declared your args. If that slot is a list, it keeps taking bare values until the next flag, and does not resume afterwards.
 3. Flags can appear anywhere - before, after, or interspersed with positional values.
+4. A `-`-prefixed token is never read as another flag's value. `--name --verbose` is an error, not `name = "--verbose"`.
 
 The key insight: when a flag "fills" an argument, that positional slot is skipped. For example:
 
@@ -211,6 +213,10 @@ args:
 # Use -- to force positional
 ./script -- -5
 ```
+
+The first form works because `count` is a number. Rad only reads a `-`-prefixed
+token as a value for `int` and `float` args - for a `str` arg, `--name -5` is an
+error, and `--name=-5` is how you say you meant it.
 
 ### Equals Syntax
 
@@ -276,7 +282,15 @@ args:
 
 ### List Types
 
-For list arguments (`str[]`, `int[]`, `float[]`, `bool[]`), users pass values by **repeating the flag**:
+For list arguments (`str[]`, `int[]`, `float[]`, `bool[]`), users pass several values either as bare positional values or by **repeating the flag**:
+
+```shell
+./script hello.txt world.txt
+```
+
+A list arg is greedy positionally - it collects every bare value until the next
+flag. Through its own flag it takes exactly one value per occurrence, so repeat
+the flag to pass several:
 
 ```rad
 args:
@@ -357,7 +371,9 @@ section2: [ 1, 2, 3 ]
 
 !!! note "List types vs variadic"
 
-    List args and variadic args both produce lists, but they're filled differently. List args are primarily filled by **repeating the flag** (`--files a.txt --files b.txt`), though a single positional value also works. If you want to collect multiple bare positional values without repeating flags, use a variadic argument (`*args`) instead - that's exactly what they're for.
+    List args and variadic args both produce lists, and both collect bare positional values greedily. They differ in the flag form: a variadic takes a run of values after its own flag (`--files a.txt b.txt`), while a list takes one per occurrence (`--files a.txt --files b.txt`).
+
+    Reach for a list for an ordinary several-values arg. Reach for a variadic when you're writing a wrapper that passes unrecognized flags through to another command - that's the job it keeps to itself.
 
 ### Optional Arguments
 
@@ -717,13 +733,14 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 - Argument names with underscores become hyphenated flags (e.g., `my_arg` becomes `--my-arg`).
 - Rad supports various argument types:
     - Basic types: `int`, `float`, `str`, `bool`
-    - List types: `str[]`, `int[]`, `float[]`, `bool[]` (passed via repeated flags)
-    - Variadic: `*args <type>` (collects remaining positional arguments)
+    - List types: `str[]`, `int[]`, `float[]`, `bool[]` (bare positional values, or the flag repeated)
+    - Variadic: `*args <type>` (like a list, but greedy after its own flag too)
     - Optional: `<type>?` (value is `null` when not provided)
 - Bool flags are never positional. All other types are both positional and flag-based.
 - Short flags support clustering (`-vdq`) and counting for ints (`-vvv` = 3).
 - Use `--` to force everything after it to be treated as positional (useful for values starting with `-`).
-- Both `--flag=value` and `--flag value` work. Equals syntax is useful for negative numbers (`--count=-5`).
+- Both `--flag=value` and `--flag value` work. A `-`-prefixed token is never taken as a value, so equals syntax is how you pass one (`--name=-5`); number args accept `--count -5` directly.
+- A list arg absorbs every remaining positional value, so args declared after one can only be set by flag.
 - You can apply constraints to arguments inside the arg block:
     - `enum` for discrete values
     - `range` for numeric bounds (using `[` for inclusive, `(` for exclusive)

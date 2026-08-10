@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2884,6 +2884,34 @@
     
   
     How to Migrate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
   
 
     
@@ -6364,7 +6392,7 @@ hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable 
 &quot;hello world hello&quot;.index_of(&quot;hello&quot;, n=1)      // -&gt; 12
 &quot;hello world hello&quot;.index_of(&quot;hello&quot;, n=-1)     // -&gt; 12
 &quot;hello&quot;.index_of(&quot;xyz&quot;)                         // -&gt; null
-&quot;hello&quot;.index_of(&quot;xyz&quot;) ?? (-1)                 // -&gt; -1
+&quot;hello&quot;.index_of(&quot;xyz&quot;) ?? -1                   // -&gt; -1
 &quot;hello&quot;.index_of(&quot;&quot;)                             // -&gt; null (empty target)
 
 // List search
@@ -6426,16 +6454,66 @@ matches(&quot;hello world&quot;, &quot;world&quot;)        // -&gt; false (defau
 matches(&quot;hello world&quot;, &quot;world&quot;, partial=true)  // -&gt; true
 matches(&quot;abc&quot;, &quot;(&quot;)                    // -&gt; error: invalid regex
 </code></pre></div>
+<p>Unlike <code>split</code> and <code>replace</code>, <code>matches</code> has no <code>regex</code> parameter and always treats <code>_pattern</code>
+as a regex. A literal <code>matches</code> would just be <code>==</code> (full match) or a substring test (partial),
+neither of which needs a function.</p>
 <p>See also: <code>replace</code>, <code>split</code></p>
 <h3 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h3>
-<p>Replaces text using regex patterns. Does not preserve string color attributes.</p>
-<div class="highlight"><pre><span></span><code>replace(_original: str, _find: str, _replace: str) -&gt; str
+<p>Replaces every occurrence of a literal substring. Pass <code>regex=true</code> to treat <code>_find</code> as a regex pattern and enable capture-group references in <code>_replace</code>. Does not preserve string color attributes.</p>
+<div class="highlight"><pre><span></span><code>replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>replace(&quot;hello world&quot;, &quot;world&quot;, &quot;Rad&quot;)        // -&gt; &quot;hello Rad&quot;
-replace(&quot;Name: Charlie Brown&quot;, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;)  // -&gt; &quot;Name: Alice Brown&quot;
-replace(&quot;abc123def&quot;, &quot;\\d+&quot;, &quot;XXX&quot;)           // -&gt; &quot;abcXXXdef&quot;
+<div class="highlight"><pre><span></span><code>replace(&quot;hello world&quot;, &quot;world&quot;, &quot;Rad&quot;)           // -&gt; &quot;hello Rad&quot;
+replace(&quot;1.2.3&quot;, &quot;.&quot;, &quot;-&quot;)                       // -&gt; &quot;1-2-3&quot;
+replace(&quot;cost: $5&quot;, &quot;$5&quot;, &quot;$10&quot;)                 // -&gt; &quot;cost: $10&quot;
+replace(&quot;abc123def&quot;, &quot;\\d+&quot;, &quot;XXX&quot;, regex=true)  // -&gt; &quot;abcXXXdef&quot;
+replace(&quot;Name: Charlie Brown&quot;, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;, regex=true) // -&gt; &quot;Name: Alice Brown&quot;
 </code></pre></div>
-<p>The <code>_find</code> parameter is a regex pattern. The <code>_replace</code> parameter can use regex capture groups like <code>$1</code>.</p>
+<p><code>_find</code> is matched literally unless <code>regex=true</code>, so metacharacters like <code>.</code> and <code>(</code> need no
+escaping in the default case. In literal mode <code>_replace</code> is inserted verbatim, <code>$</code> included -
+safe for text relayed from elsewhere.</p>
+<p>When <code>regex=true</code>, a pattern that fails to compile is an error. Patterns use Go's RE2 dialect,
+which has no backreferences or lookaround.</p>
+<p><strong>Group references in <code>_replace</code> (<code>regex=true</code> only):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Expands to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$0</code></td>
+<td>The whole match</td>
+</tr>
+<tr>
+<td><code>$N</code></td>
+<td>Capture group <code>N</code>; <code>N</code> is the longest run of digits</td>
+</tr>
+<tr>
+<td><code>${N}</code></td>
+<td>Capture group <code>N</code>, explicitly delimited</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>A literal <code>$</code></td>
+</tr>
+<tr>
+<td>Anything else</td>
+<td>Left as written</td>
+</tr>
+</tbody>
+</table>
+<p>A reference to a group that does not exist is left as written rather than expanding to an
+empty string, so stray <code>$</code> in your replacement text survives intact.</p>
+<p>Because <code>$N</code> consumes every following digit, use <code>${N}</code> when a literal digit has to follow a
+group reference: <code>${1}0</code> inserts group 1 followed by <code>0</code>, while <code>$10</code> means group 10.</p>
+<p><code>${N}</code> collides with Rad's string interpolation, which would read <code>{1}</code> as an expression to
+interpolate. Write the replacement as a raw string or escape the brace:</p>
+<div class="highlight"><pre><span></span><code>replace(&quot;Name: abc&quot;, &quot;a(b)c&quot;, r&quot;${1}0&quot;, regex=true)   // -&gt; &quot;Name: b0&quot;
+replace(&quot;Name: abc&quot;, &quot;a(b)c&quot;, &quot;$\{1}0&quot;, regex=true)   // -&gt; &quot;Name: b0&quot;
+</code></pre></div>
+<p>See also: <code>split</code>, <code>matches</code></p>
 <h3 id="reverse">reverse<a class="headerlink" href="#reverse" title="Permanent link">&para;</a></h3>
 <p>Reverses a string or list. Preserves color attributes for strings.</p>
 <div class="highlight"><pre><span></span><code>reverse(_val: str|list) -&gt; str|list
@@ -6445,18 +6523,24 @@ reverse([1, 2, 3, 4])      // -&gt; [4, 3, 2, 1]
 reverse(&quot;racecar&quot;)         // -&gt; &quot;racecar&quot;
 </code></pre></div>
 <h3 id="split">split<a class="headerlink" href="#split" title="Permanent link">&para;</a></h3>
-<p>Splits a string using regex pattern as delimiter. Does not preserve string color attributes.</p>
-<div class="highlight"><pre><span></span><code>split(_val: str, _sep: str, *, limit: int?) -&gt; str[]
+<p>Splits a string on a literal separator. Pass <code>regex=true</code> to treat <code>_sep</code> as a regex pattern instead. Does not preserve string color attributes.</p>
+<div class="highlight"><pre><span></span><code>split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -&gt; str[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>split(&quot;a,b,c&quot;, &quot;,&quot;)               // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
-split(&quot;word1 word2&quot;, &quot;\\s+&quot;)      // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
-split(&quot;abc123def&quot;, &quot;\\d+&quot;)        // -&gt; [&quot;abc&quot;, &quot;def&quot;]
-split(&quot;key=val=ue&quot;, &quot;=&quot;, limit=1) // -&gt; [&quot;key&quot;, &quot;val=ue&quot;]
-split(&quot;a,b,c,d&quot;, &quot;,&quot;, limit=2)    // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c,d&quot;]
+<div class="highlight"><pre><span></span><code>split(&quot;a,b,c&quot;, &quot;,&quot;)                    // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+split(&quot;1.2.3&quot;, &quot;.&quot;)                    // -&gt; [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
+split(&quot;word1  word2&quot;, &quot;\\s+&quot;, regex=true) // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
+split(&quot;abc123def&quot;, &quot;\\d+&quot;, regex=true) // -&gt; [&quot;abc&quot;, &quot;def&quot;]
+split(&quot;key=val=ue&quot;, &quot;=&quot;, limit=1)      // -&gt; [&quot;key&quot;, &quot;val=ue&quot;]
+split(&quot;a,b,c,d&quot;, &quot;,&quot;, limit=2)         // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c,d&quot;]
 </code></pre></div>
-<p>The <code>_sep</code> parameter is treated as a regex pattern if valid, otherwise as literal string.</p>
+<p><code>_sep</code> is matched literally unless <code>regex=true</code>, so metacharacters like <code>.</code> and <code>(</code> need no
+escaping in the default case.</p>
+<p>When <code>regex=true</code>, a pattern that fails to compile is an error. Patterns use Go's RE2 dialect,
+which has no backreferences or lookaround.</p>
 <p>When <code>limit</code> is provided, it caps the number of splits performed. The final element contains
 the unsplit remainder. <code>limit</code> must be &gt;= 1.</p>
+<p>An empty <code>_sep</code> splits between every character.</p>
+<p>See also: <code>split_lines</code>, <code>replace</code>, <code>matches</code></p>
 <h3 id="split_lines">split_lines<a class="headerlink" href="#split_lines" title="Permanent link">&para;</a></h3>
 <p>Splits a string by line endings. Handles all common styles: <code>\n</code> (Unix), <code>\r\n</code> (Windows), and <code>\r</code> (legacy Mac).</p>
 <div class="highlight"><pre><span></span><code>split_lines(_val: str) -&gt; str[]
@@ -7332,7 +7416,7 @@ explicitly. When using a float, the fractional part provides sub-unit precision 
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

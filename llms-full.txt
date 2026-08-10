@@ -8,12 +8,12 @@
 - [Basics](https://amterp.dev/rad/guide/basics.md): Variables & Assignment, Data Types, Destructuring, Operators, Functions, Control Flow, List Comprehensions, Truthy / Falsy, Converting Types, Errors
 - [Args](https://amterp.dev/rad/guide/args.md): Arg Declarations, How Argument Parsing Works, Argument Types and User Input, Constraints
 - [Functions](https://amterp.dev/rad/guide/functions.md): Syntax, Function Arguments, Custom Functions, Reference
-- [Strings (Advanced)](https://amterp.dev/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes
+- [Strings (Advanced)](https://amterp.dev/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes, Patterns: Literal by Default
 - [Rad Blocks](https://amterp.dev/rad/guide/rad-blocks.md): Basic Example, Additional Rad Block Options, Rad Block Options, Source Types, Understanding HTTP Requests
 - [Type Annotations](https://amterp.dev/rad/guide/type-annotations.md): The Basics, Collection Types, Optional Types, Defaults, Union Types, Advanced Types, Variadic and Named Parameters
 - [Error Handling](https://amterp.dev/rad/guide/error-handling.md): Error Propagation, Catch Blocks, The `??` Operator, The `catch` Operator, Creating Your Own Errors
-- [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Which Shell Runs My Command?, Capturing Output, Error Handling, String Interpolation, Modifiers, Practical Examples
-- [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Command Callbacks, Shared Logic, Getting Help, Practical Example
+- [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Which Shell Runs My Command?, Capturing Output, Error Handling, String Interpolation, Commands As Lists, Modifiers, Practical Examples
+- [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Nested Commands, Default Commands, Command Callbacks, Shared Logic, Getting Help, Practical Example
 - [Resources](https://amterp.dev/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`
 - [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `interactive`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`
 - [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks
@@ -38,6 +38,7 @@
 ## Migrations
 
 - [How to Migrate](https://amterp.dev/rad/migrations/index.md): Upgrade Workflow
+- [Migration Guide - v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Positional Shell Captures Are Reordered, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Flag-Like Tokens Are Rejected As Values
 - [Migration Guide - v0.9](https://amterp.dev/rad/migrations/v0.9.md): Breaking Change: `request` and `display` Keywords Removed, Breaking Change: `get_stash_dir` Renamed, Migration Steps, Breaking Change: `??` Now Fires on Null, New: `catch` Operator, Breaking Change: Strict `+` Concatenation, Breaking Change: `parse_epoch` Unit Names Shortened, Error Messages, Behavior Change: Invocation Logging Enabled by Default, Breaking Change: `trim_prefix` / `trim_suffix` Behavior Changed
 - [Migration Guide - v0.8](https://amterp.dev/rad/migrations/v0.8.md): Breaking Change: `get_default` Removed, Migration Steps, Why This Change?, Error Messages
 - [Migration Guide - v0.7](https://amterp.dev/rad/migrations/v0.7.md): Breaking Change: For-Loop Index Syntax, Migration Steps, Error Messages, Why This Change?, Bonus: Rad Block Lambda Context
@@ -1694,7 +1695,7 @@ If we run `-h` on this one:
 Given some words, joins them together, and optionally capitalizes them.
 
 Usage:
-  wordjoin <words> [joiner] [OPTIONS]
+  wordjoin <words...> [OPTIONS]
 
 Script args:
       --words strs   Words to join together.
@@ -1711,6 +1712,7 @@ Let's break down each declaration to see what's going on here.
 2. `joiner j str = "-"  # Joiner for the words.`
     - We declare a second argument, this one a string called `joiner`. We also define a shorthand flag `j`, allowing users to specify the arg with a simple `-j` flag.
     - After that, we define a **default** value `-` for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.
+    - Notice `joiner` doesn't appear in the usage line. `words` is a list, so it collects *every* bare value the user types - there's nothing left for a later positional slot. Users set `joiner` with `-j` instead.
 
 3. `should_capitalize "capitalize" c bool  # If true, capitalize the words.`
     - We declare our final argument `should_capitalize`. We rename it with `"capitalize"`, which will be what users see exposed to them, instead of the initial variable name.
@@ -1773,8 +1775,9 @@ users who want clarity can use flags; and anyone can mix and match as needed.
 Rad processes arguments left-to-right. The rules are simple:
 
 1. If an argument starts with `--` or `-`, it's matched as a flag by name (or short name).
-2. If an argument is a bare value (no `-` prefix), it's assigned to the next unfilled positional slot, in the order you declared your args.
+2. If an argument is a bare value (no `-` prefix), it's assigned to the next unfilled positional slot, in the order you declared your args. If that slot is a list, it keeps taking bare values until the next flag, and does not resume afterwards.
 3. Flags can appear anywhere - before, after, or interspersed with positional values.
+4. A `-`-prefixed token is never read as another flag's value. `--name --verbose` is an error, not `name = "--verbose"`.
 
 The key insight: when a flag "fills" an argument, that positional slot is skipped. For example:
 
@@ -1824,6 +1827,10 @@ args:
 # Use -- to force positional
 ./script -- -5
 ```
+
+The first form works because `count` is a number. Rad only reads a `-`-prefixed
+token as a value for `int` and `float` args - for a `str` arg, `--name -5` is an
+error, and `--name=-5` is how you say you meant it.
 
 ### Equals Syntax
 
@@ -1889,7 +1896,15 @@ args:
 
 ### List Types
 
-For list arguments (`str[]`, `int[]`, `float[]`, `bool[]`), users pass values by **repeating the flag**:
+For list arguments (`str[]`, `int[]`, `float[]`, `bool[]`), users pass several values either as bare positional values or by **repeating the flag**:
+
+```shell
+./script hello.txt world.txt
+```
+
+A list arg is greedy positionally - it collects every bare value until the next
+flag. Through its own flag it takes exactly one value per occurrence, so repeat
+the flag to pass several:
 
 ```rad
 args:
@@ -1964,7 +1979,9 @@ section2: [ 1, 2, 3 ]
 
 **Note: List types vs variadic**
 
-    List args and variadic args both produce lists, but they're filled differently. List args are primarily filled by **repeating the flag** (`--files a.txt --files b.txt`), though a single positional value also works. If you want to collect multiple bare positional values without repeating flags, use a variadic argument (`*args`) instead - that's exactly what they're for.
+    List args and variadic args both produce lists, and both collect bare positional values greedily. They differ in the flag form: a variadic takes a run of values after its own flag (`--files a.txt b.txt`), while a list takes one per occurrence (`--files a.txt --files b.txt`).
+
+    Reach for a list for an ordinary several-values arg. Reach for a variadic when you're writing a wrapper that passes unrecognized flags through to another command - that's the job it keeps to itself.
 
 ### Optional Arguments
 
@@ -2310,13 +2327,14 @@ Invalid arguments: 'token' excludes 'password', but 'password' was given
 - Argument names with underscores become hyphenated flags (e.g., `my_arg` becomes `--my-arg`).
 - Rad supports various argument types:
     - Basic types: `int`, `float`, `str`, `bool`
-    - List types: `str[]`, `int[]`, `float[]`, `bool[]` (passed via repeated flags)
-    - Variadic: `*args <type>` (collects remaining positional arguments)
+    - List types: `str[]`, `int[]`, `float[]`, `bool[]` (bare positional values, or the flag repeated)
+    - Variadic: `*args <type>` (like a list, but greedy after its own flag too)
     - Optional: `<type>?` (value is `null` when not provided)
 - Bool flags are never positional. All other types are both positional and flag-based.
 - Short flags support clustering (`-vdq`) and counting for ints (`-vvv` = 3).
 - Use `--` to force everything after it to be treated as positional (useful for values starting with `-`).
-- Both `--flag=value` and `--flag value` work. Equals syntax is useful for negative numbers (`--count=-5`).
+- Both `--flag=value` and `--flag value` work. A `-`-prefixed token is never taken as a value, so equals syntax is how you pass one (`--name=-5`); number args accept `--count -5` directly.
+- A list arg absorbs every remaining positional value, so args declared after one can only be set by flag.
 - You can apply constraints to arguments inside the arg block:
     - `enum` for discrete values
     - `range` for numeric bounds (using `` for inclusive, `(` for exclusive)
@@ -2731,12 +2749,21 @@ String interpolation expressions can be as simple as just an identifier, or can 
 Note the use of single quote `'` strings inside the last line of the above example.
 You don't have to switch delimiters like that, though it can help readability:
 everything inside `{ }` is parsed as code, not text, so nested strings using the
-*same* delimiter as the outer string are guaranteed to work, no escaping needed.
+*same* delimiter as the outer string work, no escaping needed.
 
 ```rad
 tokens = ["Hello", "World"]
 print("{tokens.join(" ")}")
 print("Count: {tokens.len() > 1 ? "several" : "just one"}")
+```
+
+The one exception is a nested string *immediately* after the `{`, because
+`"{"` is also how you write a literal opening brace, and the two cannot be
+told apart. Switch delimiters there, or add a space:
+
+```rad
+print("{'ERROR'.red()}")     // fine
+print("{ "ERROR".red() }")   // also fine
 ```
 
 ```
@@ -3018,7 +3045,10 @@ She said "Hi!"
 - `\t` - tab
 - `\\` - literal backslash
 - `\"` `\'` `` \` `` - the delimiter itself (though prefer using a different delimiter)
-- `\{` - literal brace (prevents interpolation, but consider using raw strings)
+- `\{` `\}` - literal braces (prevents interpolation, but consider using raw strings)
+
+A brace that cannot open an interpolation needs no escape: `"{"`, `"{}"` and
+`"{ }"` are all literal, as is any `}` with no interpolation open.
 
 ## String Attributes
 
@@ -3062,6 +3092,39 @@ and the `hyperlink` function for creating clickable terminal links. See the func
 
     See the Functions Reference (rad docs reference/functions) for the complete list with examples.
 
+## Patterns: Literal by Default
+
+Rad's string functions match literally. `split`, `replace`, `count`, `index_of`,
+`starts_with` and friends all look for the exact text you give them, so a `.` is a
+dot and a `(` is a parenthesis - nothing needs escaping.
+
+```rad
+print(split("1.2.3", "."))            // -> ["1", "2", "3"]
+print(replace("cost: $5", "$5", "$8")) // -> "cost: $8"
+```
+
+When you do want a regex, ask for one. `split` and `replace` take a `regex` parameter:
+
+```rad
+print(split("a b  c", "\s+", regex=true))       // -> ["a", "b", "c"]
+print(replace("order 66", "\d+", "N", regex=true)) // -> "order N"
+```
+
+`matches` is the exception, and it's the one you'd expect: it exists to test patterns,
+so it's always a regex.
+
+```rad
+print(matches("hello", "h.+o"))   // -> true
+```
+
+Patterns use Go's RE2 dialect, which has no backreferences or lookaround. A pattern
+that doesn't compile is an error rather than a silent fallback.
+
+**Info: Changed in v0.12**
+
+    `split` and `replace` used to treat their pattern as a regex by default. See the
+    v0.12 migration guide if you're upgrading.
+
 ## Summary
 
 - We learned about **escape sequences** like `\n`, `\t`, and `\{` for including special characters in strings.
@@ -3070,6 +3133,7 @@ and the `hyperlink` function for creating clickable terminal links. See the func
 - We explored **multiline strings** using `"""` syntax, which support both quotes and interpolation.
 - We learned about **raw strings** (prefixed with `r`) that prevent interpolation and escaping.
 - We covered **string attributes** like color and bold that are preserved through interpolation and concatenation.
+- We saw that string functions match **literally** by default, with `regex=true` to opt into pattern matching.
 - Rad also provides many built-in string manipulation functions covered in the Functions Reference (rad docs reference/functions).
 
 ## Next
@@ -4018,6 +4082,38 @@ Without the `idx != null` check, `idx + 1` reports a hint (`cannot do
 'int? + int'`) - the value really could be null. The null-check is both the
 fix for the hint and the correctness fix.
 
+A guard doesn't need its own block. `and` reaches its right operand only when
+the left was true, and `or` only when it was false, so the narrowing carries
+across:
+
+```rad
+my_args = ["build", "-o", "out"]
+idx = my_args.index_of("-o")
+
+if idx != null and idx + 1 < my_args.len():
+    print("output:", my_args[idx + 1])
+```
+
+Order decides it, though. Written the other way round, as
+`idx + 1 < my_args.len() and idx != null`, the comparison runs before anything
+is known and still reports.
+
+An `in` guard narrows `index_of` on the spot, with no variable to hold the
+result:
+
+```rad
+my_args = ["build", "-o", "out"]
+flag = "-o"
+
+if flag in my_args:
+    // the lookup can't miss here, so it's int rather than int?
+    print(my_args.index_of(flag) + 1)
+```
+
+That last one is a pattern match rather than general reasoning. It wants the
+same container and the same target on both sides, and it drops if you pass `n`
+or `start`, which ask for an occurrence membership doesn't promise.
+
 ## Defaults
 
 Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with `?`:
@@ -4700,7 +4796,9 @@ The shell offers a wide range of utilities and is essential for CLI scripting - 
 installed programs like git, make, or docker.
 
 Rad has rich built-in functionality (`http_get`, `read_file`, `write_file`, etc.), but sometimes you need to invoke
-system tools or installed programs. Rad makes this safe and ergonomic through first-class shell command support.
+system tools or installed programs. Rad makes this ergonomic through first-class shell command support, and quotes
+the values you interpolate so a filename with a space - or a string from somewhere you don't control - can't turn
+into shell syntax.
 
 ## Invoking Commands
 
@@ -4734,7 +4832,7 @@ Rad picks a shell to run your command in this order:
 
 ## Capturing Output
 
-Shell commands return three values: **exit code**, **stdout**, and **stderr**. You can capture anywhere from zero to all three of these values, depending on what you need.
+Shell commands produce three things: **stdout**, **stderr**, and an **exit code**. You can capture anywhere from zero to all three, depending on what you need.
 
 ### Capture Modes
 
@@ -4748,36 +4846,36 @@ When you don't assign any variables, all output goes to the terminal:
 $`ls -la`
 ```
 
-**2. Capture exit code only**
+**2. Capture stdout**
 
-Assign to one variable to capture just the exit code:
-
-```rad
-code = $`make test`
-```
-
-The exit code is captured as an `int`, but stdout and stderr still go to the terminal.
-
-**3. Capture exit code + stdout**
-
-Assign to two variables to capture the exit code and stdout:
+Assign to one variable to capture the command's output:
 
 ```rad
-code, stdout = $`git show 0dd21e6`
+stdout = $`git show 0dd21e6`
 ```
 
-The exit code and stdout are captured as an `int` and `str` respectively. Stderr still goes to the terminal.
-**Important:** When you capture stdout, it doesn't print to the terminal - it's redirected to your variable.
+Stdout is captured as a `str`. Stderr still goes to the terminal.
+**Important:** When you capture a stream, it stops printing to the terminal - it's redirected to your variable.
 
-**4. Capture all three**
+**3. Capture stdout + stderr**
 
-Assign to three variables to capture everything:
+Assign to two variables to capture both streams:
 
 ```rad
-code, stdout, stderr = $`npm install`
+stdout, stderr = $`npm install`
 ```
 
-All three values are captured. Nothing is printed to the terminal automatically.
+Both are captured as `str`. Nothing the command prints reaches the terminal.
+
+**4. Capture everything, including the exit code**
+
+Assign to three variables:
+
+```rad
+stdout, stderr, code = $`npm install`
+```
+
+The exit code is an `int`. It needs no capturing, so it comes last - and you often don't need it at all, because a non-zero exit already raises an error you handle with `catch:` (see Error Handling below).
 
 ### Named Assignment
 
@@ -4794,21 +4892,35 @@ stderr, stdout, code = $`ls`        // All three, any order
 ```
 
 This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
+It's also the only way to capture the exit code without also capturing the streams:
+`code = $cmd` leaves stdout and stderr going to the terminal.
 
 **The rule:** If ALL variables use exactly `code`, `stdout`, or `stderr`, assignment is by name. Otherwise, it's positional:
 
 ```rad
-// Positional - 'output' isn't a special name
-code, output = $`echo hi`           // output = stdout (by position)
-exit_code, out, err = $`ls`         // Assigned in order
+// Positional - neither name is reserved, so slots decide
+out, err = $`echo hi`               // out = stdout, err = stderr
+result, errors, status = $`ls`      // Assigned in (stdout, stderr, code) order
 ```
 
-This lets you write clear code like `stderr = $cmd` instead of `_, _, stderr = $cmd`.
+Note that the two rules agree as long as you keep to the canonical order - `stdout = $cmd` and
+`stdout, stderr = $cmd` mean the same thing whether Rad reads them by name or by position.
+
+**Warning: Don't mix reserved and unreserved names**
+
+    One unreserved name drops the *whole* statement to positional, so a reserved name in the
+    wrong slot silently gets something else:
+
+    ```rad
+    code, output = $`echo hi`       // 'code' gets stdout!
+    ```
+
+    Rad warns about this (RAD40018 (rad docs reference/errors)). Name them all, or name none.
 
 **Tip: Silencing outputs**
 
-    You can use `_` to ignore specific outputs: `code, _ = $cmd` captures the code and ignores stdout.
-    For silent execution, capture everything: `_, _, _ = $cmd` - nothing will print to the terminal.
+    Use `_` to discard a stream you don't want printed: `_ = $cmd` swallows stdout,
+    and `_, _ = $cmd` swallows both streams for fully silent execution.
 
 ## Error Handling
 
@@ -4854,24 +4966,117 @@ This uses the same error model covered in Error Handling (rad docs guide/error-h
 
 ## String Interpolation
 
-You can build commands dynamically using string interpolation:
+The text you write in a shell command is shell - pipes, redirects, `&&`, all of it. Interpolations are data. Each
+one becomes exactly one argument, whatever it contains:
 
 ```rad
 args:
     version str
     message str
 
-// Interpolate variables into commands
 $`git tag v{version}` catch:
     print_err("Failed to create tag")
     exit(1)
 
-$`git commit -m "{message}"` catch:
+$`git commit -m {message}` catch:
     print_err("Commit failed")
     exit(1)
 ```
 
-This is particularly useful for constructing commands based on script arguments or other runtime values.
+Note that `{message}` has no quotes around it. Rad quotes it for you, at the point it knows what the value is.
+A message of `it's fine` reaches git as `it's fine`; one containing `$HOME`, `*` or `;` arrives with those
+characters intact rather than being expanded or run.
+
+**Warning: Don't add your own quotes**
+
+    Writing `` $`git commit -m "{message}"` `` puts the quote characters *into* the message. Rad flags this as
+    RAD40023 (rad docs reference/errors). If your argument is literal text plus a value, build the string first:
+
+    ```rad
+    version = "1.2.3"
+
+    message = "Bump to {version}"
+    $`git commit -m {message}`
+    ```
+
+Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:
+
+```rad
+name = "My Notes.txt"
+version = "1.2.3"
+
+$`cp {name} backup/{name}`      // two arguments, spaces and all
+$`docker build -t app:{version} .`
+```
+
+### Lists Become Several Arguments
+
+A list expands to one argument per element, each quoted separately. An empty list contributes nothing, which
+makes conditional flags straightforward:
+
+```rad
+args:
+    all bool
+
+flags = all ? ["--hidden", "--no-ignore"] : []
+needle = "two words"
+
+$`rg {flags} -- {needle}` catch:
+    pass
+```
+
+A list has to stand alone as its own argument - `--file={files}` is an error, because there is no obvious answer
+to which element gets the prefix. Join it yourself when you want a single argument:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`tar -czf out.tgz {files}`          // three arguments
+$`echo --files={files.join(",")}`    // one argument
+```
+
+## Commands As Lists
+
+When a command is a list rather than a string, Rad runs the program directly and skips the shell entirely. Each
+element is one argument:
+
+```rad
+message = "it's fine"
+
+$["git", "commit", "-m", message]
+```
+
+This is the form to reach for when you're assembling a command piece by piece. Nothing needs quoting, because
+nothing is ever parsed as shell:
+
+```rad
+args:
+    start str?
+    end str?
+
+path = "clip.mp4"
+
+cmd = ["ffmpeg", "-i", path]
+if start:
+    cmd += ["-ss", start]
+if end:
+    cmd += ["-to", end]
+cmd += ["-c", "copy", "out.mp4"]
+
+$cmd catch:
+    print_err("ffmpeg failed")
+    exit(1)
+```
+
+The trade-off is that you give up everything the shell provides: no pipes, no redirects, no globs, no `$VAR`
+expansion, and no shell builtins such as `cd`. Use a command string when you need those, and a list when you
+don't.
+
+**Note: A command that is already a string runs verbatim**
+
+    `$cmd` where `cmd` is a *string* is the raw form: you assembled the text, so you own its quoting. Rad has no
+    interpolation to protect at that point - the interpolation already happened when the string was built. Prefer
+    a list.
 
 ## Modifiers
 
@@ -4971,22 +5176,23 @@ print("✅ Done!".green())
 
 ### Conditional Construction
 
-Building commands dynamically based on script arguments:
+Building commands dynamically based on script arguments. Collect the arguments in a list so each one stays a
+single argument no matter what it contains:
 
 ```rad
 args:
     verbose v bool
     output o str?
 
-cmd = "docker build ."
+cmd = ["docker", "build", "."]
 
 if verbose:
-    cmd += " --progress=plain"
+    cmd += ["--progress=plain"]
 
 if output:
-    cmd += " -t {output}"
+    cmd += ["-t", output]
 
-$`{cmd}` catch:
+$cmd catch:
     print_err("Docker build failed")
     exit(1)
 
@@ -5001,7 +5207,7 @@ Verifying that required tools are installed:
 tools = ["git", "docker", "make"]
 
 for tool in tools:
-    _, _, _ = $`which {tool}` catch:
+    _, _ = $`which {tool}` catch:
         print_err("Required tool not found: {tool}")
         print_err("Please install {tool} before running this script")
         exit(1)
@@ -5015,14 +5221,21 @@ print("All prerequisites installed ✅".green())
 - **Error handling:** Non-zero exit codes propagate errors unless handled with `catch:` blocks
 - **Capture modes:**
     - None: output goes to terminal
-    - Code only: `code = $cmd` (stdout/stderr to terminal)
-    - Code + stdout: `code, stdout = $cmd` (stderr to terminal)
-    - All three: `code, stdout, stderr = $cmd` (nothing to terminal)
+    - Stdout: `stdout = $cmd` (stderr to terminal)
+    - Stdout + stderr: `stdout, stderr = $cmd` (nothing to terminal)
+    - All three: `stdout, stderr, code = $cmd`
 - **Assignment semantics:**
     - **Named** when ALL variables are `code`, `stdout`, or `stderr` (order-independent)
-    - **Positional** otherwise (order matters)
+    - **Positional** otherwise, filling `(stdout, stderr, code)` in that order
+    - Mixing the two is the one trap: one unreserved name makes the whole statement positional
 - **Output routing:** Captured values don't print to the terminal (they're redirected to variables)
-- String interpolation works in commands for dynamic construction
+- **The exit code comes last** because you rarely need it - a non-zero exit already raises an error
+- **Command forms:**
+    - `` $`text {value}` ``: the text is shell, each interpolation is one argument, quoted for you
+    - `$list`: an argument vector, run directly with no shell involved
+    - `$str`: a string you assembled yourself, run verbatim
+- Interpolate a list to get one argument per element; an empty list contributes none
+- Don't put your own quotes around an interpolation - Rad already quotes it
 - Backticks are preferred for shell command strings to avoid delimiter conflicts
 
 ## Next
@@ -5316,11 +5529,144 @@ Environment healthy
 **Note: Shared args are flag-only**
 
     When commands exist, shared args can only be passed as flags (like `--verbose`, `-v`, or `--config=value`), not
-    positionally. This keeps the invocation clear: the first positional argument is always the command name.
+    positionally. That keeps the first positional argument free to name a command - or, if you declare a
+    default command, to be that command's first argument.
 
     Both long form (`--verbose`) and short form (`-v`) work for shared args.
 
     Command-specific args can be positional or flags, just like regular script args.
+
+## Nested Commands
+
+Larger tools group related commands under a namespace, like `git remote add`. A command that **contains other commands** becomes one: it has no `calls` of its own, and routes to its sub-commands instead.
+
+```rad
+#!/usr/bin/env rad
+
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        # shared with every sub-command
+
+    command add:
+        ---
+        Add a remote.
+        ---
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print("Adding {name} -> {url} (timeout {timeout})")
+
+fn do_remove():
+    print("Removing {name}")
+```
+
+Name the full path to reach the command you want:
+
+```
+> ./tool.rad remote add origin https://github.com/me/repo.git
+> ./tool.rad remote remove origin
+```
+
+Args declared directly on a namespace are **shared with every descendant**. They behave like the script-level `args:` block, just scoped to that sub-tree - flag-only, and accepted at any point along the path:
+
+```
+> ./tool.rad remote add origin https://... --timeout 5
+> ./tool.rad remote --timeout 5 add origin https://...
+```
+
+Namespaces nest as deep as you like. Only the terminal command's callback runs; an intermediate namespace exists to group and to share args, not to execute.
+
+## Default Commands
+
+Most tools have one thing they mostly do. Marking a command `default` means the user doesn't have to type its name:
+
+```rad
+#!/usr/bin/env rad
+
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str     # Time spec followed by message.
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print("Adding: {tokens}")
+
+fn do_list():
+    print("Listing")
+```
+
+```
+> ./remind.rad 15m standup
+```
+
+```
+Adding: [ "15m", "standup" ]
+```
+
+`./remind.rad add 15m standup` does exactly the same thing. The default keeps its own name, and that matters more than it looks.
+
+### When A Value Looks Like A Command
+
+A named command always wins. So if you want to add a reminder that says "list", the short form won't do it - `list` is a command:
+
+```
+> ./remind.rad list          # runs do_list, no reminder added
+```
+
+Two ways to say you meant the value. Name the default explicitly, or use `--`:
+
+```
+> ./remind.rad add list      # adds a reminder saying "list"
+> ./remind.rad -- list       # same
+```
+
+**Note: Which command runs, exactly**
+
+    Routing happens at the first token the level can't consume itself. A command name appearing *after* one of those goes to the default as data, not as a command. If a flag is needed by the default but rejected elsewhere, declare it as a shared arg so it's consumed before routing.
+
+### Defaults And Namespaces
+
+The rule is the same at every level, so a namespace's default is what runs when you name the namespace and stop:
+
+```rad
+#!/usr/bin/env rad
+
+command remote:
+    command list:
+        default
+        calls do_list
+
+    command add:
+        name str
+        calls do_add
+
+fn do_list():
+    print("Listing remotes")
+
+fn do_add():
+    print("Adding {name}")
+```
+
+`./tool.rad remote` lists remotes, exactly as `./tool.rad remote list` would.
+
+Only leaf commands can be marked. A namespace routes rather than runs, so marking one would leave the question unanswered - mark one of its sub-commands instead.
 
 ## Command Callbacks
 
@@ -6010,8 +6356,9 @@ args:
     version str
 
 path = "VERSION"
+expr = "s/Version = .*/Version = {version}/"
 
-$`sed -i '' "s/Version = .*/Version = {version}/" {path}`
+$`sed -i '' {expr} {path}`
 errdefer:
     print("Undoing bump...")
     $`git checkout -- {path}`
@@ -6029,7 +6376,8 @@ if false:  // failure simulation point 2
     print("Bah! ERROR!")
     exit(1)
 
-$`git commit -m "Bump version to {version}"`
+message = "Bump version to {version}"
+$`git commit -m {message}`
 print("Done!")
 ```
 
@@ -7946,6 +8294,56 @@ with_decimals = "{big_num:,.2}"          // "1,234,567.00"
 padded_thousands = "{big_num:>15,}"      // "      1,234,567"
 ```
 
+### Braces in Strings
+
+A `{` opens an interpolation. Rad never silently re-reads a broken
+interpolation as ordinary text, so a brace you meant literally either
+falls under one of the narrow exemptions below or has to be escaped.
+
+1. `{expr}`, optionally with a format specifier, interpolates.
+2. A `{` is literal where an interpolation is impossible: the string ends
+   immediately after it, or the `{...}` pair holds only ASCII spaces or tabs.
+   Other Unicode whitespace does not count - `{` followed by U+00A0 is an
+   error, not a literal brace.
+3. A `}` with no interpolation open is literal.
+4. `\{` and `\}` are literal braces. A raw string (`r"..."`) disables
+   interpolation and escapes for the whole string.
+5. Anything else that opens like an interpolation and isn't one is an
+   error.
+
+```rad
+print("{")             // {        -- string ends after the brace
+print("{}")            // {}       -- pair holds nothing
+print("{ }")           // { }      -- pair holds only whitespace
+print("}")             // }        -- no interpolation open
+print("\{a\}")         // {a}      -- both escapes
+print(r"\d{4}")        // \d{4}    -- raw string, nothing interpolates
+```
+
+The rule that catches people is the regex quantifier. `"\d{4}"` is a valid
+interpolation of the number 4, so it produces `\d4`:
+
+```rad
+pattern = "\d\{4}"     // \d{4}   -- escape the brace
+pattern = r"\d{4}"     // \d{4}   -- or use a raw string
+```
+
+Rad warns (`RAD40017`) when an interpolation holds a literal, since that is
+almost always this mistake.
+
+Exemption 2 is deliberately narrow. `"{name"` stays an error rather than
+printing itself, because a forgotten closing brace should be loud.
+
+An interpolation must not open with a same-delimiter string, since `"{"` is
+then indistinguishable from a literal brace at the end of a string. Reach
+for a different quote type:
+
+```rad
+print("{'ERROR'.red()}")     // use a different delimiter
+print("{ "ERROR".red() }")   // or separate the braces from the quotes
+print("{"ERROR".red()}")     // error - reads as the literal brace "{"
+```
+
 ## Ternary Operator
 
 ```rad
@@ -8396,10 +8794,91 @@ command greet:
         print("Hello, {name}!")
 ```
 
+### Nested Commands
+
+Group related commands under a namespace, like `git remote add`. A command that
+contains other commands is a *namespace*: it has no `calls` of its own and routes
+to its sub-commands instead. Args declared on it are shared - inherited by every
+descendant, and accepted anywhere on the path.
+
+```rad
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        // shared with every sub-command
+
+    command add:
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print("Adding {name} -> {url} (timeout {timeout})")
+
+fn do_remove():
+    print("Removing {name}")
+```
+
+`./tool.rad remote add origin https://... --timeout 5` runs `do_add`, and
+`--timeout` is equally valid before the sub-command. Namespaces nest as deep as
+you like; only the terminal command's `calls` runs.
+
+### Default Commands
+
+Mark one command per level `default` and it runs when the user names none, so a
+tool's primary action doesn't have to be typed:
+
+```rad
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print("Adding {tokens}")
+
+fn do_list():
+    print("Listing")
+```
+
+`./tool.rad 15m standup` and `./tool.rad add 15m standup` both run `do_add`.
+
+A named command always wins, so a value that happens to match one goes to that
+command instead. Two ways to say you meant the value: name the default
+explicitly, or use `--`.
+
+```
+./tool.rad list            # runs do_list
+./tool.rad add list        # adds a reminder saying "list"
+./tool.rad -- list         # same
+```
+
+The rule applies at every level, so a namespace's default is what `./tool.rad
+remote` runs. Only leaf commands can be marked - a namespace routes rather than
+runs, so marking one would leave the question unanswered.
+
 ### Automatic Help
 
 - `./tool.rad -h` — lists all commands with descriptions
 - `./tool.rad deploy -h` — shows command-specific arguments
+- `./tool.rad remote -h` — lists a namespace's sub-commands and shared args
+
+When a default exists, `-h` marks it and shows a second usage line spelling out
+the shorter invocation it enables.
 
 ## Shell Commands
 
@@ -8415,31 +8894,34 @@ If an error propagates up to the root level of the script and doesn't get handle
 ```rad
 // Fails script if code != 0
 $`make build`
-code = $`cmd`
-code, stdout = $`cmd`
-code, stdout, stderr = $`cmd`
+stdout = $`cmd`
+stdout, stderr = $`cmd`
+stdout, stderr, code = $`cmd`
 ```
 
 ### Capture & assignment
 
-**Capture behavior** depends on how many variables you assign:
+**Capture behavior** depends on how many variables you assign. A stream you don't
+capture goes to the terminal; a stream you do capture goes only to your variable.
 
 ```rad
 $`cmd`                        // No capture, stdout/stderr → terminal
-code = $`cmd`                 // Capture code, stdout/stderr → terminal
-code, stdout = $`cmd`         // Capture code & stdout, stderr → terminal
-code, stdout, stderr = $`cmd` // Capture all
+stdout = $`cmd`               // Capture stdout, stderr → terminal
+stdout, stderr = $`cmd`       // Capture both
+stdout, stderr, code = $`cmd` // Capture both, plus the exit code
 ```
 
 **Assignment semantics** support both positional and *named* assignment.
 
-- Shell commands conceptually return **(code, stdout, stderr)** in that order.
+- Positional targets are filled **(stdout, stderr, code)** in that order. The exit
+  code is last: it needs no capturing, and a non-zero exit already raises a
+  catchable error, so it's the value you reach for least.
 - **Positional (default):** when variable names are arbitrary, assignment is by position.
 
 ```rad
-c, out = $`cmd`                     // c = code, out = stdout
-exit_code, output, err = $`cmd`     // exit_code = code, output = stdout, err = stderr
-myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional despite name)
+out = $`cmd`                        // out = stdout
+out, err = $`cmd`                   // out = stdout, err = stderr
+result, errors, status = $`cmd`     // result = stdout, errors = stderr, status = code
 ```
 
 - **Named:** if **all** variables are exactly `code`, `stdout`, or `stderr`, assignment is by name (order independent).
@@ -8448,9 +8930,19 @@ myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional
 stdout, code = $`cmd`     // stdout = stdout, code = code
 stderr = $`cmd`           // only capture stderr
 code, stderr = $`cmd`     // capture code and stderr
+code = $`cmd`             // only way to get the code without capturing a stream
 ```
 
 > **Rule:** If *all* variables use the exact names `code`, `stdout`, or `stderr`, uses named assignment. Otherwise, assignment is positional.
+
+The two rules agree on the canonical order, so `stdout = $cmd` and
+`stdout, stderr = $cmd` mean the same thing read either way. They disagree when
+you *mix* reserved and unreserved names, because one unreserved name makes the
+whole statement positional:
+
+```rad
+code, output = $`cmd`     // 'code' gets stdout! Warns: RAD40018
+```
 
 ### Handling failures with a `catch` block
 
@@ -8623,6 +9115,7 @@ newline = "Line 1\nLine 2"         // Newline
 tab = "Column1\tColumn2"           // Tab
 backslash = "Path\\to\\file"       // Literal backslash
 brace = "Not interpolated: \{var}" // Escaped brace (literal {)
+close = "Escaped: \}"              // Escaped brace (literal })
 ```
 
 ### Defer and Error Defer Blocks
@@ -11272,7 +11765,7 @@ index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -> int
 "hello world hello".index_of("hello", n=1)      // -> 12
 "hello world hello".index_of("hello", n=-1)     // -> 12
 "hello".index_of("xyz")                         // -> null
-"hello".index_of("xyz") ?? (-1)                 // -> -1
+"hello".index_of("xyz") ?? -1                   // -> -1
 "hello".index_of("")                             // -> null (empty target)
 
 // List search
@@ -11327,23 +11820,60 @@ matches("hello world", "world", partial=true)  // -> true
 matches("abc", "(")                    // -> error: invalid regex
 ```
 
+Unlike `split` and `replace`, `matches` has no `regex` parameter and always treats `_pattern`
+as a regex. A literal `matches` would just be `==` (full match) or a substring test (partial),
+neither of which needs a function.
+
 See also: `replace`, `split`
 
 ### replace
 
-Replaces text using regex patterns. Does not preserve string color attributes.
+Replaces every occurrence of a literal substring. Pass `regex=true` to treat `_find` as a regex pattern and enable capture-group references in `_replace`. Does not preserve string color attributes.
 
 ```rad
-replace(_original: str, _find: str, _replace: str) -> str
+replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -> str
 ```
 
 ```rad
-replace("hello world", "world", "Rad")        // -> "hello Rad"
-replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1")  // -> "Name: Alice Brown"
-replace("abc123def", "\\d+", "XXX")           // -> "abcXXXdef"
+replace("hello world", "world", "Rad")           // -> "hello Rad"
+replace("1.2.3", ".", "-")                       // -> "1-2-3"
+replace("cost: $5", "$5", "$10")                 // -> "cost: $10"
+replace("abc123def", "\\d+", "XXX", regex=true)  // -> "abcXXXdef"
+replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1", regex=true) // -> "Name: Alice Brown"
 ```
 
-The `_find` parameter is a regex pattern. The `_replace` parameter can use regex capture groups like `$1`.
+`_find` is matched literally unless `regex=true`, so metacharacters like `.` and `(` need no
+escaping in the default case. In literal mode `_replace` is inserted verbatim, `$` included -
+safe for text relayed from elsewhere.
+
+When `regex=true`, a pattern that fails to compile is an error. Patterns use Go's RE2 dialect,
+which has no backreferences or lookaround.
+
+**Group references in `_replace` (`regex=true` only):**
+
+| Written       | Expands to                                          |
+| ------------- | --------------------------------------------------- |
+| `$0`          | The whole match                                     |
+| `$N`          | Capture group `N`; `N` is the longest run of digits |
+| `${N}`        | Capture group `N`, explicitly delimited             |
+| `$$`          | A literal `$`                                       |
+| Anything else | Left as written                                     |
+
+A reference to a group that does not exist is left as written rather than expanding to an
+empty string, so stray `$` in your replacement text survives intact.
+
+Because `$N` consumes every following digit, use `${N}` when a literal digit has to follow a
+group reference: `${1}0` inserts group 1 followed by `0`, while `$10` means group 10.
+
+`${N}` collides with Rad's string interpolation, which would read `{1}` as an expression to
+interpolate. Write the replacement as a raw string or escape the brace:
+
+```rad
+replace("Name: abc", "a(b)c", r"${1}0", regex=true)   // -> "Name: b0"
+replace("Name: abc", "a(b)c", "$\{1}0", regex=true)   // -> "Name: b0"
+```
+
+See also: `split`, `matches`
 
 ### reverse
 
@@ -11361,24 +11891,33 @@ reverse("racecar")         // -> "racecar"
 
 ### split
 
-Splits a string using regex pattern as delimiter. Does not preserve string color attributes.
+Splits a string on a literal separator. Pass `regex=true` to treat `_sep` as a regex pattern instead. Does not preserve string color attributes.
 
 ```rad
-split(_val: str, _sep: str, *, limit: int?) -> str[]
+split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -> str[]
 ```
 
 ```rad
-split("a,b,c", ",")               // -> ["a", "b", "c"]
-split("word1 word2", "\\s+")      // -> ["word1", "word2"]
-split("abc123def", "\\d+")        // -> ["abc", "def"]
-split("key=val=ue", "=", limit=1) // -> ["key", "val=ue"]
-split("a,b,c,d", ",", limit=2)    // -> ["a", "b", "c,d"]
+split("a,b,c", ",")                    // -> ["a", "b", "c"]
+split("1.2.3", ".")                    // -> ["1", "2", "3"]
+split("word1  word2", "\\s+", regex=true) // -> ["word1", "word2"]
+split("abc123def", "\\d+", regex=true) // -> ["abc", "def"]
+split("key=val=ue", "=", limit=1)      // -> ["key", "val=ue"]
+split("a,b,c,d", ",", limit=2)         // -> ["a", "b", "c,d"]
 ```
 
-The `_sep` parameter is treated as a regex pattern if valid, otherwise as literal string.
+`_sep` is matched literally unless `regex=true`, so metacharacters like `.` and `(` need no
+escaping in the default case.
+
+When `regex=true`, a pattern that fails to compile is an error. Patterns use Go's RE2 dialect,
+which has no backreferences or lookaround.
 
 When `limit` is provided, it caps the number of splits performed. The final element contains
 the unsplit remainder. `limit` must be >= 1.
+
+An empty `_sep` splits between every character.
+
+See also: `split_lines`, `replace`, `matches`
 
 ### split_lines
 
@@ -13541,6 +14080,88 @@ and separator characters (e.g. `DD/MM/YYYY`, `YYYY-MM-DD HH:mm:ss`).
 - Ensure the format tokens match the structure of your date string
 - Use `catch` to handle the error if the input is dynamic
 
+### RAD20045: Invalid Shell Command Value
+
+A value used as a shell command, or interpolated into one, has no form Rad can
+safely pass to a program.
+
+Inside a shell command, the text you write is shell and the interpolations are
+data. Rad quotes each interpolated value so it arrives as exactly one argument.
+That only works for values with an obvious one-argument spelling: strings,
+numbers and booleans. A map has none, and a null has one that is silently wrong
+- it would become the four-character word `null`.
+
+#### Examples
+
+```rad
+tag = null
+$`git tag {tag}`        // Error: nothing sensible to pass
+
+config = { "depth": 2 }
+$`git clone {config}`   // Error: a map is not an argument
+```
+
+A list *is* allowed - it expands to one argument per element - but it has to
+stand alone as its own argument, because there's no single obvious meaning for
+gluing several arguments onto a prefix:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`rm {files}`           // Fine: rm a.txt b.txt
+$`rm --file={files}`    // Error: which element gets the prefix?
+```
+
+The same rules apply when the whole command is a list:
+
+```rad
+$["git", "commit", "-m", null]   // Error
+$[]                              // Error: no program to run
+```
+
+#### How to Fix
+
+Give a null an explicit fallback, or leave the argument out entirely:
+
+```rad
+tag = null
+
+$`git tag {tag ?? "untagged"}`
+```
+
+Build up the arguments as a list when some are conditional. Each element is one
+argument, so nothing needs quoting:
+
+```rad
+message = "fix the parser"
+
+cmd = ["git", "commit"]
+if message:
+    cmd += ["-m", message]
+$cmd
+```
+
+Join a list yourself when you really do want one argument:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`tar -czf out.tgz {files}`             // three arguments
+$`echo --files={files.join(",")}`       // one argument
+```
+
+#### Why Rad Works This Way
+
+Bash's defining hazard is that a value carrying a space, a quote or a `$` stops
+being a value and becomes syntax. Rad removes that by quoting interpolations for
+you - but quoting only has an answer for things that *are* one argument. Rather
+than invent a rendering for the rest and let it fail silently at runtime, Rad
+asks you to say what you meant.
+
+#### See Also
+
+- `rad docs guide/shell-commands` - the three command forms and when to use each
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch
@@ -13597,14 +14218,16 @@ An operator was used with types that don't support that operation.
 #### Example
 
 ```rad
+count = 5
+
 // Wrong: can't add int to string
-x = "count: " + 5
+x = "count: " + count
 
 // Correct: use interpolation (preferred)
-x = "count: {5}"
+x = "count: {count}"
 
 // Correct: explicit conversion
-x = "count: " + str(5)
+x = "count: " + str(count)
 ```
 
 #### Supported Type Combinations
@@ -14440,3 +15063,472 @@ unary minus applies.
 
 Write the minimum value as `-9223372036854775807 - 1`, or use a `float` if you
 need to represent larger magnitudes (with reduced precision).
+
+### RAD40016: Regex Pattern Without regex=true
+
+You passed something that reads like a regex to `split()` or `replace()`, but
+neither treats its pattern as a regex unless you ask.
+
+```rad
+line = "alice   30   admin"
+
+// Warns: '\s+' is a regex, but split() is looking for that literal text
+fields = split(line, "\s+")
+
+// Correct
+fields = split(line, "\s+", regex=true)
+```
+
+#### Why This Exists
+
+Before v0.12, `split()` and `replace()` always treated their pattern as a regex.
+That default was backwards - most calls want literal text - and it failed
+silently in the dangerous direction: a `.` in a pattern quietly matched every
+character.
+
+The default is now literal. The catch is that scripts written for the old
+behavior keep running. They just stop matching:
+
+```rad
+print(split("a b  c", "\s+"))   // -> ["a b  c"], not ["a", "b", "c"]
+```
+
+No error, no crash, only a wrong answer. This warning is the tap on the shoulder.
+
+#### How to Fix It
+
+If you meant a regex, add `regex=true`:
+
+```rad
+text = "order 66 shipped"
+print(replace(text, "\d+", "N", regex=true))   // -> "order N shipped"
+```
+
+If the text really is literal, you can ignore the warning - the call already does
+what you want, and you no longer need to escape anything:
+
+```rad
+version = "1.2.3"
+print(replace(version, ".", "-"))   // -> "1-2-3", no escaping needed
+```
+
+#### Ignore It When
+
+The heuristic looks for constructs that rarely appear in literal text: `\d`,
+`\s`, a bracketed class, a group, a quantifier, alternation with branches on both
+sides, or a leading `^` / trailing `$`. Real text does sometimes contain those -
+`"C++"` and `"a|b"` are perfectly good literal separators. The warning is advice,
+not a verdict.
+
+See the v0.12 migration guide (https://amterp.dev/rad/migrations/v0.12/) for the
+full picture, and `rad check --from-logs all` to sweep every script you've run
+recently.
+
+### RAD40017: Interpolating a Constant Literal
+
+An interpolation contains a literal value, so it produces exactly the text
+you already wrote. `"{4}"` and `"4"` are the same string.
+
+This is almost always a literal brace that got read as an interpolation.
+
+#### Example
+
+```rad
+// Wrong: {4} interpolates the number 4, so this is the regex \d4
+pattern = "\d{4}"
+
+// Correct: escape the brace
+pattern = "\d\{4}"
+
+// Correct: a raw string, where nothing interpolates
+pattern = r"\d{4}"
+```
+
+Regex quantifiers are where this bites. `\d{4}` looks like "four digits"
+and parses as "a digit, then the number 4". Wider quantifiers like
+`\d{2,3}` are a syntax error instead, so the single-number form is the only
+one that fails quietly.
+
+#### How to Fix
+
+1. **Escape the brace** with `\{` if you meant a literal `{`
+2. **Use a raw string** (`r"..."`) if the text is brace-heavy - regexes and
+   JSON templates usually are
+3. **Write the value directly** if you really did mean to interpolate a
+   constant
+
+Note that `r"..."` turns off *all* interpolation and escapes for that
+string, so it is the wrong tool if you also need `{name}` to expand.
+
+#### Why This Is a Warning
+
+The rule is syntactic: it fires only when the interpolated expression is
+itself a literal. Interpolating a variable that happens to hold a constant
+is fine and stays quiet.
+
+```rad
+digits = 4
+name = "ana"
+print("{digits}")      // no warning
+print("{2 + 2}")       // no warning
+print("{name:<12}|")   // no warning - 12 is a format width, not the value
+```
+
+### RAD40018: Misleading Shell Capture Name
+
+A shell capture target is named after one stream but receives another.
+
+```rad
+// Warns: 'output' isn't a reserved name, so the whole statement is
+// positional - and position 0 is stdout, so 'code' gets the output.
+code, output = $`git status --porcelain`
+
+// Correct - all three names are reserved, so assignment goes by name
+stdout, code = $`git status --porcelain`
+```
+
+#### The Two Rules
+
+Shell commands produce three things: stdout, stderr, and an exit code. How your
+variables receive them depends on what you called them.
+
+**Named** - when *every* target is spelled exactly `code`, `stdout`, or
+`stderr`, each one gets the stream it's named after and order doesn't matter:
+
+```rad
+stderr = $`cmd`               // just stderr
+code, stdout = $`cmd`         // exit code and stdout
+stderr, stdout, code = $`cmd` // all three, any order
+```
+
+**Positional** - the moment one target isn't a reserved name, the whole
+statement switches to filling `(stdout, stderr, code)` in order:
+
+```rad
+out = $`cmd`             // out = stdout
+out, err = $`cmd`        // out = stdout, err = stderr
+out, err, c = $`cmd`     // out = stdout, err = stderr, c = exit code
+```
+
+This warning fires where those two rules collide: you used a reserved name, but
+something else in the statement dropped you into positional mode, so the name
+means nothing and the slot decides.
+
+#### How to Fix It
+
+Either name every target so assignment goes by name:
+
+```rad
+// Before
+code, output = $`cmd`
+// After
+code, stdout = $`cmd`
+```
+
+Or drop the reserved names and let position do the work:
+
+```rad
+// Before
+code, output = $`cmd`
+// After - now positional throughout, and reads as it behaves
+output, _, code = $`cmd`
+```
+
+The first form is usually what you want. It's a rename, and it captures exactly
+the same streams.
+
+#### Migrating From v0.11
+
+Before v0.12, positional captures filled `(code, stdout, stderr)` - the exit
+code first. They now fill `(stdout, stderr, code)`.
+
+Scripts written against the old order still parse and still run. They just bind
+different variables:
+
+```rad
+// v0.11: version = stdout.   v0.12: version = stderr.
+_, version = $`rad -v`
+```
+
+When the warning mentions v0.12, that's the case it found. The fix is usually to
+drop a slot, because what used to need two targets now needs one:
+
+```rad
+version = $`rad -v`
+```
+
+The exit code moved last because Rad already turns a non-zero exit into an
+error - you reach for `catch:` rather than for the code - and because a single
+capture binding the exit code was the least useful thing it could bind.
+
+#### What This Warning Cannot Catch
+
+It reads names, so a positional capture whose names give no signal is invisible
+to it:
+
+```rad
+a, b = $`cmd`   // no warning possible
+```
+
+Sweep every script you've run recently with `rad check --from-logs all`, and see
+the v0.12 migration guide (https://amterp.dev/rad/migrations/v0.12/) for the
+full picture.
+
+### RAD40019: Two Default Commands At One Level
+
+Only one command per level runs when the user names none, so two `default`
+markers among siblings leave nothing to decide between them.
+
+```rad
+command add:
+    tokens str
+    default
+    calls do_add
+
+command edit:
+    tokens str
+    default          // Error: 'add' is already the default here
+    calls do_edit
+```
+
+#### How to Fix
+
+Keep the marker on whichever command should run when none is named, and drop
+the other:
+
+```rad
+command add:
+    tokens str
+    default
+    calls do_add
+
+command edit:
+    tokens str
+    calls do_edit
+```
+
+Nesting scopes this: each namespace picks its own default independently, so
+`remote` and `image` can each have one.
+
+```rad
+command remote:
+    command add:
+        name str
+        default
+        calls do_remote_add
+
+command image:
+    command build:
+        tag str
+        default
+        calls do_image_build
+```
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40020: Command Does Nothing
+
+A command either runs something or routes to sub-commands. This one does
+neither: it has no `calls` line and no nested command blocks, so invoking it
+could only ever do nothing.
+
+```rad
+command deploy:
+    env str          // Error: nothing to run
+```
+
+#### How to Fix
+
+Add a `calls` line naming the function to run:
+
+```rad
+command deploy:
+    env str
+    calls do_deploy
+
+fn do_deploy():
+    print("Deploying to {env}...")
+```
+
+For a short body, an inline lambda avoids naming a function you only use once:
+
+```rad
+command deploy:
+    env str
+    calls fn():
+        print("Deploying to {env}...")
+```
+
+Or nest command blocks inside it, which makes it a namespace that routes to
+them instead of running itself:
+
+```rad
+command deploy:
+    timeout int = 30     // shared with every sub-command
+
+    command staging:
+        calls do_staging
+
+    command prod:
+        calls do_prod
+```
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40021: Namespace Has A Callback
+
+A command containing sub-commands is a namespace: it groups them and shares its
+args with them, and the sub-command the user names is what runs. So a `calls`
+line on it would never fire.
+
+```rad
+command remote:
+    calls do_remote      // Error: 'remote' routes to its sub-commands
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### How to Fix
+
+Drop the `calls` line. Args declared on the namespace still reach every
+descendant, which is usually what the callback was reaching for:
+
+```rad
+command remote:
+    timeout int = 30     // inherited by add, and by anything nested deeper
+
+    command add:
+        name str
+        calls do_add
+```
+
+If you wanted `tool remote` on its own to do something, mark one of its
+sub-commands `default` - that is the command it runs when none is named:
+
+```rad
+command remote:
+    command list:
+        default
+        calls do_list
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### Why Rad Works This Way
+
+Shape decides role, so there is no keyword to remember and no way for the
+declaration and the behavior to disagree. A block with `calls` runs; a block
+with commands inside routes.
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40022: Default On A Namespace
+
+`default` marks the command to run when the user names none. A namespace does
+not run - it routes - so marking one leaves the question unanswered.
+
+```rad
+command remote:
+    default              // Error: 'remote' contains sub-commands
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### How to Fix
+
+Mark the sub-command that should run:
+
+```rad
+command remote:
+    command add:
+        name str
+        default
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+```
+
+`tool remote origin` now runs `do_add`, and so does `tool remote add origin`.
+The full form stays available, which is how you pass a value that happens to
+match a sibling's name - `tool remote add remove` adds a remote called
+"remove". `tool remote -- remove` does the same.
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40023: Quoted Interpolation In A Shell Command
+
+An interpolated value in a shell command is wrapped in quotes the script wrote
+itself. Rad already quotes interpolated values, so these quotes are no longer
+protecting anything - they end up inside the argument as literal characters.
+
+```rad
+message = "hello"
+
+$`git commit -m "{message}"`   // Error: the quotes land in the message
+```
+
+#### How to Fix
+
+Delete the quotes. Rad quotes the value for you, whatever it contains:
+
+```rad
+message = "hello"
+
+$`git commit -m {message}`
+```
+
+When the argument is literal text plus a value, build the string first and
+interpolate that. The quotes were holding the two halves together as one
+argument; a single interpolation does that on its own:
+
+```rad
+version = "1.2.3"
+
+// Wrong - the quotes become part of the commit message
+$`git commit -m "Bump to {version}"`
+
+// Correct
+message = "Bump to {version}"
+$`git commit -m {message}`
+```
+
+#### Why Rad Works This Way
+
+Hand-written quotes could never be correct for every value. Double quotes still
+expand `$HOME` and `$(whoami)`; single quotes cannot contain an apostrophe at
+all. So a command that worked for `hello` would break, or worse silently
+misbehave, on `it's` or `100% of $USERS`.
+
+Rad quotes each interpolated value at the point it knows what the value is, so
+the argument the program receives is exactly the value you had:
+
+```rad
+message = "it's fine"
+
+$`git commit -m {message}`
+// runs: git commit -m 'it'\''s fine'
+```
+
+The rule is that the text you write is shell - pipes, redirects, `&&` and all -
+and interpolations are data.
+
+#### See Also
+
+- `rad docs guide/shell-commands` - the three command forms
+- `rad docs RAD20045` - values that have no single-argument form

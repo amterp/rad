@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1541,6 +1541,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -2088,7 +2116,7 @@ print(join(words, joiner))
 <div class="highlight"><pre><span></span><code>Given some words, joins them together, and optionally capitalizes them.
 
 Usage:
-  wordjoin &lt;words&gt; [joiner] [OPTIONS]
+  wordjoin &lt;words...&gt; [OPTIONS]
 
 Script args:
       --words strs   Words to join together.
@@ -2111,6 +2139,7 @@ Script args:
 <ul>
 <li>We declare a second argument, this one a string called <code>joiner</code>. We also define a shorthand flag <code>j</code>, allowing users to specify the arg with a simple <code>-j</code> flag.</li>
 <li>After that, we define a <strong>default</strong> value <code>-</code> for this parameter that will be used if the user doesn't provide one. We finish with another arg comment.</li>
+<li>Notice <code>joiner</code> doesn't appear in the usage line. <code>words</code> is a list, so it collects <em>every</em> bare value the user types - there's nothing left for a later positional slot. Users set <code>joiner</code> with <code>-j</code> instead.</li>
 </ul>
 </li>
 <li>
@@ -2160,8 +2189,9 @@ users who want clarity can use flags; and anyone can mix and match as needed.</p
 <p>Rad processes arguments left-to-right. The rules are simple:</p>
 <ol>
 <li>If an argument starts with <code>--</code> or <code>-</code>, it's matched as a flag by name (or short name).</li>
-<li>If an argument is a bare value (no <code>-</code> prefix), it's assigned to the next unfilled positional slot, in the order you declared your args.</li>
+<li>If an argument is a bare value (no <code>-</code> prefix), it's assigned to the next unfilled positional slot, in the order you declared your args. If that slot is a list, it keeps taking bare values until the next flag, and does not resume afterwards.</li>
 <li>Flags can appear anywhere - before, after, or interspersed with positional values.</li>
+<li>A <code>-</code>-prefixed token is never read as another flag's value. <code>--name --verbose</code> is an error, not <code>name = "--verbose"</code>.</li>
 </ol>
 <p>The key insight: when a flag "fills" an argument, that positional slot is skipped. For example:</p>
 <div class="highlight"><pre><span></span><code>args:
@@ -2194,6 +2224,9 @@ users who want clarity can use flags; and anyone can mix and match as needed.</p
 <span class="c1"># Use -- to force positional</span>
 ./script<span class="w"> </span>--<span class="w"> </span>-5
 </code></pre></div>
+<p>The first form works because <code>count</code> is a number. Rad only reads a <code>-</code>-prefixed
+token as a value for <code>int</code> and <code>float</code> args - for a <code>str</code> arg, <code>--name -5</code> is an
+error, and <code>--name=-5</code> is how you say you meant it.</p>
 <h3 id="equals-syntax">Equals Syntax<a class="headerlink" href="#equals-syntax" title="Permanent link">&para;</a></h3>
 <p>Both <code>--name=value</code> and <code>--name value</code> work for all flag types. For bool flags specifically,
 <code>--flag</code> sets the value to <code>true</code> by presence, while <code>--flag=false</code> explicitly sets it to <code>false</code>.</p>
@@ -2235,7 +2268,12 @@ print(&quot;verbose: {verbose}, debug: {debug}&quot;)
     verbose bool = true  # Defaults to true
 </code></pre></div>
 <h3 id="list-types">List Types<a class="headerlink" href="#list-types" title="Permanent link">&para;</a></h3>
-<p>For list arguments (<code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code>), users pass values by <strong>repeating the flag</strong>:</p>
+<p>For list arguments (<code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code>), users pass several values either as bare positional values or by <strong>repeating the flag</strong>:</p>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>hello.txt<span class="w"> </span>world.txt
+</code></pre></div>
+<p>A list arg is greedy positionally - it collects every bare value until the next
+flag. Through its own flag it takes exactly one value per occurrence, so repeat
+the flag to pass several:</p>
 <div class="highlight"><pre><span></span><code>args:
     files f str[]
     counts int[]
@@ -2293,7 +2331,8 @@ section2: [ 1, 2, 3 ]
 
 <div class="admonition note">
 <p class="admonition-title">List types vs variadic</p>
-<p>List args and variadic args both produce lists, but they're filled differently. List args are primarily filled by <strong>repeating the flag</strong> (<code>--files a.txt --files b.txt</code>), though a single positional value also works. If you want to collect multiple bare positional values without repeating flags, use a variadic argument (<code>*args</code>) instead - that's exactly what they're for.</p>
+<p>List args and variadic args both produce lists, and both collect bare positional values greedily. They differ in the flag form: a variadic takes a run of values after its own flag (<code>--files a.txt b.txt</code>), while a list takes one per occurrence (<code>--files a.txt --files b.txt</code>).</p>
+<p>Reach for a list for an ordinary several-values arg. Reach for a variadic when you're writing a wrapper that passes unrecognized flags through to another command - that's the job it keeps to itself.</p>
 </div>
 <h3 id="optional-arguments">Optional Arguments<a class="headerlink" href="#optional-arguments" title="Permanent link">&para;</a></h3>
 <p>Mark arguments as optional with <code>?</code> suffix. When not provided, their value is <code>null</code>:</p>
@@ -2564,15 +2603,16 @@ Invalid arguments: &#39;token&#39; excludes &#39;password&#39;, but &#39;passwor
 </li>
 <li>Rad supports various argument types:<ul>
 <li>Basic types: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code></li>
-<li>List types: <code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code> (passed via repeated flags)</li>
-<li>Variadic: <code>*args &lt;type&gt;</code> (collects remaining positional arguments)</li>
+<li>List types: <code>str[]</code>, <code>int[]</code>, <code>float[]</code>, <code>bool[]</code> (bare positional values, or the flag repeated)</li>
+<li>Variadic: <code>*args &lt;type&gt;</code> (like a list, but greedy after its own flag too)</li>
 <li>Optional: <code>&lt;type&gt;?</code> (value is <code>null</code> when not provided)</li>
 </ul>
 </li>
 <li>Bool flags are never positional. All other types are both positional and flag-based.</li>
 <li>Short flags support clustering (<code>-vdq</code>) and counting for ints (<code>-vvv</code> = 3).</li>
 <li>Use <code>--</code> to force everything after it to be treated as positional (useful for values starting with <code>-</code>).</li>
-<li>Both <code>--flag=value</code> and <code>--flag value</code> work. Equals syntax is useful for negative numbers (<code>--count=-5</code>).</li>
+<li>Both <code>--flag=value</code> and <code>--flag value</code> work. A <code>-</code>-prefixed token is never taken as a value, so equals syntax is how you pass one (<code>--name=-5</code>); number args accept <code>--count -5</code> directly.</li>
+<li>A list arg absorbs every remaining positional value, so args declared after one can only be set by flag.</li>
 <li>You can apply constraints to arguments inside the arg block:<ul>
 <li><code>enum</code> for discrete values</li>
 <li><code>range</code> for numeric bounds (using <code>[</code> for inclusive, <code>(</code> for exclusive)</li>
@@ -2679,7 +2719,7 @@ Invalid arguments: &#39;token&#39; excludes &#39;password&#39;, but &#39;passwor
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

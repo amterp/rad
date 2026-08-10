@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1308,6 +1308,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -1613,8 +1641,9 @@ make the script <em>atomic</em> i.e. it either succeeds entirely or does nothing
     version str
 
 path = &quot;VERSION&quot;
+expr = &quot;s/Version = .*/Version = {version}/&quot;
 
-$`sed -i &#39;&#39; &quot;s/Version = .*/Version = {version}/&quot; {path}`
+$`sed -i &#39;&#39; {expr} {path}`
 errdefer:
     print(&quot;Undoing bump...&quot;)
     $`git checkout -- {path}`
@@ -1632,7 +1661,8 @@ if false:  // failure simulation point 2
     print(&quot;Bah! ERROR!&quot;)
     exit(1)
 
-$`git commit -m &quot;Bump version to {version}&quot;`
+message = &quot;Bump version to {version}&quot;
+$`git commit -m {message}`
 print(&quot;Done!&quot;)
 </code></pre></div>
 <p>We include a couple of "failure points". We can set their condition to <code>true</code> to have them simulate an error, as the exit code of '1' indicates failure.</p>
@@ -1788,7 +1818,7 @@ Undoing bump...
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

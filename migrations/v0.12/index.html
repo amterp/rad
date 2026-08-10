@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://amterp.dev/rad/migrations/v0.9/">
+        <link rel="canonical" href="https://amterp.dev/rad/migrations/v0.12/">
       
       
-        <link rel="prev" href="../v0.12/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../v0.8/">
+        <link rel="next" href="../v0.9/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Migration Guide - v0.9 - Rad Docs</title>
+        <title>Migration Guide - v0.12 - Rad Docs</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#migrating-to-rad-v09" class="md-skip">
+        <a href="#migrating-to-rad-v012" class="md-skip">
           Skip to content
         </a>
       
@@ -116,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Migration Guide - v0.9
+              Migration Guide - v0.12
             
           </span>
         </div>
@@ -1207,34 +1207,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../v0.12/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Migration Guide - v0.12
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1254,7 +1226,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.9
+    Migration Guide - v0.12
   
 
     
@@ -1272,7 +1244,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.9
+    Migration Guide - v0.12
   
 
     
@@ -1298,15 +1270,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#breaking-change-request-and-display-keywords-removed" class="md-nav__link">
+  <a href="#breaking-change-split-and-replace-match-literally" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Breaking Change: request and display Keywords Removed
+        Breaking Change: split() and replace() Match Literally
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Breaking Change: request and display Keywords Removed">
+    <nav class="md-nav" aria-label="Breaking Change: split() and replace() Match Literally">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1314,161 +1286,6 @@
     <span class="md-ellipsis">
       
         What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#old-syntax-no-longer-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Old Syntax (No Longer Works)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#important-request-blocks-never-printed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important: request Blocks Never Printed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#migration-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migration Steps
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#breaking-change-get_stash_dir-renamed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Breaking Change: get_stash_dir Renamed
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Breaking Change: get_stash_dir Renamed">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-changed_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#old-syntax-no-longer-works_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Old Syntax (No Longer Works)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#new-syntax_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#migration-steps_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migration Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#breaking-change-now-fires-on-null" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Breaking Change: ?? Now Fires on Null
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Breaking Change: ?? Now Fires on Null">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-changed_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#before-v08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Before (v0.8)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#after-v09" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        After (v0.9)
       
     </span>
   </a>
@@ -1487,10 +1304,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migration" class="md-nav__link">
+  <a href="#two-more-things-changed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migration
+        Two More Things Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-warning-cannot-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Warning Cannot Catch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-references-in-replace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Group References in replace()
       
     </span>
   </a>
@@ -1503,55 +1353,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-catch-operator" class="md-nav__link">
+  <a href="#breaking-change-shell-commands-quote-interpolated-values" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New: catch Operator
+        Breaking Change: Shell Commands Quote Interpolated Values
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#breaking-change-strict-concatenation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Breaking Change: Strict + Concatenation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Breaking Change: Strict + Concatenation">
+    <nav class="md-nav" aria-label="Breaking Change: Shell Commands Quote Interpolated Values">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed_3" class="md-nav__link">
+  <a href="#what-changed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#before-v08_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Before (v0.8)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#after-v09_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        After (v0.9)
       
     </span>
   </a>
@@ -1570,10 +1387,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migration_1" class="md-nav__link">
+  <a href="#migration-steps_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migration
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-diagnostic-cannot-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Diagnostic Cannot Catch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New Errors
       
     </span>
   </a>
@@ -1586,91 +1425,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#breaking-change-parse_epoch-unit-names-shortened" class="md-nav__link">
+  <a href="#breaking-change-positional-shell-captures-are-reordered" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Breaking Change: parse_epoch Unit Names Shortened
+        Breaking Change: Positional Shell Captures Are Reordered
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Breaking Change: parse_epoch Unit Names Shortened">
+    <nav class="md-nav" aria-label="Breaking Change: Positional Shell Captures Are Reordered">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#old-syntax-no-longer-works_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Old Syntax (No Longer Works)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#new-syntax_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#migration_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migration
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-messages" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Error Messages
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#behavior-change-invocation-logging-enabled-by-default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Behavior Change: Invocation Logging Enabled by Default
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Behavior Change: Invocation Logging Enabled by Default">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-changed_5" class="md-nav__link">
+  <a href="#what-changed_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         What Changed
@@ -1692,10 +1459,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#how-to-opt-out" class="md-nav__link">
+  <a href="#migration-steps_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How to Opt Out
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-warning-cannot-catch_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Warning Cannot Catch
       
     </span>
   </a>
@@ -1708,19 +1486,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#breaking-change-trim_prefix-trim_suffix-behavior-changed" class="md-nav__link">
+  <a href="#breaking-change-list-args-collect-every-positional-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Breaking Change: trim_prefix / trim_suffix Behavior Changed
+        Breaking Change: List Args Collect Every Positional Value
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Breaking Change: trim_prefix / trim_suffix Behavior Changed">
+    <nav class="md-nav" aria-label="Breaking Change: List Args Collect Every Positional Value">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed_6" class="md-nav__link">
+  <a href="#what-changed_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         What Changed
@@ -1731,10 +1509,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#before-v08-character-set-stripping" class="md-nav__link">
+  <a href="#why_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Before (v0.8) - Character-Set Stripping
+        Why
       
     </span>
   </a>
@@ -1742,10 +1520,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#after-v09-literal-prefixsuffix-removal" class="md-nav__link">
+  <a href="#what-to-check" class="md-nav__link">
     <span class="md-ellipsis">
       
-        After (v0.9) - Literal Prefix/Suffix Removal
+        What To Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breaking-change-flag-like-tokens-are-rejected-as-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: Flag-Like Tokens Are Rejected As Values
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: Flag-Like Tokens Are Rejected As Values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
       
     </span>
   </a>
@@ -1753,10 +1559,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migration_3" class="md-nav__link">
+  <a href="#why_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migration
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-check_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What To Check
       
     </span>
   </a>
@@ -1772,6 +1589,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../v0.9/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.9
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1921,15 +1766,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#breaking-change-request-and-display-keywords-removed" class="md-nav__link">
+  <a href="#breaking-change-split-and-replace-match-literally" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Breaking Change: request and display Keywords Removed
+        Breaking Change: split() and replace() Match Literally
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Breaking Change: request and display Keywords Removed">
+    <nav class="md-nav" aria-label="Breaking Change: split() and replace() Match Literally">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1937,161 +1782,6 @@
     <span class="md-ellipsis">
       
         What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#old-syntax-no-longer-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Old Syntax (No Longer Works)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#new-syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#important-request-blocks-never-printed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important: request Blocks Never Printed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#migration-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migration Steps
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#breaking-change-get_stash_dir-renamed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Breaking Change: get_stash_dir Renamed
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Breaking Change: get_stash_dir Renamed">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-changed_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#old-syntax-no-longer-works_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Old Syntax (No Longer Works)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#new-syntax_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#migration-steps_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migration Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#breaking-change-now-fires-on-null" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Breaking Change: ?? Now Fires on Null
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Breaking Change: ?? Now Fires on Null">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-changed_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#before-v08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Before (v0.8)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#after-v09" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        After (v0.9)
       
     </span>
   </a>
@@ -2110,10 +1800,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migration" class="md-nav__link">
+  <a href="#two-more-things-changed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migration
+        Two More Things Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-warning-cannot-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Warning Cannot Catch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#group-references-in-replace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Group References in replace()
       
     </span>
   </a>
@@ -2126,55 +1849,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#new-catch-operator" class="md-nav__link">
+  <a href="#breaking-change-shell-commands-quote-interpolated-values" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New: catch Operator
+        Breaking Change: Shell Commands Quote Interpolated Values
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#breaking-change-strict-concatenation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Breaking Change: Strict + Concatenation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Breaking Change: Strict + Concatenation">
+    <nav class="md-nav" aria-label="Breaking Change: Shell Commands Quote Interpolated Values">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed_3" class="md-nav__link">
+  <a href="#what-changed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#before-v08_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Before (v0.8)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#after-v09_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        After (v0.9)
       
     </span>
   </a>
@@ -2193,10 +1883,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migration_1" class="md-nav__link">
+  <a href="#migration-steps_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migration
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-diagnostic-cannot-catch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Diagnostic Cannot Catch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New Errors
       
     </span>
   </a>
@@ -2209,91 +1921,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#breaking-change-parse_epoch-unit-names-shortened" class="md-nav__link">
+  <a href="#breaking-change-positional-shell-captures-are-reordered" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Breaking Change: parse_epoch Unit Names Shortened
+        Breaking Change: Positional Shell Captures Are Reordered
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Breaking Change: parse_epoch Unit Names Shortened">
+    <nav class="md-nav" aria-label="Breaking Change: Positional Shell Captures Are Reordered">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#old-syntax-no-longer-works_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Old Syntax (No Longer Works)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#new-syntax_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        New Syntax
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#migration_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Migration
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-messages" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Error Messages
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#behavior-change-invocation-logging-enabled-by-default" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Behavior Change: Invocation Logging Enabled by Default
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Behavior Change: Invocation Logging Enabled by Default">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#what-changed_5" class="md-nav__link">
+  <a href="#what-changed_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         What Changed
@@ -2315,10 +1955,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#how-to-opt-out" class="md-nav__link">
+  <a href="#migration-steps_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How to Opt Out
+        Migration Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-warning-cannot-catch_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Warning Cannot Catch
       
     </span>
   </a>
@@ -2331,19 +1982,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#breaking-change-trim_prefix-trim_suffix-behavior-changed" class="md-nav__link">
+  <a href="#breaking-change-list-args-collect-every-positional-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Breaking Change: trim_prefix / trim_suffix Behavior Changed
+        Breaking Change: List Args Collect Every Positional Value
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Breaking Change: trim_prefix / trim_suffix Behavior Changed">
+    <nav class="md-nav" aria-label="Breaking Change: List Args Collect Every Positional Value">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#what-changed_6" class="md-nav__link">
+  <a href="#what-changed_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         What Changed
@@ -2354,10 +2005,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#before-v08-character-set-stripping" class="md-nav__link">
+  <a href="#why_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Before (v0.8) - Character-Set Stripping
+        Why
       
     </span>
   </a>
@@ -2365,10 +2016,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#after-v09-literal-prefixsuffix-removal" class="md-nav__link">
+  <a href="#what-to-check" class="md-nav__link">
     <span class="md-ellipsis">
       
-        After (v0.9) - Literal Prefix/Suffix Removal
+        What To Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#breaking-change-flag-like-tokens-are-rejected-as-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: Flag-Like Tokens Are Rejected As Values
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: Flag-Like Tokens Are Rejected As Values">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Changed
       
     </span>
   </a>
@@ -2376,10 +2055,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#migration_3" class="md-nav__link">
+  <a href="#why_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Migration
+        Why
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-check_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What To Check
       
     </span>
   </a>
@@ -2411,190 +2101,408 @@
   
 
 
-<h1 id="migrating-to-rad-v09">Migrating to Rad v0.9<a class="headerlink" href="#migrating-to-rad-v09" title="Permanent link">&para;</a></h1>
-<p>Version 0.9 unifies rad block keywords, introduces changes to error handling operators, renames a built-in function, shortens <code>parse_epoch</code> unit names, and enables invocation logging by default. This guide covers what changed and how to update your scripts.</p>
-<h2 id="breaking-change-request-and-display-keywords-removed">Breaking Change: <code>request</code> and <code>display</code> Keywords Removed<a class="headerlink" href="#breaking-change-request-and-display-keywords-removed" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
-<p>The three separate rad block keywords (<code>rad</code>, <code>request</code>, <code>display</code>) have been unified into a single <code>rad</code> keyword. The <code>rad</code> keyword now dispatches on the source type at runtime:</p>
+<h1 id="migrating-to-rad-v012">Migrating to Rad v0.12<a class="headerlink" href="#migrating-to-rad-v012" title="Permanent link">&para;</a></h1>
+<p>Version 0.12 has five breaking changes.</p>
+<p>Two concern text you pass through Rad, and share a shape: each took a default that
+quietly did the wrong thing, and now makes the safe reading the default instead.</p>
 <ul>
-<li><strong>URL string</strong> - fetches JSON from the URL (replaces <code>request</code>)</li>
-<li><strong>List or map</strong> - extracts data in-memory (replaces <code>display</code>)</li>
-<li><strong>No source</strong> - operates on existing variables (replaces sourceless <code>display</code>)</li>
+<li><code>split()</code> and <code>replace()</code> now match literally, with <code>regex=true</code> to opt back in.</li>
+<li>Values interpolated into a shell command are now quoted, so they arrive as one
+  argument instead of as shell syntax.</li>
 </ul>
-<h3 id="old-syntax-no-longer-works">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>request &quot;https://api.example.com/users&quot;:
-    fields Name, Age
-
-display data:
-    fields Name, Age
+<p>One concerns what a shell command hands back:</p>
+<ul>
+<li>Capturing into names of your own now fills <code>(stdout, stderr, code)</code> instead of
+  <code>(code, stdout, stderr)</code>.</li>
+</ul>
+<p>Two concern how the command line is parsed:</p>
+<ul>
+<li>A list arg now collects every bare positional value, instead of filling a single
+  slot.</li>
+<li>A <code>-</code>-prefixed token is no longer accepted as a flag's value.</li>
+</ul>
+<p>Most of these can change what a script does without raising an error, so they are
+worth reading rather than waiting to be told.</p>
+<p>Three of the five ship a diagnostic. To find every affected script you've run
+recently:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
-<h3 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>rad &quot;https://api.example.com/users&quot;:
-    noprint
-    fields Name, Age
-
-rad data:
-    fields Name, Age
+<p>The two argument-parsing changes are the exceptions. A rejected flag-like value
+fails loudly the moment it happens, so it needs no warning. A list arg
+swallowing a later positional can pass silently, and there is no diagnostic for
+it - its section below tells you how to spot it from your own <code>--help</code> output
+instead.</p>
+<h2 id="breaking-change-split-and-replace-match-literally">Breaking Change: <code>split()</code> and <code>replace()</code> Match Literally<a class="headerlink" href="#breaking-change-split-and-replace-match-literally" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
+<p>Both functions used to treat their pattern as a regex. Now they look for the exact
+text you give them:</p>
+<div class="highlight"><pre><span></span><code>print(split(&quot;1.2.3&quot;, &quot;.&quot;))          // v0.11: [&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;]   v0.12: [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
+print(replace(&quot;a.b&quot;, &quot;.&quot;, &quot;-&quot;))     // v0.11: &quot;---&quot;                  v0.12: &quot;a-b&quot;
 </code></pre></div>
-<h3 id="important-request-blocks-never-printed">Important: <code>request</code> Blocks Never Printed<a class="headerlink" href="#important-request-blocks-never-printed" title="Permanent link">&para;</a></h3>
-<p><code>request</code> blocks only fetched data and populated fields - they never printed a table. The unified <code>rad</code> block <strong>prints by default</strong>, so when migrating from <code>request</code> you'll typically want to add <code>noprint</code> to preserve the old behavior.</p>
-<p><code>display</code> blocks already printed, so replacing <code>display</code> with <code>rad</code> requires no other changes.</p>
-<h3 id="migration-steps">Migration Steps<a class="headerlink" href="#migration-steps" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Replace <code>request</code> with <code>rad</code></strong> and add <code>noprint</code> if you don't want table output</li>
-<li><strong>Replace <code>display</code> with <code>rad</code></strong> - no other changes needed</li>
-<li>Run <code>rad check</code> on your scripts to catch any remaining uses</li>
-</ol>
-<h2 id="breaking-change-get_stash_dir-renamed">Breaking Change: <code>get_stash_dir</code> Renamed<a class="headerlink" href="#breaking-change-get_stash_dir-renamed" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed_1">What Changed<a class="headerlink" href="#what-changed_1" title="Permanent link">&para;</a></h3>
-<p><code>get_stash_dir</code> was renamed to <code>get_stash_path</code> to better reflect its behavior - it returns a <em>path</em> (often to a file), not necessarily a directory.</p>
-<h3 id="old-syntax-no-longer-works_1">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>path = get_stash_dir()
-path = get_stash_dir(&quot;data/config.json&quot;)
+<p>Pass <code>regex=true</code> to get the old behavior:</p>
+<div class="highlight"><pre><span></span><code>print(split(&quot;a b  c&quot;, &quot;\s+&quot;, regex=true))          // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+print(replace(&quot;order 66&quot;, &quot;\d+&quot;, &quot;N&quot;, regex=true)) // -&gt; &quot;order N&quot;
 </code></pre></div>
-<h3 id="new-syntax_1">New Syntax<a class="headerlink" href="#new-syntax_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>path = get_stash_path()
-path = get_stash_path(&quot;data/config.json&quot;)
-</code></pre></div>
-<h2 id="migration-steps_1">Migration Steps<a class="headerlink" href="#migration-steps_1" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong>Find all uses of <code>get_stash_dir</code></strong> in your scripts</li>
-<li><strong>Replace with <code>get_stash_path</code></strong> - the signature and behavior are identical</li>
-</ol>
-<h2 id="breaking-change-now-fires-on-null">Breaking Change: <code>??</code> Now Fires on Null<a class="headerlink" href="#breaking-change-now-fires-on-null" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed_2">What Changed<a class="headerlink" href="#what-changed_2" title="Permanent link">&para;</a></h3>
-<p><code>??</code> is now a true null-coalescing operator. It fires when the left side is <strong>null or an error</strong>, where previously it only fired on errors.</p>
-<h3 id="before-v08">Before (v0.8)<a class="headerlink" href="#before-v08" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
-print(m[&quot;key&quot;] ?? &quot;fallback&quot;)   // printed: null
-print(null ?? &quot;default&quot;)         // printed: null
-</code></pre></div>
-<h3 id="after-v09">After (v0.9)<a class="headerlink" href="#after-v09" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
-print(m[&quot;key&quot;] ?? &quot;fallback&quot;)   // prints: fallback
-print(null ?? &quot;default&quot;)         // prints: default
-</code></pre></div>
+<p><code>matches()</code> is unchanged. It exists to test patterns, so it's still always a regex.</p>
 <h3 id="why">Why<a class="headerlink" href="#why" title="Permanent link">&para;</a></h3>
-<p>This aligns <code>??</code> with developer expectations from JS/Kotlin/Swift where <code>??</code> is a null-coalescing operator. The old error-only behavior is now available via the new <code>catch</code> operator (see below).</p>
-<h3 id="migration">Migration<a class="headerlink" href="#migration" title="Permanent link">&para;</a></h3>
-<p>If you relied on null passing through <code>??</code>, use <code>catch</code> instead:</p>
-<div class="highlight"><pre><span></span><code>// If you want error-only catching (old behavior), use catch:
-result = maybe_error_value catch &quot;default&quot;
+<p>Two reasons, and the second is the one that matters.</p>
+<p>The first is that literal is what most calls want. Across a corpus of real Rad
+scripts, 87% of <code>split</code> and <code>replace</code> calls passed a pattern with no regex
+constructs in it. The default was serving the minority.</p>
+<p>The second is how the two mistakes fail. Reaching for a literal when you needed a
+regex gives you an obviously wrong answer that you notice immediately. Reaching for
+a regex when you needed a literal corrupts quietly: a <code>.</code> matches every character,
+a <code>$</code> in text you relayed from somewhere else eats your replacement. Silent
+corruption is the worse failure, and it belonged to the old default.</p>
+<h3 id="two-more-things-changed">Two More Things Changed<a class="headerlink" href="#two-more-things-changed" title="Permanent link">&para;</a></h3>
+<p><strong><code>replace()</code>'s replacement text is now literal too.</strong> In the default mode, <code>$1</code>
+and <code>$$</code> in the replacement are inserted as written. Previously they were always
+interpreted, which meant relaying text through <code>replace()</code> could mangle it. Group
+references still work under <code>regex=true</code>.</p>
+<p><strong><code>split()</code> no longer guesses.</strong> It used to compile the separator as a regex and,
+if that failed, silently fall back to a literal split. Whether a call was a regex
+split or a literal one was decided at runtime by the shape of the input:</p>
+<div class="highlight"><pre><span></span><code>// v0.11
+split(&quot;a.b&quot;, &quot;.&quot;)    // -&gt; [&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;]  (a valid regex, so: regex)
+split(&quot;a(b&quot;, &quot;(&quot;)    // -&gt; [&quot;a&quot;, &quot;b&quot;]        (not a valid regex, so: literal)
 </code></pre></div>
-<h2 id="new-catch-operator">New: <code>catch</code> Operator<a class="headerlink" href="#new-catch-operator" title="Permanent link">&para;</a></h2>
-<p>The <code>catch</code> operator provides the old <code>??</code> error-only behavior as an inline expression. It catches errors but lets null values pass through.</p>
-<div class="highlight"><pre><span></span><code>count = parse_int(input_str) catch 0
-data = parse_json(raw) catch {}
+<p>Now the separator is literal unless you say otherwise, and under <code>regex=true</code> a
+pattern that doesn't compile is an error.</p>
+<h3 id="migration-steps">Migration Steps<a class="headerlink" href="#migration-steps" title="Permanent link">&para;</a></h3>
+<p><strong>1. Find the affected calls.</strong> Rad ships a warning (RAD40016) that flags patterns
+which read like regexes but have no <code>regex=true</code>. Sweep every script you've run
+recently:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
-<p>This is distinct from the <code>catch:</code> block syntax. The operator form is an inline expression; <code>catch:</code> is a block attached to statements.</p>
-<h2 id="breaking-change-strict-concatenation">Breaking Change: Strict <code>+</code> Concatenation<a class="headerlink" href="#breaking-change-strict-concatenation" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed_3">What Changed<a class="headerlink" href="#what-changed_3" title="Permanent link">&para;</a></h3>
-<p>The <code>+</code> operator no longer implicitly converts <code>int</code>, <code>float</code>, or <code>bool</code> to strings. Both operands must be the same type (with the exception that errors behave like strings for concatenation).</p>
-<h3 id="before-v08_1">Before (v0.8)<a class="headerlink" href="#before-v08_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>print(&quot;count: &quot; + 5)       // printed: count: 5
-print(&quot;pi: &quot; + 3.14)       // printed: pi: 3.14
-print(&quot;flag: &quot; + true)     // printed: flag: true
+<p>The warning looks like this:</p>
+<div class="highlight"><pre><span></span><code>L4:17: WARN
 
-err = error(&quot;oops&quot;)
-print(err + 123)            // printed: oops123
+     4 | fields = split(line, &quot;\s+&quot;)
+       |                 ^ &#39;\s+&#39; reads as a regex (&#39;\s&#39;), but split() matches
+       |                   literally unless you pass regex=true. [...]
+       |                 (code: RAD40016)
+       = help: add regex=true to keep the old behavior [...]
 </code></pre></div>
-<h3 id="after-v09_1">After (v0.9)<a class="headerlink" href="#after-v09_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>print(&quot;count: &quot; + 5)       // error: RAD30002
-print(&quot;pi: &quot; + 3.14)       // error: RAD30002
-print(&quot;flag: &quot; + true)     // error: RAD30002
+<p><strong>2. Add <code>regex=true</code> where you meant a regex.</strong></p>
+<p><strong>3. Drop the escaping where you didn't.</strong> Patterns that only existed to escape
+metacharacters get simpler:</p>
+<div class="highlight"><pre><span></span><code>// Before
+print(split(&quot;1.2.3&quot;, &quot;\.&quot;))
+// After
+print(split(&quot;1.2.3&quot;, &quot;.&quot;))
+</code></pre></div>
+<p><strong>4. Check your <code>replace()</code> replacements.</strong> If a replacement string contains a <code>$</code>
+that you wanted taken literally, it now works without a workaround. If it contains
+a <code>$1</code> that you wanted expanded, the call needs <code>regex=true</code>.</p>
+<h3 id="what-the-warning-cannot-catch">What the Warning Cannot Catch<a class="headerlink" href="#what-the-warning-cannot-catch" title="Permanent link">&para;</a></h3>
+<p>RAD40016 only reads patterns that are written literally in your source. A pattern
+held in a variable or built at runtime is invisible to it:</p>
+<div class="highlight"><pre><span></span><code>sep = get_env(&quot;FIELD_SEP&quot;)
+parts = split(&quot;a b c&quot;, sep)   // no warning possible
+</code></pre></div>
+<p>It also stays quiet on patterns whose metacharacters are common in ordinary text,
+<code>.</code> and a lone <code>|</code> in particular, because warning on those would bury the real
+hits. If you have a script that assembles patterns dynamically, read it by hand.</p>
+<h3 id="group-references-in-replace">Group References in <code>replace()</code><a class="headerlink" href="#group-references-in-replace" title="Permanent link">&para;</a></h3>
+<p>While making the replacement literal, the <code>$</code>-expansion under <code>regex=true</code> was
+tightened up. Three long-standing bugs are fixed:</p>
+<ul>
+<li><code>$10</code> used to be corrupted by the pass that substituted <code>$1</code>. Group 10 now works.</li>
+<li>A captured group whose own text contained something like <code>$2</code> used to get
+  substituted a second time. Each output character is now written once.</li>
+<li><code>$$</code> and <code>${1}</code> were not supported. They now are, meaning you can write a literal
+  <code>$</code> and separate a group reference from a following digit.</li>
+<li>Groups came back empty when the pattern used an assertion that only held in
+  context. <code>replace("abc abc", "\Bb(c)", "[$1]", regex=true)</code> produced <code>a[$1] a[$1]</code>
+  and now produces <code>a[c] a[c]</code>.</li>
+</ul>
+<p>The full rules are in the <a href="../../reference/functions/#replace"><code>replace</code> reference</a>.</p>
+<h2 id="breaking-change-shell-commands-quote-interpolated-values">Breaking Change: Shell Commands Quote Interpolated Values<a class="headerlink" href="#breaking-change-shell-commands-quote-interpolated-values" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_1">What Changed<a class="headerlink" href="#what-changed_1" title="Permanent link">&para;</a></h3>
+<p>A value interpolated into a shell command now reaches the program as exactly one
+argument, whatever characters it contains:</p>
+<div class="highlight"><pre><span></span><code>message = &quot;it&#39;s fine&quot;
 
-err = error(&quot;oops&quot;)
-print(err + 123)            // error: RAD30002
+$`git commit -m {message}`
+// v0.11: git commit -m it&#39;s fine   -&gt;  shell syntax error
+// v0.12: git commit -m &#39;it&#39;\&#39;&#39;s fine&#39;
 </code></pre></div>
+<p>The text you write is still shell. Pipes, redirects, <code>&amp;&amp;</code>, globs and <code>$VAR</code> in the
+literal parts of the command all work exactly as before. Only the interpolations
+changed.</p>
+<p>Values made only of <code>A-Z a-z 0-9 @ % + = : , . / _ -</code> pass through unquoted, so
+most commands produce byte-identical output to v0.11.</p>
 <h3 id="why_1">Why<a class="headerlink" href="#why_1" title="Permanent link">&para;</a></h3>
-<p>Implicit coercion was asymmetric (<code>"hi" + 5</code> worked, but <code>5 + "hi"</code> errored) and used a different conversion path from string interpolation. Making <code>+</code> strict catches type bugs at the point of error rather than silently producing unexpected strings.</p>
-<h3 id="migration_1">Migration<a class="headerlink" href="#migration_1" title="Permanent link">&para;</a></h3>
-<p>Use interpolation (preferred) or <code>str()</code> for explicit conversion:</p>
-<div class="highlight"><pre><span></span><code>count = 5
-pi = 3.14
+<p>Hand-written quotes could never be correct for every value, and both spellings fail
+on ordinary data:</p>
+<table>
+<thead>
+<tr>
+<th>You wrote</th>
+<th>Value</th>
+<th>v0.11 result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-m "{msg}"</code></td>
+<td><code>it's</code></td>
+<td>works</td>
+</tr>
+<tr>
+<td><code>-m "{msg}"</code></td>
+<td><code>100% of $USERS</code></td>
+<td><strong>silently</strong> becomes <code>100% of</code></td>
+</tr>
+<tr>
+<td><code>-m '{msg}'</code></td>
+<td><code>a b</code></td>
+<td>works</td>
+</tr>
+<tr>
+<td><code>-m '{msg}'</code></td>
+<td><code>it's o'clock</code></td>
+<td><strong>silently</strong> becomes <code>its oclock</code></td>
+</tr>
+<tr>
+<td><code>-m {msg}</code></td>
+<td><code>a b</code></td>
+<td><strong>silently</strong> becomes two arguments</td>
+</tr>
+</tbody>
+</table>
+<p>There is no quoting a script can write in advance that survives every value,
+because the correct quoting depends on the value. Rad knows the value at the moment
+it interpolates, so it does the quoting there.</p>
+<p>This also closes an injection route. A value from an HTTP response, a filename, or
+an LLM could previously carry <code>; rm -rf ~</code> into a command and have it run.</p>
+<h3 id="migration-steps_1">Migration Steps<a class="headerlink" href="#migration-steps_1" title="Permanent link">&para;</a></h3>
+<p><strong>1. Find the affected commands.</strong> RAD40023 flags interpolations wrapped in quotes
+the script wrote itself:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
+</code></pre></div>
+<p><strong>2. Delete your quotes.</strong></p>
+<div class="highlight"><pre><span></span><code>message = &quot;hello&quot;
 
-// Interpolation - handles any type, recommended
-print(&quot;count: {count}&quot;)
-print(&quot;pi: {pi}&quot;)
+// Before
+$`git commit -m &quot;{message}&quot;`
+// After
+$`git commit -m {message}`
+</code></pre></div>
+<p><strong>3. Hoist arguments that mix literal text with a value.</strong> The quotes were holding
+the two halves together as one argument; a single interpolation does that alone:</p>
+<div class="highlight"><pre><span></span><code>version = &quot;1.2.3&quot;
 
-// Explicit conversion with str()
-print(&quot;count: &quot; + str(count))
-print(&quot;pi: &quot; + str(pi))
+// Before
+$`git commit -m &quot;Bump to {version}&quot;`
+// After
+message = &quot;Bump to {version}&quot;
+$`git commit -m {message}`
 </code></pre></div>
-<p>Note: errors still behave like strings for concatenation (<code>"s" + error("e")</code>, <code>error("e") + "s"</code>, and <code>error("a") + error("b")</code> all work).</p>
-<h2 id="breaking-change-parse_epoch-unit-names-shortened">Breaking Change: <code>parse_epoch</code> Unit Names Shortened<a class="headerlink" href="#breaking-change-parse_epoch-unit-names-shortened" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed_4">What Changed<a class="headerlink" href="#what-changed_4" title="Permanent link">&para;</a></h3>
-<p>The <code>unit</code> parameter for <code>parse_epoch</code> now uses short names to match the rest of the API (<code>now()</code> epoch keys, <code>convert_duration</code>/<code>parse_duration</code> enums).</p>
-<h3 id="old-syntax-no-longer-works_2">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works_2" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>time = parse_epoch(1712345678000, unit=&quot;milliseconds&quot;)
-time = parse_epoch(1712345678000000, unit=&quot;microseconds&quot;)
-time = parse_epoch(1712345678000000000, unit=&quot;nanoseconds&quot;)
-</code></pre></div>
-<h3 id="new-syntax_2">New Syntax<a class="headerlink" href="#new-syntax_2" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>time = parse_epoch(1712345678000, unit=&quot;millis&quot;)
-time = parse_epoch(1712345678000000, unit=&quot;micros&quot;)
-time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
-</code></pre></div>
-<h3 id="migration_2">Migration<a class="headerlink" href="#migration_2" title="Permanent link">&para;</a></h3>
-<p>Replace <code>"milliseconds"</code> with <code>"millis"</code>, <code>"microseconds"</code> with <code>"micros"</code>, and <code>"nanoseconds"</code> with <code>"nanos"</code> in any <code>parse_epoch</code> calls.</p>
-<h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
-<p>If you run a script that still uses <code>request</code> or <code>display</code>, you'll see:</p>
-<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed. Use &#39;rad&#39; instead.
-  --&gt; script.rad:1:1
-   |
- 1 | request &quot;https://api.example.com/users&quot;:
-   | ^^
-   |
-   = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad docs RAD40008
-</code></pre></div>
-<p>If you run a script that still uses <code>get_stash_dir</code>, you'll see a helpful error:</p>
-<div class="highlight"><pre><span></span><code>error: Cannot invoke unknown function: get_stash_dir
+<p><strong>4. Turn joined lists into real lists.</strong> A list now expands to one argument per
+element, each quoted separately, so the <code>join(" ")</code> workaround is obsolete - and it
+was losing any element containing a space:</p>
+<div class="highlight"><pre><span></span><code>files = [&quot;My Notes.txt&quot;, &quot;b.txt&quot;]
 
-  hint: get_stash_dir was renamed to get_stash_path.
-  See: https://amterp.dev/rad/migrations/v0.9/
+// Before - one argument, or several wrong ones
+$`tar -czf out.tgz {files.join(&quot; &quot;)}`
+// After - one argument per file
+$`tar -czf out.tgz {files}`
 </code></pre></div>
-<p>If you use the old long-form unit names with <code>parse_epoch</code>, you'll see:</p>
-<div class="highlight"><pre><span></span><code>error: parse_epoch unit &quot;milliseconds&quot; is no longer valid
+<p>An empty list contributes no arguments at all, which replaces the conditional
+flag-fragment trick:</p>
+<div class="highlight"><pre><span></span><code>args:
+    all bool
 
-  help: Unit names were shortened in v0.9. Use &quot;millis&quot; instead.
-  See: https://amterp.dev/rad/migrations/v0.9/
+// Before
+extra = all ? &quot;--hidden --no-ignore&quot; : &quot;&quot;
+// After
+extra = all ? [&quot;--hidden&quot;, &quot;--no-ignore&quot;] : []
 </code></pre></div>
-<h2 id="behavior-change-invocation-logging-enabled-by-default">Behavior Change: Invocation Logging Enabled by Default<a class="headerlink" href="#behavior-change-invocation-logging-enabled-by-default" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed_5">What Changed<a class="headerlink" href="#what-changed_5" title="Permanent link">&para;</a></h3>
-<p>Invocation logging is now <strong>enabled by default</strong>. Each time you run a Rad script, Rad logs basic metadata (script path, timestamp, version, duration) to <code>~/.rad/logs/invocations.jsonl</code>. Previously, this was opt-in.</p>
-<p>Arguments are <strong>not</strong> logged by default - only the metadata listed above.</p>
+<p><strong>5. Convert commands you assemble piecewise into lists.</strong> Building a command as a
+string and running it with <code>$cmd</code> still works and is still verbatim - Rad has no
+interpolation to protect once the string exists. A list is safe and reads better:</p>
+<div class="highlight"><pre><span></span><code>args:
+    start str?
+
+path = &quot;clip.mp4&quot;
+
+// Before
+cmd = `ffmpeg -i &#39;{path}&#39;`
+if start:
+    cmd += &quot; -ss {start}&quot;
+$cmd
+
+// After
+cmd = [&quot;ffmpeg&quot;, &quot;-i&quot;, path]
+if start:
+    cmd += [&quot;-ss&quot;, start]
+$cmd
+</code></pre></div>
+<h3 id="what-the-diagnostic-cannot-catch">What the Diagnostic Cannot Catch<a class="headerlink" href="#what-the-diagnostic-cannot-catch" title="Permanent link">&para;</a></h3>
+<p>RAD40023 reads command <em>literals</em>. It cannot see a command assembled into a string
+elsewhere and run with <code>$cmd</code>, because by then the interpolation has already
+happened and there is nothing left to flag:</p>
+<div class="highlight"><pre><span></span><code>path = &quot;a b.txt&quot;
+
+cmd = `ls &#39;{path}&#39;`   // no warning possible
+$cmd
+</code></pre></div>
+<p>That form is unchanged in v0.12 - it was raw before and is raw now - but it is also
+where the old quoting bugs live. If you have scripts that build command strings,
+read them by hand and convert them to lists.</p>
+<h3 id="new-errors">New Errors<a class="headerlink" href="#new-errors" title="Permanent link">&para;</a></h3>
+<p>Two shapes that used to produce a mangled command now fail outright, both under
+RAD20045:</p>
+<ul>
+<li>Interpolating a value with no single-argument form - a map, or a null that would
+  have become the four-character word <code>null</code>. Use <code>??</code> to supply a fallback.</li>
+<li>Interpolating a list that isn't standing alone as its own argument, such as
+  <code>--file={files}</code>, where there is no obvious answer to which element takes the
+  prefix.</li>
+</ul>
+<h2 id="breaking-change-positional-shell-captures-are-reordered">Breaking Change: Positional Shell Captures Are Reordered<a class="headerlink" href="#breaking-change-positional-shell-captures-are-reordered" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_2">What Changed<a class="headerlink" href="#what-changed_2" title="Permanent link">&para;</a></h3>
+<p>Shell commands produce stdout, stderr, and an exit code. When you capture them
+into variables that <em>aren't</em> named <code>code</code>, <code>stdout</code>, or <code>stderr</code>, Rad fills them
+by position - and that order has changed:</p>
+<div class="highlight"><pre><span></span><code>// v0.11: (code, stdout, stderr)     v0.12: (stdout, stderr, code)
+out = $`rad -v`             // v0.11: 0            v0.12: &quot;rad v0.12.0\n&quot;
+out, err = $`rad -v`        // v0.11: 0, output    v0.12: output, errors
+out, err, c = $`rad -v`     // v0.11: 0, out, err  v0.12: out, err, 0
+</code></pre></div>
+<p><strong>Named assignment is unchanged.</strong> If every variable in the statement is spelled
+exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, Rad assigns by name and always did:</p>
+<div class="highlight"><pre><span></span><code>code = $`cmd`                   // unchanged
+stdout = $`cmd`                 // unchanged
+code, stdout = $`cmd`           // unchanged
+stderr, stdout, code = $`cmd`   // unchanged
+</code></pre></div>
 <h3 id="why_2">Why<a class="headerlink" href="#why_2" title="Permanent link">&para;</a></h3>
-<p>Invocation logs are most useful when they're already there - for example, <code>rad check --from-logs</code> can bulk-check your recently-used scripts after an upgrade. Enabling logging by default means these tools work out of the box.</p>
-<h3 id="how-to-opt-out">How to Opt Out<a class="headerlink" href="#how-to-opt-out" title="Permanent link">&para;</a></h3>
-<p>If you prefer to disable logging, set <code>enabled = false</code> in <code>~/.rad/config.toml</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">[invocation_logging]</span>
-<span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<p>Two reasons.</p>
+<p>The first is that <code>out = $cmd</code> binding the exit code was the wrong answer to the
+most natural-looking question. Every other language with a capture idiom - bash's
+<code>$(...)</code>, Python's <code>check_output</code>, Ruby and Perl's backticks - gives you the
+output. Rad gave you a number.</p>
+<p>The second is that the number wasn't even useful. Rad assigns the capture
+variables <em>before</em> it checks the exit code, and an unhandled non-zero exit stops
+the script. So in <code>out = $cmd</code> with no <code>catch:</code>, <code>out</code> is <code>0</code> on every line that
+can read it - it cannot be anything else. The most natural capture form was
+reserved for the one value that carried no information.</p>
+<p>Moving the code last also makes the two assignment rules agree. <code>stdout = $cmd</code>
+used to mean stdout by name but the exit code by position; now both readings give
+you stdout.</p>
+<h3 id="migration-steps_2">Migration Steps<a class="headerlink" href="#migration-steps_2" title="Permanent link">&para;</a></h3>
+<p><strong>1. Find the affected captures.</strong> RAD40018 flags capture targets whose names
+promise a different stream than they now receive:</p>
+<div class="highlight"><pre><span></span><code>L46:4: WARN
+
+    46 | _, version = $`rad -v`
+       |    ^ &#39;version&#39; is bound to stderr here. [...] Before v0.12 the order
+       |      was (code, stdout, stderr), so this used to bind stdout instead -
+       |      same script, different variable, no error.
+       |    (code: RAD40018)
 </code></pre></div>
-<p>For more details on all available settings, see the <a href="../../guide/config/">Configuration guide</a>.</p>
-<h2 id="breaking-change-trim_prefix-trim_suffix-behavior-changed">Breaking Change: <code>trim_prefix</code> / <code>trim_suffix</code> Behavior Changed<a class="headerlink" href="#breaking-change-trim_prefix-trim_suffix-behavior-changed" title="Permanent link">&para;</a></h2>
-<h3 id="what-changed_6">What Changed<a class="headerlink" href="#what-changed_6" title="Permanent link">&para;</a></h3>
-<p><code>trim_prefix</code> and <code>trim_suffix</code> now remove a <strong>literal prefix/suffix string</strong>, rather than stripping a character set. The old character-set stripping behavior is available via <code>trim_left</code> and <code>trim_right</code>.</p>
-<h3 id="before-v08-character-set-stripping">Before (v0.8) - Character-Set Stripping<a class="headerlink" href="#before-v08-character-set-stripping" title="Permanent link">&para;</a></h3>
-<p>In v0.8, <code>trim_prefix</code> removed all leading characters that appeared in the given string, similar to Go's <code>strings.TrimLeft</code>. It treated the argument as a <em>set of characters</em>, not a literal string:</p>
-<div class="highlight"><pre><span></span><code>trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)    // -&gt; &quot;bbb&quot;  (stripped all leading &#39;a&#39; chars)
-trim_suffix(&quot;bbbccc&quot;, &quot;c&quot;)    // -&gt; &quot;bbb&quot;  (stripped all trailing &#39;c&#39; chars)
-trim_prefix(&quot;abcfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;  (stripped all leading &#39;a&#39;, &#39;b&#39;, or &#39;c&#39; chars)
-trim_prefix(&quot;cabfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;  (same result - order didn&#39;t matter, it was a char set)
+<p><strong>2. For mixed naming, rename rather than reorder.</strong> The most common affected
+shape uses a reserved name alongside an ordinary one, which drops the whole
+statement to positional:</p>
+<div class="highlight"><pre><span></span><code>// Before - &#39;out&#39; isn&#39;t reserved, so &#39;code&#39; silently receives stdout
+code, out = $`make test` catch:
+    print_err(&quot;failed: {out}&quot;)
+
+// After - now all names are reserved, so assignment goes by name
+code, stdout = $`make test` catch:
+    print_err(&quot;failed: {stdout}&quot;)
 </code></pre></div>
-<h3 id="after-v09-literal-prefixsuffix-removal">After (v0.9) - Literal Prefix/Suffix Removal<a class="headerlink" href="#after-v09-literal-prefixsuffix-removal" title="Permanent link">&para;</a></h3>
-<p>Now, <code>trim_prefix</code> removes the argument as a <em>literal prefix</em>. If the string doesn't start with that exact prefix, it's returned unchanged:</p>
-<div class="highlight"><pre><span></span><code>trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)    // -&gt; &quot;aabbb&quot;  (removed one literal &quot;a&quot; prefix)
-trim_suffix(&quot;bbbccc&quot;, &quot;c&quot;)    // -&gt; &quot;bbbcc&quot;  (removed one literal &quot;c&quot; suffix)
-trim_prefix(&quot;abcfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;    (removed literal &quot;abc&quot; prefix)
-trim_prefix(&quot;cabfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;cabfoo&quot; (no match - &quot;cabfoo&quot; doesn&#39;t start with &quot;abc&quot;)
+<p>This is a rename, and it captures exactly the same streams as before. It's the
+best fix for <code>code, out = ...</code> and <code>code, out, err = ...</code>.</p>
+<p><strong>3. For discard-then-capture, drop a slot.</strong> <code>_, x = $cmd</code> was the old idiom for
+"skip the exit code, take stdout". Stdout is now first, so the <code>_</code> goes:</p>
+<div class="highlight"><pre><span></span><code>// Before
+_, version = $`rad -v`
+// After
+version = $`rad -v`
 </code></pre></div>
-<p>The old character-set behavior is now available as <code>trim_left</code> and <code>trim_right</code>:</p>
-<div class="highlight"><pre><span></span><code>trim_left(&quot;aaabbb&quot;, &quot;a&quot;)      // -&gt; &quot;bbb&quot;  (old trim_prefix behavior)
-trim_right(&quot;bbbccc&quot;, &quot;c&quot;)     // -&gt; &quot;bbb&quot;  (old trim_suffix behavior)
+<p>Careful with the three-target form - the old middle slot is now the first:</p>
+<div class="highlight"><pre><span></span><code>// Before
+_, output, _ = $`pwd`
+// After
+output = $`pwd`
 </code></pre></div>
-<h3 id="migration_3">Migration<a class="headerlink" href="#migration_3" title="Permanent link">&para;</a></h3>
-<p>If you were using <code>trim_prefix</code> or <code>trim_suffix</code> to strip characters from a set, switch to <code>trim_left</code> / <code>trim_right</code> respectively.</p>
+<p><strong>4. Check your silencing.</strong> Discards follow the same order, so silencing needs
+one fewer slot than it used to:</p>
+<div class="highlight"><pre><span></span><code>// Before: three slots to swallow both streams, two to swallow stdout
+_, _, _ = $`cmd`
+_, _ = $`cmd`
+
+// After: one fewer each
+_, _ = $`cmd`
+_ = $`cmd`
+</code></pre></div>
+<h3 id="what-the-warning-cannot-catch_1">What the Warning Cannot Catch<a class="headerlink" href="#what-the-warning-cannot-catch_1" title="Permanent link">&para;</a></h3>
+<p>RAD40018 reads variable names, so a positional capture whose names give no
+signal either way is invisible to it:</p>
+<div class="highlight"><pre><span></span><code>a, b = $`cmd`   // no warning possible
+</code></pre></div>
+<p>It also stays deliberately quiet on names that are genuinely ambiguous. <code>status</code>
+is the instructive one: it reads as "exit status", but <code>status = $</code>git status``
+is a perfectly good v0.12 capture of stdout, so flagging it would fire on correct
+new code. If a script captures into names like these, read it by hand.</p>
+<h2 id="breaking-change-list-args-collect-every-positional-value">Breaking Change: List Args Collect Every Positional Value<a class="headerlink" href="#breaking-change-list-args-collect-every-positional-value" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_3">What Changed<a class="headerlink" href="#what-changed_3" title="Permanent link">&para;</a></h3>
+<p>A list arg used to fill exactly one positional slot. Now it collects every bare
+value until the next flag:</p>
+<div class="highlight"><pre><span></span><code>args:
+    targets str[]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>a.txt<span class="w"> </span>b.txt<span class="w"> </span>c.txt
+<span class="c1"># v0.11: error, &quot;Too many positional arguments. Unused: [b.txt, c.txt]&quot;</span>
+<span class="c1"># v0.12: targets = [&quot;a.txt&quot;, &quot;b.txt&quot;, &quot;c.txt&quot;]</span>
+</code></pre></div>
+<p>Through its own flag nothing changed - <code>--targets a --targets b</code> is still how you
+repeat it, and <code>--targets a b</code> still passes only <code>a</code>.</p>
+<h3 id="why_3">Why<a class="headerlink" href="#why_3" title="Permanent link">&para;</a></h3>
+<p><code>./script a.txt b.txt c.txt</code> is what everyone types first, and it was the one
+thing that didn't work. The fix was to declare the arg variadic (<code>*targets str</code>)
+instead, which differs by a single character and was invisible from the error.
+Now both spellings collect positionals, and they differ where it's meaningful:
+after its own flag, a variadic is greedy and a list takes one value.</p>
+<h3 id="what-to-check">What To Check<a class="headerlink" href="#what-to-check" title="Permanent link">&para;</a></h3>
+<p><strong>An arg declared after a list arg can no longer be given positionally.</strong> This is
+the case that can move a value silently:</p>
+<div class="highlight"><pre><span></span><code>args:
+    files str[]
+    mode str = &quot;fast&quot;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>a<span class="w"> </span>b
+<span class="c1"># v0.11: files = [&quot;a&quot;], mode = &quot;b&quot;</span>
+<span class="c1"># v0.12: files = [&quot;a&quot;, &quot;b&quot;], mode = &quot;fast&quot;</span>
+</code></pre></div>
+<p>Where the later arg is required you'll get a missing-argument error, which is
+loud. Where it has a default, as above, the value just moves. Run <code>--help</code>: if
+the usage line ends at your list arg, everything declared after it is flag-only
+now. Either reorder the declarations so the list comes last, or tell users to
+pass the later arg by flag.</p>
+<p>Scripts using <code>*variadic</code> args are unaffected.</p>
+<h2 id="breaking-change-flag-like-tokens-are-rejected-as-values">Breaking Change: Flag-Like Tokens Are Rejected As Values<a class="headerlink" href="#breaking-change-flag-like-tokens-are-rejected-as-values" title="Permanent link">&para;</a></h2>
+<h3 id="what-changed_4">What Changed<a class="headerlink" href="#what-changed_4" title="Permanent link">&para;</a></h3>
+<p>A flag used to take whatever token followed it. Now a <code>-</code>-prefixed token is read
+as a flag:</p>
+<div class="highlight"><pre><span></span><code>./script<span class="w"> </span>--name<span class="w"> </span>--verbose
+<span class="c1"># v0.11: name = &quot;--verbose&quot;, and --verbose was never set</span>
+<span class="c1"># v0.12: error</span>
+</code></pre></div>
+<p>To pass a value that starts with <code>-</code>, use the <code>=</code> form (<code>--name=--verbose</code>) or
+put it after <code>--</code>.</p>
+<h3 id="why_4">Why<a class="headerlink" href="#why_4" title="Permanent link">&para;</a></h3>
+<p>A mistyped flag became data, silently, and scripts were left hand-rolling their
+own leading-dash checks to catch what the parser should have caught.</p>
+<h3 id="what-to-check_1">What To Check<a class="headerlink" href="#what-to-check_1" title="Permanent link">&para;</a></h3>
+<p>Negative numbers still work for number args, so <code>--count -5</code> is unaffected. The
+carve-out is typed, though: for a <code>str</code> arg, <code>--name -5</code> is now an error and
+<code>--name=-5</code> is how you write it. A bare <code>-</code> is still a value, so <code>--output -</code>
+keeps working.</p>
+<p>If your script hand-rolls a <code>starts_with(value, "-")</code> rejection, you can drop it.</p>
 
 
 
@@ -2627,7 +2535,7 @@ trim_right(&quot;bbbccc&quot;, &quot;c&quot;)     // -&gt; &quot;bbb&quot;  (old
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../v0.12/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Migration Guide - v0.12">
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: How to Migrate">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2637,20 +2545,20 @@ trim_right(&quot;bbbccc&quot;, &quot;c&quot;)     // -&gt; &quot;bbb&quot;  (old
                 Previous
               </span>
               <div class="md-ellipsis">
-                Migration Guide - v0.12
+                How to Migrate
               </div>
             </div>
           </a>
         
         
           
-          <a href="../v0.8/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.8">
+          <a href="../v0.9/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.9">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Migration Guide - v0.8
+                Migration Guide - v0.9
               </div>
             </div>
             <div class="md-footer__button md-icon">

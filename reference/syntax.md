@@ -232,6 +232,56 @@ with_decimals = "{big_num:,.2}"          // "1,234,567.00"
 padded_thousands = "{big_num:>15,}"      // "      1,234,567"
 ```
 
+### Braces in Strings
+
+A `{` opens an interpolation. Rad never silently re-reads a broken
+interpolation as ordinary text, so a brace you meant literally either
+falls under one of the narrow exemptions below or has to be escaped.
+
+1. `{expr}`, optionally with a format specifier, interpolates.
+2. A `{` is literal where an interpolation is impossible: the string ends
+   immediately after it, or the `{...}` pair holds only ASCII spaces or tabs.
+   Other Unicode whitespace does not count - `{` followed by U+00A0 is an
+   error, not a literal brace.
+3. A `}` with no interpolation open is literal.
+4. `\{` and `\}` are literal braces. A raw string (`r"..."`) disables
+   interpolation and escapes for the whole string.
+5. Anything else that opens like an interpolation and isn't one is an
+   error.
+
+```rad
+print("{")             // {        -- string ends after the brace
+print("{}")            // {}       -- pair holds nothing
+print("{ }")           // { }      -- pair holds only whitespace
+print("}")             // }        -- no interpolation open
+print("\{a\}")         // {a}      -- both escapes
+print(r"\d{4}")        // \d{4}    -- raw string, nothing interpolates
+```
+
+The rule that catches people is the regex quantifier. `"\d{4}"` is a valid
+interpolation of the number 4, so it produces `\d4`:
+
+```rad
+pattern = "\d\{4}"     // \d{4}   -- escape the brace
+pattern = r"\d{4}"     // \d{4}   -- or use a raw string
+```
+
+Rad warns (`RAD40017`) when an interpolation holds a literal, since that is
+almost always this mistake.
+
+Exemption 2 is deliberately narrow. `"{name"` stays an error rather than
+printing itself, because a forgotten closing brace should be loud.
+
+An interpolation must not open with a same-delimiter string, since `"{"` is
+then indistinguishable from a literal brace at the end of a string. Reach
+for a different quote type:
+
+```rad
+print("{'ERROR'.red()}")     // use a different delimiter
+print("{ "ERROR".red() }")   // or separate the braces from the quotes
+print("{"ERROR".red()}")     // error - reads as the literal brace "{"
+```
+
 ## Ternary Operator
 
 ```rad
@@ -683,10 +733,91 @@ command greet:
         print("Hello, {name}!")
 ```
 
+### Nested Commands
+
+Group related commands under a namespace, like `git remote add`. A command that
+contains other commands is a *namespace*: it has no `calls` of its own and routes
+to its sub-commands instead. Args declared on it are shared - inherited by every
+descendant, and accepted anywhere on the path.
+
+```rad
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        // shared with every sub-command
+
+    command add:
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print("Adding {name} -> {url} (timeout {timeout})")
+
+fn do_remove():
+    print("Removing {name}")
+```
+
+`./tool.rad remote add origin https://... --timeout 5` runs `do_add`, and
+`--timeout` is equally valid before the sub-command. Namespaces nest as deep as
+you like; only the terminal command's `calls` runs.
+
+### Default Commands
+
+Mark one command per level `default` and it runs when the user names none, so a
+tool's primary action doesn't have to be typed:
+
+```rad
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print("Adding {tokens}")
+
+fn do_list():
+    print("Listing")
+```
+
+`./tool.rad 15m standup` and `./tool.rad add 15m standup` both run `do_add`.
+
+A named command always wins, so a value that happens to match one goes to that
+command instead. Two ways to say you meant the value: name the default
+explicitly, or use `--`.
+
+```
+./tool.rad list            # runs do_list
+./tool.rad add list        # adds a reminder saying "list"
+./tool.rad -- list         # same
+```
+
+The rule applies at every level, so a namespace's default is what `./tool.rad
+remote` runs. Only leaf commands can be marked - a namespace routes rather than
+runs, so marking one would leave the question unanswered.
+
 ### Automatic Help
 
 - `./tool.rad -h` — lists all commands with descriptions
 - `./tool.rad deploy -h` — shows command-specific arguments
+- `./tool.rad remote -h` — lists a namespace's sub-commands and shared args
+
+When a default exists, `-h` marks it and shows a second usage line spelling out
+the shorter invocation it enables.
 
 
 ## Shell Commands
@@ -703,31 +834,34 @@ If an error propagates up to the root level of the script and doesn't get handle
 ```rad
 // Fails script if code != 0
 $`make build`
-code = $`cmd`
-code, stdout = $`cmd`
-code, stdout, stderr = $`cmd`
+stdout = $`cmd`
+stdout, stderr = $`cmd`
+stdout, stderr, code = $`cmd`
 ```
 
 ### Capture & assignment
 
-**Capture behavior** depends on how many variables you assign:
+**Capture behavior** depends on how many variables you assign. A stream you don't
+capture goes to the terminal; a stream you do capture goes only to your variable.
 
 ```rad
 $`cmd`                        // No capture, stdout/stderr → terminal
-code = $`cmd`                 // Capture code, stdout/stderr → terminal
-code, stdout = $`cmd`         // Capture code & stdout, stderr → terminal
-code, stdout, stderr = $`cmd` // Capture all
+stdout = $`cmd`               // Capture stdout, stderr → terminal
+stdout, stderr = $`cmd`       // Capture both
+stdout, stderr, code = $`cmd` // Capture both, plus the exit code
 ```
 
 **Assignment semantics** support both positional and *named* assignment.
 
-- Shell commands conceptually return **(code, stdout, stderr)** in that order.
+- Positional targets are filled **(stdout, stderr, code)** in that order. The exit
+  code is last: it needs no capturing, and a non-zero exit already raises a
+  catchable error, so it's the value you reach for least.
 - **Positional (default):** when variable names are arbitrary, assignment is by position.
 
 ```rad
-c, out = $`cmd`                     // c = code, out = stdout
-exit_code, output, err = $`cmd`     // exit_code = code, output = stdout, err = stderr
-myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional despite name)
+out = $`cmd`                        // out = stdout
+out, err = $`cmd`                   // out = stdout, err = stderr
+result, errors, status = $`cmd`     // result = stdout, errors = stderr, status = code
 ```
 
 - **Named:** if **all** variables are exactly `code`, `stdout`, or `stderr`, assignment is by name (order independent).
@@ -736,9 +870,19 @@ myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional
 stdout, code = $`cmd`     // stdout = stdout, code = code
 stderr = $`cmd`           // only capture stderr
 code, stderr = $`cmd`     // capture code and stderr
+code = $`cmd`             // only way to get the code without capturing a stream
 ```
 
 > **Rule:** If *all* variables use the exact names `code`, `stdout`, or `stderr`, uses named assignment. Otherwise, assignment is positional.
+
+The two rules agree on the canonical order, so `stdout = $cmd` and
+`stdout, stderr = $cmd` mean the same thing read either way. They disagree when
+you *mix* reserved and unreserved names, because one unreserved name makes the
+whole statement positional:
+
+```rad
+code, output = $`cmd`     // 'code' gets stdout! Warns: RAD40018
+```
 
 ### Handling failures with a `catch` block
 
@@ -911,6 +1055,7 @@ newline = "Line 1\nLine 2"         // Newline
 tab = "Column1\tColumn2"           // Tab
 backslash = "Path\\to\\file"       // Literal backslash
 brace = "Not interpolated: \{var}" // Escaped brace (literal {)
+close = "Escaped: \}"              // Escaped brace (literal })
 ```
 
 ### Defer and Error Defer Blocks

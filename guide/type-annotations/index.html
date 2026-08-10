@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1598,6 +1598,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -2339,6 +2367,30 @@ if idx != null:
 <p>Without the <code>idx != null</code> check, <code>idx + 1</code> reports a hint (<code>cannot do
 'int? + int'</code>) - the value really could be null. The null-check is both the
 fix for the hint and the correctness fix.</p>
+<p>A guard doesn't need its own block. <code>and</code> reaches its right operand only when
+the left was true, and <code>or</code> only when it was false, so the narrowing carries
+across:</p>
+<div class="highlight"><pre><span></span><code>my_args = [&quot;build&quot;, &quot;-o&quot;, &quot;out&quot;]
+idx = my_args.index_of(&quot;-o&quot;)
+
+if idx != null and idx + 1 &lt; my_args.len():
+    print(&quot;output:&quot;, my_args[idx + 1])
+</code></pre></div>
+<p>Order decides it, though. Written the other way round, as
+<code>idx + 1 &lt; my_args.len() and idx != null</code>, the comparison runs before anything
+is known and still reports.</p>
+<p>An <code>in</code> guard narrows <code>index_of</code> on the spot, with no variable to hold the
+result:</p>
+<div class="highlight"><pre><span></span><code>my_args = [&quot;build&quot;, &quot;-o&quot;, &quot;out&quot;]
+flag = &quot;-o&quot;
+
+if flag in my_args:
+    // the lookup can&#39;t miss here, so it&#39;s int rather than int?
+    print(my_args.index_of(flag) + 1)
+</code></pre></div>
+<p>That last one is a pattern match rather than general reasoning. It wants the
+same container and the same target on both sides, and it drops if you pass <code>n</code>
+or <code>start</code>, which ask for an occurrence membership doesn't promise.</p>
 <h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
 <p>Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with <code>?</code>:</p>
 <div class="highlight"><pre><span></span><code>fn greet(name: str, greeting: str = &quot;Hello&quot;) -&gt; str:
@@ -2730,7 +2782,7 @@ especially as they grow in complexity or get reused across projects.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

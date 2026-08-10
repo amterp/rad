@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1312,6 +1312,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="String Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#braces-in-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Braces in Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1642,6 +1659,28 @@
     <span class="md-ellipsis">
       
         Inline Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Commands
       
     </span>
   </a>
@@ -2482,6 +2521,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -2855,6 +2922,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="String Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#braces-in-strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Braces in Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3185,6 +3269,28 @@
     <span class="md-ellipsis">
       
         Inline Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nested-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Commands
       
     </span>
   </a>
@@ -4077,6 +4183,45 @@ formatted = &quot;{big_num:,}&quot;                // &quot;1,234,567&quot;
 with_decimals = &quot;{big_num:,.2}&quot;          // &quot;1,234,567.00&quot;
 padded_thousands = &quot;{big_num:&gt;15,}&quot;      // &quot;      1,234,567&quot;
 </code></pre></div>
+<h3 id="braces-in-strings">Braces in Strings<a class="headerlink" href="#braces-in-strings" title="Permanent link">&para;</a></h3>
+<p>A <code>{</code> opens an interpolation. Rad never silently re-reads a broken
+interpolation as ordinary text, so a brace you meant literally either
+falls under one of the narrow exemptions below or has to be escaped.</p>
+<ol>
+<li><code>{expr}</code>, optionally with a format specifier, interpolates.</li>
+<li>A <code>{</code> is literal where an interpolation is impossible: the string ends
+   immediately after it, or the <code>{...}</code> pair holds only ASCII spaces or tabs.
+   Other Unicode whitespace does not count - <code>{</code> followed by U+00A0 is an
+   error, not a literal brace.</li>
+<li>A <code>}</code> with no interpolation open is literal.</li>
+<li><code>\{</code> and <code>\}</code> are literal braces. A raw string (<code>r"..."</code>) disables
+   interpolation and escapes for the whole string.</li>
+<li>Anything else that opens like an interpolation and isn't one is an
+   error.</li>
+</ol>
+<div class="highlight"><pre><span></span><code>print(&quot;{&quot;)             // {        -- string ends after the brace
+print(&quot;{}&quot;)            // {}       -- pair holds nothing
+print(&quot;{ }&quot;)           // { }      -- pair holds only whitespace
+print(&quot;}&quot;)             // }        -- no interpolation open
+print(&quot;\{a\}&quot;)         // {a}      -- both escapes
+print(r&quot;\d{4}&quot;)        // \d{4}    -- raw string, nothing interpolates
+</code></pre></div>
+<p>The rule that catches people is the regex quantifier. <code>"\d{4}"</code> is a valid
+interpolation of the number 4, so it produces <code>\d4</code>:</p>
+<div class="highlight"><pre><span></span><code>pattern = &quot;\d\{4}&quot;     // \d{4}   -- escape the brace
+pattern = r&quot;\d{4}&quot;     // \d{4}   -- or use a raw string
+</code></pre></div>
+<p>Rad warns (<code>RAD40017</code>) when an interpolation holds a literal, since that is
+almost always this mistake.</p>
+<p>Exemption 2 is deliberately narrow. <code>"{name"</code> stays an error rather than
+printing itself, because a forgotten closing brace should be loud.</p>
+<p>An interpolation must not open with a same-delimiter string, since <code>"{"</code> is
+then indistinguishable from a literal brace at the end of a string. Reach
+for a different quote type:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;{&#39;ERROR&#39;.red()}&quot;)     // use a different delimiter
+print(&quot;{ &quot;ERROR&quot;.red() }&quot;)   // or separate the braces from the quotes
+print(&quot;{&quot;ERROR&quot;.red()}&quot;)     // error - reads as the literal brace &quot;{&quot;
+</code></pre></div>
 <h2 id="ternary-operator">Ternary Operator<a class="headerlink" href="#ternary-operator" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>// Basic ternary syntax
 result = condition ? value_if_true : value_if_false
@@ -4447,11 +4592,77 @@ command greet:
     calls fn():
         print(&quot;Hello, {name}!&quot;)
 </code></pre></div>
+<h3 id="nested-commands">Nested Commands<a class="headerlink" href="#nested-commands" title="Permanent link">&para;</a></h3>
+<p>Group related commands under a namespace, like <code>git remote add</code>. A command that
+contains other commands is a <em>namespace</em>: it has no <code>calls</code> of its own and routes
+to its sub-commands instead. Args declared on it are shared - inherited by every
+descendant, and accepted anywhere on the path.</p>
+<div class="highlight"><pre><span></span><code>command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        // shared with every sub-command
+
+    command add:
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print(&quot;Adding {name} -&gt; {url} (timeout {timeout})&quot;)
+
+fn do_remove():
+    print(&quot;Removing {name}&quot;)
+</code></pre></div>
+<p><code>./tool.rad remote add origin https://... --timeout 5</code> runs <code>do_add</code>, and
+<code>--timeout</code> is equally valid before the sub-command. Namespaces nest as deep as
+you like; only the terminal command's <code>calls</code> runs.</p>
+<h3 id="default-commands">Default Commands<a class="headerlink" href="#default-commands" title="Permanent link">&para;</a></h3>
+<p>Mark one command per level <code>default</code> and it runs when the user names none, so a
+tool's primary action doesn't have to be typed:</p>
+<div class="highlight"><pre><span></span><code>command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print(&quot;Adding {tokens}&quot;)
+
+fn do_list():
+    print(&quot;Listing&quot;)
+</code></pre></div>
+<p><code>./tool.rad 15m standup</code> and <code>./tool.rad add 15m standup</code> both run <code>do_add</code>.</p>
+<p>A named command always wins, so a value that happens to match one goes to that
+command instead. Two ways to say you meant the value: name the default
+explicitly, or use <code>--</code>.</p>
+<div class="highlight"><pre><span></span><code>./tool.rad list            # runs do_list
+./tool.rad add list        # adds a reminder saying &quot;list&quot;
+./tool.rad -- list         # same
+</code></pre></div>
+<p>The rule applies at every level, so a namespace's default is what <code>./tool.rad
+remote</code> runs. Only leaf commands can be marked - a namespace routes rather than
+runs, so marking one would leave the question unanswered.</p>
 <h3 id="automatic-help">Automatic Help<a class="headerlink" href="#automatic-help" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>./tool.rad -h</code> — lists all commands with descriptions</li>
 <li><code>./tool.rad deploy -h</code> — shows command-specific arguments</li>
+<li><code>./tool.rad remote -h</code> — lists a namespace's sub-commands and shared args</li>
 </ul>
+<p>When a default exists, <code>-h</code> marks it and shows a second usage line spelling out
+the shorter invocation it enables.</p>
 <h2 id="shell-commands">Shell Commands<a class="headerlink" href="#shell-commands" title="Permanent link">&para;</a></h2>
 <h3 id="invocation-critical-by-default">Invocation (<code>$</code>) — critical by default<a class="headerlink" href="#invocation-critical-by-default" title="Permanent link">&para;</a></h3>
 <p>Shell commands can be invoked with <code>$</code> and are <em>critical by default</em>: if the exit <code>code != 0</code>, an error will propagate unless you handle it.
@@ -4463,25 +4674,28 @@ handler runs. See <a href="#signal-handling">Signal Handling</a> for details.</p
 </blockquote>
 <div class="highlight"><pre><span></span><code>// Fails script if code != 0
 $`make build`
-code = $`cmd`
-code, stdout = $`cmd`
-code, stdout, stderr = $`cmd`
+stdout = $`cmd`
+stdout, stderr = $`cmd`
+stdout, stderr, code = $`cmd`
 </code></pre></div>
 <h3 id="capture-assignment">Capture &amp; assignment<a class="headerlink" href="#capture-assignment" title="Permanent link">&para;</a></h3>
-<p><strong>Capture behavior</strong> depends on how many variables you assign:</p>
+<p><strong>Capture behavior</strong> depends on how many variables you assign. A stream you don't
+capture goes to the terminal; a stream you do capture goes only to your variable.</p>
 <div class="highlight"><pre><span></span><code>$`cmd`                        // No capture, stdout/stderr → terminal
-code = $`cmd`                 // Capture code, stdout/stderr → terminal
-code, stdout = $`cmd`         // Capture code &amp; stdout, stderr → terminal
-code, stdout, stderr = $`cmd` // Capture all
+stdout = $`cmd`               // Capture stdout, stderr → terminal
+stdout, stderr = $`cmd`       // Capture both
+stdout, stderr, code = $`cmd` // Capture both, plus the exit code
 </code></pre></div>
 <p><strong>Assignment semantics</strong> support both positional and <em>named</em> assignment.</p>
 <ul>
-<li>Shell commands conceptually return <strong>(code, stdout, stderr)</strong> in that order.</li>
+<li>Positional targets are filled <strong>(stdout, stderr, code)</strong> in that order. The exit
+  code is last: it needs no capturing, and a non-zero exit already raises a
+  catchable error, so it's the value you reach for least.</li>
 <li><strong>Positional (default):</strong> when variable names are arbitrary, assignment is by position.</li>
 </ul>
-<div class="highlight"><pre><span></span><code>c, out = $`cmd`                     // c = code, out = stdout
-exit_code, output, err = $`cmd`     // exit_code = code, output = stdout, err = stderr
-myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional despite name)
+<div class="highlight"><pre><span></span><code>out = $`cmd`                        // out = stdout
+out, err = $`cmd`                   // out = stdout, err = stderr
+result, errors, status = $`cmd`     // result = stdout, errors = stderr, status = code
 </code></pre></div>
 <ul>
 <li><strong>Named:</strong> if <strong>all</strong> variables are exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, assignment is by name (order independent).</li>
@@ -4489,10 +4703,17 @@ myvar, stdout = $`cmd`              // myvar = code, stdout = stdout (positional
 <div class="highlight"><pre><span></span><code>stdout, code = $`cmd`     // stdout = stdout, code = code
 stderr = $`cmd`           // only capture stderr
 code, stderr = $`cmd`     // capture code and stderr
+code = $`cmd`             // only way to get the code without capturing a stream
 </code></pre></div>
 <blockquote>
 <p><strong>Rule:</strong> If <em>all</em> variables use the exact names <code>code</code>, <code>stdout</code>, or <code>stderr</code>, uses named assignment. Otherwise, assignment is positional.</p>
 </blockquote>
+<p>The two rules agree on the canonical order, so <code>stdout = $cmd</code> and
+<code>stdout, stderr = $cmd</code> mean the same thing read either way. They disagree when
+you <em>mix</em> reserved and unreserved names, because one unreserved name makes the
+whole statement positional:</p>
+<div class="highlight"><pre><span></span><code>code, output = $`cmd`     // &#39;code&#39; gets stdout! Warns: RAD40018
+</code></pre></div>
 <h3 id="handling-failures-with-a-catch-block">Handling failures with a <code>catch</code> block<a class="headerlink" href="#handling-failures-with-a-catch-block" title="Permanent link">&para;</a></h3>
 <p>Use a suffix <code>catch:</code> block to handle non‑zero exit codes. Variables are already assigned to the actual results inside the block; you may log or reassign fallbacks, then execution continues.</p>
 <div class="highlight"><pre><span></span><code>code, stdout = $`grep hello file` catch:
@@ -4644,6 +4865,7 @@ newline = &quot;Line 1\nLine 2&quot;         // Newline
 tab = &quot;Column1\tColumn2&quot;           // Tab
 backslash = &quot;Path\\to\\file&quot;       // Literal backslash
 brace = &quot;Not interpolated: \{var}&quot; // Escaped brace (literal {)
+close = &quot;Escaped: \}&quot;              // Escaped brace (literal })
 </code></pre></div>
 <h3 id="defer-and-error-defer-blocks">Defer and Error Defer Blocks<a class="headerlink" href="#defer-and-error-defer-blocks" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Defer block - runs before script ends regardless of success/failure
@@ -5211,7 +5433,7 @@ code, stdout = $`potentially_failing_command` catch:
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

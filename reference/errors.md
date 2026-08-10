@@ -1478,6 +1478,88 @@ and separator characters (e.g. `DD/MM/YYYY`, `YYYY-MM-DD HH:mm:ss`).
 - Ensure the format tokens match the structure of your date string
 - Use `catch` to handle the error if the input is dynamic
 
+### RAD20045: Invalid Shell Command Value
+
+A value used as a shell command, or interpolated into one, has no form Rad can
+safely pass to a program.
+
+Inside a shell command, the text you write is shell and the interpolations are
+data. Rad quotes each interpolated value so it arrives as exactly one argument.
+That only works for values with an obvious one-argument spelling: strings,
+numbers and booleans. A map has none, and a null has one that is silently wrong
+- it would become the four-character word `null`.
+
+#### Examples
+
+```rad
+tag = null
+$`git tag {tag}`        // Error: nothing sensible to pass
+
+config = { "depth": 2 }
+$`git clone {config}`   // Error: a map is not an argument
+```
+
+A list *is* allowed - it expands to one argument per element - but it has to
+stand alone as its own argument, because there's no single obvious meaning for
+gluing several arguments onto a prefix:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`rm {files}`           // Fine: rm a.txt b.txt
+$`rm --file={files}`    // Error: which element gets the prefix?
+```
+
+The same rules apply when the whole command is a list:
+
+```rad
+$["git", "commit", "-m", null]   // Error
+$[]                              // Error: no program to run
+```
+
+#### How to Fix
+
+Give a null an explicit fallback, or leave the argument out entirely:
+
+```rad
+tag = null
+
+$`git tag {tag ?? "untagged"}`
+```
+
+Build up the arguments as a list when some are conditional. Each element is one
+argument, so nothing needs quoting:
+
+```rad
+message = "fix the parser"
+
+cmd = ["git", "commit"]
+if message:
+    cmd += ["-m", message]
+$cmd
+```
+
+Join a list yourself when you really do want one argument:
+
+```rad
+files = ["a.txt", "b.txt"]
+
+$`tar -czf out.tgz {files}`             // three arguments
+$`echo --files={files.join(",")}`       // one argument
+```
+
+#### Why Rad Works This Way
+
+Bash's defining hazard is that a value carrying a space, a quote or a `$` stops
+being a value and becomes syntax. Rad removes that by quoting interpolations for
+you - but quoting only has an answer for things that *are* one argument. Rather
+than invent a rendering for the rest and let it fail silently at runtime, Rad
+asks you to say what you meant.
+
+#### See Also
+
+- `rad docs guide/shell-commands` - the three command forms and when to use each
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch
@@ -1534,14 +1616,16 @@ An operator was used with types that don't support that operation.
 #### Example
 
 ```rad
+count = 5
+
 // Wrong: can't add int to string
-x = "count: " + 5
+x = "count: " + count
 
 // Correct: use interpolation (preferred)
-x = "count: {5}"
+x = "count: {count}"
 
 // Correct: explicit conversion
-x = "count: " + str(5)
+x = "count: " + str(count)
 ```
 
 #### Supported Type Combinations
@@ -2376,3 +2460,472 @@ unary minus applies.
 
 Write the minimum value as `-9223372036854775807 - 1`, or use a `float` if you
 need to represent larger magnitudes (with reduced precision).
+
+### RAD40016: Regex Pattern Without regex=true
+
+You passed something that reads like a regex to `split()` or `replace()`, but
+neither treats its pattern as a regex unless you ask.
+
+```rad
+line = "alice   30   admin"
+
+// Warns: '\s+' is a regex, but split() is looking for that literal text
+fields = split(line, "\s+")
+
+// Correct
+fields = split(line, "\s+", regex=true)
+```
+
+#### Why This Exists
+
+Before v0.12, `split()` and `replace()` always treated their pattern as a regex.
+That default was backwards - most calls want literal text - and it failed
+silently in the dangerous direction: a `.` in a pattern quietly matched every
+character.
+
+The default is now literal. The catch is that scripts written for the old
+behavior keep running. They just stop matching:
+
+```rad
+print(split("a b  c", "\s+"))   // -> ["a b  c"], not ["a", "b", "c"]
+```
+
+No error, no crash, only a wrong answer. This warning is the tap on the shoulder.
+
+#### How to Fix It
+
+If you meant a regex, add `regex=true`:
+
+```rad
+text = "order 66 shipped"
+print(replace(text, "\d+", "N", regex=true))   // -> "order N shipped"
+```
+
+If the text really is literal, you can ignore the warning - the call already does
+what you want, and you no longer need to escape anything:
+
+```rad
+version = "1.2.3"
+print(replace(version, ".", "-"))   // -> "1-2-3", no escaping needed
+```
+
+#### Ignore It When
+
+The heuristic looks for constructs that rarely appear in literal text: `\d`,
+`\s`, a bracketed class, a group, a quantifier, alternation with branches on both
+sides, or a leading `^` / trailing `$`. Real text does sometimes contain those -
+`"C++"` and `"a|b"` are perfectly good literal separators. The warning is advice,
+not a verdict.
+
+See the [v0.12 migration guide](https://amterp.dev/rad/migrations/v0.12/) for the
+full picture, and `rad check --from-logs all` to sweep every script you've run
+recently.
+
+### RAD40017: Interpolating a Constant Literal
+
+An interpolation contains a literal value, so it produces exactly the text
+you already wrote. `"{4}"` and `"4"` are the same string.
+
+This is almost always a literal brace that got read as an interpolation.
+
+#### Example
+
+```rad
+// Wrong: {4} interpolates the number 4, so this is the regex \d4
+pattern = "\d{4}"
+
+// Correct: escape the brace
+pattern = "\d\{4}"
+
+// Correct: a raw string, where nothing interpolates
+pattern = r"\d{4}"
+```
+
+Regex quantifiers are where this bites. `\d{4}` looks like "four digits"
+and parses as "a digit, then the number 4". Wider quantifiers like
+`\d{2,3}` are a syntax error instead, so the single-number form is the only
+one that fails quietly.
+
+#### How to Fix
+
+1. **Escape the brace** with `\{` if you meant a literal `{`
+2. **Use a raw string** (`r"..."`) if the text is brace-heavy - regexes and
+   JSON templates usually are
+3. **Write the value directly** if you really did mean to interpolate a
+   constant
+
+Note that `r"..."` turns off *all* interpolation and escapes for that
+string, so it is the wrong tool if you also need `{name}` to expand.
+
+#### Why This Is a Warning
+
+The rule is syntactic: it fires only when the interpolated expression is
+itself a literal. Interpolating a variable that happens to hold a constant
+is fine and stays quiet.
+
+```rad
+digits = 4
+name = "ana"
+print("{digits}")      // no warning
+print("{2 + 2}")       // no warning
+print("{name:<12}|")   // no warning - 12 is a format width, not the value
+```
+
+### RAD40018: Misleading Shell Capture Name
+
+A shell capture target is named after one stream but receives another.
+
+```rad
+// Warns: 'output' isn't a reserved name, so the whole statement is
+// positional - and position 0 is stdout, so 'code' gets the output.
+code, output = $`git status --porcelain`
+
+// Correct - all three names are reserved, so assignment goes by name
+stdout, code = $`git status --porcelain`
+```
+
+#### The Two Rules
+
+Shell commands produce three things: stdout, stderr, and an exit code. How your
+variables receive them depends on what you called them.
+
+**Named** - when *every* target is spelled exactly `code`, `stdout`, or
+`stderr`, each one gets the stream it's named after and order doesn't matter:
+
+```rad
+stderr = $`cmd`               // just stderr
+code, stdout = $`cmd`         // exit code and stdout
+stderr, stdout, code = $`cmd` // all three, any order
+```
+
+**Positional** - the moment one target isn't a reserved name, the whole
+statement switches to filling `(stdout, stderr, code)` in order:
+
+```rad
+out = $`cmd`             // out = stdout
+out, err = $`cmd`        // out = stdout, err = stderr
+out, err, c = $`cmd`     // out = stdout, err = stderr, c = exit code
+```
+
+This warning fires where those two rules collide: you used a reserved name, but
+something else in the statement dropped you into positional mode, so the name
+means nothing and the slot decides.
+
+#### How to Fix It
+
+Either name every target so assignment goes by name:
+
+```rad
+// Before
+code, output = $`cmd`
+// After
+code, stdout = $`cmd`
+```
+
+Or drop the reserved names and let position do the work:
+
+```rad
+// Before
+code, output = $`cmd`
+// After - now positional throughout, and reads as it behaves
+output, _, code = $`cmd`
+```
+
+The first form is usually what you want. It's a rename, and it captures exactly
+the same streams.
+
+#### Migrating From v0.11
+
+Before v0.12, positional captures filled `(code, stdout, stderr)` - the exit
+code first. They now fill `(stdout, stderr, code)`.
+
+Scripts written against the old order still parse and still run. They just bind
+different variables:
+
+```rad
+// v0.11: version = stdout.   v0.12: version = stderr.
+_, version = $`rad -v`
+```
+
+When the warning mentions v0.12, that's the case it found. The fix is usually to
+drop a slot, because what used to need two targets now needs one:
+
+```rad
+version = $`rad -v`
+```
+
+The exit code moved last because Rad already turns a non-zero exit into an
+error - you reach for `catch:` rather than for the code - and because a single
+capture binding the exit code was the least useful thing it could bind.
+
+#### What This Warning Cannot Catch
+
+It reads names, so a positional capture whose names give no signal is invisible
+to it:
+
+```rad
+a, b = $`cmd`   // no warning possible
+```
+
+Sweep every script you've run recently with `rad check --from-logs all`, and see
+the [v0.12 migration guide](https://amterp.dev/rad/migrations/v0.12/) for the
+full picture.
+
+### RAD40019: Two Default Commands At One Level
+
+Only one command per level runs when the user names none, so two `default`
+markers among siblings leave nothing to decide between them.
+
+```rad
+command add:
+    tokens str
+    default
+    calls do_add
+
+command edit:
+    tokens str
+    default          // Error: 'add' is already the default here
+    calls do_edit
+```
+
+#### How to Fix
+
+Keep the marker on whichever command should run when none is named, and drop
+the other:
+
+```rad
+command add:
+    tokens str
+    default
+    calls do_add
+
+command edit:
+    tokens str
+    calls do_edit
+```
+
+Nesting scopes this: each namespace picks its own default independently, so
+`remote` and `image` can each have one.
+
+```rad
+command remote:
+    command add:
+        name str
+        default
+        calls do_remote_add
+
+command image:
+    command build:
+        tag str
+        default
+        calls do_image_build
+```
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40020: Command Does Nothing
+
+A command either runs something or routes to sub-commands. This one does
+neither: it has no `calls` line and no nested command blocks, so invoking it
+could only ever do nothing.
+
+```rad
+command deploy:
+    env str          // Error: nothing to run
+```
+
+#### How to Fix
+
+Add a `calls` line naming the function to run:
+
+```rad
+command deploy:
+    env str
+    calls do_deploy
+
+fn do_deploy():
+    print("Deploying to {env}...")
+```
+
+For a short body, an inline lambda avoids naming a function you only use once:
+
+```rad
+command deploy:
+    env str
+    calls fn():
+        print("Deploying to {env}...")
+```
+
+Or nest command blocks inside it, which makes it a namespace that routes to
+them instead of running itself:
+
+```rad
+command deploy:
+    timeout int = 30     // shared with every sub-command
+
+    command staging:
+        calls do_staging
+
+    command prod:
+        calls do_prod
+```
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40021: Namespace Has A Callback
+
+A command containing sub-commands is a namespace: it groups them and shares its
+args with them, and the sub-command the user names is what runs. So a `calls`
+line on it would never fire.
+
+```rad
+command remote:
+    calls do_remote      // Error: 'remote' routes to its sub-commands
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### How to Fix
+
+Drop the `calls` line. Args declared on the namespace still reach every
+descendant, which is usually what the callback was reaching for:
+
+```rad
+command remote:
+    timeout int = 30     // inherited by add, and by anything nested deeper
+
+    command add:
+        name str
+        calls do_add
+```
+
+If you wanted `tool remote` on its own to do something, mark one of its
+sub-commands `default` - that is the command it runs when none is named:
+
+```rad
+command remote:
+    command list:
+        default
+        calls do_list
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### Why Rad Works This Way
+
+Shape decides role, so there is no keyword to remember and no way for the
+declaration and the behavior to disagree. A block with `calls` runs; a block
+with commands inside routes.
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40022: Default On A Namespace
+
+`default` marks the command to run when the user names none. A namespace does
+not run - it routes - so marking one leaves the question unanswered.
+
+```rad
+command remote:
+    default              // Error: 'remote' contains sub-commands
+
+    command add:
+        name str
+        calls do_add
+```
+
+#### How to Fix
+
+Mark the sub-command that should run:
+
+```rad
+command remote:
+    command add:
+        name str
+        default
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+```
+
+`tool remote origin` now runs `do_add`, and so does `tool remote add origin`.
+The full form stays available, which is how you pass a value that happens to
+match a sibling's name - `tool remote add remove` adds a remote called
+"remove". `tool remote -- remove` does the same.
+
+#### See Also
+
+- `rad docs guide/script-commands` - commands, nesting and defaults
+
+### RAD40023: Quoted Interpolation In A Shell Command
+
+An interpolated value in a shell command is wrapped in quotes the script wrote
+itself. Rad already quotes interpolated values, so these quotes are no longer
+protecting anything - they end up inside the argument as literal characters.
+
+```rad
+message = "hello"
+
+$`git commit -m "{message}"`   // Error: the quotes land in the message
+```
+
+#### How to Fix
+
+Delete the quotes. Rad quotes the value for you, whatever it contains:
+
+```rad
+message = "hello"
+
+$`git commit -m {message}`
+```
+
+When the argument is literal text plus a value, build the string first and
+interpolate that. The quotes were holding the two halves together as one
+argument; a single interpolation does that on its own:
+
+```rad
+version = "1.2.3"
+
+// Wrong - the quotes become part of the commit message
+$`git commit -m "Bump to {version}"`
+
+// Correct
+message = "Bump to {version}"
+$`git commit -m {message}`
+```
+
+#### Why Rad Works This Way
+
+Hand-written quotes could never be correct for every value. Double quotes still
+expand `$HOME` and `$(whoami)`; single quotes cannot contain an apostrophe at
+all. So a command that worked for `hello` would break, or worse silently
+misbehave, on `it's` or `100% of $USERS`.
+
+Rad quotes each interpolated value at the point it knows what the value is, so
+the argument the program receives is exactly the value you had:
+
+```rad
+message = "it's fine"
+
+$`git commit -m {message}`
+// runs: git commit -m 'it'\''s fine'
+```
+
+The rule is that the text you write is shell - pipes, redirects, `&&` and all -
+and interpolations are data.
+
+#### See Also
+
+- `rad docs guide/shell-commands` - the three command forms
+- `rad docs RAD20045` - values that have no single-argument form

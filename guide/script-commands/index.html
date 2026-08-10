@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -707,6 +707,56 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nested-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-a-value-looks-like-a-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When A Value Looks Like A Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defaults-and-namespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defaults And Namespaces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1391,6 +1441,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -1605,6 +1683,56 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nested-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nested Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-a-value-looks-like-a-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When A Value Looks Like A Command
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defaults-and-namespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defaults And Namespaces
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2036,10 +2164,172 @@ Environment healthy
 <div class="admonition note">
 <p class="admonition-title">Shared args are flag-only</p>
 <p>When commands exist, shared args can only be passed as flags (like <code>--verbose</code>, <code>-v</code>, or <code>--config=value</code>), not
-positionally. This keeps the invocation clear: the first positional argument is always the command name.</p>
+positionally. That keeps the first positional argument free to name a command - or, if you declare a
+<a href="#default-commands">default command</a>, to be that command's first argument.</p>
 <p>Both long form (<code>--verbose</code>) and short form (<code>-v</code>) work for shared args.</p>
 <p>Command-specific args can be positional or flags, just like regular script args.</p>
 </div>
+<h2 id="nested-commands">Nested Commands<a class="headerlink" href="#nested-commands" title="Permanent link">&para;</a></h2>
+<p>Larger tools group related commands under a namespace, like <code>git remote add</code>. A command that <strong>contains other commands</strong> becomes one: it has no <code>calls</code> of its own, and routes to its sub-commands instead.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command remote:
+    ---
+    Manage remotes.
+    ---
+    timeout int = 30        # shared with every sub-command
+
+    command add:
+        ---
+        Add a remote.
+        ---
+        name str
+        url str
+        calls do_add
+
+    command remove:
+        name str
+        calls do_remove
+
+fn do_add():
+    print(&quot;Adding {name} -&gt; {url} (timeout {timeout})&quot;)
+
+fn do_remove():
+    print(&quot;Removing {name}&quot;)
+</code></pre></div></td></tr></table></div>
+<p>Name the full path to reach the command you want:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad remote add origin https://github.com/me/repo.git
+&gt; ./tool.rad remote remove origin
+</code></pre></div>
+<p>Args declared directly on a namespace are <strong>shared with every descendant</strong>. They behave like the script-level <code>args:</code> block, just scoped to that sub-tree - flag-only, and accepted at any point along the path:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./tool.rad remote add origin https://... --timeout 5
+&gt; ./tool.rad remote --timeout 5 add origin https://...
+</code></pre></div>
+<p>Namespaces nest as deep as you like. Only the terminal command's callback runs; an intermediate namespace exists to group and to share args, not to execute.</p>
+<h2 id="default-commands">Default Commands<a class="headerlink" href="#default-commands" title="Permanent link">&para;</a></h2>
+<p>Most tools have one thing they mostly do. Marking a command <code>default</code> means the user doesn't have to type its name:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command add:
+    ---
+    Add a reminder.
+    ---
+    *tokens str     # Time spec followed by message.
+    default
+    calls do_add
+
+command list:
+    ---
+    Show upcoming reminders.
+    ---
+    calls do_list
+
+fn do_add():
+    print(&quot;Adding: {tokens}&quot;)
+
+fn do_list():
+    print(&quot;Listing&quot;)
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><pre><span></span><code>&gt; ./remind.rad 15m standup
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>Adding: [ &quot;15m&quot;, &quot;standup&quot; ]
+</code></pre></div>
+</div>
+
+<p><code>./remind.rad add 15m standup</code> does exactly the same thing. The default keeps its own name, and that matters more than it looks.</p>
+<h3 id="when-a-value-looks-like-a-command">When A Value Looks Like A Command<a class="headerlink" href="#when-a-value-looks-like-a-command" title="Permanent link">&para;</a></h3>
+<p>A named command always wins. So if you want to add a reminder that says "list", the short form won't do it - <code>list</code> is a command:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./remind.rad list          # runs do_list, no reminder added
+</code></pre></div>
+<p>Two ways to say you meant the value. Name the default explicitly, or use <code>--</code>:</p>
+<div class="highlight"><pre><span></span><code>&gt; ./remind.rad add list      # adds a reminder saying &quot;list&quot;
+&gt; ./remind.rad -- list       # same
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Which command runs, exactly</p>
+<p>Routing happens at the first token the level can't consume itself. A command name appearing <em>after</em> one of those goes to the default as data, not as a command. If a flag is needed by the default but rejected elsewhere, declare it as a shared arg so it's consumed before routing.</p>
+</div>
+<h3 id="defaults-and-namespaces">Defaults And Namespaces<a class="headerlink" href="#defaults-and-namespaces" title="Permanent link">&para;</a></h3>
+<p>The rule is the same at every level, so a namespace's default is what runs when you name the namespace and stop:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+
+command remote:
+    command list:
+        default
+        calls do_list
+
+    command add:
+        name str
+        calls do_add
+
+fn do_list():
+    print(&quot;Listing remotes&quot;)
+
+fn do_add():
+    print(&quot;Adding {name}&quot;)
+</code></pre></div></td></tr></table></div>
+<p><code>./tool.rad remote</code> lists remotes, exactly as <code>./tool.rad remote list</code> would.</p>
+<p>Only leaf commands can be marked. A namespace routes rather than runs, so marking one would leave the question unanswered - mark one of its sub-commands instead.</p>
 <h2 id="command-callbacks">Command Callbacks<a class="headerlink" href="#command-callbacks" title="Permanent link">&para;</a></h2>
 <p>We've been using function references (<code>calls on_deploy</code>), which is the recommended approach for most commands.
 However, for very short implementations, you can also use inline lambdas:</p>
@@ -2482,7 +2772,7 @@ building interactive tools.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

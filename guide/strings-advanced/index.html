@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -625,6 +625,17 @@
     <span class="md-ellipsis">
       
         String Attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#patterns-literal-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patterns: Literal by Default
       
     </span>
   </a>
@@ -1391,6 +1402,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../migrations/v0.12/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migration Guide - v0.12
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../migrations/v0.9/" class="md-nav__link">
         
   
@@ -1670,6 +1709,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#patterns-literal-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patterns: Literal by Default
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1745,10 +1795,16 @@ Conditions: short name!
 <p>Note the use of single quote <code>'</code> strings inside the last line of the above example.
 You don't have to switch delimiters like that, though it can help readability:
 everything inside <code>{ }</code> is parsed as code, not text, so nested strings using the
-<em>same</em> delimiter as the outer string are guaranteed to work, no escaping needed.</p>
+<em>same</em> delimiter as the outer string work, no escaping needed.</p>
 <div class="highlight"><pre><span></span><code>tokens = [&quot;Hello&quot;, &quot;World&quot;]
 print(&quot;{tokens.join(&quot; &quot;)}&quot;)
 print(&quot;Count: {tokens.len() &gt; 1 ? &quot;several&quot; : &quot;just one&quot;}&quot;)
+</code></pre></div>
+<p>The one exception is a nested string <em>immediately</em> after the <code>{</code>, because
+<code>"{"</code> is also how you write a literal opening brace, and the two cannot be
+told apart. Switch delimiters there, or add a space:</p>
+<div class="highlight"><pre><span></span><code>print(&quot;{&#39;ERROR&#39;.red()}&quot;)     // fine
+print(&quot;{ &quot;ERROR&quot;.red() }&quot;)   // also fine
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hello World
@@ -1983,8 +2039,10 @@ She said &quot;Hi!&quot;
 <li><code>\t</code> - tab</li>
 <li><code>\\</code> - literal backslash</li>
 <li><code>\"</code> <code>\'</code> <code>\`</code> - the delimiter itself (though prefer using a different delimiter)</li>
-<li><code>\{</code> - literal brace (prevents interpolation, but consider using raw strings)</li>
+<li><code>\{</code> <code>\}</code> - literal braces (prevents interpolation, but consider using raw strings)</li>
 </ul>
+<p>A brace that cannot open an interpolation needs no escape: <code>"{"</code>, <code>"{}"</code> and
+<code>"{ }"</code> are all literal, as is any <code>}</code> with no interpolation open.</p>
 <h2 id="string-attributes">String Attributes<a class="headerlink" href="#string-attributes" title="Permanent link">&para;</a></h2>
 <p>Strings in Rad can carry attributes like color, bold, italic, and underline. These attributes are preserved through string interpolation and concatenation:</p>
 <div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;.green()
@@ -2021,6 +2079,28 @@ Use <a href="../functions/#ufcs">UFCS</a> (dot notation) for cleaner, more reada
 </ul>
 <p>See the <a href="../../reference/functions/">Functions Reference</a> for the complete list with examples.</p>
 </div>
+<h2 id="patterns-literal-by-default">Patterns: Literal by Default<a class="headerlink" href="#patterns-literal-by-default" title="Permanent link">&para;</a></h2>
+<p>Rad's string functions match literally. <code>split</code>, <code>replace</code>, <code>count</code>, <code>index_of</code>,
+<code>starts_with</code> and friends all look for the exact text you give them, so a <code>.</code> is a
+dot and a <code>(</code> is a parenthesis - nothing needs escaping.</p>
+<div class="highlight"><pre><span></span><code>print(split(&quot;1.2.3&quot;, &quot;.&quot;))            // -&gt; [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
+print(replace(&quot;cost: $5&quot;, &quot;$5&quot;, &quot;$8&quot;)) // -&gt; &quot;cost: $8&quot;
+</code></pre></div>
+<p>When you do want a regex, ask for one. <code>split</code> and <code>replace</code> take a <code>regex</code> parameter:</p>
+<div class="highlight"><pre><span></span><code>print(split(&quot;a b  c&quot;, &quot;\s+&quot;, regex=true))       // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+print(replace(&quot;order 66&quot;, &quot;\d+&quot;, &quot;N&quot;, regex=true)) // -&gt; &quot;order N&quot;
+</code></pre></div>
+<p><code>matches</code> is the exception, and it's the one you'd expect: it exists to test patterns,
+so it's always a regex.</p>
+<div class="highlight"><pre><span></span><code>print(matches(&quot;hello&quot;, &quot;h.+o&quot;))   // -&gt; true
+</code></pre></div>
+<p>Patterns use Go's RE2 dialect, which has no backreferences or lookaround. A pattern
+that doesn't compile is an error rather than a silent fallback.</p>
+<div class="admonition info">
+<p class="admonition-title">Changed in v0.12</p>
+<p><code>split</code> and <code>replace</code> used to treat their pattern as a regex by default. See the
+<a href="../../migrations/v0.12/">v0.12 migration guide</a> if you're upgrading.</p>
+</div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>We learned about <strong>escape sequences</strong> like <code>\n</code>, <code>\t</code>, and <code>\{</code> for including special characters in strings.</li>
@@ -2029,6 +2109,7 @@ Use <a href="../functions/#ufcs">UFCS</a> (dot notation) for cleaner, more reada
 <li>We explored <strong>multiline strings</strong> using <code>"""</code> syntax, which support both quotes and interpolation.</li>
 <li>We learned about <strong>raw strings</strong> (prefixed with <code>r</code>) that prevent interpolation and escaping.</li>
 <li>We covered <strong>string attributes</strong> like color and bold that are preserved through interpolation and concatenation.</li>
+<li>We saw that string functions match <strong>literally</strong> by default, with <code>regex=true</code> to opt into pattern matching.</li>
 <li>Rad also provides many built-in string manipulation functions covered in the <a href="../../reference/functions/">Functions Reference</a>.</li>
 </ul>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
@@ -2128,7 +2209,7 @@ Use <a href="../functions/#ufcs">UFCS</a> (dot notation) for cleaner, more reada
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
