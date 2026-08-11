@@ -222,22 +222,23 @@ error[RAD20046]: this script needs to ask you something, but there's no terminal
   deploy.rad:6  input   "Release notes"
   deploy.rad:7  pick    options: web-1, web-2, db-1
 
-    rad deploy.rad prod --reply 5:yes --reply '6:<value>' --reply 7:web-1
+    rad deploy.rad prod --reply '5:<yes|no>' --reply '6:<value>' --reply '7:<option>'
 ```
 
-Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is the command you wanted, with the keys filled in. Replace any `<value>` placeholder before running it - rad takes them literally.
+Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is your own command with a `--reply` per prompt: keys in place, answers blank. Rad won't guess those - whether you mean yes, or which server you want, isn't in the script. Fill in each `<...>` and run it; rad takes whatever you put there literally.
 
 Rad exits `7` when it stops like this, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.
 
 Each listed prompt may also carry a note about how it behaves:
 
-| Note                                                     | Meaning                                                                                                                |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `filtered - may not prompt, and then ignores its answer` | A `pick` given a filter. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped. |
-| `used as a value - ...`                                  | An interactive function passed around rather than called. Takes `--reply-na` only.                                     |
-| `may run more than once - repeat --reply per run`        | It sits in a loop, or in a function called from several places. One `--reply` answers one execution.                   |
-| `secret - cannot be answered on the command line`        | See secret inputs below.                                                                                               |
-| `options computed at runtime`                            | Rad can't list the choices without running the script. They're checked when the prompt is reached.                     |
+| Note                                                     | Meaning                                                                                                                                                               |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filtered - may not prompt, and then ignores its answer` | A `pick` whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped.             |
+| `settles on "web-1" - won't ask`                         | A `pick` whose options and filter are both written literally, leaving one survivor. It takes that option without asking, so rad answers it with `--reply-na` for you. |
+| `used as a value - ...`                                  | An interactive function passed around rather than called. Takes `--reply-na` only.                                                                                    |
+| `may run more than once - repeat --reply per run`        | It sits in a loop, or in a function called from several places. One `--reply` answers one execution.                                                                  |
+| `secret - cannot be answered on the command line`        | See secret inputs below.                                                                                                                                              |
+| `options computed at runtime`                            | Rad can't list the choices without running the script. They're checked when the prompt is reached.                                                                    |
 
 ### Prompts rad can't answer
 
@@ -256,14 +257,14 @@ rad dispatch.rad --reply-na 1
 
 That matters for a script that merely *mentions* one on a path this run won't take - a handler map where the interactive entry isn't selected. If the assertion turns out to be wrong, the script stops at the prompt with RAD20047 (rad docs reference/errors) rather than acting on a guess.
 
-Answers are matched by the kind of prompt on that line, so only `multipick` needs escaping:
+Answers are matched by the kind of prompt on that line - which is what the blank names - and only `multipick` needs escaping:
 
-| Prompt                                  | Answer                                                                |
-| --------------------------------------- | --------------------------------------------------------------------- |
-| `confirm`, `confirm $\`...\``           | `yes` or `no` (also `y`, `n`, `true`, `false`)                        |
-| `input`                                 | everything after the colon, verbatim; empty takes the arg's `default` |
-| `pick`, `pick_kv`, `pick_from_resource` | one option, matched exactly                                           |
-| `multipick`                             | comma-separated; `\,` is a literal comma, `\\` a literal backslash    |
+| Prompt                                  | Blank          | Answer                                                                |
+| --------------------------------------- | -------------- | --------------------------------------------------------------------- |
+| `confirm`, `confirm $\`...\``           | `<yes|no>`     | `yes` or `no` (also `y`, `n`, `true`, `false`)                        |
+| `input`                                 | `<value>`      | everything after the colon, verbatim; empty takes the arg's `default` |
+| `pick`, `pick_kv`, `pick_from_resource` | `<option>`     | one option, matched exactly                                           |
+| `multipick`                             | `<option,...>` | comma-separated; `\,` is a literal comma, `\\` a literal backslash    |
 
 Only the first colon separates the key from the value, so `--reply 6:https://example.com` works without quoting. For `pick_kv`, answer with the key the user would see, not the value it returns - the listing names it `pick_kv` rather than `pick` for exactly this reason.
 
@@ -293,7 +294,7 @@ rad deploy.rad --dry-run --reply-na 20
 
 If the script reaches it anyway, rad fails with RAD20047 (rad docs reference/errors) instead of acting on a guess.
 
-This is also a good answer for a `pick` given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Rad marks those in the list, and suggests a `--reply` anyway when it knows the options - that answer is harmless whether or not the filter ends up settling the choice. Where both the options and the filter are written literally, the suggested value is one the filter actually keeps.
+This is also a good answer for a `pick` given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Where the options and the filter are both written literally, rad works that out for you and puts `--reply-na` in the suggested command itself. Where either is computed while the script runs, it can't, so the prompt is listed like any other - reach for `--reply-na` on the runs you expect the filter to settle.
 
 Secret inputs are the one case with no `--reply` at all. Command-line arguments are visible to other processes, so a secret `input` can only be answered at a terminal. Use `--reply-na` if this run won't reach it. This holds whether `secret` is written as a literal or computed while the script runs - in the second case rad can't warn you up front, but it still refuses the answer.
 

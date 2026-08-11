@@ -165,17 +165,16 @@ func preflightMessage(scriptName string, sites, unanswered []prompts.Site) strin
 	b.WriteString("\n")
 	fmt.Fprintf(&b, "    %s\n\n", suggestedCommand(unanswered))
 
-	// Only worth saying when a placeholder actually made it into the command
-	// above; copy-pasting it verbatim would otherwise answer with the literal
-	// text "<value>" and run the script on it.
-	if lo.SomeBy(unanswered, func(s prompts.Site) bool {
-		return !s.Secret && !s.AsValue && placeholderFor(s) == ""
-	}) {
-		b.WriteString("  Replace each <...> with a real value first; rad takes them literally.\n")
+	// All of this is about filling in a blank, so it only belongs here when the
+	// command above has one. A run whose every site takes --reply-na is already
+	// complete, and telling that caller to fill something in sends them looking
+	// for it.
+	if lo.SomeBy(unanswered, func(s prompts.Site) bool { return !answeredByRad(s) }) {
+		b.WriteString("  Every <...> is a blank - rad writes the shape of the command, never the\n")
+		b.WriteString("  answers. Fill each one in; rad takes the text literally and matches it\n")
+		b.WriteString("  exactly. For a prompt on a branch you know won't run, or a filtered pick\n")
+		b.WriteString("  you expect to settle itself, use --reply-na instead of choosing for it.\n")
 	}
-	b.WriteString("  Answers must match exactly; rad won't guess. For a prompt on a branch you\n")
-	b.WriteString("  know won't run - or a filtered pick you expect to narrow to one option -\n")
-	b.WriteString("  use --reply-na rather than inventing a value.\n")
 	fmt.Fprintf(&b, "%s\n", com.CyanS(fmt.Sprintf("   = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers)))
 
 	return b.String()
@@ -201,7 +200,12 @@ func describeSite(s prompts.Site) string {
 	} else if s.Kind == prompts.Pick || s.Kind == prompts.Multipick {
 		parts = append(parts, "options computed at runtime")
 	}
-	if s.Filtered {
+	if settlesItself(s) {
+		// Naming the survivor is a fact about the code, not a suggested answer:
+		// this call cannot land anywhere else, and saying so beats leaving the
+		// caller to apply the filter by eye.
+		parts = append(parts, fmt.Sprintf("settles on %q - won't ask", survivingOptions(s)[0]))
+	} else if s.Filtered {
 		// The second clause matters: an answer for a call the filter settles on
 		// its own is consumed and dropped, which is surprising unless said.
 		parts = append(parts, "filtered - may not prompt, and then ignores its answer")
@@ -220,8 +224,9 @@ func describeSite(s prompts.Site) string {
 	return strings.Join(parts, "  ")
 }
 
-// suggestedCommand rebuilds the caller's own invocation with the missing
-// answers appended, so the fix is a copy-paste rather than a reconstruction.
+// suggestedCommand rebuilds the caller's own invocation with a slot for every
+// missing answer appended, so the fix is filling in blanks rather than a
+// reconstruction.
 //
 // Quoting matters more than it looks: unquoted, a multipick's `\,` is eaten by
 // the shell and rad silently sees two selections instead of one.
@@ -237,20 +242,11 @@ func suggestedCommand(unanswered []prompts.Site) string {
 	parts := append([]string{"rad", scriptRef}, originalScriptArgs()...)
 
 	for _, s := range unanswered {
-		// The two cases where no value can honestly go here: a secret must never
-		// travel through argv, and a builtin used as a value has no call for an
-		// answer to attach to. Everything else gets a --reply, including a
-		// filtered pick - an answer the filter makes moot is dropped rather than
-		// fought with, so offering one is safe either way.
-		if s.Secret || s.AsValue {
+		if answeredByRad(s) {
 			parts = append(parts, "--reply-na", s.Key)
 			continue
 		}
-		value := placeholderFor(s)
-		if value == "" {
-			value = placeholderTextFor(s)
-		}
-		parts = append(parts, "--reply", s.Key+":"+value)
+		parts = append(parts, "--reply", s.Key+":"+blankFor(s))
 	}
 
 	quoted := lo.Map(parts, func(s string, _ int) string { return shellQuoteIfNeeded(s) })
@@ -272,36 +268,49 @@ func originalScriptArgs() []string {
 	return args[1:] // drop the script path / `-`
 }
 
-// placeholderFor is a value rad can honestly suggest, or "" when the caller has
-// to supply one themselves.
-func placeholderFor(s prompts.Site) string {
+// answeredByRad reports whether rad can fill this site in itself rather than
+// leave the caller a blank. Three cases, and all three are things rad knows
+// rather than things it guesses: a secret must never travel through argv, a
+// builtin used as a value has no call for an answer to attach to, and a pick
+// that settles on one option never asks. --reply-na states each of them.
+func answeredByRad(s prompts.Site) bool {
+	return s.Secret || s.AsValue || settlesItself(s)
+}
+
+// settlesItself reports whether a pick can only land on one option, which it
+// takes without asking. Options and any filter both have to be literal for
+// that to be knowable here; a filter built at runtime leaves it open.
+func settlesItself(s prompts.Site) bool {
+	if s.Kind != prompts.Pick || len(s.Options) == 0 {
+		return false
+	}
+	if s.Filtered && len(s.Filter) == 0 {
+		return false
+	}
+	return len(survivingOptions(s)) == 1
+}
+
+// blankFor is the slot rad prints in place of an answer. It names the shape the
+// answer takes and stops there: which option to take, or whether to say yes to
+// "this is a one-way trip, proceed?", is the caller's to decide, and a
+// plausible value filled in for them reads as advice rad has no standing to
+// give - then gets pasted as one. The prompt's own options sit a few lines
+// above, so the slot doesn't have to repeat them.
+func blankFor(s prompts.Site) string {
 	switch s.Kind {
 	case prompts.Confirm, prompts.ShellConfirm:
-		return "yes"
+		return "<yes|no>"
+	case prompts.Pick:
+		return "<option>"
 	case prompts.Multipick:
-		if len(s.Options) == 0 {
-			return ""
-		}
-		// Suggesting every option overshoots a max the prompt sets, and an
-		// option containing a comma has to survive the split it would land in.
-		n := len(s.Options)
-		if s.MaxSet && s.Max >= 0 && int64(n) > s.Max {
-			n = int(s.Max)
-		}
-		escaped := lo.Map(s.Options[:n], func(o string, _ int) string { return escapeSelection(o) })
-		return strings.Join(escaped, ",")
+		return "<option,...>"
 	default:
-		if surviving := survivingOptions(s); len(surviving) > 0 {
-			return surviving[0]
-		}
-		return ""
+		return "<value>"
 	}
 }
 
-// survivingOptions applies a pick's own filter to its own options, so the
-// suggested answer is one the call will actually accept. Naming the first of
-// the unfiltered list instead produces a command that fails on paste whenever
-// the filter excludes it.
+// survivingOptions applies a pick's own filter to its own options, so rad can
+// tell whether the call has a choice left to make.
 func survivingOptions(s prompts.Site) []string {
 	if len(s.Filter) == 0 {
 		return s.Options
@@ -320,21 +329,6 @@ func survivingOptions(s prompts.Site) []string {
 		}
 	}
 	return kept
-}
-
-// placeholderTextFor is the stand-in shown when rad has no real value to offer.
-// Deliberately angle-bracketed so it reads as something to replace.
-func placeholderTextFor(s prompts.Site) string {
-	if s.Kind == prompts.Multipick {
-		return "<values>"
-	}
-	return "<value>"
-}
-
-// escapeSelection makes an option safe to put in a comma-separated multipick
-// answer, mirroring what splitEscaped will undo.
-func escapeSelection(opt string) string {
-	return strings.NewReplacer(`\`, `\\`, `,`, `\,`).Replace(opt)
 }
 
 func commandPath(cmd *ScriptCommand) []string {

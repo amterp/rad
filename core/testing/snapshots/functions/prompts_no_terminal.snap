@@ -18,12 +18,12 @@ error[RAD20046]: this script needs to ask you something, but there's no terminal
   TestCase:3  input   "Notes"
   TestCase:4  pick    options: dev, prod
 
-    rad TestCase --color=never --reply 2:yes --reply '3:<value>' --reply 4:dev
+    rad TestCase --color=never --reply '2:<yes|no>' --reply '3:<value>' --reply '4:<option>'
 
-  Replace each <...> with a real value first; rad takes them literally.
-  Answers must match exactly; rad won't guess. For a prompt on a branch you
-  know won't run - or a filtered pick you expect to narrow to one option -
-  use --reply-na rather than inventing a value.
+  Every <...> is a blank - rad writes the shape of the command, never the
+  answers. Fill each one in; rad takes the text literally and matches it
+  exactly. For a prompt on a branch you know won't run, or a filtered pick
+  you expect to settle itself, use --reply-na instead of choosing for it.
    = info: rad docs RAD20046
 ### EXIT ###
 7
@@ -394,7 +394,7 @@ side effect
 only
 
 ### TITLE ###
-A filtered pick that does not narrow is suggested a real value
+A filtered pick with a choice left gets a blank like any other
 ### INPUT ###
 x = pick(["alpha", "beta"], "a")
 print(x)
@@ -408,11 +408,12 @@ error[RAD20046]: this script needs to ask you something, but there's no terminal
 
   TestCase:1  pick options: alpha, beta  filtered - may not prompt, and then ignores its answer
 
-    rad TestCase --color=never --reply 1:alpha
+    rad TestCase --color=never --reply '1:<option>'
 
-  Answers must match exactly; rad won't guess. For a prompt on a branch you
-  know won't run - or a filtered pick you expect to narrow to one option -
-  use --reply-na rather than inventing a value.
+  Every <...> is a blank - rad writes the shape of the command, never the
+  answers. Fill each one in; rad takes the text literally and matches it
+  exactly. For a prompt on a branch you know won't run, or a filtered pick
+  you expect to settle itself, use --reply-na instead of choosing for it.
    = info: rad docs RAD20046
 ### EXIT ###
 7
@@ -435,9 +436,6 @@ error[RAD20046]: this script needs to ask you something, but there's no terminal
 
     rad TestCase --color=never --reply-na 1
 
-  Answers must match exactly; rad won't guess. For a prompt on a branch you
-  know won't run - or a filtered pick you expect to narrow to one option -
-  use --reply-na rather than inventing a value.
    = info: rad docs RAD20046
 ### EXIT ###
 7
@@ -483,25 +481,24 @@ error[RAD20046]: cannot answer the pick used as a value at 1: the script passes 
 7
 
 ### TITLE ###
-A filtered pick is suggested an option its own filter keeps
+A pick that can only land on one option is answered with reply-na
 ### INPUT ###
-x = pick(["zulu", "beta", "gamma"], "a")
-print(x)
+x = pick(["zulu", "beta", "gamma"], "be")
+y = pick(["solo"])
+print(x, y)
 ### NO_TERMINAL ###
 ### STDERR ###
 error[RAD20046]: this script needs to ask you something, but there's no terminal
 
-  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and
+  TestCase prompts in 2 places. rad found no terminal - stdin isn't one and
   /dev/tty isn't available - so it can't ask. Supply the answers up front,
   keyed by line number.
 
-  TestCase:1  pick options: zulu, beta, gamma  filtered - may not prompt, and then ignores its answer
+  TestCase:1  pick options: zulu, beta, gamma  settles on "beta" - won't ask
+  TestCase:2  pick options: solo  settles on "solo" - won't ask
 
-    rad TestCase --color=never --reply 1:beta
+    rad TestCase --color=never --reply-na 1 --reply-na 2
 
-  Answers must match exactly; rad won't guess. For a prompt on a branch you
-  know won't run - or a filtered pick you expect to narrow to one option -
-  use --reply-na rather than inventing a value.
    = info: rad docs RAD20046
 ### EXIT ###
 7

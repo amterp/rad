@@ -80,8 +80,8 @@ type Site struct {
 	Min, Max       int64
 	MinSet, MaxSet bool
 	// Filter holds a pick's literal filter arguments, nil when computed. With
-	// both these and Options known, rad can work out which choices survive and
-	// suggest one that will actually be accepted.
+	// both these and Options known, rad can work out which choices survive, and
+	// so whether the call has a choice left to make or settles without asking.
 	Filter []string
 	// AsValue marks an interactive builtin named rather than called - `f = pick`.
 	// Rad cannot see where such a value ends up, so there is no call to key an
