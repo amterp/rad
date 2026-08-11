@@ -2,7 +2,22 @@
   "_v": 3,
   "alias": "decide-whether-an",
   "alias_explicit": false,
-  "column": "p0-tier1",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "**Decided and landed** on `rad-sprint2`. No RED was written - deliberate call this session; the reasoning lives in the commit messages instead, per AGENTS.md treating `git blame` as documentation.\n\n**The card framed one question. It was two, and only one was a decision.**\n\n**Half A - `error(\"x\") ?? y` yields the error.** Not a design fork. Three layers already specified the opposite, and the interpreter was the only one disagreeing:\n\n- the guide: \"`??` fires when the left side is **null or an error**\"\n- `SYNTAX.md`: \"yields the left value if it is **not null or an error**\"\n- the checker, `rts/check/type_check.go` `synthCatchExpr`: *\"Catch fires when left evaluates to an error\"*\n\nOnly `core/interpreter.go` checked `panicked || IsNull()` with no `IsError()`. Fixed in `94da0bfc` - roughly six lines across `Fallback` and `CatchExpr`, plus extending `synthFallback` to strip the error arm so static and runtime agree. **Blast radius was zero**: no test case and no doc snippet in the repo paired `error(` with `??` or `catch`. Nothing broke; three documents became true.\n\n**The card's option 2 (make `error()` panic) is rejected**, and it is worth recording why so it does not come back. It breaks all 10 cases in `types/error.snap` - a file that exists solely to pin error-as-value semantics, including errors as map keys - moves ~10 golden diagnostic spans, leaves the `error` type uninhabitable by any expression (the only remaining construction site would be a `catch:` binding), deletes two checker carve-outs, and contradicts the shipped v0.9 migration guide, which explicitly shows `err = error(\"oops\")`.\n\n**Half B - does a bound error stay armed? Yes. Decided, documented in `7a8aeac7`.**\n\nAn error stays armed for as long as it exists. Binding it does not disarm it, so returning it from another function raises it there.\n\nRejected the alternative (mark an error handled once caught, so it can never fire again) on two grounds: a value carrying hidden state fights the self-explanatory bar in `docs/thinking/principles.md`, and a real failure would vanish the moment it passed through a function that returned it unchanged. Silently losing a failure is worse than an exit that names where it happened.\n\nThe cost - a transparent relay re-raises - is mitigated rather than removed: the diagnostic already names the re-raise site (that half shipped as a_25TdYyCC3), and with half A fixed, guarding the second call reads exactly like guarding the first: `relay(stored) ?? \"default\"`.\n\n**One deliberate asymmetry, now documented rather than accidental.** `??` and `catch` inspect the value the left side produced, so they fire on a held error. A `catch:` *block* catches an operation that failed, so a statement that merely assigns an error you already had does not trigger it. The plan called for changing all five guard sites; the block forms were left alone on purpose. Wiring them would also have meant threading a result back through every branch of `assignRightsToLefts`, which returns `VoidNormal` throughout.\n\nNew guide section \"Holding an Error\", a `SYNTAX.md` subsection, snapshot cases in `fallback.snap` / `catch_expr.snap` / `catch.snap` (including one pinning that the remedy works), and a note in the v0.12 migration guide.\n\n**Unblocks a_sBQgqO7u (fixed) and a_sBRDpFgU (works-as-intended).** Also sets the frame for a_25NhzvsZM (how http_* failures enter the error model) and a_25TZTZgpu (`replace()` declaring `-\u003e str`) - with no RED, those two will need to read `94da0bfc` and `7a8aeac7` for the rationale.",
+      "created_at_millis": 1786436036222,
+      "id": "c_260VCYV9Y"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Decided: an error stays armed until handled again. Documented in 59e9a96f; 47702b90 makes ?? and catch fire on an error already held.",
+      "created_at_millis": 1786436996016,
+      "id": "c_260uAbeaL",
+      "updated_at_millis": 1786439144662
+    }
+  ],
   "created_at_millis": 1786357725890,
   "creator": "Alexander Terp",
   "description": "Two bugs on the `bugfixes` board are the same question wearing different clothes, and neither can be fixed until it is answered:\n\n- a_sBQgqO7u - `error(\"x\") ?? fallback` yields the error, not the fallback\n- a_sBRDpFgU - an error stored via `catch: pass` re-fires when returned from a later function\n\n**The question:** does an error value stay armed once it is bound to a variable?\n\n### Why they are one question\n\n- `core/funcs.go:251` - `panicIfError: !(funcName == FUNC_ERROR \u0026\u0026 isBuiltIn)`. Every call panics on an error return *except* the `error()` builtin itself. That single exemption is what makes `error(\"x\") ?? y` behave differently from `fail() ?? y`.\n- `core/interpreter.go:509` - `Fallback` fires on `panicked || leftResult.Val.IsNull()`, never `IsError()`. So an error that arrives as a *value* rather than a panic passes straight through.\n- `core/interpreter.go:358-375` - assign-with-`catch:` binds `rp.ErrV` to the target, so the variable holds a live error. Any later call returning it re-arms at `core/type_fn.go:243-245`.\n\nAnswer them together or the answers will drift apart.\n\n### The alternatives\n\n1. `??` and `catch` also check `IsError()` - the error value is caught wherever it surfaces.\n2. `error()` panics like everything else - collapses the asymmetry at the source.\n3. Document the asymmetry and change nothing - errors-as-values is the model, and a value that has not been *called* has not failed yet.\n\n### Watch out for\n\n- This is a breaking change under options 1 and 2, carrying the three-layer obligation from AGENTS.md:181-193 - a migration diagnostic, a `core/error_docs/\u003ccode\u003e.md` entry, and a section in `docs-web/docs/migrations/v0.X.md`. Commit prefix `fix!:`.\n- It contradicts or refines what the guide states outright - `core/embedded_docs/guide/error-handling.md:315`, \"errors are values that propagate by default, unless handled\".\n- **Write a RED.** It clears the bar in docs/red/0001-red-process.md:43-56 on both counts: the choice is hard to undo (breaking change to established semantics), and the interesting part is why this and not the obvious alternative. `docs/red/` has no error-model record today, which is its own gap. Option 3 still wants a RED - a `Rejected` one, which RED-1 explicitly keeps, so the question does not come back in six months with no record of why we left the asymmetry alone.\n- The span-attribution sub-bug that used to live on a_sBRDpFgU is now a_25TdYyCC3 and is NOT blocked on this - it ships either way.",
@@ -11,14 +26,15 @@
   "labels": [
     "needs-decision"
   ],
-  "position": "UUUUUUU",
+  "position": "UUUUUUUUUUUUUUUUUUUU",
   "source": [
     "main-board"
   ],
   "title": "Decide whether an error value stays armed once bound to a variable",
   "type": "bug",
-  "updated_at_millis": 1786357725890,
+  "updated_at_millis": 1786439144662,
   "history": [
-    {"field":"column","value":"p0-tier1","at":1786357725890}
+    {"field":"column","value":"p0-tier1","at":1786357725890},
+    {"field":"column","value":"done","at":1786436965651}
   ]
 }

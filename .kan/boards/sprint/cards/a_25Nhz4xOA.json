@@ -2,7 +2,7 @@
   "_v": 3,
   "alias": "add-a-min-version",
   "alias_explicit": false,
-  "column": "p2",
+  "column": "big-rocks",
   "comments": [
     {
       "author": "Alexander Terp",
@@ -19,14 +19,15 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "UU",
+  "position": "UUUUU",
   "source": [
     "friction-153"
   ],
   "title": "Add a @min_version header macro",
   "type": "feature",
-  "updated_at_millis": 1786379997749,
+  "updated_at_millis": 1786397552516,
   "history": [
-    {"field":"column","value":"p2","at":1786343579665}
+    {"field":"column","value":"p2","at":1786343579665},
+    {"field":"column","value":"big-rocks","at":1786397552516}
   ]
 }

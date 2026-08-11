@@ -2,7 +2,15 @@
   "_v": 3,
   "alias": "collect-bare",
   "alias_explicit": true,
-  "column": "doing",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Already shipped before this sprint pickup: ra 3e579ec (v0.9.0) plus rad b3297b57, documented in the v0.12 migration guide.",
+      "created_at_millis": 1786436996276,
+      "id": "c_260uB1G0V"
+    }
+  ],
   "created_at_millis": 1786343755484,
   "creator": "Alexander Terp",
   "description": "From #153 batch 5, plus the design call that followed. Supersedes this card's original framing.\n\n`targets str[]` fills exactly one positional slot, so the invocation everyone tries first fails:\n\n```rad\nargs:\n    targets str[]\n```\n\n```\nmycmd a.txt b.txt c.txt\n-\u003e Too many positional arguments. Unused: [b.txt, c.txt]\n```\n\n`*targets str` works, and `parseErrorHint` already says so, but the two spellings differ only by a bit and people reach for the one that doesn't.\n\n#153 read this from the flag side and proposed making `-c c1 c2` collect both values. We went the other way: flags keep taking exactly one value - repeating them is what git, gcc and kubectl do, and greedy flags fight with positionals. What should be greedy is bare positional values.\n\n|                | bare positional values | after its own flag |\n|----------------|------------------------|--------------------|\n| `name str[]`   | greedy; stops at any `-` token, unknown ones error | exactly one, repeatable |\n| `*name str`    | greedy; swallows *unknown* flag-shaped tokens, stops at known ones | greedy |\n\n`*` keeps a distinct job: raw rest capture for wrapper scripts, which is what `WithVariadicUnknownFlags` was built for (`radd script.rad -U`). `str[]` becomes the ordinary several-values arg.\n\nWith `*tokens str` / `filter c str[] = []`:\n\n```\nt1 t2 t3 -c c1 c2   tokens=[t1,t2,t3]  filter=[c1]  error on c2\nx y -c c1           filter=[x,y,c1]\n-c c1 x y           filter=[c1]  error on x,y\n```\n\nWith `targets str[]` / `verbose v bool`:\n\n```\na b -v c d          targets=[a,b]  error on c,d\n```\n\nThese already fall out of ra's \"a flag ends a variadic run\" rule, so the change is mostly promoting positional greediness from variadic slice flags to every slice flag rather than new machinery. Non-resumption is deliberate - it's what makes multiple variadic sections work, documented in ra's `EXAMPLES.md` since before the parser existed.\n\nUnchanged, but load-bearing now that it's the stated rule: `targets str[]` with no default is required, `= []` makes it optional, `*name` is always optional.\n\nFix lives in `ra`. Rad's `parseErrorHint` note suggesting `*targets` stops being true and should go.\n\nNot #148.1. That item is the manual-dispatch subcommand pattern straining because `command default:` doesn't exist - see `add-a-default`.\n\nSiblings from the same design call: `reject-dash-prefixed` completes the model's flag-value rule, `add-a-len-constraint` makes the required/optional rule sayable.",
@@ -11,15 +19,16 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUUU",
+  "position": "UUUUUUUUUUUUUUUUUUUUUUU",
   "source": [
     "friction-153"
   ],
   "title": "Collect bare positional values into list args",
   "type": "bug",
-  "updated_at_millis": 1786378498398,
+  "updated_at_millis": 1786436996276,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786343755484},
-    {"field":"column","value":"doing","at":1786370611744}
+    {"field":"column","value":"doing","at":1786370611744},
+    {"field":"column","value":"done","at":1786436965921}
   ]
 }

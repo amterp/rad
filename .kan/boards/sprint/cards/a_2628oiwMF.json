@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "variadic-int-args",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786439942330,
+  "creator": "Alexander Terp",
+  "description": "A variadic int arg renders `ints` in `--help` where a variadic float\nrenders `[floats...]`:\n\n```\n      --numbers ints\n      --values [floats...]\n```\n\nThe bracket form is what tells a reader the arg takes several values, and\nint is the one type that doesn't get it.\n\nRad registers its int args on ra's `Int64` flags, so ra would name them\n`int64` and `int64s` - a width Rad's language has no word for. Rad has\ncorrected that since the pflag-to-ra switch (043d1047) by hardcoding\n`SetCustomUsageType(\"int\")` and `(\"ints\")` in `core/args.go`. A plain\nstring can't vary with the flag, so the variadic form was never reachable\nfrom there.\n\n`e068dd65` removed every other rad-side placeholder string, leaving these\ntwo as the only ones. `AGENTS.md` is explicit that this is the wrong repo\nfor the fix: ra owns the table of type names and is the only layer that\nknows whether a flag is variadic.\n\nThe upstream change is written and tested, sitting unpushed on ra's main\nas `85353c1` - it renames `Int64Flag` to `int` and `Int64SliceFlag` to\n`ints` / `[ints...]`. Releasing it is the call this card is waiting on:\n`IntFlag` and `Int64Flag` would then render identically, which is a real\nloss for a consumer displaying both, recoverable with\n`SetCustomUsageType(\"int64\")` at the one site that wants the distinction.\n\nOnce ra ships, this is a `go.mod` bump plus deleting the two hardcoded\ncalls, and every arg type forwards its placeholder the same way. Expect\nexactly one snapshot line to move: `args/variadic.snap`, `--numbers ints`\nto `[ints...]`. More than one means something else changed.\n\nWorth pinning the whole matrix at the same time. `args.snap`'s\n`HelpWorksForAllTypes` covers the eight non-variadic types; a variadic\nsibling would cover the remaining four, so no type's placeholder can\ndrift from the rest unnoticed again.",
+  "effort": "xs",
+  "id": "a_2628oiwMF",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "UUUUUUUUUUUU",
+  "title": "Variadic int args render `ints`, not `[ints...]` - needs an ra release",
+  "type": "bug",
+  "updated_at_millis": 1786439942330,
+  "history": [
+    {"field":"column","value":"p1","at":1786439942330}
+  ]
+}

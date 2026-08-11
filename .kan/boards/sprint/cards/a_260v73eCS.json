@@ -1,0 +1,31 @@
+{
+  "_v": 3,
+  "alias": "list-args-render-as",
+  "alias_explicit": false,
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Fixed in e068dd65. str[] renders 'strs' and *str renders '[strs...]' again, including for rad's own commands. The placeholder is now a setter only rad's own flags call (--color, --reply, --reply-na), so no script arg can override its type name. 173d75e7 then deleted the four unreachable CreateFlag branches where half the duplicated placeholder spellings lived. One loose end split out to its own card: *int still renders 'ints' rather than '[ints...]'.",
+      "created_at_millis": 1786439923835,
+      "id": "c_2628KtGEN"
+    }
+  ],
+  "created_at_millis": 1786437032260,
+  "creator": "Alexander Terp",
+  "description": "`--help` renders every list arg's value placeholder as `string,string`:\n\n```\n      --targets string,string\n      --paths string,string   Paths of Rad scripts to format.\n```\n\nIt used to read `strs`, and `[strs...]` for a variadic - which also told the\nreader the arg was variadic. Both spellings are gone, and this reaches rad's\nown commands too, not just script args.\n\nIt came in with the non-interactive prompts work (24919cca), which added this\nto `StringListRadArg.Register`:\n\n```go\n// Only when the caller supplied one: script-declared list args leave this\n// empty and should keep rendering as the generic \"strs\".\nif f.ArgUsage != \"\" {\n    arg = arg.SetCustomUsageType(f.ArgUsage)\n}\n```\n\nThe comment states the intent plainly, but every script-arg call site passes\nthe literal `\"string,string\"` for `argUsage` (`core/args.go:1090` and `:1132`),\nso the guard is never false and the generic rendering never survives. The\nsnapshot churn was accepted at the time, so the flip reads as deliberate in\nthe diff rather than as a slip.\n\nIndependent evidence that `strs` was still the expected rendering: the\nconstraint-enforcement work (e5f9204a) was written on a tree without this\nchange, and its snapshots expected `strs` and `[strs...]` throughout. They\nwere regenerated to `string,string` when the two branches were combined, so\nthe new constraint snapshots now bless the same behavior.\n\nWorth settling which rendering we actually want before changing anything -\n`string,string` does hint at repeatability in a way `strs` doesn't, so this\nmay be the better output arrived at by accident. But whichever wins, the\nvariadic `[strs...]` form carried information that is now lost, and the code\nand its comment currently disagree about what is supposed to happen.",
+  "effort": "s",
+  "id": "a_260v73eCS",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "UUUUUUUUUUUUUUUUUUUUUUUUU",
+  "title": "List args render as `string,string` in --help, losing `strs` and `[strs...]`",
+  "type": "bug",
+  "updated_at_millis": 1786439923912,
+  "history": [
+    {"field":"column","value":"p1","at":1786437032260},
+    {"field":"column","value":"doing","at":1786437270654},
+    {"field":"column","value":"done","at":1786439923912}
+  ]
+}

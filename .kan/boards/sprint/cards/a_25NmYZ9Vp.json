@@ -2,7 +2,7 @@
   "_v": 3,
   "alias": "clear-the-four",
   "alias_explicit": false,
-  "column": "approved",
+  "column": "p0-tier1",
   "comments": [
     {
       "author": "Alexander Terp",
@@ -25,15 +25,16 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUUU",
+  "position": "UUUUUUUUU",
   "source": [
     "main-board"
   ],
   "title": "Clear the four shippable todo-hi bugs on the bugfixes board",
   "type": "bug",
-  "updated_at_millis": 1786370392759,
+  "updated_at_millis": 1786386944279,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786343755432},
-    {"field":"column","value":"approved","at":1786356810714}
+    {"field":"column","value":"approved","at":1786356810714},
+    {"field":"column","value":"p0-tier1","at":1786386944279}
   ]
 }

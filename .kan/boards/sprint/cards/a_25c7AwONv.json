@@ -2,7 +2,22 @@
   "_v": 3,
   "alias": "scalar-arg",
   "alias_explicit": false,
-  "column": "p0-tier1",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Landed on `rad-sprint2` as `e3412028` (`fix!: constraints on a list arg are enforced, not ignored`), together with the `len` card a_25c7On7dH.\n\n**⚠️ The branch does not build as committed.** `e3412028` needs Ra API that is committed at `~/src/ra` (`5328726`) but **unpushed and untagged**, by explicit decision this session. `go.mod` is pinned to the released ra v0.9.0 and the working tree carries an uncommitted `replace` directive pointing at the local checkout. Dropping it fails with `arg.SetEnumConstraint undefined`, five more of the same. **Before anything else here: release ra v0.10.0, then `go get github.com/amterp/ra@v0.10.0` and drop the replace.**\n\n**What works**, verified against real scripts on the dev binary:\n\n- `--scores 5 --scores 500` with `scores range [0, 100]` now fails. So does `--envs nope` against an enum, and `ABC` against `regex` on a `*tags` variadic.\n- Enforced on all three routes into a list: repeated flag, one token split on a separator, and greedy bare-positional collection. They share the five `append*SliceValue` functions in Ra, which is why one check per element type covers everything.\n- `-h` renders `Range: [0, 100]`, `Valid values: [...]`, `Regex: ...`, `Length: [2, 2]` on lists, matching the scalar form.\n- `len` works and composes: `pair len [2,2]`, `ports len [1,]`, `scores range [0,100]` + `scores len [2,]`.\n\n**Design decisions worth knowing:**\n\n1. **Constraints reach Ra from the ScriptArg at `Register`, not through the four list constructors.** The card and the plan both assumed constructor params plus eight `CreateFlag` sites. Unnecessary: `f.scriptArg` is already attached at every one of those sites before `Register` runs, and already carries the constraints. One forwarding site per element type instead of eight. Threading through constructors is *how these got dropped* - eight sites each had to remember, and the four list ones did not.\n2. **Ra's slice bounds are `float64` for all three numeric element types**, not per-type fields mirroring the scalar flags. Rad's own `ArgRangeConstraint` is already float64-based, so this matches; one set of fields means one comparison rather than three that can drift.\n3. **A constraint the element type cannot honor errors at `Register` in Ra**, rather than being stored unread. Introducing a fresh silent-ignore at the registration boundary while fixing a silent-ignore bug would have been perverse. Rad's checker rejects it earlier anyway (RAD40024), so this is defense in depth.\n4. **RAD40024 also catches the scalar spelling.** `age int` + `age enum [...]` was equally ignored - same drop, different branch of the same switch. Called out on the card as an adjacent bug; it is fixed here.\n5. **`len` is checked after the required-args pass**, so an omitted flag reports as missing rather than as too short. Only flags the user actually set are counted - an untouched default is the author's choice, not input to police.\n\n**The `rad -i` contradiction was real** and is what settled enforce-vs-reject. `core/interactive_args.go:850` `elementValidatorFor` had been validating per element at the prompt all along, then synthesizing an argv the non-interactive path accepted unchecked. It is now a prompt-time convenience rather than the only check; `elementValidatorFor` carries a comment saying so. Full unification was not done deliberately: with Ra enforcing, drift there can only make the prompt reject something Ra would accept, or accept something Ra then rejects - annoying, no longer a silent-failure class bug.\n\n**Drive-by:** deleted `StringRadArg`/`IntRadArg`/`FloatRadArg` `GetDescription` and `addRangeDescriptionIfPresent` in `core/args.go`. They built constraint text for usage output and nothing called them - Ra renders help - so they were a second, divergent renderer that read as authoritative.\n\n**Coverage added:** list/variadic cases in `constraints/{enum,range,regex}.snap`, a new `constraints/len.snap`, `rts/check/snapshots/arg_constraints.snap`, and 23 tests in `ra_slice_constraint_test.go`. There was zero coverage of a constraint on a list before this.\n\n**Migration:** `docs-web/docs/migrations/v0.12.md` gains a sixth breaking change, with a \"what the diagnostic cannot catch\" note - RAD40024 finds constraints that can never apply, but cannot tell you a *valid* constraint will now start rejecting values it used to let through. Error doc at `core/error_docs/40024.md`.\n\nResolves probe 3 on `run-the-nine` (regex on variadics): it parsed, was unenforced, and now is enforced.",
+      "created_at_millis": 1786436013791,
+      "id": "c_260UcNtU0"
+    },
+    {
+      "author": "Alexander Terp",
+      "body": "Shipped as e3153393 on rad-sprint. Invalid-for-type constraints now raise RAD40024.",
+      "created_at_millis": 1786436996104,
+      "id": "c_260uAkHpZ",
+      "updated_at_millis": 1786439144743
+    }
+  ],
   "created_at_millis": 1786377913950,
   "creator": "Alexander Terp",
   "description": "`enum`, `regex` and `range` are accepted on a list or variadic arg, shown nowhere, and never enforced:\n\n```rad\nargs:\n    scores int[]\n    scores range [0, 100]\n```\n\n```\n$ rad script.rad --scores 5 --scores 500\nscores=[ 5, 500 ]\n```\n\nSame for `enum` on `str[]` (`--envs nope` passes) and `regex` on `*tags` (`ABC` and `123` pass). `rad check` reports no diagnostics, and the constraint never reaches `-h` - the args block shows a bare `--scores ints` where the scalar equivalent shows `Range: [0, 100]`.\n\nThe scalar path works, so an author has every reason to believe the list one does. A script validating `*envs str enum [...]` before feeding those values into a shell command is trusting something that isn't happening.\n\nVisible on both sides of the boundary: the four `*ListRadArg` types in `core/args.go` carry no `EnumConstraint`, `RegexConstraint` or `RangeConstraint` field, and `ra`'s slice flags expose no constraint setters at all. So this is Rad wiring plus per-element validation in `ra`.\n\nThe natural reading is per-element:\n\n```rad\nargs:\n    scores int[] range [0, 100]\n    *envs str enum [\"dev\", \"stg\", \"prd\"]\n    *tags str regex \"[a-z][a-z0-9-]*\"\n```\n\nMinimum bar is rejecting a declaration that can't be honored rather than ignoring it. Enforcing per-element is the better answer.\n\nEnforcing will fail scripts that currently pass values violating a declared-but-ignored constraint - which is the point, but it needs a migration note.\n\n`run-the-nine` lists regex-on-variadics as an unverified probe; this resolves it.",
@@ -12,17 +27,18 @@
     "ai-lo",
     "breaking"
   ],
-  "position": "UUUUUUUU",
+  "position": "UUUUUUUUUUUUUUUUUUUUU",
   "source": [
     "friction-153"
   ],
   "title": "Scalar arg constraints are silently ignored on list and variadic args",
   "type": "bug",
-  "updated_at_millis": 1786379118341,
+  "updated_at_millis": 1786439144743,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786377913950},
     {"field":"column","value":"doing","at":1786378361334},
     {"field":"column","value":"big-rocks","at":1786379117383},
-    {"field":"column","value":"p0-tier1","at":1786379118341}
+    {"field":"column","value":"p0-tier1","at":1786379118341},
+    {"field":"column","value":"done","at":1786436965736}
   ]
 }
