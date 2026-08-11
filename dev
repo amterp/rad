@@ -16,7 +16,7 @@ args:
     release range [1, 3]
 
 get_branch = fn():
-    _, branch  = $`echo -n $(git branch --show-current)`
+    branch = $`echo -n $(git branch --show-current)`
     return branch
 
 if bump:
@@ -52,18 +52,18 @@ if release:
         exit(1)
 
     // check for replace directives in go.mod
-    no_replace_directives = $`grep "^replace " go.mod` catch:
+    code = $`grep "^replace " go.mod` catch:
         pass
-    if not no_replace_directives:
+    if code == 0:
         print("{'ERROR'.red()}: go.mod contains replace directives which should not be present in releases:")
         print("Please remove all replace directives before releasing.".yellow())
         exit(1)
 
     // resolve version /////////////
-    _, tags = $`git tag -l`
+    tags = $`git tag -l`
     tags = split(tags[:-1], "\n")
     tags = [replace(t, "v", "") for t in tags]
-    tags = [split(t, "\.") for t in tags]
+    tags = [split(t, ".") for t in tags]
     major = sort([parse_int(t[0]) for t in tags])[-1]
     minor = sort([parse_int(t[1]) for t in tags if parse_int(t[0]) == major])[-1]
     patch = sort([parse_int(t[2]) for t in tags if parse_int(t[0]) == major and parse_int(t[1]) == minor])[-1]
@@ -82,7 +82,8 @@ if release:
         print("Working directory is dirty! Aborting.".red())
         exit(1)
 
-    $`sed -i '' "s/Version = \".*\"/Version = \"{version}\"/" ./core/version.go`
+    sed_expr = "s/Version = \".*\"/Version = \"{version}\"/"
+    $`sed -i '' {sed_expr} ./core/version.go`
 
     $`git add ./core/version.go`
 
@@ -90,7 +91,8 @@ if release:
         if amend:
             $`git commit --amend --no-edit`
         else:
-            $`git commit -m "chore: bump version to {version}"`
+            commit_msg = "chore: bump version to {version}"
+            $`git commit -m {commit_msg}`
 
         $`git tag {version}`
 

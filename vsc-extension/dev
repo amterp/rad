@@ -18,18 +18,20 @@ if reinstall:
     $`code --install-extension {compiled_path} --force`
 
 if version:
-    clean_before = $`git status --porcelain | grep -q .` catch:
+    code = $`git status --porcelain | grep -q .` catch:
         pass
+    clean_before = code != 0
     if not clean_before:
         $`git diff HEAD --compact-summary`
         print(yellow("Warning!"), "Your repo is not clean. Continue and include in your version bump?")
         if not confirm():
             print(red("Exiting..."))
             exit(1)
-    _, stdout = $`npm version {version}`
+    stdout = $`npm version {version}`
     stdout = split(stdout, "\n")[0] // cut off newline
     $`git add .`
     $`git diff HEAD --compact-summary`
-    confirm $`git commit -m 'Release VSCode extension {stdout}'`
+    commit_msg = "Release VSCode extension {stdout}"
+    confirm $`git commit -m {commit_msg}`
     confirm $`npx @vscode/vsce publish`
     confirm $`git push`
