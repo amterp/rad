@@ -12,10 +12,13 @@ Decodes Base16 (hexadecimal) text back to original string.
 decode_base16("48656c6c6f")   // -> "Hello"
 decode_base16("414243")       // -> "ABC"
 
-// Error handling
-result = decode_base16("invalid hex")
-if result.error:
-    print("Invalid hex string")
+// Handle errors - inside the block, `result` is the error
+result = decode_base16("invalid hex") catch:
+    print_err("Invalid hex string: {result}")
+    exit(1)
+
+// Or fall back
+result = decode_base16("invalid hex") ?? ""
 ```
 
 ## Category

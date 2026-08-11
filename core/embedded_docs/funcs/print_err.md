@@ -9,5 +9,8 @@ print_err(*_items: any, *, sep: str = " ", end: str = "\n") -> void
 
 ```rad
 print_err("failed to load config")     // -> writes to stderr
-print_err("error:", err.msg)           // -> "error: <msg>" to stderr
+
+// Inside a catch: block the assigned variable is the error itself
+config = read_file("config.json") catch:
+    print_err("error:", config)        // -> "error: <msg>" to stderr
 ```

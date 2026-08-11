@@ -15,10 +15,13 @@ decoded = decode_base64(encoded)           // -> "Hello World"
 url_encoded = encode_base64("test", url_safe=true)
 decoded = decode_base64(url_encoded, url_safe=true)
 
-// Error handling
-result = decode_base64("invalid base64!")
-if result.error:
-    print("Decode failed:", result.error)
+// Handle errors - inside the block, `result` is the error
+result = decode_base64("invalid base64!") catch:
+    print_err("Decode failed: {result}")
+    exit(1)
+
+// Or fall back
+result = decode_base64("invalid base64!") ?? ""
 ```
 
 ## Notes

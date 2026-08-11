@@ -28,10 +28,10 @@ print(time.epoch.millis)  // -> 1712345678500
 time = parse_epoch(1712345678123.25, unit="millis")
 print(time.epoch.nanos)  // -> 1712345678123250000
 
-// Error handling
-time, err = parse_epoch(1712345678, tz="Invalid/Timezone")
-if err:
-    print("Invalid timezone:", err.msg)
+// Handle errors - inside the block, `time` is the error
+time = parse_epoch(1712345678, tz="Invalid/Timezone") catch:
+    print_err("Invalid timezone: {time}")
+    exit(1)
 ```
 
 ## Category

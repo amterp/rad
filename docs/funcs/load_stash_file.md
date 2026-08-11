@@ -10,10 +10,14 @@ Loads a file from the script's stash directory, creating it with default content
 
 ```rad
 result = load_stash_file("config.txt", "default config")
-if result.success:
-    if result.created:
-        print("Created new config file")
-    content = result.content
+if result.created:
+    print("Created new config file")
+content = result.content
+
+// Handle errors - inside the block, `result` is the error
+result = load_stash_file("config.txt") catch:
+    print_err("Could not load stash file: {result}")
+    exit(1)
 ```
 
 ## Category

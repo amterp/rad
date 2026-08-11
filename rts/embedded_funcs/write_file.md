@@ -17,10 +17,10 @@ print("Wrote", result.bytes_written, "bytes")
 // Append to existing file
 write_file("log.txt", "\nNew entry", append=true)
 
-// Error handling
-result, err = write_file("/readonly/file.txt", "data")
-if err:
-    print("Write failed:", err.msg)
+// Handle errors - inside the block, `result` is the error
+result = write_file("/readonly/file.txt", "data") catch:
+    print_err("Write failed: {result}")
+    exit(1)
 ```
 
 ## Category

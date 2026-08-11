@@ -10,18 +10,19 @@ read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_byte
 ```rad
 // Read text file
 result = read_file("config.txt")
-if result.success:
-    content = result.content  // -> string
-    
+content = result.content      // -> string
+
 // Read binary file
 result = read_file("image.png", mode="bytes")
-if result.success:
-    bytes = result.content    // -> list[int]
-    
-// Handle errors
-result = read_file("missing.txt")
-if not result.success:
-    print("Error:", result.error)
+bytes = result.content        // -> list[int]
+
+// Handle errors - inside the block, `result` is the error
+result = read_file("missing.txt") catch:
+    print_err("Read failed: {result}")
+    exit(1)
+
+// Or fall back
+result = read_file("missing.txt") ?? { "size_bytes": 0, "content": "" }
 ```
 
 ## Notes
