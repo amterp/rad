@@ -1,0 +1,18 @@
+{
+  "_v": 3,
+  "alias": "nested-commands-drop",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786448587657,
+  "creator": "Alexander Terp",
+  "description": "`52dfca8b` shipped nested commands and named this as a known rough edge, pinned by snapshots so that fixing it shows up as a reviewable diff. Rewriting `remind` onto command blocks hit it on the first try: the help for a namespace tells the reader to type something that does not work.\n\n```\n$ remind agent --help\nUsage:\n  agent [command] [OPTIONS]        \u003c- `agent` on its own is not a command\n```\n\nEvery level below the root drops its ancestry. `core/testing/snapshots/args/nested_cmds.snap` already pins all three shapes:\n\n| line | renders | should read |\n|---|---|---|\n| 145 | `remote [command] [OPTIONS]` | `TestCase remote [command] [OPTIONS]` |\n| 192 | `remote [command] [OPTIONS]` | `TestCase remote [command] [OPTIONS]` |\n| 232 | `add \u003cname\u003e \u003curl\u003e [OPTIONS]` | `TestCase remote add \u003cname\u003e \u003curl\u003e [OPTIONS]` |\n\nThe root's own line (273) is correct, so this is only about the path prefix. Line 145 is the \"Must specify a command for 'remote'\" error, which makes it the worst of the three: the one moment the reader has already been told they got the invocation wrong is the moment we hand them another one that will not parse.\n\n### Orientation\n\nThe fix is upstream in ra. Rad only prints the string it is given.\n\n- `ra_usage.go:441` `generateSynopsis` renders the leading name as `c.name`, the command's own name, with no ancestry.\n- `generateSynopsisAs(name, ...)` directly below it already accepts an arbitrary leading name. It exists so a parent can render its default sub-command's line. The rendering half is therefore done; what is missing is knowing the path.\n- `Cmd` (`ra_cmd.go:34`) holds `subCmds` but no link back to its parent, so a sub-command cannot currently derive its own path. Either record the parent at registration, or thread the accumulated prefix down through the usage walk.\n\n### Watch out for\n\n- The synopsis is reached from at least three entry points: a namespace's `-h`, a leaf's `-h`, and the missing-command error. Fixing the help path alone leaves the error path wrong, and that is the one users actually hit.\n- `generateSynopsisAs` also renders the `(same as: ...)` line for a default command, where it deliberately substitutes the *parent's* name. Any change assuming \"leading name == full path\" breaks that line.\n- Rad pins ra by version, so this needs an ra release before rad can take it, same as `a_2628oiwMF`.\n\nThe sibling rough edge `52dfca8b` called out in the same breath, a namespace's shared args rendering under \"Global options\" rather than as its own args, is not carded anywhere. Worth deciding whether it rides along with this.",
+  "effort": "s",
+  "id": "a_265linKNW",
+  "position": "UUUUUUUUUU",
+  "title": "Nested commands drop their path from the usage line - needs an ra release",
+  "type": "bug",
+  "updated_at_millis": 1786448587657,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786448587657}
+  ]
+}
