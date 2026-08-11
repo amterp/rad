@@ -1068,24 +1068,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 
 	switch argType {
 	case ArgStringT:
-		// Handle variadic string arguments with list defaults
-		if arg.IsVariadic && arg.DefaultStringList != nil {
-			var defVal []string // Empty defaults - we'll handle at Rad level
-			f := NewStringListRadArg(
-				apiName,
-				shorthand,
-				description,
-				false,  // Don't let ra handle defaults for variadic args
-				defVal, // Empty defaults - we'll handle at Rad level
-				arg.RequiresConstraint,
-				arg.ExcludesConstraint,
-			)
-			f.scriptArg = arg
-			f.Identifier = arg.Name
-			return &f
-		}
-
-		// Handle normal string arguments
 		defVal := ""
 		hasDefault := arg.DefaultString != nil
 		if hasDefault {
@@ -1124,25 +1106,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.Identifier = arg.Name
 		return &f
 	case ArgIntT:
-		// Handle variadic int arguments with list defaults
-		if arg.IsVariadic && arg.DefaultIntList != nil {
-			var defVal []int64
-			defVal = *arg.DefaultIntList
-			f := NewIntListRadArg(
-				apiName,
-				shorthand,
-				description,
-				false,  // Don't let ra handle defaults for variadic args
-				defVal, // Keep defaults for Rad-level handling
-				arg.RequiresConstraint,
-				arg.ExcludesConstraint,
-			)
-			f.scriptArg = arg
-			f.Identifier = arg.Name
-			return &f
-		}
-
-		// Handle normal int arguments
 		defVal := int64(0)
 		hasDefault := arg.DefaultInt != nil
 		if hasDefault {
@@ -1180,25 +1143,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.Identifier = arg.Name
 		return &f
 	case ArgFloatT:
-		// Handle variadic float arguments with list defaults
-		if arg.IsVariadic && arg.DefaultFloatList != nil {
-			var defVal []float64
-			defVal = *arg.DefaultFloatList
-			f := NewFloatListRadArg(
-				apiName,
-				shorthand,
-				description,
-				false,  // Don't let ra handle defaults for variadic args
-				defVal, // Keep defaults for Rad-level handling
-				arg.RequiresConstraint,
-				arg.ExcludesConstraint,
-			)
-			f.scriptArg = arg
-			f.Identifier = arg.Name
-			return &f
-		}
-
-		// Handle normal float arguments
 		defVal := 0.0
 		hasDefault := arg.DefaultFloat != nil
 		if hasDefault {
@@ -1236,25 +1180,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f.Identifier = arg.Name
 		return &f
 	case ArgBoolT:
-		// Handle variadic bool arguments with list defaults
-		if arg.IsVariadic && arg.DefaultBoolList != nil {
-			var defVal []bool
-			defVal = *arg.DefaultBoolList
-			f := NewBoolListRadArg(
-				apiName,
-				shorthand,
-				description,
-				false,  // Don't let ra handle defaults for variadic args
-				defVal, // Keep defaults for Rad-level handling
-				arg.RequiresConstraint,
-				arg.ExcludesConstraint,
-			)
-			f.scriptArg = arg
-			f.Identifier = arg.Name
-			return &f
-		}
-
-		// Handle normal bool arguments
 		defVal := false
 		if arg.DefaultBool != nil {
 			defVal = *arg.DefaultBool
