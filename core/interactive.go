@@ -66,7 +66,7 @@ func (osTerminalSource) Open() (*Terminal, error) {
 		return &Terminal{In: os.Stdin, Out: RIo.StdErr}, nil
 	}
 
-	f, err := com.OpenControllingTerminal()
+	tty, err := com.OpenControllingTerminal()
 	if err != nil {
 		if com.IsTerminal(os.Stdin) {
 			// Keystrokes still reach us; only the drawing surface is redirected.
@@ -78,14 +78,14 @@ func (osTerminalSource) Open() (*Terminal, error) {
 
 	in := os.Stdin
 	if !com.IsTerminal(in) {
-		in = f
+		in = tty.In
 	}
 	out := RIo.StdErr
 	if !stdErrIsTerminal() {
-		out = f
+		out = tty.Out
 	}
 
-	return &Terminal{In: in, Out: out, close: func() { f.Close() }}, nil
+	return &Terminal{In: in, Out: out, close: tty.Close}, nil
 }
 
 func stdErrIsTerminal() bool {
