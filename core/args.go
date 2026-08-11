@@ -75,7 +75,6 @@ type RadArg interface {
 	GetExternalName() string
 	GetIdentifier() string
 	GetShort() string
-	GetArgUsage() string
 	GetDescription() string
 	DefaultAsString() string
 	HasNonZeroDefault() bool // todo
@@ -97,7 +96,7 @@ type BaseRadArg struct {
 	ExternalName       string // User-facing arg they'll set in CLI
 	Identifier         string // Identifier in script. If non-script arg, then equal to ExternalName
 	Short              string
-	ArgUsage           string
+	usagePlaceholder   string
 	Description        string
 	requiresConstraint []string // Identifiers, not external names
 	excludesConstraint []string // Identifiers, not external names
@@ -121,10 +120,6 @@ func (f *BaseRadArg) GetIdentifier() string {
 
 func (f *BaseRadArg) GetShort() string {
 	return f.Short
-}
-
-func (f *BaseRadArg) GetArgUsage() string {
-	return f.ArgUsage
 }
 
 func (f *BaseRadArg) GetDescription() string {
@@ -196,6 +191,14 @@ func (f *BaseRadArg) SetBypassValidation(bypass bool) {
 	f.bypassValidation = bypass
 }
 
+// SetUsagePlaceholder overrides the value placeholder shown in usage, e.g.
+// "line:value" for --reply. Rad's own flags are the only callers: a script's
+// args take ra's placeholder for their type, which is what keeps the type
+// names in --help consistent across every arg rad registers.
+func (f *BaseRadArg) SetUsagePlaceholder(placeholder string) {
+	f.usagePlaceholder = placeholder
+}
+
 func (f *BaseRadArg) Excludes(otherArg RadArg) bool {
 	return lo.Contains(f.excludesConstraint, otherArg.GetIdentifier())
 }
@@ -225,7 +228,6 @@ func NewBoolRadArg(name,
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           "",
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -263,6 +265,7 @@ func (f *BoolRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetFlagOnly(flagOnly).
+		SetCustomUsageType(f.usagePlaceholder).
 		RegisterWithPtr(cmd, &f.Value, opts...)
 
 	if err != nil {
@@ -298,7 +301,6 @@ type BoolListRadArg struct {
 
 func NewBoolListRadArg(name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue []bool,
@@ -310,7 +312,6 @@ func NewBoolListRadArg(name,
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -341,7 +342,8 @@ func (f *BoolListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetHiddenInShortHelp(asRaGlobal).
-		SetFlagOnly(flagOnly)
+		SetFlagOnly(flagOnly).
+		SetCustomUsageType(f.usagePlaceholder)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -402,7 +404,6 @@ type StringRadArg struct {
 func NewStringRadArg(
 	name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue string,
@@ -416,7 +417,6 @@ func NewStringRadArg(
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -446,7 +446,7 @@ func (f *StringRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetUsage(f.Description).
 		SetHiddenInShortHelp(asRaGlobal).
 		SetHidden(f.hidden).
-		SetCustomUsageType(f.ArgUsage).
+		SetCustomUsageType(f.usagePlaceholder).
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetRegexConstraint(f.RegexConstraint).
@@ -547,7 +547,6 @@ type StringListRadArg struct {
 func NewStringListRadArg(
 	name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue,
@@ -559,7 +558,6 @@ func NewStringListRadArg(
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -590,13 +588,8 @@ func (f *StringListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetHiddenInShortHelp(asRaGlobal).
-		SetFlagOnly(flagOnly)
-
-	// Only when the caller supplied one: script-declared list args leave this
-	// empty and should keep rendering as the generic "strs".
-	if f.ArgUsage != "" {
-		arg = arg.SetCustomUsageType(f.ArgUsage)
-	}
+		SetFlagOnly(flagOnly).
+		SetCustomUsageType(f.usagePlaceholder)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -671,7 +664,6 @@ type IntRadArg struct {
 func NewIntRadArg(
 	name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue int64,
@@ -684,7 +676,6 @@ func NewIntRadArg(
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -773,7 +764,6 @@ type IntListRadArg struct {
 func NewIntListRadArg(
 	name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue []int64,
@@ -785,7 +775,6 @@ func NewIntListRadArg(
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -877,7 +866,6 @@ type FloatRadArg struct {
 func NewFloatRadArg(
 	name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue float64,
@@ -890,7 +878,6 @@ func NewFloatRadArg(
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -922,7 +909,8 @@ func (f *FloatRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetHiddenInShortHelp(asRaGlobal).
-		SetFlagOnly(flagOnly)
+		SetFlagOnly(flagOnly).
+		SetCustomUsageType(f.usagePlaceholder)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -977,7 +965,6 @@ type FloatListRadArg struct {
 func NewFloatListRadArg(
 	name,
 	short,
-	argUsage,
 	description string,
 	hasDefault bool,
 	defaultValue []float64,
@@ -989,7 +976,6 @@ func NewFloatListRadArg(
 			ExternalName:       name,
 			Identifier:         name,
 			Short:              short,
-			ArgUsage:           argUsage,
 			Description:        description,
 			requiresConstraint: requires,
 			excludesConstraint: excludes,
@@ -1020,7 +1006,8 @@ func (f *FloatListRadArg) Register(cmd *ra.Cmd, mode RegistrationMode) {
 		SetRequires(f.requiresConstraint).
 		SetExcludes(f.excludesConstraint).
 		SetHiddenInShortHelp(asRaGlobal).
-		SetFlagOnly(flagOnly)
+		SetFlagOnly(flagOnly).
+		SetCustomUsageType(f.usagePlaceholder)
 
 	if f.hasDefault {
 		arg = arg.SetDefault(f.Default)
@@ -1087,7 +1074,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 			f := NewStringListRadArg(
 				apiName,
 				shorthand,
-				"string,string",
 				description,
 				false,  // Don't let ra handle defaults for variadic args
 				defVal, // Empty defaults - we'll handle at Rad level
@@ -1108,7 +1094,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewStringRadArg(
 			apiName,
 			shorthand,
-			rl.T_STR,
 			description,
 			hasDefault,
 			defVal,
@@ -1129,7 +1114,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewStringListRadArg(
 			apiName,
 			shorthand,
-			"string,string",
 			description,
 			hasDefault,
 			defVal,
@@ -1147,7 +1131,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 			f := NewIntListRadArg(
 				apiName,
 				shorthand,
-				"int,int",
 				description,
 				false,  // Don't let ra handle defaults for variadic args
 				defVal, // Keep defaults for Rad-level handling
@@ -1168,7 +1151,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewIntRadArg(
 			apiName,
 			shorthand,
-			"int",
 			description,
 			hasDefault,
 			defVal,
@@ -1188,7 +1170,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewIntListRadArg(
 			apiName,
 			shorthand,
-			"int,int",
 			description,
 			hasDefault,
 			defVal,
@@ -1206,7 +1187,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 			f := NewFloatListRadArg(
 				apiName,
 				shorthand,
-				"float,float",
 				description,
 				false,  // Don't let ra handle defaults for variadic args
 				defVal, // Keep defaults for Rad-level handling
@@ -1227,7 +1207,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewFloatRadArg(
 			apiName,
 			shorthand,
-			"float",
 			description,
 			hasDefault,
 			defVal,
@@ -1247,7 +1226,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewFloatListRadArg(
 			apiName,
 			shorthand,
-			"float,float",
 			description,
 			hasDefault,
 			defVal,
@@ -1265,7 +1243,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 			f := NewBoolListRadArg(
 				apiName,
 				shorthand,
-				"bool,bool",
 				description,
 				false,  // Don't let ra handle defaults for variadic args
 				defVal, // Keep defaults for Rad-level handling
@@ -1303,7 +1280,6 @@ func CreateFlag(arg *ScriptArg) RadArg {
 		f := NewBoolListRadArg(
 			apiName,
 			shorthand,
-			"bool,bool",
 			description,
 			hasDefault,
 			defVal,

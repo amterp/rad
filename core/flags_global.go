@@ -123,7 +123,6 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 	FlagColor = NewStringRadArg(
 		FLAG_COLOR,
 		"",
-		"mode",
 		"Control output colorization.",
 		true,
 		"auto",
@@ -132,6 +131,7 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
+	FlagColor.SetUsagePlaceholder("mode")
 
 	FlagQuiet = NewBoolRadArg(
 		FLAG_QUIET,
@@ -233,11 +233,11 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 	FlagRadArgsDump.SetBypassValidation(true)
 	hideFromUsageIfHaveScript(&FlagRadArgsDump.hidden)
 
+	// todo more descriptive placeholder than ra's default "str", via
+	//  SetUsagePlaceholder("pattern:filePath")
 	FlagMockResponse = NewStringRadArg(
 		FLAG_MOCK_RESPONSE,
 		"",
-		"str",
-		// "pattern:filePath", // todo more descriptive
 		"Add mock response for json requests (pattern:filePath)",
 		false,
 		"",
@@ -251,7 +251,6 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 	FlagReply = NewStringListRadArg(
 		FLAG_REPLY,
 		"",
-		"line:value",
 		"Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.",
 		// A global flag has no scriptArg, so IsNullable() is always false and an
 		// empty default is what keeps it from being treated as required.
@@ -260,17 +259,18 @@ func CreateAndRegisterGlobalFlags(invocationType InvocationType) []RadArg {
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
+	FlagReply.SetUsagePlaceholder("line:value")
 
 	FlagReplyNa = NewStringListRadArg(
 		FLAG_REPLY_NA,
 		"",
-		"line",
 		"Assert a prompt won't be reached on this run; rad fails cleanly if it is.",
 		true,
 		[]string{},
 		NO_CONSTRAINTS,
 		NO_CONSTRAINTS,
 	)
+	FlagReplyNa.SetUsagePlaceholder("line")
 
 	// ordering of this table matters -- it's the order in which flags are printed in the usage string
 	GlobalFlagScopes = []ScopedGlobalFlag{

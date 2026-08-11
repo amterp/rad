@@ -180,7 +180,7 @@ Usage:
   TestCase <tags...> [OPTIONS]
 
 Script args:
-      --tags string,string   Regex: ^[a-z][a-z0-9-]*$
+      --tags strs   Regex: ^[a-z][a-z0-9-]*$
 
 Global options:
   -h, --help               Print usage string.

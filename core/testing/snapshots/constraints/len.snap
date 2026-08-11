@@ -18,10 +18,10 @@ Usage:
   TestCase <pair...> [OPTIONS]
 
 Script args:
-      --pair string,string       Exactly two. Length: [2, 2]
-      --sample ints              Length: [3, 5)
-      --ports ints               Length: [1, )
-      --trailing string,string   Length: (, 4]
+      --pair strs       Exactly two. Length: [2, 2]
+      --sample ints     Length: [3, 5)
+      --ports ints      Length: [1, )
+      --trailing strs   Length: (, 4]
 
 Global options:
   -h, --help               Print usage string.
@@ -51,7 +51,7 @@ Usage:
   TestCase <pair...> [OPTIONS]
 
 Script args:
-      --pair string,string   Length: [2, 2]
+      --pair strs   Length: [2, 2]
 
 Global options:
   -h, --help               Print usage string.

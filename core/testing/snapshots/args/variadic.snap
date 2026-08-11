@@ -314,7 +314,7 @@ Usage:
 
 Script args:
       --command str
-      --options string,string
+      --options [strs...]
   -v, --verbose
 
 ### TITLE ###
@@ -333,8 +333,8 @@ Usage:
 
 Script args:
       --command str
-      --options1 string,string
-      --options2 string,string
+      --options1 [strs...]
+      --options2 [strs...]
   -f, --flag
 
 ### TITLE ###
