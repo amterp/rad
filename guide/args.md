@@ -632,6 +632,66 @@ No other characters will be accepted, so `Alice` will be a valid value, but `bob
 
 As with other constraints, Rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
 
+### Constraints on lists
+
+`enum`, `regex` and `range` work on list and variadic args too, where they describe **each value** rather than the list:
+
+```rad
+#!/usr/bin/env rad
+args:
+    scores int[]
+    envs str[]
+
+    scores range [0, 100]
+    envs enum ["dev", "stg", "prd"]
+print("{scores} on {envs}")
+```
+
+Every value has to pass, however it was supplied - repeated flags, or bare positional values:
+
+```shell
+./deploy --scores 5 --scores 500 --envs dev
+```
+
+<div class="result">
+```
+'scores' value 500 is > maximum 100
+```
+</div>
+
+Pick the constraint that matches what the arg holds. A `str[]` takes `enum` and `regex`; an `int[]` or `float[]` takes `range`. Declaring one that can't apply - `enum` on an `int[]`, say - is an error rather than something Rad ignores.
+
+### Length
+
+`len` bounds **how many** values a list or variadic takes, using the same interval notation as `range`:
+
+```rad
+#!/usr/bin/env rad
+args:
+    pair str[]
+    sample int[]
+    *ports int
+
+    pair len [2,2]      // exactly two
+    sample len [3,5)    // three or four
+    ports len [1,]      // at least one
+print(pair, sample, ports)
+```
+
+Without a `len`, `targets str[]` already means "at least one" and `targets str[] = []` means "may be empty" - `len` is how you say anything else.
+
+It pairs with the constraints above rather than replacing them: `len` bounds the count, `range` bounds each value.
+
+```shell
+./pairs a
+```
+
+<div class="result">
+```
+'pair' takes at least 2 values, got 1
+```
+</div>
+
 ### Relational
 
 Relational constraints let you express logical relationships **between your script's arguments**. There are two types of constraints you can define:

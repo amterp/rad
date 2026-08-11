@@ -822,6 +822,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reply
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="reply">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prompts-rad-cant-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompts rad can't answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompts-that-run-more-than-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompts that run more than once
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reply-na" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reply-na
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1686,6 +1736,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reply
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="reply">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prompts-rad-cant-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompts rad can't answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompts-that-run-more-than-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompts that run more than once
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reply-na" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reply-na
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1749,6 +1849,8 @@
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+      --reply line:value    Answer a prompt when there&#39;s no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won&#39;t be reached on this run; rad fails cleanly if it is.
 </code></pre></div>
 <p>Note that when <code>--shell</code> is enabled, help output goes to stderr instead of stdout, and stdout gets an <code>exit 0</code> statement.
 This keeps stdout safe to <code>eval</code>: wrappers using <code>eval "$(rad - --shell "$@" &lt;&lt;&lt; "$script")"</code> won't execute usage text as shell code, and stop cleanly after showing help.</p>
@@ -1866,9 +1968,116 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
 <p>It's common for scripts to perform just one API query, in which case the regex filter doesn't need to be specific.
 Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</p>
 </div>
+<h2 id="reply"><code>reply</code><a class="headerlink" href="#reply" title="Permanent link">&para;</a></h2>
+<p><code>input</code>, <code>confirm</code>, <code>pick</code>, <code>pick_kv</code>, <code>pick_from_resource</code>, <code>multipick</code>, and <code>confirm</code>-gated shell commands all need a person at a terminal. Rad looks for one on stdin and, failing that, on <code>/dev/tty</code>, which still works when stdin carries data rather than keystrokes. In CI, cron, and AI agent tool calls, neither is there.</p>
+<p>Rather than run until it hits a prompt and dies, rad stops first and prints what the script would ask:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>deploy.rad<span class="w"> </span>prod
+</code></pre></div>
+<div class="highlight"><span class="filename">stderr</span><pre><span></span><code>error[RAD20046]: this script needs to ask you something, but there&#39;s no terminal
+
+  deploy.rad prompts in 3 places. rad found no terminal - stdin isn&#39;t one and
+  /dev/tty isn&#39;t available - so it can&#39;t ask. Supply the answers up front,
+  keyed by line number.
+
+  deploy.rad:5  confirm &quot;Deploy to prod?&quot;
+  deploy.rad:6  input   &quot;Release notes&quot;
+  deploy.rad:7  pick    options: web-1, web-2, db-1
+
+    rad deploy.rad prod --reply 5:yes --reply &#39;6:&lt;value&gt;&#39; --reply 7:web-1
+</code></pre></div>
+<p>Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is the command you wanted, with the keys filled in. Replace any <code>&lt;value&gt;</code> placeholder before running it - rad takes them literally.</p>
+<p>Rad exits <code>7</code> when it stops like this, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.</p>
+<p>Each listed prompt may also carry a note about how it behaves:</p>
+<table>
+<thead>
+<tr>
+<th>Note</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filtered - may not prompt, and then ignores its answer</code></td>
+<td>A <code>pick</code> given a filter. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped.</td>
+</tr>
+<tr>
+<td><code>used as a value - ...</code></td>
+<td>An interactive function passed around rather than called. Takes <code>--reply-na</code> only.</td>
+</tr>
+<tr>
+<td><code>may run more than once - repeat --reply per run</code></td>
+<td>It sits in a loop, or in a function called from several places. One <code>--reply</code> answers one execution.</td>
+</tr>
+<tr>
+<td><code>secret - cannot be answered on the command line</code></td>
+<td>See <a href="#reply-na">secret inputs</a> below.</td>
+</tr>
+<tr>
+<td><code>options computed at runtime</code></td>
+<td>Rad can't list the choices without running the script. They're checked when the prompt is reached.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="prompts-rad-cant-answer">Prompts rad can't answer<a class="headerlink" href="#prompts-rad-cant-answer" title="Permanent link">&para;</a></h3>
+<p>One shape takes no <code>--reply</code>: passing an interactive function around as a value rather than calling it.</p>
+<div class="highlight"><pre><span></span><code>ask = pick
+answer = ask([&quot;dev&quot;, &quot;prod&quot;])
+</code></pre></div>
+<p>Answers are addressed by the position of the call, and rad can't see where such a value ends up or how many times it runs - so there is nothing for a value to attach to. It's still listed and still keyed, so <code>--reply-na</code> can assert the value is never invoked:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>dispatch.rad<span class="w"> </span>--reply-na<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+<p>That matters for a script that merely <em>mentions</em> one on a path this run won't take - a handler map where the interactive entry isn't selected. If the assertion turns out to be wrong, the script stops at the prompt with <a href="../../reference/errors/">RAD20047</a> rather than acting on a guess.</p>
+<p>Answers are matched by the kind of prompt on that line, so only <code>multipick</code> needs escaping:</p>
+<table>
+<thead>
+<tr>
+<th>Prompt</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>confirm</code>, <code>confirm $\</code>...`<code>|</code>yes<code>or</code>no<code>(also</code>y<code>,</code>n<code>,</code>true<code>,</code>false`)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>input</code></td>
+<td>everything after the colon, verbatim; empty takes the arg's <code>default</code></td>
+</tr>
+<tr>
+<td><code>pick</code>, <code>pick_kv</code>, <code>pick_from_resource</code></td>
+<td>one option, matched exactly</td>
+</tr>
+<tr>
+<td><code>multipick</code></td>
+<td>comma-separated; <code>\,</code> is a literal comma, <code>\\</code> a literal backslash</td>
+</tr>
+</tbody>
+</table>
+<p>Only the first colon separates the key from the value, so <code>--reply 6:https://example.com</code> works without quoting. For <code>pick_kv</code>, answer with the key the user would see, not the value it returns - the listing names it <code>pick_kv</code> rather than <code>pick</code> for exactly this reason.</p>
+<p>Matching is exact. A near miss fails rather than running the wrong thing.</p>
+<p>A <code>multipick</code> answer must name each option at most once, and must satisfy the prompt's own <code>min</code> and <code>max</code>. Where those are written literally in the script, a bad count fails at pre-flight rather than partway through the run. Answer with an empty value (<code>--reply 3:</code>) to select nothing, which a <code>min=0</code> prompt accepts.</p>
+<h3 id="prompts-that-run-more-than-once">Prompts that run more than once<a class="headerlink" href="#prompts-that-run-more-than-once" title="Permanent link">&para;</a></h3>
+<p>A prompt inside a loop asks once per pass. Repeat its key to answer each one, in order:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>cleanup.rad<span class="w"> </span>--reply<span class="w"> </span><span class="m">12</span>:yes<span class="w"> </span>--reply<span class="w"> </span><span class="m">12</span>:no
+</code></pre></div>
+<p>Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single <code>yes</code> approving five hundred deletions is the accident this avoids. When there <em>is</em> a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.</p>
+<p>One answer is consumed per execution of the line, not per prompt you would have seen. A filtered <code>pick</code> that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. That answer is then discarded: you answer prompts, and no prompt happened, so the script's own filter decides. The same applies when a <code>pick</code>'s list simply happens to hold one entry on this run.</p>
+<h2 id="reply-na"><code>reply-na</code><a class="headerlink" href="#reply-na" title="Permanent link">&para;</a></h2>
+<p>Some prompts sit on branches a given run won't take. Rather than invent a value you expect to go unused, assert that the prompt won't be reached:</p>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>deploy.rad<span class="w"> </span>--dry-run<span class="w"> </span>--reply-na<span class="w"> </span><span class="m">20</span>
+</code></pre></div>
+<p>If the script reaches it anyway, rad fails with <a href="../../reference/errors/">RAD20047</a> instead of acting on a guess.</p>
+<p>This is also a good answer for a <code>pick</code> given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Rad marks those in the list, and suggests a <code>--reply</code> anyway when it knows the options - that answer is harmless whether or not the filter ends up settling the choice. Where both the options and the filter are written literally, the suggested value is one the filter actually keeps.</p>
+<p>Secret inputs are the one case with no <code>--reply</code> at all. Command-line arguments are visible to other processes, so a secret <code>input</code> can only be answered at a terminal. Use <code>--reply-na</code> if this run won't reach it. This holds whether <code>secret</code> is written as a literal or computed while the script runs - in the second case rad can't warn you up front, but it still refuses the answer.</p>
+<div class="admonition note">
+<p class="admonition-title">Scripts that disable global options</p>
+<p>A script setting <code>@enable_global_options = false</code> has no <code>--reply</code> flag to give it. Rad says so rather than suggesting a command the script would reject; such a script can only be answered at a terminal.</p>
+</div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Rad provides several global flags that can be used across all Rad scripts.</li>
+<li>Use <code>--reply</code> and <code>--reply-na</code> to run scripts that prompt in CI, cron, or an AI agent.</li>
 <li>Use <code>--src</code>, <code>--cst-tree</code>, and <code>--ast-tree</code> to inspect scripts without running them.</li>
 <li>Use <code>--tls-insecure</code> for development against self-signed certs.</li>
 <li>Use <code>--mock-response</code> to test your scripts against canned API responses.</li>

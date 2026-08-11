@@ -944,7 +944,7 @@ Counterpart to [`delete_path`](#delete_path).
 Presents an interactive menu for selecting multiple options from a list.
 
 ```rad
-multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> str[]
+multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> error|str[]
 ```
 
 ```rad
@@ -972,7 +972,7 @@ The `prompt` parameter has smart defaults that adjust based on the min/max const
 Presents an interactive menu for selecting from a list of options.
 
 ```rad
-pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> str
+pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> error|str
 ```
 
 ```rad

@@ -5484,7 +5484,7 @@ all platforms - it is not resolved to an absolute path.</p>
 <p>Counterpart to <a href="#delete_path"><code>delete_path</code></a>.</p>
 <h3 id="multipick">multipick<a class="headerlink" href="#multipick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting multiple options from a list.</p>
-<div class="highlight"><pre><span></span><code>multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -&gt; str[]
+<div class="highlight"><pre><span></span><code>multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -&gt; error|str[]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>fruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;, &quot;date&quot;]
 selected = multipick(fruits)
@@ -5527,7 +5527,7 @@ Unlike <code>pick</code>, which returns a single selection, <code>multipick</cod
 <p>The <code>prompt</code> parameter has smart defaults that adjust based on the min/max constraints.</p>
 <h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting from a list of options.</p>
-<div class="highlight"><pre><span></span><code>pick(_options: str[], _filter: (str|str[])?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; str
+<div class="highlight"><pre><span></span><code>pick(_options: str[], _filter: (str|str[])?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; error|str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>pick([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])                        // -&gt; Interactive menu
 pick([&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;], &quot;r&quot;)                        // -&gt; Fuzzy-filtered to &quot;red&quot;, &quot;green&quot;

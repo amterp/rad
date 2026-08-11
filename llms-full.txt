@@ -11,11 +11,11 @@
 - [Strings (Advanced)](https://amterp.dev/rad/guide/strings-advanced.md): String Interpolation, Formatting, Multiline Strings, Raw Strings, Escape Sequences, String Attributes, Patterns: Literal by Default
 - [Rad Blocks](https://amterp.dev/rad/guide/rad-blocks.md): Basic Example, Additional Rad Block Options, Rad Block Options, Source Types, Understanding HTTP Requests
 - [Type Annotations](https://amterp.dev/rad/guide/type-annotations.md): The Basics, Collection Types, Optional Types, Defaults, Union Types, Advanced Types, Variadic and Named Parameters
-- [Error Handling](https://amterp.dev/rad/guide/error-handling.md): Error Propagation, Catch Blocks, The `??` Operator, The `catch` Operator, Creating Your Own Errors
+- [Error Handling](https://amterp.dev/rad/guide/error-handling.md): Error Propagation, Catch Blocks, The `??` Operator, The `catch` Operator, Creating Your Own Errors, Holding an Error
 - [Shell Commands](https://amterp.dev/rad/guide/shell-commands.md): Invoking Commands, Which Shell Runs My Command?, Capturing Output, Error Handling, String Interpolation, Commands As Lists, Modifiers, Practical Examples
 - [Script Commands](https://amterp.dev/rad/guide/script-commands.md): Basic Syntax, Multiple Commands, Adding Descriptions, Command Arguments, Shared Args, Nested Commands, Default Commands, Command Callbacks, Shared Logic, Getting Help, Practical Example
 - [Resources](https://amterp.dev/rad/guide/resources.md): `pick`, `pick_kv`, `pick_from_resource`
-- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `interactive`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`
+- [Global Flags](https://amterp.dev/rad/guide/global-flags.md): `help`, `interactive`, `debug`, `quiet`, `color`, `src`, `cst-tree`, `ast-tree`, `tls-insecure`, `mock-response`, `reply`, `reply-na`
 - [Defer & Errdefer](https://amterp.dev/rad/guide/defer-errdefer.md): Defer, Errdefer, Errors in defer blocks
 - [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes
 - [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging
@@ -38,7 +38,7 @@
 ## Migrations
 
 - [How to Migrate](https://amterp.dev/rad/migrations/index.md): Upgrade Workflow
-- [Migration Guide - v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Positional Shell Captures Are Reordered, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Flag-Like Tokens Are Rejected As Values
+- [Migration Guide - v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Positional Shell Captures Are Reordered, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Flag-Like Tokens Are Rejected As Values, Breaking Change: Constraints On A List Are Enforced, Breaking Change: Scripts That Prompt Stop Before Running Without A Terminal, Also Changed: `??` and `catch` See Errors You Already Hold
 - [Migration Guide - v0.9](https://amterp.dev/rad/migrations/v0.9.md): Breaking Change: `request` and `display` Keywords Removed, Breaking Change: `get_stash_dir` Renamed, Migration Steps, Breaking Change: `??` Now Fires on Null, New: `catch` Operator, Breaking Change: Strict `+` Concatenation, Breaking Change: `parse_epoch` Unit Names Shortened, Error Messages, Behavior Change: Invocation Logging Enabled by Default, Breaking Change: `trim_prefix` / `trim_suffix` Behavior Changed
 - [Migration Guide - v0.8](https://amterp.dev/rad/migrations/v0.8.md): Breaking Change: `get_default` Removed, Migration Steps, Why This Change?, Error Messages
 - [Migration Guide - v0.7](https://amterp.dev/rad/migrations/v0.7.md): Breaking Change: For-Loop Index Syntax, Migration Steps, Error Messages, Why This Change?, Bonus: Rad Block Lambda Context
@@ -2225,6 +2225,62 @@ In this example, a valid `name` value must start with a capital letter, and can 
 No other characters will be accepted, so `Alice` will be a valid value, but `bob` or `John123` are not.
 
 As with other constraints, Rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.
+
+### Constraints on lists
+
+`enum`, `regex` and `range` work on list and variadic args too, where they describe **each value** rather than the list:
+
+```rad
+#!/usr/bin/env rad
+args:
+    scores int[]
+    envs str[]
+
+    scores range [0, 100]
+    envs enum ["dev", "stg", "prd"]
+print("{scores} on {envs}")
+```
+
+Every value has to pass, however it was supplied - repeated flags, or bare positional values:
+
+```shell
+./deploy --scores 5 --scores 500 --envs dev
+```
+
+```
+'scores' value 500 is > maximum 100
+```
+
+Pick the constraint that matches what the arg holds. A `str[]` takes `enum` and `regex`; an `int[]` or `float[]` takes `range`. Declaring one that can't apply - `enum` on an `int[]`, say - is an error rather than something Rad ignores.
+
+### Length
+
+`len` bounds **how many** values a list or variadic takes, using the same interval notation as `range`:
+
+```rad
+#!/usr/bin/env rad
+args:
+    pair str[]
+    sample int[]
+    *ports int
+
+    pair len [2,2]      // exactly two
+    sample len [3,5)    // three or four
+    ports len [1,]      // at least one
+print(pair, sample, ports)
+```
+
+Without a `len`, `targets str[]` already means "at least one" and `targets str[] = []` means "may be empty" - `len` is how you say anything else.
+
+It pairs with the constraints above rather than replacing them: `len` bounds the count, `range` bounds each value.
+
+```shell
+./pairs a
+```
+
+```
+'pair' takes at least 2 values, got 1
+```
 
 ### Relational
 
@@ -4716,6 +4772,11 @@ age = parse_int(age_str) catch:
     Use `catch` when you only want to handle errors and null is a valid value.
     Use `catch:` when you need to log, inspect, or conditionally handle the error.
 
+The two operators look at the value the left side produced, so they also fire on an error
+you already hold - see Holding an Error. A `catch:` block instead
+catches an operation that failed, so a statement that merely assigns an error you already
+had doesn't trigger it.
+
 ## Creating Your Own Errors
 
 When writing your own functions, you can return errors using the `error(str)` function.
@@ -4764,6 +4825,51 @@ The error union makes your code self-documenting - anyone reading your function 
     We covered union types in detail in an earlier section: Type Annotations (rad docs guide/type-annotations).
     Error unions are just one application of Rad's union type system.
 
+## Holding an Error
+
+A `catch:` block that doesn't reassign leaves the error itself in the variable, where you
+can read it:
+
+```rad
+fn fail() -> str|error:
+    return error("boom")
+
+stored = fail() catch:
+    pass
+
+print(stored)           // boom
+print(type_of(stored))  // error
+```
+
+It is still live, though. Returning it from another function raises it again, and the
+script exits pointing at that second call rather than the original one:
+
+```rad
+fn fail() -> str|error:
+    return error("boom")
+
+fn relay(x):
+    return x
+
+stored = fail() catch:
+    pass
+
+result = relay(stored)  // exits: boom
+```
+
+Rad doesn't record whether an error has been handled before. A function that returns an
+error has failed, whatever that error's history, so guard the call like any other:
+
+```rad
+result = relay(stored) ?? "default"
+result = relay(stored) catch "default"
+```
+
+The alternative - marking an error handled so it never fires again - would make a real
+failure vanish the moment it passed through a function that returned it unchanged.
+Assigning the value elsewhere and reading it are both safe; only a call that returns it
+raises it.
+
 ## Summary
 
 Rad's error handling model gives you the tools to write robust scripts that handle failures gracefully:
@@ -4782,6 +4888,8 @@ Rad's error handling model gives you the tools to write robust scripts that hand
     - Useful when null is a meaningful value you want to preserve
 - **Create errors** with `error("message")` in your own functions
 - **Type unions** (`T|error`) make fallible operations explicit in function signatures
+- **A held error stays live** - returning it from another function raises it there, so
+  guard that call too
 
 ## Next
 
@@ -6074,6 +6182,8 @@ Global options:
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
+      --reply line:value    Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 ```
 
 Note that when `--shell` is enabled, help output goes to stderr instead of stdout, and stdout gets an `exit 0` statement.
@@ -6249,9 +6359,110 @@ avoiding the HTTP request, and simply returning the contents of the mocked respo
     It's common for scripts to perform just one API query, in which case the regex filter doesn't need to be specific.
     Instead, you can just write `.*` e.g. `.*:commits.json`.
 
+## `reply`
+
+`input`, `confirm`, `pick`, `pick_kv`, `pick_from_resource`, `multipick`, and `confirm`-gated shell commands all need a person at a terminal. Rad looks for one on stdin and, failing that, on `/dev/tty`, which still works when stdin carries data rather than keystrokes. In CI, cron, and AI agent tool calls, neither is there.
+
+Rather than run until it hits a prompt and dies, rad stops first and prints what the script would ask:
+
+```shell
+rad deploy.rad prod
+```
+
+```title="stderr"
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  deploy.rad prompts in 3 places. rad found no terminal - stdin isn't one and
+  /dev/tty isn't available - so it can't ask. Supply the answers up front,
+  keyed by line number.
+
+  deploy.rad:5  confirm "Deploy to prod?"
+  deploy.rad:6  input   "Release notes"
+  deploy.rad:7  pick    options: web-1, web-2, db-1
+
+    rad deploy.rad prod --reply 5:yes --reply '6:<value>' --reply 7:web-1
+```
+
+Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is the command you wanted, with the keys filled in. Replace any `<value>` placeholder before running it - rad takes them literally.
+
+Rad exits `7` when it stops like this, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.
+
+Each listed prompt may also carry a note about how it behaves:
+
+| Note                                                     | Meaning                                                                                                                |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `filtered - may not prompt, and then ignores its answer` | A `pick` given a filter. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped. |
+| `used as a value - ...`                                  | An interactive function passed around rather than called. Takes `--reply-na` only.                                     |
+| `may run more than once - repeat --reply per run`        | It sits in a loop, or in a function called from several places. One `--reply` answers one execution.                   |
+| `secret - cannot be answered on the command line`        | See secret inputs below.                                                                                               |
+| `options computed at runtime`                            | Rad can't list the choices without running the script. They're checked when the prompt is reached.                     |
+
+### Prompts rad can't answer
+
+One shape takes no `--reply`: passing an interactive function around as a value rather than calling it.
+
+```rad
+ask = pick
+answer = ask(["dev", "prod"])
+```
+
+Answers are addressed by the position of the call, and rad can't see where such a value ends up or how many times it runs - so there is nothing for a value to attach to. It's still listed and still keyed, so `--reply-na` can assert the value is never invoked:
+
+```shell
+rad dispatch.rad --reply-na 1
+```
+
+That matters for a script that merely *mentions* one on a path this run won't take - a handler map where the interactive entry isn't selected. If the assertion turns out to be wrong, the script stops at the prompt with RAD20047 (rad docs reference/errors) rather than acting on a guess.
+
+Answers are matched by the kind of prompt on that line, so only `multipick` needs escaping:
+
+| Prompt                                  | Answer                                                                |
+| --------------------------------------- | --------------------------------------------------------------------- |
+| `confirm`, `confirm $\`...\``           | `yes` or `no` (also `y`, `n`, `true`, `false`)                        |
+| `input`                                 | everything after the colon, verbatim; empty takes the arg's `default` |
+| `pick`, `pick_kv`, `pick_from_resource` | one option, matched exactly                                           |
+| `multipick`                             | comma-separated; `\,` is a literal comma, `\\` a literal backslash    |
+
+Only the first colon separates the key from the value, so `--reply 6:https://example.com` works without quoting. For `pick_kv`, answer with the key the user would see, not the value it returns - the listing names it `pick_kv` rather than `pick` for exactly this reason.
+
+Matching is exact. A near miss fails rather than running the wrong thing.
+
+A `multipick` answer must name each option at most once, and must satisfy the prompt's own `min` and `max`. Where those are written literally in the script, a bad count fails at pre-flight rather than partway through the run. Answer with an empty value (`--reply 3:`) to select nothing, which a `min=0` prompt accepts.
+
+### Prompts that run more than once
+
+A prompt inside a loop asks once per pass. Repeat its key to answer each one, in order:
+
+```shell
+rad cleanup.rad --reply 12:yes --reply 12:no
+```
+
+Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single `yes` approving five hundred deletions is the accident this avoids. When there *is* a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.
+
+One answer is consumed per execution of the line, not per prompt you would have seen. A filtered `pick` that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. That answer is then discarded: you answer prompts, and no prompt happened, so the script's own filter decides. The same applies when a `pick`'s list simply happens to hold one entry on this run.
+
+## `reply-na`
+
+Some prompts sit on branches a given run won't take. Rather than invent a value you expect to go unused, assert that the prompt won't be reached:
+
+```shell
+rad deploy.rad --dry-run --reply-na 20
+```
+
+If the script reaches it anyway, rad fails with RAD20047 (rad docs reference/errors) instead of acting on a guess.
+
+This is also a good answer for a `pick` given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Rad marks those in the list, and suggests a `--reply` anyway when it knows the options - that answer is harmless whether or not the filter ends up settling the choice. Where both the options and the filter are written literally, the suggested value is one the filter actually keeps.
+
+Secret inputs are the one case with no `--reply` at all. Command-line arguments are visible to other processes, so a secret `input` can only be answered at a terminal. Use `--reply-na` if this run won't reach it. This holds whether `secret` is written as a literal or computed while the script runs - in the second case rad can't warn you up front, but it still refuses the answer.
+
+**Note: Scripts that disable global options**
+
+    A script setting `@enable_global_options = false` has no `--reply` flag to give it. Rad says so rather than suggesting a command the script would reject; such a script can only be answered at a terminal.
+
 ## Summary
 
 - Rad provides several global flags that can be used across all Rad scripts.
+- Use `--reply` and `--reply-na` to run scripts that prompt in CI, cron, or an AI agent.
 - Use `--src`, `--cst-tree`, and `--ast-tree` to inspect scripts without running them.
 - Use `--tls-insecure` for development against self-signed certs.
 - Use `--mock-response` to test your scripts against canned API responses.
@@ -9306,6 +9517,30 @@ a, b = fallible_pair() catch:
     a, b = 0, 0
 ```
 
+#### Held errors stay live
+
+A `catch:` block that doesn't reassign leaves the error in the variable. Rad doesn't
+track that it was handled, so returning it from another function raises it again, at
+that call:
+
+```rad
+fn fail() -> str|error:
+    return error("boom")
+
+fn relay(x):
+    return x
+
+stored = fail() catch:
+    pass
+
+relay(stored)               // exits
+relay(stored) ?? "default"  // "default"
+```
+
+Assigning the value elsewhere and reading it are safe; only a call that returns it raises
+it. `??` and `catch` inspect the value the left side produced, so they fire on a held
+error too; a `catch:` block catches a failing operation, so it does not.
+
 ## Operators
 
 ### Arithmetic
@@ -10680,7 +10915,7 @@ Counterpart to `delete_path`.
 Presents an interactive menu for selecting multiple options from a list.
 
 ```rad
-multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> str[]
+multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -> error|str[]
 ```
 
 ```rad
@@ -10708,7 +10943,7 @@ The `prompt` parameter has smart defaults that adjust based on the min/max const
 Presents an interactive menu for selecting from a list of options.
 
 ```rad
-pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> str
+pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -> error|str
 ```
 
 ```rad
@@ -14162,6 +14397,145 @@ asks you to say what you meant.
 
 - `rad docs guide/shell-commands` - the three command forms and when to use each
 
+### RAD20046: Interactive Input Required
+
+The script asks the user something - via `input()`, `confirm()`, `pick()`, `multipick()`, or a `confirm`-gated shell command - but there is no terminal to ask at. Rad stops before running any of the script and tells you what it would have asked.
+
+Rad looks for a terminal in two places: standard input, and `/dev/tty` (the terminal attached to your session, which works even when stdin is a pipe or a here-string). Both being unavailable means nothing interactive can happen: a CI job, a cron run, or an AI agent's tool call.
+
+Nothing in the script has executed at this point. That is deliberate - discovering a prompt halfway through would leave you reasoning about a half-finished run before you could retry.
+
+Rad exits `7` here, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.
+
+#### How to Fix
+
+Answer each prompt up front with `--reply`, keyed by the line it sits on. Rad prints a ready-to-run command with the keys already filled in, so this is usually copy-paste:
+
+```
+rad deploy.rad prod --reply 5:yes --reply 6:'shipped it' --reply 7:web-1
+```
+
+Answers are matched by kind, so nothing needs escaping except a `multipick`:
+
+| Prompt                                  | Answer                                                          |
+| --------------------------------------- | --------------------------------------------------------------- |
+| `confirm`, `confirm $\`...\``           | `yes` / `no` (also `y`, `n`, `true`, `false`)                   |
+| `input`                                 | the rest of the value, taken verbatim                           |
+| `pick`, `pick_kv`, `pick_from_resource` | one option, matched exactly                                     |
+| `multipick`                             | comma-separated; `\,` for a literal comma, `\\` for a backslash |
+
+Only the first colon separates the key from the value, so `--reply 6:https://example.com` needs no quoting. Any `<value>` in the suggested command is a placeholder - replace it, or rad answers with that literal text.
+
+A `multipick` answer must name each option at most once and satisfy the prompt's `min` and `max`. Give an empty value (`--reply 3:`) to select nothing.
+
+#### Repeating a Prompt
+
+A prompt inside a loop runs more than once. Repeat the key to answer each pass in order:
+
+```
+rad cleanup.rad --reply 12:yes --reply 12:no
+```
+
+Answers are queued per line rather than globally, so adding a prompt earlier in a script never silently re-targets a later answer. Running out mid-loop stops the script rather than reusing the last answer.
+
+#### Prompts You Don't Expect To Reach
+
+If a prompt sits on a branch this run won't take, say so instead of inventing a value:
+
+```
+rad deploy.rad --dry-run --reply-na 20
+```
+
+If the script reaches it anyway, rad fails cleanly (see RAD20047) rather than acting on a guess. Use this for a `pick` given a filter too - a filtered pick often narrows to a single option and never asks, which is why rad suggests `--reply-na` for those rather than a value.
+
+#### Secret Inputs
+
+A secret `input` cannot be answered this way at all. Command-line arguments are visible to other processes on the machine, so a password there would leak. Run the script where a terminal is available, or use `--reply-na` if this run won't reach it. Rad refuses the answer whether `secret` is a literal or computed while the script runs, though only a literal can be reported here rather than at the prompt.
+
+#### Interactive Functions Used As Values
+
+One shape takes no `--reply`: an interactive function passed around as a value rather than called.
+
+```rad
+ask = pick
+answer = ask(["dev", "prod"])
+```
+
+Answers are keyed by the position of the call, and rad can't see where such a value ends up or how often it runs, so there is nothing for a value to attach to. Use `--reply-na` on its line to assert this run never invokes it - which is the usual answer for a handler map whose interactive entry isn't the one selected. If that assertion is wrong, the script stops at the prompt (see RAD20047) rather than guessing.
+
+#### Scripts That Disable Global Options
+
+A script setting `@enable_global_options = 0` removes `--reply` along with every other global flag, so its prompts can't be answered from the command line. Rad says so rather than suggesting a command the script would reject. Run it where a terminal is available, or re-enable global options in the script.
+
+#### Related
+
+- **RAD20047** - a prompt was reached that couldn't be answered.
+- **RAD20010** - an interactive prompt failed or was canceled.
+
+### RAD20047: Prompt Reached Without A Usable Answer
+
+The script reached a prompt that `--reply` couldn't answer. Unlike RAD20046, this one fires mid-run, because it depends on something rad could not know before starting.
+
+There are four ways to get here.
+
+#### The Prompt Was Marked Unreachable
+
+You passed `--reply-na` for this line, asserting the run wouldn't reach it, and it did:
+
+```
+rad deploy.rad --reply-na 20
+```
+
+That assertion is a promise, not a fallback, so rad stops rather than guessing an answer. Either the branch you expected to skip was taken, or the assertion was aimed at the wrong line. Replace it with a real `--reply`, or work out why the branch ran.
+
+#### The Answers Ran Out
+
+A prompt inside a loop consumed every answer supplied for its line and was reached again:
+
+```
+rad cleanup.rad --reply 12:yes --reply 12:yes    # ran a third time
+```
+
+Rad does not reuse the last answer. One `yes` silently approving five hundred deletions is exactly the accident worth failing over. Supply as many answers as the loop has passes, or narrow what the loop iterates over.
+
+#### The Answer Matched No Option
+
+A `pick` or `multipick` over runtime data - a fetched list, a resource file, a computed set - got an answer that isn't in it:
+
+```rad
+fn fetch_servers():
+    return ["web-1", "web-2"]
+
+server = pick(fetch_servers())
+```
+
+Rad can't check that up front, because the options don't exist until the script builds them. The error lists the real options, so the next run can name one exactly. Matching is exact by design: a near-miss fails rather than quietly acting on the wrong choice.
+
+#### The Input Was Secret
+
+`input` with `secret` set can't be answered from the command line at all - other processes on the machine can read your arguments. Where `secret` is written literally, RAD20046 says so before the script runs. Where it's computed, rad only finds out on reaching the prompt:
+
+```rad
+env = input("Environment")
+needs_secret = env == "prod"
+token = input("Token", secret=needs_secret)
+```
+
+Run it where a terminal is available, or use `--reply-na` if this run shouldn't reach it.
+
+#### The Answer Broke A multipick's Rules
+
+A `multipick` answer named an option twice, or gave more or fewer selections than the prompt allows. Where the bounds are literal, RAD20046 catches this up front; where they're computed, it surfaces here.
+
+#### How to Fix
+
+Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job. Note that the script did execute up to this point - if it has side effects, check what already happened before retrying.
+
+#### Related
+
+- **RAD20046** - prompts need answers, raised before the script runs.
+- **RAD20010** - an interactive prompt failed or was canceled.
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch
@@ -15532,3 +15906,61 @@ and interpolations are data.
 
 - `rad docs guide/shell-commands` - the three command forms
 - `rad docs RAD20045` - values that have no single-argument form
+
+### RAD40024: Constraint Does Not Fit The Arg's Type
+
+An arg carries a constraint its type cannot be checked against - an `enum` or
+`regex` on a number, or a `range` on a string.
+
+```rad
+args:
+    scores int[]
+    scores enum ["low", "high"]   // Error: scores holds ints
+```
+
+#### How to Fix
+
+Use the constraint that matches the type:
+
+| Constraint | Works on             |
+| ---------- | -------------------- |
+| `enum`     | `str`                |
+| `regex`    | `str`                |
+| `range`    | `int`, `float`       |
+| `len`      | any list or variadic |
+
+So the example above wants either a string arg:
+
+```rad
+args:
+    levels str[]
+    levels enum ["low", "high"]
+```
+
+or a numeric bound:
+
+```rad
+args:
+    scores int[]
+    scores range [0, 100]
+```
+
+A list or variadic takes the same constraints as the type it holds, because the
+constraint describes each element. `scores int[]` is checked with `range`, the
+same as a plain `scores int` - every value has to be in range, not the list as a
+whole. To bound how many values arrive instead, use `len`.
+
+#### Why Rad Works This Way
+
+Rad used to accept these declarations and ignore them. A script could say
+`scores range [0, 100]` on an `int[]`, pass `--scores 500`, and get no
+complaint - the constraint reached the parser and was dropped there. That is
+worse than rejecting it: the script reads as though it validates its input, so
+whoever wrote it stops checking by hand, and the values flow on unexamined.
+
+A constraint that cannot be applied is a mistake in the script rather than a
+preference, so Rad reports it instead of guessing at what was meant.
+
+#### See Also
+
+- `rad docs guide/args` - declaring args and their constraints

@@ -682,6 +682,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#constraints-on-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constraints on lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#relational" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1954,6 +1976,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#constraints-on-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constraints on lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#relational" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2525,6 +2569,48 @@ print(&quot;Hi, {name}&quot;)
 <p>In this example, a valid <code>name</code> value must start with a capital letter, and can then be followed by any number of lowercase letters.
 No other characters will be accepted, so <code>Alice</code> will be a valid value, but <code>bob</code> or <code>John123</code> are not.</p>
 <p>As with other constraints, Rad will validate input against this regex, and if it doesn't match, it will print an error. The constraint is also printed in the script's usage string.</p>
+<h3 id="constraints-on-lists">Constraints on lists<a class="headerlink" href="#constraints-on-lists" title="Permanent link">&para;</a></h3>
+<p><code>enum</code>, <code>regex</code> and <code>range</code> work on list and variadic args too, where they describe <strong>each value</strong> rather than the list:</p>
+<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
+args:
+    scores int[]
+    envs str[]
+
+    scores range [0, 100]
+    envs enum [&quot;dev&quot;, &quot;stg&quot;, &quot;prd&quot;]
+print(&quot;{scores} on {envs}&quot;)
+</code></pre></div>
+<p>Every value has to pass, however it was supplied - repeated flags, or bare positional values:</p>
+<div class="highlight"><pre><span></span><code>./deploy<span class="w"> </span>--scores<span class="w"> </span><span class="m">5</span><span class="w"> </span>--scores<span class="w"> </span><span class="m">500</span><span class="w"> </span>--envs<span class="w"> </span>dev
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>&#39;scores&#39; value 500 is &gt; maximum 100
+</code></pre></div>
+</div>
+
+<p>Pick the constraint that matches what the arg holds. A <code>str[]</code> takes <code>enum</code> and <code>regex</code>; an <code>int[]</code> or <code>float[]</code> takes <code>range</code>. Declaring one that can't apply - <code>enum</code> on an <code>int[]</code>, say - is an error rather than something Rad ignores.</p>
+<h3 id="length">Length<a class="headerlink" href="#length" title="Permanent link">&para;</a></h3>
+<p><code>len</code> bounds <strong>how many</strong> values a list or variadic takes, using the same interval notation as <code>range</code>:</p>
+<div class="highlight"><pre><span></span><code>#!/usr/bin/env rad
+args:
+    pair str[]
+    sample int[]
+    *ports int
+
+    pair len [2,2]      // exactly two
+    sample len [3,5)    // three or four
+    ports len [1,]      // at least one
+print(pair, sample, ports)
+</code></pre></div>
+<p>Without a <code>len</code>, <code>targets str[]</code> already means "at least one" and <code>targets str[] = []</code> means "may be empty" - <code>len</code> is how you say anything else.</p>
+<p>It pairs with the constraints above rather than replacing them: <code>len</code> bounds the count, <code>range</code> bounds each value.</p>
+<div class="highlight"><pre><span></span><code>./pairs<span class="w"> </span>a
+</code></pre></div>
+<div class="result">
+<div class="highlight"><pre><span></span><code>&#39;pair&#39; takes at least 2 values, got 1
+</code></pre></div>
+</div>
+
 <h3 id="relational">Relational<a class="headerlink" href="#relational" title="Permanent link">&para;</a></h3>
 <p>Relational constraints let you express logical relationships <strong>between your script's arguments</strong>. There are two types of constraints you can define:</p>
 <ul>

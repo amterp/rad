@@ -1948,6 +1948,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#held-errors-stay-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Held errors stay live
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3558,6 +3569,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#held-errors-stay-live" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Held errors stay live
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5026,6 +5048,25 @@ a, b = fallible_pair() ?? [0, 0]
     print_err(&quot;Failed: {a}&quot;)
     a, b = 0, 0
 </code></pre></div>
+<h4 id="held-errors-stay-live">Held errors stay live<a class="headerlink" href="#held-errors-stay-live" title="Permanent link">&para;</a></h4>
+<p>A <code>catch:</code> block that doesn't reassign leaves the error in the variable. Rad doesn't
+track that it was handled, so returning it from another function raises it again, at
+that call:</p>
+<div class="highlight"><pre><span></span><code>fn fail() -&gt; str|error:
+    return error(&quot;boom&quot;)
+
+fn relay(x):
+    return x
+
+stored = fail() catch:
+    pass
+
+relay(stored)               // exits
+relay(stored) ?? &quot;default&quot;  // &quot;default&quot;
+</code></pre></div>
+<p>Assigning the value elsewhere and reading it are safe; only a call that returns it raises
+it. <code>??</code> and <code>catch</code> inspect the value the left side produced, so they fire on a held
+error too; a <code>catch:</code> block catches a failing operation, so it does not.</p>
 <h2 id="operators">Operators<a class="headerlink" href="#operators" title="Permanent link">&para;</a></h2>
 <h3 id="arithmetic">Arithmetic<a class="headerlink" href="#arithmetic" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>a + b       // Addition
