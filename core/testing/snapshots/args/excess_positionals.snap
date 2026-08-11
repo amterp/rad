@@ -63,7 +63,7 @@ Usage:
   TestCase <targets...> [OPTIONS]
 
 Script args:
-      --targets string,string
+      --targets strs
   -v, --verbose
 
 Global options:

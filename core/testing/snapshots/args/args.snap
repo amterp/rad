@@ -336,14 +336,14 @@ Usage:
   TestCase [stringArg] [intArg] [floatArg] [stringListArg...] [OPTIONS]
 
 Script args:
-      --stringArg str                 (default alice)
-      --intArg int                    An int. (default 1)
-      --floatArg float                (default 1.1)
-      --stringListArg string,string   (default [bob, charlie])
-      --intListArg ints               (default [2, 3])
-      --floatListArg floats           (default [2.1, 3.1])
-      --boolListArg bools             (default [true, false])
-      --boolArg                       (default true)
+      --stringArg str         (default alice)
+      --intArg int            An int. (default 1)
+      --floatArg float        (default 1.1)
+      --stringListArg strs    (default [bob, charlie])
+      --intListArg ints       (default [2, 3])
+      --floatListArg floats   (default [2.1, 3.1])
+      --boolListArg bools     (default [true, false])
+      --boolArg               (default true)
 
 ### TITLE ###
 UnsetBoolDefaultsToFalse

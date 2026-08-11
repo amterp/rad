@@ -203,8 +203,8 @@ Commands:
   list   Show upcoming reminders.
 
 Args for default command 'add':
-      --tokens string,string   Time spec followed by message.
-  -r, --repeat str             (optional) Repeat interval.
+      --tokens [strs...]   Time spec followed by message.
+  -r, --repeat str         (optional) Repeat interval.
 
 Global options:
   -h, --help               Print usage string.

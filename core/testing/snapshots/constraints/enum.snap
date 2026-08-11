@@ -95,7 +95,7 @@ Usage:
   TestCase <envs...> [OPTIONS]
 
 Script args:
-      --envs string,string   Valid values: [dev, stg, prd]
+      --envs strs   Valid values: [dev, stg, prd]
 
 Global options:
   -h, --help               Print usage string.
@@ -143,7 +143,7 @@ Usage:
   TestCase [envs...] [OPTIONS]
 
 Script args:
-      --envs string,string   Valid values: [dev, stg, prd]
+      --envs [strs...]   Valid values: [dev, stg, prd]
 
 Global options:
   -h, --help               Print usage string.
