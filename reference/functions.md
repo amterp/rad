@@ -74,10 +74,13 @@ decode_base16(_content: str) -> error|str
 decode_base16("48656c6c6f")   // -> "Hello"
 decode_base16("414243")       // -> "ABC"
 
-// Error handling
-result = decode_base16("invalid hex")
-if result.error:
-    print("Invalid hex string")
+// Handle errors - inside the block, `result` is the error
+result = decode_base16("invalid hex") catch:
+    print_err("Invalid hex string: {result}")
+    exit(1)
+
+// Or fall back
+result = decode_base16("invalid hex") ?? ""
 ```
 
 ### decode_base64
@@ -96,10 +99,13 @@ decoded = decode_base64(encoded)           // -> "Hello World"
 url_encoded = encode_base64("test", url_safe=true)
 decoded = decode_base64(url_encoded, url_safe=true)
 
-// Error handling
-result = decode_base64("invalid base64!")
-if result.error:
-    print("Decode failed:", result.error)
+// Handle errors - inside the block, `result` is the error
+result = decode_base64("invalid base64!") catch:
+    print_err("Decode failed: {result}")
+    exit(1)
+
+// Or fall back
+result = decode_base64("invalid base64!") ?? ""
 ```
 
 **Parameters:**
@@ -1075,7 +1081,10 @@ print_err(*_items: any, *, sep: str = " ", end: str = "\n") -> void
 
 ```rad
 print_err("failed to load config")     // -> writes to stderr
-print_err("error:", err.msg)           // -> "error: <msg>" to stderr
+
+// Inside a catch: block the assigned variable is the error itself
+config = read_file("config.json") catch:
+    print_err("error:", config)        // -> "error: <msg>" to stderr
 ```
 
 ### read_file
@@ -1089,18 +1098,19 @@ read_file(_path: str, *, mode: ["text", "bytes"] = "text") -> error|{ "size_byte
 ```rad
 // Read text file
 result = read_file("config.txt")
-if result.success:
-    content = result.content  // -> string
-    
+content = result.content      // -> string
+
 // Read binary file
 result = read_file("image.png", mode="bytes")
-if result.success:
-    bytes = result.content    // -> list[int]
-    
-// Handle errors
-result = read_file("missing.txt")
-if not result.success:
-    print("Error:", result.error)
+bytes = result.content        // -> list[int]
+
+// Handle errors - inside the block, `result` is the error
+result = read_file("missing.txt") catch:
+    print_err("Read failed: {result}")
+    exit(1)
+
+// Or fall back
+result = read_file("missing.txt") ?? { "size_bytes": 0, "content": "" }
 ```
 
 **Parameters:**
@@ -1151,10 +1161,10 @@ print("Wrote", result.bytes_written, "bytes")
 // Append to existing file
 write_file("log.txt", "\nNew entry", append=true)
 
-// Error handling
-result, err = write_file("/readonly/file.txt", "data")
-if err:
-    print("Write failed:", err.msg)
+// Handle errors - inside the block, `result` is the error
+result = write_file("/readonly/file.txt", "data") catch:
+    print_err("Write failed: {result}")
+    exit(1)
 ```
 
 **Parameters:**
@@ -1856,10 +1866,14 @@ load_stash_file(_path: str, _default: str = "") -> error|{ "full_path": str, "cr
 
 ```rad
 result = load_stash_file("config.txt", "default config")
-if result.success:
-    if result.created:
-        print("Created new config file")
-    content = result.content
+if result.created:
+    print("Created new config file")
+content = result.content
+
+// Handle errors - inside the block, `result` is the error
+result = load_stash_file("config.txt") catch:
+    print_err("Could not load stash file: {result}")
+    exit(1)
 ```
 
 **Return map contains:**
@@ -2851,10 +2865,10 @@ print(time.epoch.millis)  // -> 1712345678500
 time = parse_epoch(1712345678123.25, unit="millis")
 print(time.epoch.nanos)  // -> 1712345678123250000
 
-// Error handling
-time, err = parse_epoch(1712345678, tz="Invalid/Timezone")
-if err:
-    print("Invalid timezone:", err.msg)
+// Handle errors - inside the block, `time` is the error
+time = parse_epoch(1712345678, tz="Invalid/Timezone") catch:
+    print_err("Invalid timezone: {time}")
+    exit(1)
 ```
 
 **Parameters:**

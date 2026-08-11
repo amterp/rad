@@ -4809,10 +4809,13 @@ with said error.</p>
 <div class="highlight"><pre><span></span><code>decode_base16(&quot;48656c6c6f&quot;)   // -&gt; &quot;Hello&quot;
 decode_base16(&quot;414243&quot;)       // -&gt; &quot;ABC&quot;
 
-// Error handling
-result = decode_base16(&quot;invalid hex&quot;)
-if result.error:
-    print(&quot;Invalid hex string&quot;)
+// Handle errors - inside the block, `result` is the error
+result = decode_base16(&quot;invalid hex&quot;) catch:
+    print_err(&quot;Invalid hex string: {result}&quot;)
+    exit(1)
+
+// Or fall back
+result = decode_base16(&quot;invalid hex&quot;) ?? &quot;&quot;
 </code></pre></div>
 <h3 id="decode_base64">decode_base64<a class="headerlink" href="#decode_base64" title="Permanent link">&para;</a></h3>
 <p>Decodes Base64 text back to original string.</p>
@@ -4825,10 +4828,13 @@ decoded = decode_base64(encoded)           // -&gt; &quot;Hello World&quot;
 url_encoded = encode_base64(&quot;test&quot;, url_safe=true)
 decoded = decode_base64(url_encoded, url_safe=true)
 
-// Error handling
-result = decode_base64(&quot;invalid base64!&quot;)
-if result.error:
-    print(&quot;Decode failed:&quot;, result.error)
+// Handle errors - inside the block, `result` is the error
+result = decode_base64(&quot;invalid base64!&quot;) catch:
+    print_err(&quot;Decode failed: {result}&quot;)
+    exit(1)
+
+// Or fall back
+result = decode_base64(&quot;invalid base64!&quot;) ?? &quot;&quot;
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5591,7 +5597,10 @@ print(&quot;no newline&quot;, end=&quot;&quot;) // -&gt; no newline
 <div class="highlight"><pre><span></span><code>print_err(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>print_err(&quot;failed to load config&quot;)     // -&gt; writes to stderr
-print_err(&quot;error:&quot;, err.msg)           // -&gt; &quot;error: &lt;msg&gt;&quot; to stderr
+
+// Inside a catch: block the assigned variable is the error itself
+config = read_file(&quot;config.json&quot;) catch:
+    print_err(&quot;error:&quot;, config)        // -&gt; &quot;error: &lt;msg&gt;&quot; to stderr
 </code></pre></div>
 <h3 id="read_file">read_file<a class="headerlink" href="#read_file" title="Permanent link">&para;</a></h3>
 <p>Reads the contents of a file.</p>
@@ -5599,18 +5608,19 @@ print_err(&quot;error:&quot;, err.msg)           // -&gt; &quot;error: &lt;msg&g
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Read text file
 result = read_file(&quot;config.txt&quot;)
-if result.success:
-    content = result.content  // -&gt; string
+content = result.content      // -&gt; string
 
 // Read binary file
 result = read_file(&quot;image.png&quot;, mode=&quot;bytes&quot;)
-if result.success:
-    bytes = result.content    // -&gt; list[int]
+bytes = result.content        // -&gt; list[int]
 
-// Handle errors
-result = read_file(&quot;missing.txt&quot;)
-if not result.success:
-    print(&quot;Error:&quot;, result.error)
+// Handle errors - inside the block, `result` is the error
+result = read_file(&quot;missing.txt&quot;) catch:
+    print_err(&quot;Read failed: {result}&quot;)
+    exit(1)
+
+// Or fall back
+result = read_file(&quot;missing.txt&quot;) ?? { &quot;size_bytes&quot;: 0, &quot;content&quot;: &quot;&quot; }
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5662,10 +5672,10 @@ print(&quot;Wrote&quot;, result.bytes_written, &quot;bytes&quot;)
 // Append to existing file
 write_file(&quot;log.txt&quot;, &quot;\nNew entry&quot;, append=true)
 
-// Error handling
-result, err = write_file(&quot;/readonly/file.txt&quot;, &quot;data&quot;)
-if err:
-    print(&quot;Write failed:&quot;, err.msg)
+// Handle errors - inside the block, `result` is the error
+result = write_file(&quot;/readonly/file.txt&quot;, &quot;data&quot;) catch:
+    print_err(&quot;Write failed: {result}&quot;)
+    exit(1)
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6232,10 +6242,14 @@ exclusive).</p>
 <div class="highlight"><pre><span></span><code>load_stash_file(_path: str, _default: str = &quot;&quot;) -&gt; error|{ &quot;full_path&quot;: str, &quot;created&quot;: bool, &quot;content&quot;?: str }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>result = load_stash_file(&quot;config.txt&quot;, &quot;default config&quot;)
-if result.success:
-    if result.created:
-        print(&quot;Created new config file&quot;)
-    content = result.content
+if result.created:
+    print(&quot;Created new config file&quot;)
+content = result.content
+
+// Handle errors - inside the block, `result` is the error
+result = load_stash_file(&quot;config.txt&quot;) catch:
+    print_err(&quot;Could not load stash file: {result}&quot;)
+    exit(1)
 </code></pre></div>
 <p><strong>Return map contains:</strong></p>
 <ul>
@@ -7285,10 +7299,10 @@ print(time.epoch.millis)  // -&gt; 1712345678500
 time = parse_epoch(1712345678123.25, unit=&quot;millis&quot;)
 print(time.epoch.nanos)  // -&gt; 1712345678123250000
 
-// Error handling
-time, err = parse_epoch(1712345678, tz=&quot;Invalid/Timezone&quot;)
-if err:
-    print(&quot;Invalid timezone:&quot;, err.msg)
+// Handle errors - inside the block, `time` is the error
+time = parse_epoch(1712345678, tz=&quot;Invalid/Timezone&quot;) catch:
+    print_err(&quot;Invalid timezone: {time}&quot;)
+    exit(1)
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
