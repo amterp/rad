@@ -2539,14 +2539,15 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
 <p>Replace <code>"milliseconds"</code> with <code>"millis"</code>, <code>"microseconds"</code> with <code>"micros"</code>, and <code>"nanoseconds"</code> with <code>"nanos"</code> in any <code>parse_epoch</code> calls.</p>
 <h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
 <p>If you run a script that still uses <code>request</code> or <code>display</code>, you'll see:</p>
-<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed. Use &#39;rad&#39; instead.
+<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed
   --&gt; script.rad:1:1
-   |
- 1 | request &quot;https://api.example.com/users&quot;:
-   | ^^
-   |
-   = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad docs RAD40008
+  |
+1 | request &quot;https://api.example.com/users&quot;:
+  | ^^^^^^^
+2 |     fields Name
+  |
+  = help: Use a &#39;rad&#39; block instead. See https://amterp.dev/rad/migrations/v0.9/
+  = info: rad docs RAD40008
 </code></pre></div>
 <p>If you run a script that still uses <code>get_stash_dir</code>, you'll see a helpful error:</p>
 <div class="highlight"><pre><span></span><code>error: Cannot invoke unknown function: get_stash_dir

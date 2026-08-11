@@ -2526,13 +2526,17 @@ recently:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
 <p>The warning looks like this:</p>
-<div class="highlight"><pre><span></span><code>L4:17: WARN
-
-     4 | fields = split(line, &quot;\s+&quot;)
-       |                 ^ &#39;\s+&#39; reads as a regex (&#39;\s&#39;), but split() matches
-       |                   literally unless you pass regex=true. [...]
-       |                 (code: RAD40016)
-       = help: add regex=true to keep the old behavior [...]
+<div class="highlight"><pre><span></span><code>warning[RAD40016]: &#39;\s+&#39; reads as a regex (&#39;\s&#39;), but split() matches it literally
+  --&gt; parse.rad:4:22
+  |
+3 |
+4 | fields = split(line, &quot;\s+&quot;)
+  |                      ^^^^^
+5 |
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal - otherwise it silently
+          matches nothing. See https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
 </code></pre></div>
 <p><strong>2. Add <code>regex=true</code> where you meant a regex.</strong></p>
 <p><strong>3. Drop the escaping where you didn't.</strong> Patterns that only existed to escape
@@ -2746,13 +2750,18 @@ you stdout.</p>
 <h3 id="migration-steps_2">Migration Steps<a class="headerlink" href="#migration-steps_2" title="Permanent link">&para;</a></h3>
 <p><strong>1. Find the affected captures.</strong> RAD40018 flags capture targets whose names
 promise a different stream than they now receive:</p>
-<div class="highlight"><pre><span></span><code>L46:4: WARN
-
-    46 | _, version = $`rad -v`
-       |    ^ &#39;version&#39; is bound to stderr here. [...] Before v0.12 the order
-       |      was (code, stdout, stderr), so this used to bind stdout instead -
-       |      same script, different variable, no error.
-       |    (code: RAD40018)
+<div class="highlight"><pre><span></span><code>warning[RAD40018]: &#39;version&#39; is bound to stderr here
+   --&gt; release.rad:46:4
+   |
+45 | // ...
+46 | _, version = $`rad -v`
+   |    ^^^^^^^
+47 |
+   |
+   = help: Positional captures fill (stdout, stderr, code) in that order - reorder the targets, or
+           name them all so assignment goes by name. Before v0.12 this bound stdout instead. See
+           https://amterp.dev/rad/migrations/v0.12/
+   = info: rad docs RAD40018
 </code></pre></div>
 <p><strong>2. For mixed naming, rename rather than reorder.</strong> The most common affected
 shape uses a reserved name alongside an ordinary one, which drops the whole

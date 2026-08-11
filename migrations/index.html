@@ -1676,14 +1676,15 @@ Checked 38 scripts: 37 passed, 1 failed (1 warn, 1 hint, 5 skipped).
 </div>
 <h3 id="5-fix-issues">5. Fix issues<a class="headerlink" href="#5-fix-issues" title="Permanent link">&para;</a></h3>
 <p>When you hit a breaking change - either through <code>rad check</code> or by running a script - Rad tells you what changed and how to fix it. For example, running a script that uses a removed keyword produces:</p>
-<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed. Use &#39;rad&#39; instead.
+<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed
   --&gt; script.rad:1:1
-   |
- 1 | request &quot;https://api.example.com/users&quot;:
-   | ^^
-   |
-   = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad docs RAD40008
+  |
+1 | request &quot;https://api.example.com/users&quot;:
+  | ^^^^^^^
+2 |     fields Name
+  |
+  = help: Use a &#39;rad&#39; block instead. See https://amterp.dev/rad/migrations/v0.9/
+  = info: rad docs RAD40008
 </code></pre></div>
 <p>The inline error gives you the gist, but if you want more detail, run <code>rad docs</code> with the error code:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>docs<span class="w"> </span>RAD40008

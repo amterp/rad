@@ -72,14 +72,15 @@ rad check ./my-script.rad
 When you hit a breaking change - either through `rad check` or by running a script - Rad tells you what changed and how to fix it. For example, running a script that uses a removed keyword produces:
 
 ```
-error[RAD40008]: 'request' blocks have been removed. Use 'rad' instead.
+error[RAD40008]: 'request' blocks have been removed
   --> script.rad:1:1
-   |
- 1 | request "https://api.example.com/users":
-   | ^^
-   |
-   = help: See migration guide: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad docs RAD40008
+  |
+1 | request "https://api.example.com/users":
+  | ^^^^^^^
+2 |     fields Name
+  |
+  = help: Use a 'rad' block instead. See https://amterp.dev/rad/migrations/v0.9/
+  = info: rad docs RAD40008
 ```
 
 The inline error gives you the gist, but if you want more detail, run `rad docs` with the error code:
