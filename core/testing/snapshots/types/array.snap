@@ -125,7 +125,7 @@ error[RAD20029]: Index out of bounds: 4 (length 4)
 2 | a[4] = 500
   |   ^
   |
-   = info: rad docs RAD20029
+  = info: rad docs RAD20029
 ### EXIT ###
 1
 
@@ -172,7 +172,7 @@ error[RAD20029]: Index out of bounds: -99 (length 4)
 2 | print(a[-99])
   |         ^^^
   |
-   = info: rad docs RAD20029
+  = info: rad docs RAD20029
 ### EXIT ###
 1
 
@@ -189,6 +189,6 @@ error[RAD20029]: Index out of bounds: -99 (length 4)
 2 | a[-99] = 5
   |   ^^^
   |
-   = info: rad docs RAD20029
+  = info: rad docs RAD20029
 ### EXIT ###
 1

@@ -10,9 +10,8 @@ print(ok, notes, where)
 ### STDERR ###
 error[RAD20046]: this script needs to ask you something, but there's no terminal
 
-  TestCase prompts in 3 places. rad found no terminal - stdin isn't one and
-  /dev/tty isn't available - so it can't ask. Supply the answers up front,
-  keyed by line number.
+  TestCase prompts in 3 places. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
 
   TestCase:2  confirm "Deploy?"
   TestCase:3  input   "Notes"
@@ -20,11 +19,10 @@ error[RAD20046]: this script needs to ask you something, but there's no terminal
 
     rad TestCase --color=never --reply '2:<yes|no>' --reply '3:<value>' --reply '4:<option>'
 
-  Every <...> is a blank - rad writes the shape of the command, never the
-  answers. Fill each one in; rad takes the text literally and matches it
-  exactly. For a prompt on a branch you know won't run, or a filtered pick
-  you expect to settle itself, use --reply-na instead of choosing for it.
-   = info: rad docs RAD20046
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -56,8 +54,9 @@ print(where)
 1:staging
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20046]: "staging" is not one of the options for the pick at 1. Valid options: dev, prod. Answers must match exactly - rad won't guess which one you meant
-   = info: rad docs RAD20046
+error[RAD20046]: "staging" is not one of the options for the pick at 1. Valid options: dev, prod.
+  Answers must match exactly - rad won't guess which one you meant
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -71,8 +70,9 @@ print(ok)
 9:yes
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20046]: no prompt at 9. This script prompts at: 1. If the script changed, re-run it without --reply to get the current list
-   = info: rad docs RAD20046
+error[RAD20046]: no prompt at 9. This script prompts at: 1. If the script changed, re-run it without
+  --reply to get the current list
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -100,14 +100,15 @@ print(ok)
 1
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20047]: The confirm "Actually asked" was reached, but --reply-na said it wouldn't be. That's an assertion, not a fallback, so rad won't guess an answer
+error[RAD20047]: The confirm "Actually asked" was reached, but --reply-na said it wouldn't be.
+  That's an assertion, not a fallback, so rad won't guess an answer
   --> <script>:1:6
   |
 1 | ok = confirm("Actually asked")
   |      ^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | print(ok)
   |
-   = info: rad docs RAD20047
+  = info: rad docs RAD20047
 ### EXIT ###
 1
 
@@ -127,7 +128,8 @@ for item in ["a", "b", "c"]:
 a true
 b false
 ### STDERR ###
-error[RAD20047]: The confirm "Delete c?" ran out of answers - it executed more times than --reply accounted for. Repeat the flag once per pass; rad won't reuse the last answer
+error[RAD20047]: The confirm "Delete c?" ran out of answers - it executed more times than --reply
+  accounted for. Repeat the flag once per pass; rad won't reuse the last answer
   --> <script>:2:10
   |
 1 | for item in ["a", "b", "c"]:
@@ -135,7 +137,7 @@ error[RAD20047]: The confirm "Delete c?" ran out of answers - it executed more t
   |          ^^^^^^^^^^^^^^^^^^^^^^^^^
 3 |     print(item, ok)
   |
-   = info: rad docs RAD20047
+  = info: rad docs RAD20047
 ### EXIT ###
 1
 
@@ -151,7 +153,8 @@ print(choice)
 3:gamma
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20047]: "gamma" is not one of the options for the pick "Pick an option". Options: alpha, beta. Answers must match exactly - rad won't guess which one you meant
+error[RAD20047]: "gamma" is not one of the options for the pick "Pick an option". Options: alpha,
+  beta. Answers must match exactly - rad won't guess which one you meant
   --> <script>:3:10
   |
 2 |     return ["alpha", "beta"]
@@ -159,7 +162,7 @@ error[RAD20047]: "gamma" is not one of the options for the pick "Pick an option"
   |          ^^^^^^^^^^^^^^^
 4 | print(choice)
   |
-   = info: rad docs RAD20047
+  = info: rad docs RAD20047
 ### EXIT ###
 1
 
@@ -186,7 +189,7 @@ print(picks)
 ### NO_TERMINAL ###
 ### STDERR ###
 error[RAD20046]: the multipick at 1 needs at least 2 selections, but the answer gave 1
-   = info: rad docs RAD20046
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -200,8 +203,10 @@ print(pw)
 1:hunter2
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20046]: cannot answer the secret input "Password" at 1 from the command line: arguments are visible to other processes on this machine. Run it where there's a terminal, or use --reply-na 1 if this run won't reach it
-   = info: rad docs RAD20046
+error[RAD20046]: cannot answer the secret input "Password" at 1 from the command line: arguments are
+  visible to other processes on this machine. Run it where there's a terminal, or use --reply-na 1
+  if this run won't reach it
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -259,7 +264,7 @@ error[RAD20000]: Command exited with code 1
   | ^^^^^^^^^^^^^^^^^^^^^^
 2 | print("after")
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -299,7 +304,8 @@ for x in ["a", "b"]:
 ### STDOUT ###
 a true
 ### STDERR ###
-error[RAD20047]: The confirm "Delete b?" ran out of answers - it executed more times than --reply accounted for. Repeat the flag once per pass; rad won't reuse the last answer
+error[RAD20047]: The confirm "Delete b?" ran out of answers - it executed more times than --reply
+  accounted for. Repeat the flag once per pass; rad won't reuse the last answer
   --> <script>:2:10
   |
 1 | for x in ["a", "b"]:
@@ -307,7 +313,7 @@ error[RAD20047]: The confirm "Delete b?" ran out of answers - it executed more t
   |          ^^^^^^^^^^^^^^^^^^^^^^
 3 |     print(x, ok)
   |
-   = info: rad docs RAD20047
+  = info: rad docs RAD20047
 ### EXIT ###
 1
 
@@ -341,7 +347,9 @@ print(pw)
 2:hunter2
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20047]: The secret input "Password" needs a terminal. It can't be answered with --reply, because command-line arguments are visible to other processes. Run this where a terminal is available, or use --reply-na if this run shouldn't reach it
+error[RAD20047]: The secret input "Password" needs a terminal. It can't be answered with --reply,
+  because command-line arguments are visible to other processes. Run this where a terminal is
+  available, or use --reply-na if this run shouldn't reach it
   --> <script>:2:6
   |
 1 | is_secret = true
@@ -349,7 +357,7 @@ error[RAD20047]: The secret input "Password" needs a terminal. It can't be answe
   |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3 | print(pw)
   |
-   = info: rad docs RAD20047
+  = info: rad docs RAD20047
 ### EXIT ###
 1
 
@@ -375,7 +383,7 @@ print(sel)
 ### NO_TERMINAL ###
 ### STDERR ###
 error[RAD20046]: "a" is selected twice for the multipick at 1; list each option at most once
-   = info: rad docs RAD20046
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -402,19 +410,17 @@ print(x)
 ### STDERR ###
 error[RAD20046]: this script needs to ask you something, but there's no terminal
 
-  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and
-  /dev/tty isn't available - so it can't ask. Supply the answers up front,
-  keyed by line number.
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
 
   TestCase:1  pick options: alpha, beta  filtered - may not prompt, and then ignores its answer
 
     rad TestCase --color=never --reply '1:<option>'
 
-  Every <...> is a blank - rad writes the shape of the command, never the
-  answers. Fill each one in; rad takes the text literally and matches it
-  exactly. For a prompt on a branch you know won't run, or a filtered pick
-  you expect to settle itself, use --reply-na instead of choosing for it.
-   = info: rad docs RAD20046
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -428,15 +434,14 @@ print(f(["alpha", "beta"]))
 ### STDERR ###
 error[RAD20046]: this script needs to ask you something, but there's no terminal
 
-  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and
-  /dev/tty isn't available - so it can't ask. Supply the answers up front,
-  keyed by line number.
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
 
   TestCase:1  pick used as a value - rad can't see where it runs; assert with --reply-na
 
     rad TestCase --color=never --reply-na 1
 
-   = info: rad docs RAD20046
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -475,8 +480,10 @@ print(f(["alpha", "beta"]))
 1:alpha
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20046]: cannot answer the pick used as a value at 1: the script passes it around as a value rather than calling it, so rad can't tell where it runs and has nothing to attach an answer to. Use --reply-na 1 if this run won't invoke it
-   = info: rad docs RAD20046
+error[RAD20046]: cannot answer the pick used as a value at 1: the script passes it around as a value
+  rather than calling it, so rad can't tell where it runs and has nothing to attach an answer to.
+  Use --reply-na 1 if this run won't invoke it
+  = info: rad docs RAD20046
 ### EXIT ###
 7
 
@@ -490,15 +497,51 @@ print(x, y)
 ### STDERR ###
 error[RAD20046]: this script needs to ask you something, but there's no terminal
 
-  TestCase prompts in 2 places. rad found no terminal - stdin isn't one and
-  /dev/tty isn't available - so it can't ask. Supply the answers up front,
-  keyed by line number.
+  TestCase prompts in 2 places. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
 
   TestCase:1  pick options: zulu, beta, gamma  settles on "beta" - won't ask
   TestCase:2  pick options: solo  settles on "solo" - won't ask
 
     rad TestCase --color=never --reply-na 1 --reply-na 2
 
-   = info: rad docs RAD20046
+  = info: rad docs RAD20046
+### EXIT ###
+7
+
+### TITLE ###
+Pre-flight prose fits a narrow terminal
+### INPUT ###
+ok = confirm("Deploy?")
+notes = input("Notes")
+print(ok, notes)
+### TERM_WIDTH ###
+40
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to
+  ask you something, but there's no
+  terminal
+
+  TestCase prompts in 2 places. rad
+  found no terminal - stdin isn't one
+  and /dev/tty isn't available - so it
+  can't ask. Supply the answers up
+  front, keyed by line number.
+
+  TestCase:1  confirm "Deploy?"
+  TestCase:2  input   "Notes"
+
+    rad TestCase --color=never --reply '1:<yes|no>' --reply '2:<value>'
+
+  Every <...> is a blank - rad writes
+  the shape of the command, never the
+  answers. Fill each one in; rad takes
+  the text literally and matches it
+  exactly. For a prompt on a branch you
+  know won't run, or a filtered pick you
+  expect to settle itself, use
+  --reply-na instead of choosing for it.
+  = info: rad docs RAD20046
 ### EXIT ###
 7

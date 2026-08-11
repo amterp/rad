@@ -30,7 +30,13 @@ func GetTermWidth() int {
 	}
 	width, _, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
-		RP.RadDebugf(fmt.Sprintf("Error getting terminal width, defaulting to %d: %v\n", defaultTermWidth, err))
+		// Reachable before the printer is wired up - diagnostics can be
+		// rendered during early setup, and a unit test may never wire one at
+		// all. Losing the debug line is better than panicking on the way to
+		// reporting an error.
+		if RP != nil {
+			RP.RadDebugf(fmt.Sprintf("Error getting terminal width, defaulting to %d: %v\n", defaultTermWidth, err))
+		}
 		return defaultTermWidth
 	}
 	return width

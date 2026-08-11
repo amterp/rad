@@ -186,8 +186,11 @@ func (c *RadCheckerImpl) addDeprecatedBlockKeywordErrors(d *[]Diagnostic) {
 			return
 		}
 		if radBlock.Keyword == rl.KEYWORD_REQUEST || radBlock.Keyword == rl.KEYWORD_DISPLAY {
-			msg := "'" + radBlock.Keyword + "' blocks have been removed. Use 'rad' instead. See https://amterp.dev/rad/migrations/v0.9/"
-			*d = append(*d, NewDiagnosticErrorFromSpan(radBlock.KeywordSpan, c.src, msg, rl.ErrDeprecatedBlockKeyword))
+			msg := "'" + radBlock.Keyword + "' blocks have been removed"
+			suggestion := "Use a 'rad' block instead. See https://amterp.dev/rad/migrations/v0.9/"
+			diag := NewDiagnosticErrorFromSpan(radBlock.KeywordSpan, c.src, msg, rl.ErrDeprecatedBlockKeyword)
+			diag.Suggestion = &suggestion
+			*d = append(*d, diag)
 		}
 	})
 }
@@ -217,11 +220,12 @@ func (c *RadCheckerImpl) addShellInterpolationQuoteErrors(d *[]Diagnostic) {
 		}
 
 		for _, seg := range quotedInterpolations(lit) {
-			msg := "This value is inside quotes, but Rad already quotes interpolated values in " +
-				"shell commands - these quotes will end up in the argument itself. Remove them. " +
-				"If the argument is literal text plus a value, build it as a string first and " +
-				"interpolate that."
-			*d = append(*d, NewDiagnosticErrorFromSpan(seg.Span(), c.src, msg, rl.ErrShellInterpolationQuoted))
+			msg := "Quotes around this interpolation end up in the argument itself"
+			suggestion := "Remove them - Rad quotes shell interpolations for you. For literal " +
+				"text plus a value, build the string first and interpolate that."
+			diag := NewDiagnosticErrorFromSpan(seg.Span(), c.src, msg, rl.ErrShellInterpolationQuoted)
+			diag.Suggestion = &suggestion
+			*d = append(*d, diag)
 		}
 	})
 }
@@ -343,7 +347,7 @@ func (c *RadCheckerImpl) addConstantInterpolationWarnings(d *[]Diagnostic) {
 			}
 			literal := safeSlice(c.src, seg.Expr.Span().StartByte, seg.Expr.Span().EndByte)
 			msg := "Interpolating the literal " + truncate(literal, 20) + " has no effect"
-			suggestion := "Write the value directly. For a literal brace, escape it as '\\{' or use a raw string: r\"...\""
+			suggestion := "Write the value directly, or escape a literal brace as '\\{'."
 			*d = append(*d, NewDiagnosticWarnFromSpanWithSuggestion(
 				seg.Span(), c.src, msg, rl.ErrConstantInterpolation, suggestion))
 		}
@@ -418,24 +422,28 @@ func (c *RadCheckerImpl) addCommandBlockErrors(d *[]Diagnostic) {
 			switch {
 			case cmd.IsNamespace() && cmd.Callback != nil:
 				*d = append(*d, NewDiagnosticErrorFromSpan(cmd.Callback.Span_, c.src,
-					"'"+cmd.Name+"' contains sub-commands, so it routes to them rather than running itself. Remove 'calls', or move it to a sub-command.",
-					rl.ErrNamespaceHasCallback))
+					"'"+cmd.Name+"' has sub-commands, so it routes rather than runs",
+					rl.ErrNamespaceHasCallback).
+					WithSuggestion("Remove 'calls', or move it to a sub-command."))
 			case !cmd.IsNamespace() && cmd.Callback == nil:
 				*d = append(*d, NewDiagnosticErrorFromSpan(cmd.Span(), c.src,
-					"Command '"+cmd.Name+"' does nothing: it needs a 'calls' line naming what to run, or nested command blocks to route to.",
-					rl.ErrCommandMissingCallback))
+					"Command '"+cmd.Name+"' does nothing",
+					rl.ErrCommandMissingCallback).
+					WithSuggestion("Add a 'calls' line naming what to run, or nested command blocks to route to."))
 			}
 
 			if cmd.IsDefault() {
 				switch {
 				case cmd.IsNamespace():
 					*d = append(*d, NewDiagnosticErrorFromSpan(*cmd.DefaultSpan, c.src,
-						"'"+cmd.Name+"' contains sub-commands, so it cannot be the default. Mark one of its sub-commands instead.",
-						rl.ErrDefaultOnNamespace))
+						"'"+cmd.Name+"' has sub-commands, so it cannot be the default",
+						rl.ErrDefaultOnNamespace).
+						WithSuggestion("Mark one of its sub-commands instead."))
 				case firstDefault != nil:
 					*d = append(*d, NewDiagnosticErrorFromSpan(*cmd.DefaultSpan, c.src,
-						"'"+firstDefault.Name+"' is already the default at this level, so '"+cmd.Name+"' cannot be. Only one command per level runs when none is named.",
-						rl.ErrMultipleDefaultCommands))
+						"'"+firstDefault.Name+"' is already the default at this level",
+						rl.ErrMultipleDefaultCommands).
+						WithSuggestion("Only one command per level can run when none is named."))
 				default:
 					firstDefault = cmd
 				}

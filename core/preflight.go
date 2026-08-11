@@ -33,9 +33,10 @@ func (r *RadRunner) runPromptPreflight(invoked *ScriptCommand) {
 
 	replies, err := prompts.ParseReplies(FlagReply.Value, FlagReplyNa.Value, sites)
 	if err != nil {
-		emitPreflight(fmt.Sprintf("%s %v\n%s\n",
-			color.RedString("error[RAD%s]:", rl.ErrPromptsNeedAnswers), err,
-			com.CyanS(fmt.Sprintf("   = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers))))
+		var b strings.Builder
+		writeDiagnosticHeader(&b, rl.ErrPromptsNeedAnswers, err.Error())
+		b.WriteString(com.CyanS(fmt.Sprintf("  = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers)) + "\n")
+		emitPreflight(b.String())
 		RExit.Exit(exitPromptsNeedAnswers)
 		return
 	}
@@ -51,10 +52,12 @@ func (r *RadRunner) runPromptPreflight(invoked *ScriptCommand) {
 	// refuse the combination outright. A script with no shell commands at all
 	// has nothing to gate, so it isn't caught by this.
 	if FlagConfirmShellCommands.Value && hasShellCommand(r.scriptData.Ast) {
-		emitPreflight(fmt.Sprintf(
-			"%s --confirm-shell asks you to approve every shell command, but there's no terminal to ask at.\n\n"+
-				"  Drop --confirm-shell, or run this where a terminal is available.\n",
-			color.RedString("error:")))
+		var b strings.Builder
+		writeDiagnosticHeader(&b, "",
+			"--confirm-shell asks you to approve every shell command, but there's no terminal to ask at.")
+		b.WriteString("\n")
+		writePara(&b, "Drop --confirm-shell, or run this where a terminal is available.")
+		emitPreflight(b.String())
 		RExit.Exit(exitPromptsNeedAnswers)
 		return
 	}
@@ -69,15 +72,17 @@ func (r *RadRunner) runPromptPreflight(invoked *ScriptCommand) {
 	// is actually true instead. Stopping here still holds the line that nothing
 	// runs before the caller knows what this needs.
 	if r.scriptData.DisableGlobalOpts {
-		emitPreflight(fmt.Sprintf(
-			"%s this script needs to ask you something, but there's no terminal\n\n"+
-				"  %s prompts in %s, and it sets @%s = false.\n"+
-				"  That removes the --reply flag which would otherwise answer them. Run\n"+
-				"  this where a terminal is available, or re-enable global options in the\n"+
-				"  script.\n",
-			color.RedString("error[RAD%s]:", rl.ErrPromptsNeedAnswers),
+		var b strings.Builder
+		writeDiagnosticHeader(&b, rl.ErrPromptsNeedAnswers,
+			"this script needs to ask you something, but there's no terminal")
+		b.WriteString("\n")
+		writePara(&b, fmt.Sprintf(
+			"%s prompts in %s, and it sets @%s = false. That removes the --reply flag "+
+				"which would otherwise answer them. Run this where a terminal is available, "+
+				"or re-enable global options in the script.",
 			preflightScriptName(), com.Pluralize(len(sites), "place"),
 			MACRO_ENABLE_GLOBAL_OPTIONS))
+		emitPreflight(b.String())
 		RExit.Exit(exitPromptsNeedAnswers)
 		return
 	}
@@ -116,19 +121,54 @@ func emitPreflight(msg string) {
 	emitShellExit(exitPromptsNeedAnswers)
 }
 
+// writeDiagnosticHeader writes "error[RADxxxxx]: message", wrapping the message
+// to the terminal with a 2-column hanging indent - the same shape
+// DiagnosticRenderer produces, which these messages have to match by hand
+// because they build their own bodies rather than going through the renderer.
+// Pass an empty code for a bare "error:".
+func writeDiagnosticHeader(b *strings.Builder, code rl.Error, message string) {
+	prefix := "error:"
+	if code != "" {
+		// code.String() carries the "RAD" prefix already.
+		prefix = fmt.Sprintf("error[%s]:", code.String())
+	}
+
+	// Wrap against the uncolored prefix, then swap the color in: measuring an
+	// escape-laden string against a column budget would come out far too wide.
+	for i, line := range com.WrapPrefixed(message, prefix+" ", "  ", DiagnosticProseWidth()) {
+		if i == 0 {
+			b.WriteString(color.RedString(prefix) + strings.TrimPrefix(line, prefix) + "\n")
+		} else {
+			b.WriteString(line + "\n")
+		}
+	}
+}
+
+// writePara wraps a paragraph to the terminal and indents it into the message
+// body. The site table and the suggested command are written directly instead:
+// one is a column layout and the other is meant to be copy-pasted, so neither
+// survives being reflowed.
+func writePara(b *strings.Builder, text string) {
+	for _, line := range com.Wrap(text, DiagnosticProseWidth()-2) {
+		b.WriteString("  " + line + "\n")
+	}
+}
+
 // preflightMessage explains the situation to a person first. The caller may
 // well be an AI agent, but writing for a human keeps it readable for both, and
 // the machine-facing part - the exact command to run - is unambiguous either way.
 func preflightMessage(scriptName string, sites, unanswered []prompts.Site) string {
 	var b strings.Builder
 
-	fmt.Fprintf(&b, "%s this script needs to ask you something, but there's no terminal\n\n",
-		color.RedString("error[RAD%s]:", rl.ErrPromptsNeedAnswers))
+	writeDiagnosticHeader(&b, rl.ErrPromptsNeedAnswers,
+		"this script needs to ask you something, but there's no terminal")
+	b.WriteString("\n")
 
-	fmt.Fprintf(&b, "  %s prompts in %s. rad found no terminal - stdin isn't one and\n",
-		scriptName, com.Pluralize(len(sites), "place"))
-	b.WriteString("  /dev/tty isn't available - so it can't ask. Supply the answers up front,\n")
-	b.WriteString("  keyed by line number.\n\n")
+	writePara(&b, fmt.Sprintf(
+		"%s prompts in %s. rad found no terminal - stdin isn't one and /dev/tty isn't "+
+			"available - so it can't ask. Supply the answers up front, keyed by line number.",
+		scriptName, com.Pluralize(len(sites), "place")))
+	b.WriteString("\n")
 
 	missing := make(map[string]bool, len(unanswered))
 	for _, u := range unanswered {
@@ -170,12 +210,12 @@ func preflightMessage(scriptName string, sites, unanswered []prompts.Site) strin
 	// complete, and telling that caller to fill something in sends them looking
 	// for it.
 	if lo.SomeBy(unanswered, func(s prompts.Site) bool { return !answeredByRad(s) }) {
-		b.WriteString("  Every <...> is a blank - rad writes the shape of the command, never the\n")
-		b.WriteString("  answers. Fill each one in; rad takes the text literally and matches it\n")
-		b.WriteString("  exactly. For a prompt on a branch you know won't run, or a filtered pick\n")
-		b.WriteString("  you expect to settle itself, use --reply-na instead of choosing for it.\n")
+		writePara(&b, "Every <...> is a blank - rad writes the shape of the command, never "+
+			"the answers. Fill each one in; rad takes the text literally and matches it "+
+			"exactly. For a prompt on a branch you know won't run, or a filtered pick you "+
+			"expect to settle itself, use --reply-na instead of choosing for it.")
 	}
-	fmt.Fprintf(&b, "%s\n", com.CyanS(fmt.Sprintf("   = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers)))
+	fmt.Fprintf(&b, "%s\n", com.CyanS(fmt.Sprintf("  = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers)))
 
 	return b.String()
 }

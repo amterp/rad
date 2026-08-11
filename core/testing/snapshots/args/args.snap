@@ -238,10 +238,10 @@ error[RAD10001]: Invalid argument declaration
   --> <script>:2:16
   |
 1 | args:
-2 | 	intArg int = 1.2
-  |                ^^
+2 |     intArg int = 1.2
+  |                   ^^
   |
-   = info: rad docs RAD10001
+  = info: rad docs RAD10001
 ### EXIT ###
 1
 

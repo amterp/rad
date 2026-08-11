@@ -84,7 +84,10 @@ func (i *Interpreter) executeOp(
 		return (op == rl.OpEq) == eq
 	}
 
-	additionalErrMsg := ""
+	// Set when the operand types suggest a specific fix. Rendered as a
+	// "= help:" line rather than appended to the message, so the message stays
+	// one sentence naming what is wrong.
+	hint := ""
 	leftV := left().Val
 	rightV := right().Val
 	switch coercedLeft := leftV.(type) {
@@ -320,7 +323,7 @@ func (i *Interpreter) executeOp(
 		}
 		switch op {
 		case rl.OpAdd:
-			additionalErrMsg = ". Did you mean to wrap the right side in a list in order to append?"
+			hint = rl.HintListAppend
 		}
 	case *RadMap:
 		switch coercedRight := rightV.(type) {
@@ -387,13 +390,17 @@ func (i *Interpreter) executeOp(
 		opStr += "="
 	}
 
-	msg := fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'%s",
-		TypeAsString(leftV), opStr, TypeAsString(rightV), additionalErrMsg)
+	msg := fmt.Sprintf("Invalid operand types: cannot do '%s %s %s'",
+		TypeAsString(leftV), opStr, TypeAsString(rightV))
 
-	// Emit a migration hint when str + non-str is attempted with +
+	// The migration hint wins: a script that adds a string to a non-string used
+	// to work, so "this changed in v0.9" explains more than the generic nudge.
 	if op == rl.OpAdd && isStrPlusNonStr(leftV, rightV) {
-		i.emitErrorWithHint(rl.ErrInvalidTypeForOp, parentNode, msg,
-			"In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/")
+		hint = rl.HintStrPlusMigration
+	}
+
+	if hint != "" {
+		i.emitErrorWithHint(rl.ErrInvalidTypeForOp, parentNode, msg, hint)
 	} else {
 		i.emitErrorf(rl.ErrInvalidTypeForOp, parentNode, "%s", msg)
 	}

@@ -177,7 +177,7 @@ fn classify(s: str):
   x (local): int
 
 # Diagnostics
-  [error] RAD40012 @ 5:14 - Case is unreachable; 'a' is already matched by an earlier arm on line 3
+  [error] RAD40012 @ 5:14 - Case 'a' is unreachable - already matched on line 3
 
 ### TITLE ###
 SwitchMultiKeyOverlapFlagsRedundantKey
@@ -207,7 +207,7 @@ fn classify(s: str):
   x (local): int
 
 # Diagnostics
-  [error] RAD40012 @ 5:14 - Case is unreachable; 'b' is already matched by an earlier arm on line 3
+  [error] RAD40012 @ 5:14 - Case 'b' is unreachable - already matched on line 3
 
 ### TITLE ###
 SwitchIntDuplicateFlagged
@@ -237,7 +237,7 @@ fn classify(n: int):
   x (local): int
 
 # Diagnostics
-  [error] RAD40012 @ 5:14 - Case is unreachable; '2' is already matched by an earlier arm on line 3
+  [error] RAD40012 @ 5:14 - Case '2' is unreachable - already matched on line 3
 
 ### TITLE ###
 SwitchVariableKeysSkipDuplicateCheck

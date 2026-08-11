@@ -15,9 +15,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo([[1, 2], [3, "bad"]])
   |                  ^^^^^
 2 | fn foo(x: int[][]):
-3 | 	print(x)
+3 |     print(x)
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -43,9 +43,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo([1, [2, "bad"]])
   |             ^^^^^
 2 | fn foo(x: [int, int[]]):
-3 | 	print(x)
+3 |     print(x)
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -71,9 +71,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo({ "a": [1, "bad"] })
   |                ^^^^^
 2 | fn foo(x: { str: int[] }):
-3 | 	print(x)
+3 |     print(x)
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -90,9 +90,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo({ "outer": { "inner": "no" } })
   |                           ^^^^
 2 | fn foo(x: { "outer": { "inner": int } }):
-3 | 	print(x)
+3 |     print(x)
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -121,9 +121,9 @@ error[RAD30001]: Argument type 'null' is not assignable to expected type 'int'
 1 | foo([1, null, 2])
   |         ^^^^
 2 | fn foo(x: int[]):
-3 | 	print(x)
+3 |     print(x)
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -143,13 +143,13 @@ fn foo(x: int[]):
 error[RAD30001]: Argument type 'fn() -> void' is not assignable to expected type 'int'
   --> <script>:3:9
   |
-2 | 	print("hi")
+2 |     print("hi")
 3 | foo([1, helper, 2])
   |         ^^^^^^
 4 | fn foo(x: int[]):
-5 | 	print(x)
+5 |     print(x)
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 

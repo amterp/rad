@@ -43,7 +43,17 @@ type Diagnostic struct {
 	Severity    Severity
 	Message     string
 	Code        *rl.Error
-	Suggestion  *string // Optional suggestion for fixing the error (rendered as "Try: ...")
+	Suggestion  *string // Optional suggestion for fixing the error (rendered as "= help: ...")
+}
+
+// WithSuggestion attaches a "= help:" line and returns the diagnostic.
+//
+// Keep it to one imperative sentence: the message says what is wrong, this says
+// what to do, and anything longer belongs in core/error_docs/<code>.md, which
+// every diagnostic already points at. See that directory's AGENTS.md.
+func (d Diagnostic) WithSuggestion(suggestion string) Diagnostic {
+	d.Suggestion = &suggestion
+	return d
 }
 
 func NewDiagnosticFromNode(

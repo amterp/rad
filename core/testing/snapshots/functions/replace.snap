@@ -110,7 +110,7 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing cl
 1 | replace("a(b", "(", "-", regex=true)
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20024
+  = info: rad docs RAD20024
 ### EXIT ###
 1
 

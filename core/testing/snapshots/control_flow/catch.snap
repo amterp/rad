@@ -30,7 +30,7 @@ error[RAD20000]: this is an error
 3 | print("Got: {a}")
 4 |
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -105,7 +105,7 @@ error[RAD20000]: this is an error
 3 |
 4 | fn foo():
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -127,7 +127,7 @@ error[RAD20000]: this is an error
 3 |
 4 | fn foo():
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -148,12 +148,12 @@ error[RAD20000]: bar error
   --> <script>:5:6
   |
 4 | fn foo():
-5 | 	a = bar()
-  |      ^^^^^
-6 | 	return error("foo error")
+5 |     a = bar()
+  |         ^^^^^
+6 |     return error("foo error")
 7 |
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -180,7 +180,7 @@ error[RAD20000]: foo error bar error
 3 |
 4 | fn foo():
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -203,7 +203,7 @@ error[RAD20000]: this is an error
 4 |
 5 | fn foo(x):
   |
-   = info: rad docs RAD20000
+  = info: rad docs RAD20000
 ### EXIT ###
 1
 
@@ -351,8 +351,8 @@ error[RAD20028]: Undefined identifier 'out'
 6 |   return error(out)
   |                ^^^
   |
-   = help: did you mean 'count', 'int', or 'sort'?
-   = info: rad docs RAD20028
+  = help: did you mean 'count', 'int', or 'sort'?
+  = info: rad docs RAD20028
 ### EXIT ###
 1
 
@@ -375,9 +375,9 @@ Foo 1
 error[RAD20000]: error 1
   --> <script>:10:10
    |
- 9 | 	print_err("bar")
-10 | 	return [foo(a) for a in [1, 2]]
-   |          ^^^^^^
+ 9 |     print_err("bar")
+10 |     return [foo(a) for a in [1, 2]]
+   |             ^^^^^^
    |
    = info: rad docs RAD20000
 ### EXIT ###
@@ -424,10 +424,10 @@ print(outer("AAA"))
 error[RAD20028]: Undefined identifier 'x'
   --> <script>:11:9
    |
-10 | 	secs = mid(t0) catch:
-11 | 		print(x)
-   |         ^
-12 | 	return secs
+10 |     secs = mid(t0) catch:
+11 |         print(x)
+   |               ^
+12 |     return secs
 13 |
    |
    = help: did you mean 'max' or 't0'?
@@ -476,9 +476,9 @@ error[RAD20000]: boom
  4 |
  5 | stored = fail() catch:
    |          ------ originally raised here
- 6 | 	pass
+ 6 |     pass
  7 |
-...
+...|
 10 |
 11 | result = relay(stored)
    |          ^^^^^^^^^^^^^ re-raised here

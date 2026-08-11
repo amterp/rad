@@ -192,6 +192,16 @@ AGENTS.md), surfaced by `rad docs RADxxxxx`. The interpreter has two failure
 mechanisms: `RadPanic` for catchable, data-driven errors user code can
 `catch`, and `emitError*` for hard exits on programming errors.
 
+Both `rad check` and runtime errors render through `core/diagnostic_render.go`,
+which fits output to the terminal - prose caps at 100 columns, the source
+snippet uses the full width. Anything else that hand-formats error text must
+wrap with `com.Wrap` (`core/common/text.go`) to `core.DiagnosticProseWidth()`
+rather than picking its own width; `core/preflight.go` is the worked example.
+Keep inline messages to one sentence and leave the explanation to the error
+doc - the budget and its rationale are in `core/error_docs/AGENTS.md`. Hints
+shared between the checker and the interpreter live in `rts/rl/hints.go` so the
+two can't drift.
+
 ### Embedded commands are Rad scripts
 
 `rad`'s own subcommands (`new`, `check`, `docs`, `fmt`, `stash`, `explain`,

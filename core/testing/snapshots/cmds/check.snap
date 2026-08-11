@@ -1,0 +1,612 @@
+### TITLE ###
+Check_Valid
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/hello.rad
+### STDOUT ###
+No diagnostics to report.
+
+### TITLE ###
+Check_SyntaxAndUndefinedIdentifiers
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/invalid.rad
+### STDOUT ###
+error[RAD10009]: Unexpected '2'
+  --> ./rad_scripts/invalid.rad:1:9
+  |
+1 | hello = 2 a
+  |         ^
+2 | if true:
+3 |     yes no
+  |
+  = info: rad docs RAD10009
+
+error[RAD10009]: Unexpected 'yes'
+  --> ./rad_scripts/invalid.rad:3:2
+  |
+2 | if true:
+3 |     yes no
+  |     ^^^
+  |
+  = info: rad docs RAD10009
+
+error[RAD20028]: Undefined identifier 'a'
+  --> ./rad_scripts/invalid.rad:1:11
+  |
+1 | hello = 2 a
+  |           ^
+2 | if true:
+3 |     yes no
+  |
+  = help: did you mean 'abs', 'map', or 'max'?
+  = info: rad docs RAD20028
+
+error[RAD20028]: Undefined identifier 'no'
+  --> ./rad_scripts/invalid.rad:3:6
+  |
+2 | if true:
+3 |     yes no
+  |         ^^
+  |
+  = help: did you mean 'now', 'int', or 'pow'?
+  = info: rad docs RAD20028
+
+Reported 4 diagnostics.
+### EXIT ###
+1
+
+### TITLE ###
+Check_UnknownFunctions
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/unknown_functions.rad
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'foo'
+  --> ./rad_scripts/unknown_functions.rad:1:1
+  |
+1 | foo()
+  | ^^^
+2 | bar()
+3 | qux()
+  |
+  = help: did you mean 'floor', 'now', or 'pow'?
+  = info: rad docs RAD20028
+
+error[RAD20028]: Undefined identifier 'qux'
+  --> ./rad_scripts/unknown_functions.rad:3:1
+  |
+2 | bar()
+3 | qux()
+  | ^^^
+4 | print()
+5 |
+  |
+  = help: did you mean 'max' or 'sum'?
+  = info: rad docs RAD20028
+
+Reported 2 diagnostics.
+### EXIT ###
+1
+
+### TITLE ###
+Check_RadOptionNoEffect
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/rad_option_no_effect.rad
+### STDOUT ###
+warning[RAD40007]: 'insecure' has no effect without a URL source
+  --> ./rad_scripts/rad_option_no_effect.rad:3:5
+  |
+2 | rad:
+3 |     insecure
+  |     ^^^^^^^^
+4 |     quiet
+5 |     noprint
+  |
+  = info: rad docs RAD40007
+
+warning[RAD40007]: 'quiet' has no effect without a URL source
+  --> ./rad_scripts/rad_option_no_effect.rad:4:5
+  |
+3 |     insecure
+4 |     quiet
+  |     ^^^^^
+5 |     noprint
+6 |     fields Names
+  |
+  = info: rad docs RAD40007
+
+warning[RAD40007]: 'noprint' has no effect without a source (mutations are not preserved)
+  --> ./rad_scripts/rad_option_no_effect.rad:5:5
+  |
+4 |     quiet
+5 |     noprint
+  |     ^^^^^^^
+6 |     fields Names
+7 |
+  |
+  = info: rad docs RAD40007
+
+Reported 3 diagnostics.
+
+### TITLE ###
+Check_RegexPatternWithoutRegexArg
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/regex_pattern_without_flag.rad
+### STDOUT ###
+warning[RAD40016]: '\s+' reads as a regex ('\s'), but split() matches it literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:4:17
+  |
+3 | // Warns: regex constructs, no regex=true. Plain and UFCS call forms both count.
+4 | a = split(text, "\s+")
+  |                 ^^^^^
+5 | b = text.replace("[^a-z]", "")
+6 |
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal - otherwise it silently
+          matches nothing. See https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+warning[RAD40016]: '[^a-z]' reads as a regex ('[...]'), but replace() matches it literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:5:18
+  |
+4 | a = split(text, "\s+")
+5 | b = text.replace("[^a-z]", "")
+  |                  ^^^^^^^^
+6 |
+7 | // Quiet: literal separators that happen to be metacharacters.
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal - otherwise it silently
+          matches nothing. See https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+Reported 2 diagnostics.
+
+### TITLE ###
+Check_DeprecatedRequest
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/deprecated_request.rad
+### STDOUT ###
+error[RAD40008]: 'request' blocks have been removed
+  --> ./rad_scripts/deprecated_request.rad:1:1
+  |
+1 | request "http://example.com":
+  | ^^^^^^^
+2 |     fields Name
+3 |
+  |
+  = help: Use a 'rad' block instead. See https://amterp.dev/rad/migrations/v0.9/
+  = info: rad docs RAD40008
+
+Reported 1 diagnostic.
+### EXIT ###
+1
+
+### TITLE ###
+Check_DeprecatedDisplay
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/deprecated_display.rad
+### STDOUT ###
+error[RAD40008]: 'display' blocks have been removed
+  --> ./rad_scripts/deprecated_display.rad:2:1
+  |
+1 | data = [{"name": "alice"}]
+2 | display data:
+  | ^^^^^^^
+3 |     fields Name
+4 |
+  |
+  = help: Use a 'rad' block instead. See https://amterp.dev/rad/migrations/v0.9/
+  = info: rad docs RAD40008
+
+Reported 1 diagnostic.
+### EXIT ###
+1
+
+### TITLE ###
+Check_UnknownCommandCallbacks
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/unknown_command_callbacks.rad
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'missing_one'
+  --> ./rad_scripts/unknown_command_callbacks.rad:4:11
+  |
+3 | command first:
+4 |     calls missing_one
+  |           ^^^^^^^^^^^
+5 |
+6 | command second:
+  |
+  = info: rad docs RAD20028
+
+error[RAD20028]: Undefined identifier 'missing_two'
+  --> ./rad_scripts/unknown_command_callbacks.rad:7:11
+  |
+6 | command second:
+7 |     calls missing_two
+  |           ^^^^^^^^^^^
+8 |
+9 | command third:
+  |
+  = info: rad docs RAD20028
+
+Reported 2 diagnostics.
+### EXIT ###
+1
+
+### TITLE ###
+Check_UnhandledFallible_HiddenByDefault
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/unhandled_fallible.rad
+### STDOUT ###
+No diagnostics to report.
+
+### TITLE ###
+Check_UnhandledFallible_StrictSurfacesWarning
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/unhandled_fallible.rad
+--strict
+### STDOUT ###
+warning[RAD30011]: This call can fail; the error isn't handled and would halt the script
+  --> ./rad_scripts/unhandled_fallible.rad:1:5
+  |
+1 | n = parse_int("5")
+  |     ^^^^^^^^^^^^^^
+2 | print(n + 1)
+3 |
+  |
+  = help: Handle it with `catch` or `??`, e.g. `x = <call> catch <fallback>`
+  = info: rad docs RAD30011
+
+Reported 1 diagnostic.
+
+### TITLE ###
+Check_Width40_Floor
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/regex_pattern_without_flag.rad
+### TERM_WIDTH ###
+40
+### STDOUT ###
+warning[RAD40016]: '\s+' reads as a
+  regex ('\s'), but split() matches it
+  literally
+  --> ...x_pattern_without_flag.rad:4:17
+  |
+3 | // Warns: regex constructs, no re...
+4 | a = split(text, "\s+")
+  |                 ^^^^^
+5 | b = text.replace("[^a-z]", "")
+6 |
+  |
+  = help: Pass regex=true, or ignore
+          this if the text really is
+          literal - otherwise it
+          silently matches nothing. See
+          https://amterp.dev/rad/migrati
+          ons/v0.12/
+  = info: rad docs RAD40016
+
+warning[RAD40016]: '[^a-z]' reads as a
+  regex ('[...]'), but replace() matches
+  it literally
+  --> ...x_pattern_without_flag.rad:5:18
+  |
+4 | a = split(text, "\s+")
+5 | b = text.replace("[^a-z]", "")
+  |                  ^^^^^^^^
+6 |
+7 | // Quiet: literal separators that...
+  |
+  = help: Pass regex=true, or ignore
+          this if the text really is
+          literal - otherwise it
+          silently matches nothing. See
+          https://amterp.dev/rad/migrati
+          ons/v0.12/
+  = info: rad docs RAD40016
+
+Reported 2 diagnostics.
+
+### TITLE ###
+Check_Width20_ClampsToFloor
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/regex_pattern_without_flag.rad
+### TERM_WIDTH ###
+20
+### STDOUT ###
+warning[RAD40016]: '\s+' reads as a
+  regex ('\s'), but split() matches it
+  literally
+  --> ...x_pattern_without_flag.rad:4:17
+  |
+3 | // Warns: regex constructs, no re...
+4 | a = split(text, "\s+")
+  |                 ^^^^^
+5 | b = text.replace("[^a-z]", "")
+6 |
+  |
+  = help: Pass regex=true, or ignore
+          this if the text really is
+          literal - otherwise it
+          silently matches nothing. See
+          https://amterp.dev/rad/migrati
+          ons/v0.12/
+  = info: rad docs RAD40016
+
+warning[RAD40016]: '[^a-z]' reads as a
+  regex ('[...]'), but replace() matches
+  it literally
+  --> ...x_pattern_without_flag.rad:5:18
+  |
+4 | a = split(text, "\s+")
+5 | b = text.replace("[^a-z]", "")
+  |                  ^^^^^^^^
+6 |
+7 | // Quiet: literal separators that...
+  |
+  = help: Pass regex=true, or ignore
+          this if the text really is
+          literal - otherwise it
+          silently matches nothing. See
+          https://amterp.dev/rad/migrati
+          ons/v0.12/
+  = info: rad docs RAD40016
+
+Reported 2 diagnostics.
+
+### TITLE ###
+Check_Width60
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/regex_pattern_without_flag.rad
+### TERM_WIDTH ###
+60
+### STDOUT ###
+warning[RAD40016]: '\s+' reads as a regex ('\s'), but
+  split() matches it literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:4:17
+  |
+3 | // Warns: regex constructs, no regex=true. Plain and ...
+4 | a = split(text, "\s+")
+  |                 ^^^^^
+5 | b = text.replace("[^a-z]", "")
+6 |
+  |
+  = help: Pass regex=true, or ignore this if the text really
+          is literal - otherwise it silently matches
+          nothing. See
+          https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+warning[RAD40016]: '[^a-z]' reads as a regex ('[...]'), but
+  replace() matches it literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:5:18
+  |
+4 | a = split(text, "\s+")
+5 | b = text.replace("[^a-z]", "")
+  |                  ^^^^^^^^
+6 |
+7 | // Quiet: literal separators that happen to be metach...
+  |
+  = help: Pass regex=true, or ignore this if the text really
+          is literal - otherwise it silently matches
+          nothing. See
+          https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+Reported 2 diagnostics.
+
+### TITLE ###
+Check_Width80
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/regex_pattern_without_flag.rad
+### TERM_WIDTH ###
+80
+### STDOUT ###
+warning[RAD40016]: '\s+' reads as a regex ('\s'), but split() matches it
+  literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:4:17
+  |
+3 | // Warns: regex constructs, no regex=true. Plain and UFCS call forms both...
+4 | a = split(text, "\s+")
+  |                 ^^^^^
+5 | b = text.replace("[^a-z]", "")
+6 |
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal -
+          otherwise it silently matches nothing. See
+          https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+warning[RAD40016]: '[^a-z]' reads as a regex ('[...]'), but replace() matches it
+  literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:5:18
+  |
+4 | a = split(text, "\s+")
+5 | b = text.replace("[^a-z]", "")
+  |                  ^^^^^^^^
+6 |
+7 | // Quiet: literal separators that happen to be metacharacters.
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal -
+          otherwise it silently matches nothing. See
+          https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+Reported 2 diagnostics.
+
+### TITLE ###
+Check_Width200_ProseStaysCapped
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/regex_pattern_without_flag.rad
+### TERM_WIDTH ###
+200
+### STDOUT ###
+warning[RAD40016]: '\s+' reads as a regex ('\s'), but split() matches it literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:4:17
+  |
+3 | // Warns: regex constructs, no regex=true. Plain and UFCS call forms both count.
+4 | a = split(text, "\s+")
+  |                 ^^^^^
+5 | b = text.replace("[^a-z]", "")
+6 |
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal - otherwise it silently
+          matches nothing. See https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+warning[RAD40016]: '[^a-z]' reads as a regex ('[...]'), but replace() matches it literally
+  --> ./rad_scripts/regex_pattern_without_flag.rad:5:18
+  |
+4 | a = split(text, "\s+")
+5 | b = text.replace("[^a-z]", "")
+  |                  ^^^^^^^^
+6 |
+7 | // Quiet: literal separators that happen to be metacharacters.
+  |
+  = help: Pass regex=true, or ignore this if the text really is literal - otherwise it silently
+          matches nothing. See https://amterp.dev/rad/migrations/v0.12/
+  = info: rad docs RAD40016
+
+Reported 2 diagnostics.
+
+### TITLE ###
+Check_LongLine_Width60
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/check_long_line.rad
+### TERM_WIDTH ###
+60
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'mystery'
+  --> ./rad_scripts/check_long_line.rad:1:79
+  |
+1 | ...--" + mystery + "---------------------------------...
+  |          ^^^^^^^
+2 |
+  |
+  = help: did you mean 'filter' or 'str'?
+  = info: rad docs RAD20028
+
+Reported 1 diagnostic.
+### EXIT ###
+1
+
+### TITLE ###
+Check_LongLine_Width120
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/check_long_line.rad
+### TERM_WIDTH ###
+120
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'mystery'
+  --> ./rad_scripts/check_long_line.rad:1:79
+  |
+1 | padded = "----------------------------------------------------------------" + mystery + "------------------------...
+  |                                                                               ^^^^^^^
+2 |
+  |
+  = help: did you mean 'filter' or 'str'?
+  = info: rad docs RAD20028
+
+Reported 1 diagnostic.
+### EXIT ###
+1
+
+### TITLE ###
+Check_DeepIndent_Width60
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/check_deep_indent.rad
+### TERM_WIDTH ###
+60
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'mystery'
+  --> ./rad_scripts/check_deep_indent.rad:7:33
+  |
+6 | ...if true:
+7 | ...    value = mystery + "aaaaaaaaaaaaaaaaaaaaaaaaaaa...
+  |                ^^^^^^^
+8 |
+  |
+  = help: did you mean 'filter' or 'str'?
+  = info: rad docs RAD20028
+
+Reported 1 diagnostic.
+### EXIT ###
+1
+
+### TITLE ###
+Check_WideChars_Width60
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/check_wide_chars.rad
+### TERM_WIDTH ###
+60
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'mystery'
+  --> ./rad_scripts/check_wide_chars.rad:1:75
+  |
+1 | ...す" + mystery
+  |          ^^^^^^^
+2 |
+  |
+  = help: did you mean 'filter' or 'str'?
+  = info: rad docs RAD20028
+
+Reported 1 diagnostic.
+### EXIT ###
+1
+
+### TITLE ###
+Check_TabIndentedCaretAlignment
+### INPUT ###
+### ARGS ###
+check
+./rad_scripts/check_tabs.rad
+### STDOUT ###
+error[RAD20028]: Undefined identifier 'mystery'
+  --> ./rad_scripts/check_tabs.rad:2:10
+  |
+1 | if true:
+2 |     value = mystery
+  |             ^^^^^^^
+3 |
+  |
+  = help: did you mean 'filter' or 'str'?
+  = info: rad docs RAD20028
+
+Reported 1 diagnostic.
+### EXIT ###
+1

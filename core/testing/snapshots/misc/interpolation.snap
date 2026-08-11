@@ -65,8 +65,8 @@ error[RAD20028]: Undefined identifier 'var'
 2 | print("hello, {var}")
   |                ^^^
   |
-   = help: did you mean 'map', 'max', or 'str'?
-   = info: rad docs RAD20028
+  = help: did you mean 'map', 'max', or 'str'?
+  = info: rad docs RAD20028
 ### EXIT ###
 1
 
@@ -303,7 +303,7 @@ error[RAD30003]: Cannot format str with thousands separator ','
 3 | print("Testing type safety: {name:,}")
   |                             ^^^^^^^^
   |
-   = info: rad docs RAD30003
+  = info: rad docs RAD30003
 ### EXIT ###
 1
 

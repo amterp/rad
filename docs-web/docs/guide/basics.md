@@ -1166,6 +1166,7 @@ error[RAD20029]: Index out of bounds: 5 (length 2)
 10 | names = ["alice", "bob"]
 11 | print(names[5])
    |             ^
+12 |
    |
    = info: rad docs RAD20029
 ```

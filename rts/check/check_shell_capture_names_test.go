@@ -52,6 +52,17 @@ func firstDiagnosticMessage(t *testing.T, src string, code rl.Error) string {
 	return diags[0].Message
 }
 
+// firstDiagnosticSuggestion returns the "= help:" text. The migration tier
+// lives here rather than in the message, so that is where these assertions
+// have to look.
+func firstDiagnosticSuggestion(t *testing.T, src string, code rl.Error) string {
+	t.Helper()
+	diags := diagnosticsWithCode(t, src, code)
+	require.NotEmpty(t, diags, "expected at least one %s diagnostic", code)
+	require.NotNil(t, diags[0].Suggestion, "expected a suggestion on the %s diagnostic", code)
+	return *diags[0].Suggestion
+}
+
 func TestShellCaptureNames_Flagged(t *testing.T) {
 	// Every case here binds a variable to a stream its name contradicts.
 	cases := map[string]string{
@@ -106,11 +117,11 @@ func TestShellCaptureNames_ReservedMessageOmitsMigrationLink(t *testing.T) {
 	// The reserved-name half is permanent - it describes a confusion that
 	// exists on its own terms, not a version change - so it must not point at
 	// the migration guide.
-	msg := firstDiagnosticMessage(t, "code, output = $`cmd`\n", rl.ErrMisleadingShellCaptureName)
-	assert.NotContains(t, msg, "v0.12")
+	help := firstDiagnosticSuggestion(t, "code, output = $`cmd`\n", rl.ErrMisleadingShellCaptureName)
+	assert.NotContains(t, help, "v0.12")
 }
 
 func TestShellCaptureNames_SynonymMessageExplainsTheFlip(t *testing.T) {
-	msg := firstDiagnosticMessage(t, "_, version = $`cmd`\n", rl.ErrMisleadingShellCaptureName)
-	assert.Contains(t, msg, "Before v0.12")
+	help := firstDiagnosticSuggestion(t, "_, version = $`cmd`\n", rl.ErrMisleadingShellCaptureName)
+	assert.Contains(t, help, "Before v0.12")
 }

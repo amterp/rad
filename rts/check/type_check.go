@@ -1578,15 +1578,15 @@ func (tc *typeChecker) emitCaseKeyNotInDomain(key rl.Node, valueText, discName, 
 			valueText, discName, discTypeName, valueText)
 	case valueText != "":
 		msg = fmt.Sprintf(
-			"Case %s is unreachable; the discriminant is of type %s and can never equal %s",
-			valueText, discTypeName, valueText)
+			"Case %s is unreachable - the switch value is of type %s",
+			valueText, discTypeName)
 	case discName != "":
 		msg = fmt.Sprintf(
-			"Case is unreachable; '%s' is of type %s and can never match this value",
+			"Case is unreachable - '%s' is of type %s",
 			discName, discTypeName)
 	default:
 		msg = fmt.Sprintf(
-			"Case is unreachable; the discriminant is of type %s and can never match this value",
+			"Case is unreachable - the switch value is of type %s",
 			discTypeName)
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
@@ -1608,11 +1608,11 @@ func (tc *typeChecker) emitUnreachableCase(key rl.Node, prev rl.Span) {
 	var msg string
 	if valueText != "" {
 		msg = fmt.Sprintf(
-			"Case is unreachable; %s is already matched by an earlier arm on line %d",
+			"Case %s is unreachable - already matched on line %d",
 			valueText, prev.StartLine())
 	} else {
 		msg = fmt.Sprintf(
-			"Case is unreachable; the value is already matched by an earlier arm on line %d",
+			"Case is unreachable - already matched on line %d",
 			prev.StartLine())
 	}
 	tc.info.Issues = append(tc.info.Issues, BindIssue{
@@ -4140,11 +4140,11 @@ func unionOf(a, b rl.TypingT) rl.TypingT {
 // str+non-str / non-str+str operation hits ErrInvalidTypeForOp.
 // Surface the same text statically so LSP and `rad check` users see
 // the same actionable follow-up as `rad <script>` users do.
-const strPlusMigrationHint = "In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/"
+const strPlusMigrationHint = rl.HintStrPlusMigration
 
 // listAppendHint mirrors the runtime nudge (core/expr_ops.go) shown when
 // a script adds a non-list to a list - almost always a missed `+ [item]`.
-const listAppendHint = "Did you mean to wrap the right side in a list in order to append? e.g. `myList + [item]`"
+const listAppendHint = rl.HintListAppend
 
 // opMismatchSeverity decides whether a rejected operator pair gates as
 // an Error or only nudges as a Hint. The checker's rule everywhere is

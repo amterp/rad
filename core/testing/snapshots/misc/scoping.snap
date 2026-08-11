@@ -86,11 +86,11 @@ print("i", i)
 error[RAD20028]: Undefined identifier 'i'
   --> <script>:6:12
   |
-5 | 		map fn(i) i * 2
+5 |         map fn(i) i * 2
 6 | print("i", i)
   |            ^
   |
-   = help: did you mean 'dim', 'int', or 'min'?
-   = info: rad docs RAD20028
+  = help: did you mean 'dim', 'int', or 'min'?
+  = info: rad docs RAD20028
 ### EXIT ###
 1

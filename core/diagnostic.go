@@ -12,6 +12,7 @@ const (
 	SeverityError Severity = iota
 	SeverityWarning
 	SeverityNote
+	SeverityHint
 )
 
 func (s Severity) String() string {
@@ -22,6 +23,8 @@ func (s Severity) String() string {
 		return "warning"
 	case SeverityNote:
 		return "note"
+	case SeverityHint:
+		return "hint"
 	default:
 		return "unknown"
 	}
@@ -212,8 +215,10 @@ func convertCheckSeverity(s check.Severity) Severity {
 		return SeverityError
 	case check.Warning:
 		return SeverityWarning
-	case check.Hint, check.Info:
+	case check.Info:
 		return SeverityNote
+	case check.Hint:
+		return SeverityHint
 	default:
 		return SeverityError
 	}
@@ -236,12 +241,12 @@ func NewDiagnosticFromCheck(d check.Diagnostic, file string) Diagnostic {
 		EndByte:   0,
 	}
 
-	// Determine the error code
+	// A code-less check diagnostic stays code-less. Substituting a generic one
+	// would have the renderer point at `rad docs RAD20000`, which documents
+	// something else entirely.
 	var code rl.Error
 	if d.Code != nil {
 		code = *d.Code
-	} else {
-		code = rl.ErrGenericRuntime
 	}
 
 	diag := Diagnostic{

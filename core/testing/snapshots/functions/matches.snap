@@ -94,14 +94,15 @@ Matches invalid regex
 result = matches("test", "+")
 print("Should not reach this")
 ### STDERR ###
-error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing argument to repetition operator: `+`
+error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing argument to repetition
+  operator: `+`
   --> <script>:1:10
   |
 1 | result = matches("test", "+")
   |          ^^^^^^^^^^^^^^^^^^^^
 2 | print("Should not reach this")
   |
-   = info: rad docs RAD20024
+  = info: rad docs RAD20024
 ### EXIT ###
 1
 
@@ -118,7 +119,7 @@ error[RAD20024]: Error compiling regex pattern: error parsing regexp: missing cl
   |          ^^^^^^^^^^^^^^^^^^^^^^^
 2 | print("Should not reach this")
   |
-   = info: rad docs RAD20024
+  = info: rad docs RAD20024
 ### EXIT ###
 1
 

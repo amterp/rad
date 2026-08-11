@@ -62,7 +62,7 @@ error[RAD20041]: Key not found: "eve"
   |   ^^^^^
 3 | print(a)
   |
-   = info: rad docs RAD20041
+  = info: rad docs RAD20041
 ### EXIT ###
 1
 
@@ -129,7 +129,7 @@ error[RAD20041]: Key not found: "bob"
 2 | print(a["bob"])
   |         ^^^^^
   |
-   = info: rad docs RAD20041
+  = info: rad docs RAD20041
 ### EXIT ###
 1
 
@@ -146,6 +146,6 @@ error[RAD20041]: Key not found: bob
 2 | print(a.bob)
   |         ^^^
   |
-   = info: rad docs RAD20041
+  = info: rad docs RAD20041
 ### EXIT ###
 1

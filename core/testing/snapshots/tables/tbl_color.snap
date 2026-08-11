@@ -156,14 +156,15 @@ rad url:
     name:
         color color "o[a-z]"
 ### STDERR ###
-error[RAD20025]: Invalid color value "licorice". Allowed: [black blue bold cyan dim green italic magenta orange pink plain red strikethrough underline white yellow]
+error[RAD20025]: Invalid color value "licorice". Allowed: [black blue bold cyan dim green italic
+  magenta orange pink plain red strikethrough underline white yellow]
   --> <script>:7:15
   |
 6 |     name:
 7 |         color color "o[a-z]"
   |               ^^^^^
   |
-   = info: rad docs RAD20025
+  = info: rad docs RAD20025
 ### EXIT ###
 1
 
@@ -177,13 +178,14 @@ rad url:
     name:
         color "dim" "o[a-z]"
 ### STDERR ###
-error[RAD20025]: "dim" is a style attribute, not a color. The color modifier only accepts colors: [black blue cyan green magenta orange pink plain red white yellow]
+error[RAD20025]: "dim" is a style attribute, not a color. The color modifier only accepts colors:
+  [black blue cyan green magenta orange pink plain red white yellow]
   --> <script>:6:15
   |
 5 |     name:
 6 |         color "dim" "o[a-z]"
   |               ^^^^^
   |
-   = info: rad docs RAD20025
+  = info: rad docs RAD20025
 ### EXIT ###
 1

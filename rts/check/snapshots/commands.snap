@@ -76,7 +76,8 @@ command edit:
   tokens (cmdarg): str
 
 # Diagnostics
-  [error] RAD40019 @ 9:5 - 'add' is already the default at this level, so 'edit' cannot be. Only one command per level runs when none is named.
+  [error] RAD40019 @ 9:5 - 'add' is already the default at this level
+    help: Only one command per level can run when none is named.
 
 ### TITLE ###
 DefaultsAreScopedPerLevel
@@ -124,7 +125,8 @@ command deploy:
   env (cmdarg): str
 
 # Diagnostics
-  [error] RAD40020 @ 1:1 - Command 'deploy' does nothing: it needs a 'calls' line naming what to run, or nested command blocks to route to.
+  [error] RAD40020 @ 1:1 - Command 'deploy' does nothing
+    help: Add a 'calls' line naming what to run, or nested command blocks to route to.
 
 ### TITLE ###
 NamespaceCarryingACallback
@@ -146,7 +148,8 @@ command remote:
   name (cmdarg): str
 
 # Diagnostics
-  [error] RAD40021 @ 2:5 - 'remote' contains sub-commands, so it routes to them rather than running itself. Remove 'calls', or move it to a sub-command.
+  [error] RAD40021 @ 2:5 - 'remote' has sub-commands, so it routes rather than runs
+    help: Remove 'calls', or move it to a sub-command.
 
 ### TITLE ###
 DefaultOnANamespace
@@ -166,4 +169,5 @@ command remote:
   name (cmdarg): str
 
 # Diagnostics
-  [error] RAD40022 @ 2:5 - 'remote' contains sub-commands, so it cannot be the default. Mark one of its sub-commands instead.
+  [error] RAD40022 @ 2:5 - 'remote' has sub-commands, so it cannot be the default
+    help: Mark one of its sub-commands instead.

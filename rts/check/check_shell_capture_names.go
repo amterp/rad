@@ -160,17 +160,17 @@ func (c *RadCheckerImpl) shellCaptureDiagnostic(
 	got rl.ShellStream,
 	isMigrant bool,
 ) Diagnostic {
-	msg := "'" + name + "' is bound to " + shellStreamName(got) +
-		" here. Positional shell captures fill (stdout, stderr, code) in that order; " +
-		"assignment goes by name only when every target is spelled exactly " +
-		"'code', 'stdout' or 'stderr'."
+	msg := "'" + name + "' is bound to " + shellStreamName(got) + " here"
 
-	suggestion := "Reorder the targets to match, or name them all so assignment goes by " +
-		"name - e.g. 'stdout, code = $`cmd`'."
+	suggestion := "Positional captures fill (stdout, stderr, code) in that order - reorder " +
+		"the targets, or name them all so assignment goes by name."
 	if isMigrant {
-		msg += " Before v0.12 the order was (code, stdout, stderr), so this used to bind " +
-			shellStreamName(oldOrderStream(got)) + " instead - same script, different variable, no error."
-		suggestion += " See https://amterp.dev/rad/migrations/v0.12/"
+		// The migration half stays inline rather than moving to the docs: it is
+		// the reason a script that ran correctly last release now doesn't, and
+		// a reader who doesn't already suspect a version change won't go
+		// looking for it. It leaves with the rest of the migrant tier.
+		suggestion += " Before v0.12 this bound " + shellStreamName(oldOrderStream(got)) +
+			" instead. See https://amterp.dev/rad/migrations/v0.12/"
 	}
 
 	diag := NewDiagnosticWarnFromSpan(target.Span(), c.src, msg, rl.ErrMisleadingShellCaptureName)

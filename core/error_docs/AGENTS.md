@@ -2,6 +2,22 @@
 
 These docs are displayed when users run `rad docs RAD<code>`. They're the second layer of help - the inline error message is first, these docs go deeper.
 
+## The Inline Message
+
+Every diagnostic prints `= info: rad docs RAD<code>` beneath itself, so the inline text doesn't have to teach. It has to identify.
+
+- **Message**: one sentence naming what is wrong. Aim under 80 columns. Not why it's wrong, not how to fix it.
+- **`= help:`**: one imperative sentence saying what to do, under 100 columns.
+- Everything else belongs in this doc.
+
+These are soft budgets, but the cost of missing them is real: diagnostics wrap to the terminal, so a 230-character message is four lines of screen every time it fires, and `rad check` on a real script reports dozens at once.
+
+Good: `'code' is bound to stdout here`
+
+Bad: `'code' is bound to stdout here. Positional shell captures fill (stdout, stderr, code) in that order; assignment goes by name only when every target is spelled exactly 'code', 'stdout' or 'stderr'.`
+
+Before cutting prose out of a message, check the doc already covers it. Moving it here is the point; losing it isn't.
+
 ## Audience
 
 Beginners learning Rad, or agents trying to fix code in an unfamiliar language. Write for someone who hit this error and wants to understand what went wrong and how to fix it.

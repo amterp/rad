@@ -70,11 +70,11 @@ Invalid time zone 'invalid time zone'
 error[RAD20009]: Invalid time zone 'another bad one'
   --> <script>:3:5
   |
-2 | 	print(a)
+2 |     print(a)
 3 | a = now(tz="another bad one")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20009
+  = info: rad docs RAD20009
 ### EXIT ###
 1
 
@@ -122,11 +122,11 @@ Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
 error[RAD20007]: Ambiguous epoch length (11 digits). Use 'unit' to disambiguate.
   --> <script>:3:5
   |
-2 | 	print(a)
+2 |     print(a)
 3 | a = parse_epoch(17123456781)
   |     ^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20007
+  = info: rad docs RAD20007
 ### EXIT ###
 1
 
@@ -189,8 +189,9 @@ error[RAD20008]: parse_epoch unit "milliseconds" is no longer valid
 1 | a = parse_epoch(1712345678000, unit = "milliseconds")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = help: Unit names were shortened in v0.9. Use "millis" instead. See: https://amterp.dev/rad/migrations/v0.9/
-   = info: rad docs RAD20008
+  = help: Unit names were shortened in v0.9. Use "millis" instead. See:
+          https://amterp.dev/rad/migrations/v0.9/
+  = info: rad docs RAD20008
 ### EXIT ###
 1
 
@@ -275,14 +276,16 @@ a = parse_date("not-a-date")
 ### STDOUT ###
 Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds). Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
 ### STDERR ###
-error[RAD20044]: Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds). Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
+error[RAD20044]: Failed to parse date "not-a-date". Supported formats: YYYY-MM-DD,
+  YYYY-MM-DDTHH:mm:ss, YYYY-MM-DD HH:mm:ss (with optional timezone offset and fractional seconds).
+  Use 'format' to specify a custom format, e.g. parse_date("not-a-date", format="DD/MM/YYYY").
   --> <script>:3:5
   |
-2 | 	print(a)
+2 |     print(a)
 3 | a = parse_date("not-a-date")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20044
+  = info: rad docs RAD20044
 ### EXIT ###
 1
 
@@ -362,11 +365,11 @@ Invalid time zone 'bad'
 error[RAD20009]: Invalid time zone 'another bad one'
   --> <script>:3:5
   |
-2 | 	print(a)
+2 |     print(a)
 3 | a = parse_date("2026-03-22", tz="another bad one")
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20009
+  = info: rad docs RAD20009
 ### EXIT ###
 1
 

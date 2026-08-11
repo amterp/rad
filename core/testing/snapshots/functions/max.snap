@@ -23,7 +23,7 @@ error[RAD30001]: Value '[ 1, "ab", 3 ]' (list) is not compatible with expected t
 1 | print(max([1, "ab", 3]))
   |           ^^^^^^^^^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -80,7 +80,7 @@ error[RAD20018]: Cannot find max of empty list
 1 | print(max([]))
   |       ^^^^^^^
   |
-   = info: rad docs RAD20018
+  = info: rad docs RAD20018
 ### EXIT ###
 1
 
@@ -95,7 +95,7 @@ error[RAD20018]: Cannot find max of empty list
 1 | print(max())
   |       ^^^^^
   |
-   = info: rad docs RAD20018
+  = info: rad docs RAD20018
 ### EXIT ###
 1
 
@@ -104,13 +104,14 @@ Max multiple lists error
 ### INPUT ###
 print(max([1, 2], [3, 4]))
 ### STDERR ###
-error[RAD20012]: max() with multiple arguments requires numbers, not lists. Use max([...]) for a single list
+error[RAD20012]: max() with multiple arguments requires numbers, not lists. Use max([...]) for a
+  single list
   --> <script>:1:7
   |
 1 | print(max([1, 2], [3, 4]))
   |       ^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20012
+  = info: rad docs RAD20012
 ### EXIT ###
 1
 

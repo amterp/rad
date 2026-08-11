@@ -9,7 +9,7 @@ error[RAD10009]: Unexpected '1 ='
 1 | 1 = 2
   | ^^^
   |
-   = info: rad docs RAD10009
+  = info: rad docs RAD10009
 ### EXIT ###
 1
 
@@ -27,7 +27,7 @@ error[RAD20039]: Cannot use '_' as a value
 3 | print(_)
   |       ^
   |
-   = info: rad docs RAD20039
+  = info: rad docs RAD20039
 ### EXIT ###
 1
 
@@ -201,7 +201,7 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int|flo
 2 | a = abs("asd")
   |         ^^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -504,8 +504,8 @@ error[RAD20028]: Undefined identifier 'usernme'
 3 | print(usernme)
   |       ^^^^^^^
   |
-   = help: did you mean 'username' or 'base_name'?
-   = info: rad docs RAD20028
+  = help: did you mean 'username' or 'base_name'?
+  = info: rad docs RAD20028
 ### EXIT ###
 1
 
@@ -524,8 +524,8 @@ error[RAD20028]: Undefined identifier 'usernme'
 4 | print(usernme)
   |       ^^^^^^^
   |
-   = help: did you mean 'username', 'user_name', or 'base_name'?
-   = info: rad docs RAD20028
+  = help: did you mean 'username', 'user_name', or 'base_name'?
+  = info: rad docs RAD20028
 ### EXIT ###
 1
 
@@ -543,7 +543,7 @@ error[RAD20028]: Undefined identifier 'completely_different_name'
 3 | print(completely_different_name)
   |       ^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20028
+  = info: rad docs RAD20028
 ### EXIT ###
 1
 

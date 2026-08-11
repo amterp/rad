@@ -73,6 +73,6 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
 1 | print(base_name(42))
   |                 ^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1

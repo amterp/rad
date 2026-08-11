@@ -281,8 +281,8 @@ func (c *RadCheckerImpl) addIntLiteralOutOfRangeErrors(d *[]Diagnostic) {
 		if err == nil || !errors.Is(err, strconv.ErrRange) {
 			continue
 		}
-		suggestion := "int values must fit in a signed 64-bit integer (max 9223372036854775807). " +
-			"Write the minimum as `-9223372036854775807 - 1`, or use a float for larger magnitudes."
+		suggestion := "ints are signed 64-bit (max 9223372036854775807) - use a float for " +
+			"larger magnitudes, or write the minimum as `-9223372036854775807 - 1`."
 		*d = append(*d, NewDiagnosticErrorWithSuggestion(
 			node, c.src, "Integer literal is out of range", rl.ErrIntLiteralOutOfRange, &suggestion))
 	}

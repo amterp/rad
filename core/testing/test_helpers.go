@@ -192,6 +192,10 @@ func captureFrames() string {
 	return prompt.RenderFrames(lastInteractiveDriver)
 }
 
+// defaultTestTermWidth mirrors core's non-tty fallback, so an unpinned test
+// behaves exactly as a piped run does.
+const defaultTestTermWidth = 9999
+
 type TestParams struct {
 	script           string
 	stdinInput       string
@@ -279,9 +283,17 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	resetTestState()
 	core.IsTest = true
 
+	// Always pin the width. GetTermWidth probes the real os.Stdout, not the
+	// buffers the harness swaps in, so leaving it unset would let a developer's
+	// actual terminal size leak into diagnostic layout when the test binary is
+	// run directly rather than through `go test`. The default matches
+	// GetTermWidth's own non-tty fallback, so table truncation is unaffected
+	// and diagnostics land on their 100-column cap.
+	width := defaultTestTermWidth
 	if tp.termWidth > 0 {
-		runnerInput.RTermWidth = &tp.termWidth
+		width = tp.termWidth
 	}
+	runnerInput.RTermWidth = &width
 
 	if tp.confirmResponder != nil {
 		confirmResponder = tp.confirmResponder
@@ -461,13 +473,22 @@ func assertError(t *testing.T, expectedCode int, expectedMsg string) {
 func assertErrorContains(t *testing.T, expectedCode int, substrings ...string) {
 	t.Helper()
 	actual := stdErrBuffer.String()
+	// Compared with whitespace collapsed: these assertions are about what the
+	// message says, and diagnostics wrap to the terminal, so where a line break
+	// lands in the middle of a phrase is not something a caller should have to
+	// predict or re-check whenever a message is reworded.
+	flatActual := flattenWhitespace(actual)
 	for _, substr := range substrings {
-		if !strings.Contains(actual, substr) {
+		if !strings.Contains(flatActual, flattenWhitespace(substr)) {
 			t.Errorf("Expected stderr to contain %q, but got:\n%s", substr, actual)
 		}
 	}
 	stdErrBuffer.Reset()
 	assertExitCode(t, expectedCode)
+}
+
+func flattenWhitespace(s string) string {
+	return strings.Join(strings.Fields(s), " ")
 }
 
 func assertExitCode(t *testing.T, code int) {

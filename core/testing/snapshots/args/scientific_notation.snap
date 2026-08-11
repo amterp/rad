@@ -36,11 +36,11 @@ error[RAD40001]: Scientific notation value does not evaluate to a whole number
   --> <script>:2:12
   |
 1 | args:
-2 | 	num int = 1e-5
-  |            ^^^^
+2 |     num int = 1e-5
+  |               ^^^^
 3 | print("{num}")
   |
-   = info: rad docs RAD40001
+  = info: rad docs RAD40001
 ### EXIT ###
 1
 
@@ -55,11 +55,11 @@ error[RAD40001]: Scientific notation value does not evaluate to a whole number
   --> <script>:2:12
   |
 1 | args:
-2 | 	num int = 1.25e1
-  |            ^^^^^^
+2 |     num int = 1.25e1
+  |               ^^^^^^
 3 | print("{num}")
   |
-   = info: rad docs RAD40001
+  = info: rad docs RAD40001
 ### EXIT ###
 1
 

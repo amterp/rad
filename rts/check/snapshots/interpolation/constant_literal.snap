@@ -16,7 +16,7 @@ pattern = "\d{4}"
 
 # Diagnostics
   [warn] RAD40017 @ 1:14 - Interpolating the literal 4 has no effect
-    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+    help: Write the value directly, or escape a literal brace as '\{'.
 
 ### TITLE ###
 EveryConstantLiteralKind
@@ -43,13 +43,13 @@ d = "{'s'}"
 
 # Diagnostics
   [warn] RAD40017 @ 1:6 - Interpolating the literal 0 has no effect
-    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+    help: Write the value directly, or escape a literal brace as '\{'.
   [warn] RAD40017 @ 2:6 - Interpolating the literal 3.14 has no effect
-    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+    help: Write the value directly, or escape a literal brace as '\{'.
   [warn] RAD40017 @ 3:6 - Interpolating the literal true has no effect
-    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+    help: Write the value directly, or escape a literal brace as '\{'.
   [warn] RAD40017 @ 4:6 - Interpolating the literal 's' has no effect
-    help: Write the value directly. For a literal brace, escape it as '\{' or use a raw string: r"..."
+    help: Write the value directly, or escape a literal brace as '\{'.
 
 ### TITLE ###
 NonLiteralExpressionsStayQuiet

@@ -196,7 +196,10 @@ func TestNewDiagnosticFromCheckSeverityMapping(t *testing.T) {
 	}{
 		{check.Error, core.SeverityError},
 		{check.Warning, core.SeverityWarning},
-		{check.Hint, core.SeverityNote},
+		// Hint and Info stay distinct. Collapsing them would have `rad check`
+		// print the same label for both, losing a difference its old renderer
+		// showed by coloring them differently.
+		{check.Hint, core.SeverityHint},
 		{check.Info, core.SeverityNote},
 	}
 
@@ -214,7 +217,9 @@ func TestNewDiagnosticFromCheckSeverityMapping(t *testing.T) {
 }
 
 func TestNewDiagnosticFromCheckNilCode(t *testing.T) {
-	// When check.Diagnostic has nil code, should use ErrGenericRuntime
+	// A code-less diagnostic stays code-less. Substituting a generic code would
+	// have the renderer print "= info: rad docs RAD20000", pointing the reader
+	// at documentation for an unrelated error.
 	checkDiag := check.Diagnostic{
 		OriginalSrc: "test",
 		Severity:    check.Error,
@@ -222,5 +227,5 @@ func TestNewDiagnosticFromCheckNilCode(t *testing.T) {
 		Code:        nil,
 	}
 	coreDiag := core.NewDiagnosticFromCheck(checkDiag, "test.rad")
-	assert.Equal(t, rl.ErrGenericRuntime, coreDiag.Code)
+	assert.Empty(t, coreDiag.Code)
 }

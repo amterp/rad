@@ -79,7 +79,7 @@ error[RAD30002]: Invalid operand types: cannot do 'error + int'
 3 | print(err + 123)
   |       ^^^^^^^^^
   |
-   = info: rad docs RAD30002
+  = info: rad docs RAD30002
 ### EXIT ###
 1
 
@@ -97,7 +97,7 @@ error[RAD30002]: Invalid operand types: cannot do 'error + float'
 3 | print(err + 3.14)
   |       ^^^^^^^^^^
   |
-   = info: rad docs RAD30002
+  = info: rad docs RAD30002
 ### EXIT ###
 1
 
@@ -115,7 +115,7 @@ error[RAD30002]: Invalid operand types: cannot do 'error + bool'
 3 | print(err + true)
   |       ^^^^^^^^^^
   |
-   = info: rad docs RAD30002
+  = info: rad docs RAD30002
 ### EXIT ###
 1
 

@@ -40,7 +40,7 @@ error[RAD20016]: Cannot cast "map" to int
 1 | int({})
   | ^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1
 
@@ -55,7 +55,7 @@ error[RAD20016]: Cannot cast +Inf to int
 1 | int(parse_float("Inf"))
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1
 
@@ -70,7 +70,7 @@ error[RAD20016]: Cannot cast -Inf to int
 1 | int(parse_float("-Inf"))
   | ^^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1
 
@@ -85,7 +85,7 @@ error[RAD20016]: Cannot cast NaN to int
 1 | int(parse_float("NaN"))
   | ^^^^^^^^^^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1
 
@@ -94,12 +94,13 @@ int errors on string with details
 ### INPUT ###
 int("10")
 ### STDERR ###
-error[RAD20016]: Cannot cast string to int. Did you mean to use 'parse_int' to parse the given string?
+error[RAD20016]: Cannot cast string to int. Did you mean to use 'parse_int' to parse the given
+  string?
   --> <script>:1:1
   |
 1 | int("10")
   | ^^^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1

@@ -68,11 +68,12 @@ func (c *RadCheckerImpl) addRegexPatternWithoutRegexArgWarnings(resolved *Resolv
 		}
 
 		msg := "'" + truncate(text, 20) + "' reads as a regex ('" + signal + "'), but " +
-			name + "() matches literally unless you pass regex=true. It will search for that " +
-			"exact text, most likely match nothing, and return the input unchanged - no error, " +
-			"just a wrong answer."
-		suggestion := "add regex=true to keep the old behavior, or ignore this if the text really " +
-			"is literal. See https://amterp.dev/rad/migrations/v0.12/"
+			name + "() matches it literally"
+		// "Silently" is the load-bearing word and stays inline: the failure mode
+		// is a wrong answer with no error, so a reader who skims this and moves
+		// on has no second chance to notice.
+		suggestion := "Pass regex=true, or ignore this if the text really is literal - " +
+			"otherwise it silently matches nothing. See https://amterp.dev/rad/migrations/v0.12/"
 
 		diag := NewDiagnosticWarnFromSpan(pattern.Span(), c.src, msg, rl.ErrRegexPatternWithoutRegexArg)
 		diag.Suggestion = &suggestion

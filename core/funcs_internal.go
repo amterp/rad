@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 
@@ -100,23 +99,16 @@ func AddInternalFuncs() {
 				diagnostics := NewRadList()
 				for _, diag := range checkR.Diagnostics {
 					diagMap := NewRadMap()
-					diagMap.SetPrimitiveStr("src", diag.RangedSrc)
-					diagMap.SetPrimitiveStr("line_src", diag.LineSrc)
-
-					diagMap.SetPrimitiveInt("start_line", diag.Range.Start.Line)
-					diagMap.SetPrimitiveInt("start_char", diag.Range.Start.Character)
+					// Rendering happens here rather than in the check script so
+					// that `rad check` and runtime errors share one layout, and
+					// so terminal-width fitting is written once.
 					diagMap.SetPrimitiveStr(
-						"pos",
-						fmt.Sprintf("L%d:%d", diag.Range.Start.Line+1, diag.Range.Start.Character+1),
+						"render",
+						RenderDiagnosticToString(NewDiagnosticFromCheck(diag, scriptPath)),
 					)
-
 					diagMap.SetPrimitiveStr("severity", diag.Severity.String())
-					diagMap.SetPrimitiveStr("msg", diag.Message)
 					if diag.Code != nil {
 						diagMap.SetPrimitiveStr("code", diag.Code.String())
-					}
-					if diag.Suggestion != nil && *diag.Suggestion != "" {
-						diagMap.SetPrimitiveStr("suggestion", *diag.Suggestion)
 					}
 					diagnostics.Append(newRadValueMap(diagMap))
 				}

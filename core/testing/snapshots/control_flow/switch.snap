@@ -67,10 +67,10 @@ error[RAD20034]: No matching case found for switch
 1 | name = "david"
 2 | switch name:
   |        ^^^^
-3 | 	case "alice" -> print("ALICE")
-4 | 	case "bob" -> print("BOB")
+3 |     case "alice" -> print("ALICE")
+4 |     case "bob" -> print("BOB")
   |
-   = info: rad docs RAD20034
+  = info: rad docs RAD20034
 ### EXIT ###
 1
 
@@ -89,10 +89,10 @@ error[RAD20035]: Multiple matching cases found for switch
 1 | name = "alice"
 2 | switch name:
   |        ^^^^
-3 | 	case "alice" -> print("ALICE")
-4 | 	case "bob" -> print("BOB")
+3 |     case "alice" -> print("ALICE")
+4 |     case "bob" -> print("BOB")
   |
-   = info: rad docs RAD20035
+  = info: rad docs RAD20035
 ### EXIT ###
 1
 

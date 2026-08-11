@@ -230,7 +230,7 @@ xs[0] = 1 + "not a number"
 
 # Diagnostics
   [error] RAD30002 @ 2:9 - Invalid operand types: cannot do 'int + str'
-    help: In v0.9, + no longer coerces types. Use string interpolation instead. See: https://amterp.dev/rad/migrations/v0.9/
+    help: Use string interpolation - + no longer coerces types since v0.9. See https://amterp.dev/rad/migrations/v0.9/
 
 ### TITLE ###
 NarrowedOptionalListChecks

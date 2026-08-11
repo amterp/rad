@@ -40,7 +40,7 @@ error[RAD20016]: Cannot cast "map" to float
 1 | float({})
   | ^^^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1
 
@@ -49,12 +49,13 @@ Float errors on string with details
 ### INPUT ###
 float("10")
 ### STDERR ###
-error[RAD20016]: Cannot cast string to float. Did you mean to use 'parse_float' to parse the given string?
+error[RAD20016]: Cannot cast string to float. Did you mean to use 'parse_float' to parse the given
+  string?
   --> <script>:1:1
   |
 1 | float("10")
   | ^^^^^^^^^^^
   |
-   = info: rad docs RAD20016
+  = info: rad docs RAD20016
 ### EXIT ###
 1

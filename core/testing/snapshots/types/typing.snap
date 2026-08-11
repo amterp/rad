@@ -20,9 +20,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 1 | add(1, "2").print()
   |        ^^^
 2 | fn add(x: float, y: float) -> float:
-3 | 	return x + y
+3 |     return x + y
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -37,10 +37,10 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn add(x: float, y: float) -> float:
-3 | 	return "hi"
-  |         ^^^^
+3 |     return "hi"
+  |            ^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -83,9 +83,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'float'
 1 | foo(x=1, y="2").print()
   |            ^^^
 2 | fn foo(x: float, y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -102,9 +102,9 @@ error[RAD30006]: Unknown named argument 'z'
 1 | foo(x=1, y=2, z=3).print()
   |               ^
 2 | fn foo(x: float, y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30006
+  = info: rad docs RAD30006
 ### EXIT ###
 1
 
@@ -121,9 +121,9 @@ error[RAD30007]: Missing required argument 'y'
 1 | foo(x=1).print()
   | ^^^^^^^^
 2 | fn foo(x: float, y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 ### EXIT ###
 1
 
@@ -149,9 +149,9 @@ error[RAD30001]: Value '"2"' (str) is not compatible with expected type 'float'
 1 | foo(x=1).print()
 2 | fn foo(x: float, y: float = "2") -> float:
   |                             ^^^
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -168,9 +168,9 @@ error[RAD30007]: Expected at most 2 args, but was invoked with 3
 1 | foo(1, 2, 3).print()
   | ^^^^^^^^^^^^
 2 | fn foo(x: float, y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 ### EXIT ###
 1
 
@@ -187,9 +187,9 @@ error[RAD30007]: Too many positional args, remaining args are named-only
 1 | foo(1, 2, 3).print()
   |           ^
 2 | fn foo(x: float, y: float, *, z: float) -> float:
-3 | 	return x / y + z
+3 |     return x / y + z
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 
 error[RAD30007]: Missing required argument 'z'
   --> <script>:1:1
@@ -197,9 +197,9 @@ error[RAD30007]: Missing required argument 'z'
 1 | foo(1, 2, 3).print()
   | ^^^^^^^^^^^^
 2 | fn foo(x: float, y: float, *, z: float) -> float:
-3 | 	return x / y + z
+3 |     return x / y + z
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 ### EXIT ###
 1
 
@@ -214,21 +214,21 @@ error[RAD20028]: Undefined identifier 'x'
   --> <script>:3:9
   |
 2 | fn foo(_x: float, _y: float) -> float:
-3 | 	return x / y
-  |         ^
+3 |     return x / y
+  |            ^
   |
-   = help: did you mean '_x', '_y', or 'max'?
-   = info: rad docs RAD20028
+  = help: did you mean '_x', '_y', or 'max'?
+  = info: rad docs RAD20028
 
 error[RAD20028]: Undefined identifier 'y'
   --> <script>:3:13
   |
 2 | fn foo(_x: float, _y: float) -> float:
-3 | 	return x / y
-  |             ^
+3 |     return x / y
+  |                ^
   |
-   = help: did you mean '_y' or '_x'?
-   = info: rad docs RAD20028
+  = help: did you mean '_y' or '_x'?
+  = info: rad docs RAD20028
 
 error[RAD30006]: Argument '_x' cannot be passed as named arg, only positionally
   --> <script>:1:5
@@ -236,9 +236,9 @@ error[RAD30006]: Argument '_x' cannot be passed as named arg, only positionally
 1 | foo(_x=1, _y=2).print()
   |     ^^
 2 | fn foo(_x: float, _y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30006
+  = info: rad docs RAD30006
 
 error[RAD30006]: Argument '_y' cannot be passed as named arg, only positionally
   --> <script>:1:11
@@ -246,9 +246,9 @@ error[RAD30006]: Argument '_y' cannot be passed as named arg, only positionally
 1 | foo(_x=1, _y=2).print()
   |           ^^
 2 | fn foo(_x: float, _y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30006
+  = info: rad docs RAD30006
 
 error[RAD30007]: Missing required argument '_x'
   --> <script>:1:1
@@ -256,9 +256,9 @@ error[RAD30007]: Missing required argument '_x'
 1 | foo(_x=1, _y=2).print()
   | ^^^^^^^^^^^^^^^
 2 | fn foo(_x: float, _y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 
 error[RAD30007]: Missing required argument '_y'
   --> <script>:1:1
@@ -266,9 +266,9 @@ error[RAD30007]: Missing required argument '_y'
 1 | foo(_x=1, _y=2).print()
   | ^^^^^^^^^^^^^^^
 2 | fn foo(_x: float, _y: float) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 ### EXIT ###
 1
 
@@ -303,11 +303,11 @@ error[RAD20038]: Expected 'float', but got void value
 1 | foo(x=1)
   | ^^^^^^^^
 2 | fn foo(x: float, y?) -> float:
-3 | 	a = 1
+3 |     a = 1
   |
-   = stack:
-     at foo (TestCase:1:1)
-   = info: rad docs RAD20038
+  = stack:
+    at foo (TestCase:1:1)
+  = info: rad docs RAD20038
 ### EXIT ###
 1
 
@@ -324,9 +324,9 @@ error[RAD30006]: Argument 'x' already specified
 1 | foo(1, x=2)
   |        ^
 2 | fn foo(x: float, y?) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30006
+  = info: rad docs RAD30006
 ### EXIT ###
 1
 
@@ -343,9 +343,9 @@ error[RAD30006]: Argument 'y' already specified
 1 | foo(1, y = 2, y = 3)
   |               ^
 2 | fn foo(x: float, y?) -> float:
-3 | 	return x / y
+3 |     return x / y
   |
-   = info: rad docs RAD30006
+  = info: rad docs RAD30006
 ### EXIT ###
 1
 
@@ -371,9 +371,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'str'
 1 | foo(2)
   |     ^
 2 | fn foo(x: str):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -397,10 +397,10 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> str:
-3 | 	return 2
-  |         ^
+3 |     return 2
+  |            ^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -426,9 +426,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo("2")
   |     ^^^
 2 | fn foo(x: int):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -445,9 +445,9 @@ error[RAD30001]: Argument type 'null' is not assignable to expected type 'int'
 1 | foo(null)
   |     ^^^^
 2 | fn foo(x: int):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -471,10 +471,10 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> int:
-3 | 	return "2"
-  |         ^^^
+3 |     return "2"
+  |            ^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -500,9 +500,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'bool'
 1 | foo(1)
   |     ^
 2 | fn foo(x: bool):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -526,10 +526,10 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> bool:
-3 | 	return 1
-  |         ^
+3 |     return 1
+  |            ^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -555,9 +555,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'error'
 1 | foo(1)
   |     ^
 2 | fn foo(x: error):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -582,10 +582,10 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> error:
-3 | 	return 1
-  |         ^
+3 |     return 1
+  |            ^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -640,19 +640,19 @@ error[RAD10001]: Invalid function syntax
 1 | foo(1).print()
 2 | fn foo(x: void) -> str:
   |        ^^
-3 | 	return "|{x}|"
+3 |     return "|{x}|"
   |
-   = info: rad docs RAD10001
+  = info: rad docs RAD10001
 
 error[RAD20028]: Undefined identifier 'x'
   --> <script>:3:12
   |
 2 | fn foo(x: void) -> str:
-3 | 	return "|{x}|"
-  |            ^
+3 |     return "|{x}|"
+  |               ^
   |
-   = help: did you mean 'max'?
-   = info: rad docs RAD20028
+  = help: did you mean 'max'?
+  = info: rad docs RAD20028
 ### EXIT ###
 1
 
@@ -678,9 +678,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'list'
 1 | foo(1)
   |     ^
 2 | fn foo(x: list):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -697,9 +697,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'list'
 1 | foo(1, 2)
   |     ^
 2 | fn foo(x: list):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 
 error[RAD30007]: Expected at most 1 args, but was invoked with 2
   --> <script>:1:1
@@ -707,9 +707,9 @@ error[RAD30007]: Expected at most 1 args, but was invoked with 2
 1 | foo(1, 2)
   | ^^^^^^^^^
 2 | fn foo(x: list):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30007
+  = info: rad docs RAD30007
 ### EXIT ###
 1
 
@@ -742,10 +742,10 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> list:
-3 | 	return 1
-  |         ^
+3 |     return 1
+  |            ^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -771,9 +771,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo(["hi", 1])
   |      ^^^^
 2 | fn foo(x: [int, str]):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -797,10 +797,10 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   --> <script>:3:13
   |
 2 | fn foo() -> [int, str]:
-3 | 	return [1, 2]
-  |             ^
+3 |     return [1, 2]
+  |                ^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -828,9 +828,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo([1, "hi"])
   |         ^^^^
 2 | fn foo(x: int[]):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -854,10 +854,10 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   --> <script>:3:13
   |
 2 | fn foo() -> int[]:
-3 | 	return [1, "2"]
-  |             ^^^
+3 |     return [1, "2"]
+  |                ^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -883,9 +883,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type '["foo",
 1 | foo("quz")
   |     ^^^^^
 2 | fn foo(x: ["foo", "bar"]):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -905,14 +905,15 @@ foo().print()
 fn foo() -> ["foo", "bar"]:
 	return "quz"
 ### STDERR ###
-error[RAD30001]: Return value of type 'str' is not assignable to declared return type '["foo", "bar"]'
+error[RAD30001]: Return value of type 'str' is not assignable to declared return type '["foo",
+  "bar"]'
   --> <script>:3:9
   |
 2 | fn foo() -> ["foo", "bar"]:
-3 | 	return "quz"
-  |         ^^^^^
+3 |     return "quz"
+  |            ^^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -938,9 +939,9 @@ error[RAD30001]: Argument type 'int' is not assignable to expected type 'map'
 1 | foo(2)
   |     ^
 2 | fn foo(x: map):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -964,10 +965,10 @@ error[RAD30001]: Return value of type 'int' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> map:
-3 | 	return 1
-  |         ^
+3 |     return 1
+  |            ^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -987,15 +988,16 @@ foo({"key2": 10})
 fn foo(x: {"key1": int}):
 	print("|{x}|")
 ### STDERR ###
-error[RAD30001]: Argument type '{ str: int }' is not assignable to expected type '{ "key1": int }' (missing required field 'key1')
+error[RAD30001]: Argument type '{ str: int }' is not assignable to expected type '{ "key1": int }'
+  (missing required field 'key1')
   --> <script>:1:5
   |
 1 | foo({"key2": 10})
   |     ^^^^^^^^^^^^
 2 | fn foo(x: {"key1": int}):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1015,14 +1017,15 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": 10}
 ### STDERR ###
-error[RAD30001]: Return value of type '{ str: int }' is not assignable to declared return type '{ "key1": int }' (missing required field 'key1')
+error[RAD30001]: Return value of type '{ str: int }' is not assignable to declared return type '{
+  "key1": int }' (missing required field 'key1')
   --> <script>:3:9
   |
 2 | fn foo() -> {"key1": int}:
-3 | 	return {"key2": 10}
-  |         ^^^^^^^^^^^^
+3 |     return {"key2": 10}
+  |            ^^^^^^^^^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1033,14 +1036,15 @@ foo().print()
 fn foo() -> {"key1": int}:
 	return {"key2": "hi"}
 ### STDERR ###
-error[RAD30001]: Return value of type '{ str: str }' is not assignable to declared return type '{ "key1": int }' (missing required field 'key1')
+error[RAD30001]: Return value of type '{ str: str }' is not assignable to declared return type '{
+  "key1": int }' (missing required field 'key1')
   --> <script>:3:9
   |
 2 | fn foo() -> {"key1": int}:
-3 | 	return {"key2": "hi"}
-  |         ^^^^^^^^^^^^^^
+3 |     return {"key2": "hi"}
+  |            ^^^^^^^^^^^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1066,9 +1070,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo({"key1": "hi"})
   |              ^^^^
 2 | fn foo(x: {str: int}):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1092,10 +1096,10 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   --> <script>:3:18
   |
 2 | fn foo() -> {str: int}:
-3 | 	return {"key1": "hi"}
-  |                  ^^^^
+3 |     return {"key1": "hi"}
+  |                     ^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1125,9 +1129,9 @@ error[RAD30001]: Value '"hi"' (str) is not compatible with expected type 'int'
 1 | foo(1, "hi")
   |        ^^^^
 2 | fn foo(*x: int):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1194,9 +1198,9 @@ error[RAD30001]: Argument type 'str' is not assignable to expected type 'int'
 1 | foo("hi")
   |     ^^^^
 2 | fn foo(x: int?):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1224,10 +1228,10 @@ error[RAD30001]: Return value of type 'str' is not assignable to declared return
   --> <script>:3:9
   |
 2 | fn foo() -> int?:
-3 | 	return "hi"
-  |         ^^^^
+3 |     return "hi"
+  |            ^^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1255,9 +1259,9 @@ error[RAD30001]: Argument type 'float' is not assignable to expected type 'int|s
 1 | foo(1.2)
   |     ^^^
 2 | fn foo(x: int|str):
-3 | 	print("|{x}|")
+3 |     print("|{x}|")
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
 
@@ -1288,9 +1292,9 @@ error[RAD30001]: Return value of type 'float' is not assignable to declared retu
   --> <script>:4:9
   |
 3 | fn foo(x) -> int|str:
-4 | 	return 1.2
-  |         ^^^
+4 |     return 1.2
+  |            ^^^
   |
-   = info: rad docs RAD30001
+  = info: rad docs RAD30001
 ### EXIT ###
 1
