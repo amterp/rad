@@ -140,6 +140,10 @@ default_column = "p2"
     [[custom_fields.source.options]]
       value = "clig-audit"
       description = "The clig.dev conformance audit card filed 2026-07-14"
+
+    [[custom_fields.source.options]]
+      value = "agent-redteam"
+      description = "An agent session that adversarially probed a shipped feature and reproduced each failure it reports"
   [custom_fields.type]
     type = "enum"
     wanted = true

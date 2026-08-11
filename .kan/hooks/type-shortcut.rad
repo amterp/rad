@@ -30,7 +30,7 @@ if not matches(title, "![a-zA-Z]+", partial=true):
 
 // Extract the type keyword (without the !)
 // Use regex to find and extract the keyword
-match_result = replace(title, "(?i).*!([a-z]+).*", "$1")
+match_result = replace(title, "(?i).*!([a-z]+).*", "$1", regex=true)
 type_keyword = lower(match_result)
 
 // Map alias to canonical type if needed
@@ -39,12 +39,12 @@ if type_keyword in type_aliases:
     card_type = type_aliases[type_keyword]
 
 // Strip the !keyword from the title and clean up whitespace
-new_title = replace(title, "(?i)\\s*![a-z]+\\s*", " ")
+new_title = replace(title, "(?i)\\s*![a-z]+\\s*", " ", regex=true)
 new_title = trim(new_title)
 // Handle double spaces that might result from removal in the middle
-new_title = replace(new_title, "\\s+", " ")
+new_title = replace(new_title, "\\s+", " ", regex=true)
 
 // Update the card with new title and type
-quiet $`kan edit {card_id} -b {board_name} -t "{new_title}" -f type={card_type}`
+quiet $`kan edit {card_id} -b {board_name} -t {new_title} -f type={card_type}`
 
 print("Set type to '{card_type}'")

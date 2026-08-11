@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "rad20047-blames-the",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786464906777,
+  "creator": "Alexander Terp",
+  "description": "Follow on from `make-interaction` (a_25Rcu1uOI). Reproduced against v0.11.0.\n\nRe-asking until a value is valid is a common shape:\n\n```rad\nenv = \"\"\nwhile env not in [\"prod\", \"staging\"]:\n    env = input(\"Environment? \")   // line 8\n```\n\n`--reply 8:dev` reports:\n\n\u003e The input \"Environment? \" ran out of answers - it executed more times than `--reply` accounted for. Repeat the flag once per pass; rad won't reuse the last answer\n\nTrue, and useless. The value was rejected and the loop came back around. Following the advice literally can never work - `--reply 8:dev --reply 8:dev` fails identically - so an agent keeps adding flags and keeps failing.\n\n### Direction\n\nrad can't distinguish \"re-asked because the value was rejected\" from \"legitimately runs N times\", but it doesn't have to. The message just needs to stop asserting one of them. Carrying both diagnoses is enough:\n\n\u003e ... ran out of answers after 1 pass. If the script re-asks until a value is accepted, more `--reply` flags won't help - check the value is one it takes.\n\nWording is the whole card; prompt-engineer principles apply, and RAD20047 is already dense.",
+  "effort": "xs",
+  "id": "a_26CcFxMCf",
+  "position": "UUUUUUUUUUUUUU",
+  "source": [
+    "agent-redteam"
+  ],
+  "title": "RAD20047 blames the answer count when the answer was just rejected",
+  "type": "enhancement",
+  "updated_at_millis": 1786464906777,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786464906777}
+  ]
+}

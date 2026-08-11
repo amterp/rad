@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "a-filtered-pick",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786464906703,
+  "creator": "Alexander Terp",
+  "description": "Follow on from `make-interaction` (a_25Rcu1uOI). Reproduced against v0.11.0.\n\nA filtered `pick` that narrows to a single option selects it without prompting, and discards whatever `--reply` was supplied:\n\n```rad\ntarget = pick(services, svc_filter, prefer_exact=true)   // line 11\n```\n\n```\nrad 06_filter.rad api --reply 11:worker\n  -\u003e tailing api    EXIT=0\n```\n\n`worker` was an explicit instruction. It was dropped for `api` with no error.\n\nRAD20046 does warn up front - `pick options computed at runtime  filtered - may not prompt, and then ignores its answer` - so the behavior is disclosed. What stays silent is the moment the two actually disagree, which is the only moment it matters. It is also data-dependent: the same command is right or wrong depending on what the filtered list holds that day.\n\n### Direction\n\nFail when an auto-selected value isn't an exact match for the supplied `--reply`; stay quiet when they agree.\n\nThat leans on a distinction worth confirming first. `--reply-na` already means \"I assert this won't prompt\", and fails loudly when it does. If a real `--reply` symmetrically means \"I expect to be asked\", the two become complementary: `--reply-na` says \"I expect this to narrow to one\", `--reply` says \"I expect a choice\". The RAD20046 hint already steers toward `--reply-na` for filtered picks, so this mostly makes existing advice enforceable.",
+  "effort": "s",
+  "id": "a_26CcFpGKL",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUUUUUUUUUU",
+  "source": [
+    "agent-redteam"
+  ],
+  "title": "A filtered pick discards a disagreeing --reply and picks something else",
+  "type": "bug",
+  "updated_at_millis": 1786464906703,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786464906703}
+  ]
+}

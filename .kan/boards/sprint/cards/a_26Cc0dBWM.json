@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "prompts-inside-a",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786464897275,
+  "creator": "Alexander Terp",
+  "description": "Follow on from `make-interaction` (a_25Rcu1uOI), which shipped `--reply`/`--reply-na`. Found by adversarially probing that feature; every case below reproduced against v0.11.0.\n\n`--reply` keys answers by line number, so several semantically different questions that funnel through one `input()` all share a key:\n\n```rad\nfn ask(label):\n    return input(\"Enter {label}: \")   // line 7 - the only prompt site\n\nhost = ask(\"hostname\")                // line 9\nuser = ask(\"username\")                // line 10\nport = ask(\"port\")                    // line 11\n```\n\nRAD20046 reports the site once, and says nothing about what it asks or how often:\n\n```\n04_helper.rad:7  input may run more than once - repeat --reply per run\n```\n\nAnswers bind in execution order, confirmed with marker values:\n\n```\n--reply 7:FIRST --reply 7:SECOND --reply 7:THIRD\n  -\u003e host=FIRST  user=SECOND  port=THIRD\n```\n\nSo nothing swaps inside rad. The caller simply has no way to learn the order is host, user, port. Reading it as username-first and passing `alice, db.internal, 5432` gives `db.internal@alice:5432` and exit 0. Every value is free text, so nothing downstream can catch it.\n\nRAD20046 *does* print prompt text when it's a literal (`08_retry.rad:8  input \"Environment? \"`). It drops it here because `\"Enter {label}: \"` is interpolated - the case where the reader most needs it.\n\n### Direction\n\nThe key names a position, not a question. Options, roughly cheapest first:\n\n- Print the raw template even when interpolated. `input \"Enter {label}: \"` at least shows the question varies per pass.\n- List call sites alongside the definition. Static analysis already resolves them: `input at :7, reached from :9, :10, :11`.\n- An opt-in stable id - `input(\"Enter {label}: \", id=\"host\")` answered by `--reply host:db.internal`. Order-independent and survives refactors, at the cost of a new named arg on four functions.\n\nThe last also covers the reorder case: swapping two adjacent `input()` calls silently rebinds a saved command, because rad validates *that* a line prompts and never *what* it asks. That one is parked, but it shares this root cause and is worth weighing when choosing here.",
+  "effort": "m",
+  "id": "a_26Cc0dBWM",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUUUUUUUUU",
+  "source": [
+    "agent-redteam"
+  ],
+  "title": "Prompts inside a helper function share one --reply key and bind by order",
+  "type": "bug",
+  "updated_at_millis": 1786464897275,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786464897275}
+  ]
+}

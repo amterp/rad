@@ -1,0 +1,21 @@
+{
+  "_v": 3,
+  "alias": "point-reply-guidance",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1786464906852,
+  "creator": "Alexander Terp",
+  "description": "Follow on from `make-interaction` (a_25Rcu1uOI). Reproduced against v0.11.0.\n\nLoop arity is the one thing RAD20046 can't determine statically, so the caller guesses - and guessing low commits real work before failing:\n\n```\nrad 02_arity.rad --reply 13:yes\n\nDraining connections...\n  deployed api\nerror[RAD20047]: The confirm \"Deploy web? [Y/n] \" ran out of answers\n```\n\n`api` was deployed. Retrying with three replies deploys it again. RAD20046 itself is safe - a genuine pre-flight, zero execution, exit 7 - but the moment you supply replies you are executing, and the count is exactly what you couldn't know.\n\nNot solving this with a `--reply-each`/`--reply-all` that reuses one answer for every pass. Refusing to reuse is a safety property worth keeping, even though it is what forces the guess.\n\nWhat's cheap is telling the caller to look before they leap. `rad \u003cscript\u003e --src` prints the source, enough to count the passes and spot side effects.\n\n### Direction\n\nAdd a line to the reply guidance along the lines of: if a partial run would be costly, read the script first (`rad \u003cscript\u003e --src`) and check the replies cover every pass.\n\nWhere it goes is the open question. RAD20046 is the only place the advice can still prevent the damage, but its own run was harmless, so the warning risks reading as noise. RAD20047 is where the caller is about to retry and repeat the side effects, but by then the first partial run already happened. Probably both, worded differently - a nudge on RAD20046, something firmer on RAD20047.\n\nWording carries this one; prompt-engineer principles apply, and both messages are dense enough that a new line has to earn its place.",
+  "effort": "xs",
+  "id": "a_26CcG4eFu",
+  "position": "UUUUUUUUUUUUUUU",
+  "source": [
+    "agent-redteam"
+  ],
+  "title": "Point --reply guidance at --src before a retry repeats side effects",
+  "type": "enhancement",
+  "updated_at_millis": 1786464906852,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786464906852}
+  ]
+}

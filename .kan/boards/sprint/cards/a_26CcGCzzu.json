@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "add-reply-env-so",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1786464906935,
+  "creator": "Alexander Terp",
+  "description": "Follow on from `make-interaction` (a_25Rcu1uOI). Reproduced against v0.11.0.\n\nA `secret=true` prompt has no non-interactive path at all. rad refuses to take it from `--reply`:\n\n```\n05_secret.rad:6  input \"Vault password: \"  secret - cannot be answered on the command line\n    rad 05_secret.rad --reply-na 6\n```\n\nRefusing argv is right - it would put the credential in `ps` output and shell history. But the `--reply-na` it suggests is an assertion that the prompt won't be reached, so it fails when it is:\n\n```\nerror[RAD20047]: The input \"Vault password: \" was reached, but --reply-na said it wouldn't be.\n```\n\nEvery other prompt type gained an automation path from the `--reply` work; this one didn't. Any script asking for a credential stays unrunnable by an agent, a cron job, or CI unless its author maintains a separate path - the thing `make-interaction` set out to avoid.\n\n### Direction\n\n`--reply-env 6:VAULT_PW` - name an environment variable to read the answer from. The secret stays out of argv and shell history, and the flag is only meaningful for prompts rad already refuses to take inline.\n\nOpen: whether to accept it for non-secret prompts too (consistent, and useful in CI for anything sensitive), and what to do when the named variable is unset or empty. Failing seems right - silently answering a password prompt with `\"\"` is worse than stopping.",
+  "effort": "s",
+  "id": "a_26CcGCzzu",
+  "labels": [
+    "security"
+  ],
+  "position": "UUUUUUUUUUUUU",
+  "source": [
+    "agent-redteam"
+  ],
+  "title": "Add --reply-env so secret prompts have a non-interactive path",
+  "type": "feature",
+  "updated_at_millis": 1786464906935,
+  "history": [
+    {"field":"column","value":"p1","at":1786464906935}
+  ]
+}
