@@ -1,0 +1,18 @@
+{
+  "_v": 3,
+  "alias": "syntax-for-fluently",
+  "alias_explicit": false,
+  "column": "big-rocks",
+  "created_at_millis": 1786448228319,
+  "creator": "Alexander Terp",
+  "effort": "m",
+  "id": "a_265cNCIJA",
+  "position": "UUUUUU",
+  "title": "syntax for fluently doing work on stdout of a shell command",
+  "type": "feature",
+  "updated_at_millis": 1786448255388,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786448228319},
+    {"field":"column","value":"big-rocks","at":1786448235903}
+  ]
+}
