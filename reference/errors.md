@@ -1572,22 +1572,28 @@ Rad exits `7` here, so a wrapper can tell "this run needs input" apart from "thi
 
 #### How to Fix
 
-Answer each prompt up front with `--reply`, keyed by the line it sits on. Rad prints a ready-to-run command with the keys already filled in, so this is usually copy-paste:
+Answer each prompt up front with `--reply`, keyed by the line it sits on. Rad prints your own command back with a `--reply` per prompt: keys in place, answers left blank.
+
+```
+rad deploy.rad prod --reply '5:<yes|no>' --reply '6:<value>' --reply '7:<option>'
+```
+
+Replace the blanks and run it. Rad never fills them in - whether you mean yes, or which option you want, isn't in the script for it to read:
 
 ```
 rad deploy.rad prod --reply 5:yes --reply 6:'shipped it' --reply 7:web-1
 ```
 
-Answers are matched by kind, so nothing needs escaping except a `multipick`:
+Answers are matched by kind, which is what the blank names. Nothing needs escaping except a `multipick`:
 
-| Prompt | Answer |
-|---|---|
-| `confirm`, `confirm $\`...\`` | `yes` / `no` (also `y`, `n`, `true`, `false`) |
-| `input` | the rest of the value, taken verbatim |
-| `pick`, `pick_kv`, `pick_from_resource` | one option, matched exactly |
-| `multipick` | comma-separated; `\,` for a literal comma, `\\` for a backslash |
+| Prompt | Blank | Answer |
+|---|---|---|
+| `confirm`, `confirm $\`...\`` | `<yes\|no>` | `yes` / `no` (also `y`, `n`, `true`, `false`) |
+| `input` | `<value>` | the rest of the value, taken verbatim |
+| `pick`, `pick_kv`, `pick_from_resource` | `<option>` | one option, matched exactly |
+| `multipick` | `<option,...>` | comma-separated; `\,` for a literal comma, `\\` for a backslash |
 
-Only the first colon separates the key from the value, so `--reply 6:https://example.com` needs no quoting. Any `<value>` in the suggested command is a placeholder - replace it, or rad answers with that literal text.
+Only the first colon separates the key from the value, so `--reply 6:https://example.com` needs no quoting. A blank left unreplaced is taken literally: `confirm`, `pick`, and `multipick` reject it, and `input` answers with the text `<value>`.
 
 A `multipick` answer must name each option at most once and satisfy the prompt's `min` and `max`. Give an empty value (`--reply 3:`) to select nothing.
 
@@ -1609,7 +1615,7 @@ If a prompt sits on a branch this run won't take, say so instead of inventing a 
 rad deploy.rad --dry-run --reply-na 20
 ```
 
-If the script reaches it anyway, rad fails cleanly (see RAD20047) rather than acting on a guess. Use this for a `pick` given a filter too - a filtered pick often narrows to a single option and never asks, which is why rad suggests `--reply-na` for those rather than a value.
+If the script reaches it anyway, rad fails cleanly (see RAD20047) rather than acting on a guess. Use this for a `pick` given a filter too, since a filtered pick often narrows to a single option and never asks. Where the options and the filter are both literal, rad works out the survivor itself and writes the `--reply-na` for you; where either is computed while the script runs, that call is yours to make.
 
 #### Secret Inputs
 

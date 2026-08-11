@@ -1983,9 +1983,9 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
   deploy.rad:6  input   &quot;Release notes&quot;
   deploy.rad:7  pick    options: web-1, web-2, db-1
 
-    rad deploy.rad prod --reply 5:yes --reply &#39;6:&lt;value&gt;&#39; --reply 7:web-1
+    rad deploy.rad prod --reply &#39;5:&lt;yes|no&gt;&#39; --reply &#39;6:&lt;value&gt;&#39; --reply &#39;7:&lt;option&gt;&#39;
 </code></pre></div>
-<p>Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is the command you wanted, with the keys filled in. Replace any <code>&lt;value&gt;</code> placeholder before running it - rad takes them literally.</p>
+<p>Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is your own command with a <code>--reply</code> per prompt: keys in place, answers blank. Rad won't guess those - whether you mean yes, or which server you want, isn't in the script. Fill in each <code>&lt;...&gt;</code> and run it; rad takes whatever you put there literally.</p>
 <p>Rad exits <code>7</code> when it stops like this, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.</p>
 <p>Each listed prompt may also carry a note about how it behaves:</p>
 <table>
@@ -1998,7 +1998,11 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 <tbody>
 <tr>
 <td><code>filtered - may not prompt, and then ignores its answer</code></td>
-<td>A <code>pick</code> given a filter. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped.</td>
+<td>A <code>pick</code> whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped.</td>
+</tr>
+<tr>
+<td><code>settles on "web-1" - won't ask</code></td>
+<td>A <code>pick</code> whose options and filter are both written literally, leaving one survivor. It takes that option without asking, so rad answers it with <code>--reply-na</code> for you.</td>
 </tr>
 <tr>
 <td><code>used as a value - ...</code></td>
@@ -2027,29 +2031,34 @@ answer = ask([&quot;dev&quot;, &quot;prod&quot;])
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>dispatch.rad<span class="w"> </span>--reply-na<span class="w"> </span><span class="m">1</span>
 </code></pre></div>
 <p>That matters for a script that merely <em>mentions</em> one on a path this run won't take - a handler map where the interactive entry isn't selected. If the assertion turns out to be wrong, the script stops at the prompt with <a href="../../reference/errors/">RAD20047</a> rather than acting on a guess.</p>
-<p>Answers are matched by the kind of prompt on that line, so only <code>multipick</code> needs escaping:</p>
+<p>Answers are matched by the kind of prompt on that line - which is what the blank names - and only <code>multipick</code> needs escaping:</p>
 <table>
 <thead>
 <tr>
 <th>Prompt</th>
+<th>Blank</th>
 <th>Answer</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>confirm</code>, <code>confirm $\</code>...`<code>|</code>yes<code>or</code>no<code>(also</code>y<code>,</code>n<code>,</code>true<code>,</code>false`)</td>
+<td><code>confirm</code>, <code>confirm $\</code>...`<code>|</code><yes\|no><code>|</code>yes<code>or</code>no<code>(also</code>y<code>,</code>n<code>,</code>true<code>,</code>false`)</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td><code>input</code></td>
+<td><code>&lt;value&gt;</code></td>
 <td>everything after the colon, verbatim; empty takes the arg's <code>default</code></td>
 </tr>
 <tr>
 <td><code>pick</code>, <code>pick_kv</code>, <code>pick_from_resource</code></td>
+<td><code>&lt;option&gt;</code></td>
 <td>one option, matched exactly</td>
 </tr>
 <tr>
 <td><code>multipick</code></td>
+<td><code>&lt;option,...&gt;</code></td>
 <td>comma-separated; <code>\,</code> is a literal comma, <code>\\</code> a literal backslash</td>
 </tr>
 </tbody>
@@ -2068,7 +2077,7 @@ answer = ask([&quot;dev&quot;, &quot;prod&quot;])
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>deploy.rad<span class="w"> </span>--dry-run<span class="w"> </span>--reply-na<span class="w"> </span><span class="m">20</span>
 </code></pre></div>
 <p>If the script reaches it anyway, rad fails with <a href="../../reference/errors/">RAD20047</a> instead of acting on a guess.</p>
-<p>This is also a good answer for a <code>pick</code> given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Rad marks those in the list, and suggests a <code>--reply</code> anyway when it knows the options - that answer is harmless whether or not the filter ends up settling the choice. Where both the options and the filter are written literally, the suggested value is one the filter actually keeps.</p>
+<p>This is also a good answer for a <code>pick</code> given a filter. Such a call narrows its options first and never asks when one survives, so it often needs no answer at all. Where the options and the filter are both written literally, rad works that out for you and puts <code>--reply-na</code> in the suggested command itself. Where either is computed while the script runs, it can't, so the prompt is listed like any other - reach for <code>--reply-na</code> on the runs you expect the filter to settle.</p>
 <p>Secret inputs are the one case with no <code>--reply</code> at all. Command-line arguments are visible to other processes, so a secret <code>input</code> can only be answered at a terminal. Use <code>--reply-na</code> if this run won't reach it. This holds whether <code>secret</code> is written as a literal or computed while the script runs - in the second case rad can't warn you up front, but it still refuses the answer.</p>
 <div class="admonition note">
 <p class="admonition-title">Scripts that disable global options</p>

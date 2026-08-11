@@ -2919,7 +2919,8 @@ env = pick([&quot;dev&quot;, &quot;prod&quot;])
 <span class="c1"># v0.12: error[RAD20046], listing every prompt. Nothing runs.</span>
 </code></pre></div>
 <p>Answer the prompts with <a href="../../guide/global-flags/#reply"><code>--reply</code></a>, keyed by
-line. Rad prints the full command, so it is usually a copy-paste.</p>
+line. Rad prints your own command back with a <code>--reply</code> per prompt, keys in
+place and a blank where each answer goes.</p>
 <p>Two things soften this. Rad now looks for a terminal on <code>/dev/tty</code> as well as
 stdin, so <code>echo x | rad script.rad</code> and the <code>rad - --shell</code> Bash embedding both
 prompt normally where they previously could not. And on a terminal nothing

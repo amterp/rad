@@ -10139,37 +10139,45 @@ asks you to say what you meant.</p>
 <p>Nothing in the script has executed at this point. That is deliberate - discovering a prompt halfway through would leave you reasoning about a half-finished run before you could retry.</p>
 <p>Rad exits <code>7</code> here, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.</p>
 <h4 id="how-to-fix_32">How to Fix<a class="headerlink" href="#how-to-fix_32" title="Permanent link">&para;</a></h4>
-<p>Answer each prompt up front with <code>--reply</code>, keyed by the line it sits on. Rad prints a ready-to-run command with the keys already filled in, so this is usually copy-paste:</p>
+<p>Answer each prompt up front with <code>--reply</code>, keyed by the line it sits on. Rad prints your own command back with a <code>--reply</code> per prompt: keys in place, answers left blank.</p>
+<div class="highlight"><pre><span></span><code>rad deploy.rad prod --reply &#39;5:&lt;yes|no&gt;&#39; --reply &#39;6:&lt;value&gt;&#39; --reply &#39;7:&lt;option&gt;&#39;
+</code></pre></div>
+<p>Replace the blanks and run it. Rad never fills them in - whether you mean yes, or which option you want, isn't in the script for it to read:</p>
 <div class="highlight"><pre><span></span><code>rad deploy.rad prod --reply 5:yes --reply 6:&#39;shipped it&#39; --reply 7:web-1
 </code></pre></div>
-<p>Answers are matched by kind, so nothing needs escaping except a <code>multipick</code>:</p>
+<p>Answers are matched by kind, which is what the blank names. Nothing needs escaping except a <code>multipick</code>:</p>
 <table>
 <thead>
 <tr>
 <th>Prompt</th>
+<th>Blank</th>
 <th>Answer</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>confirm</code>, <code>confirm $\</code>...`<code>|</code>yes<code>/</code>no<code>(also</code>y<code>,</code>n<code>,</code>true<code>,</code>false`)</td>
+<td><code>confirm</code>, <code>confirm $\</code>...`<code>|</code><yes\|no><code>|</code>yes<code>/</code>no<code>(also</code>y<code>,</code>n<code>,</code>true<code>,</code>false`)</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td><code>input</code></td>
+<td><code>&lt;value&gt;</code></td>
 <td>the rest of the value, taken verbatim</td>
 </tr>
 <tr>
 <td><code>pick</code>, <code>pick_kv</code>, <code>pick_from_resource</code></td>
+<td><code>&lt;option&gt;</code></td>
 <td>one option, matched exactly</td>
 </tr>
 <tr>
 <td><code>multipick</code></td>
+<td><code>&lt;option,...&gt;</code></td>
 <td>comma-separated; <code>\,</code> for a literal comma, <code>\\</code> for a backslash</td>
 </tr>
 </tbody>
 </table>
-<p>Only the first colon separates the key from the value, so <code>--reply 6:https://example.com</code> needs no quoting. Any <code>&lt;value&gt;</code> in the suggested command is a placeholder - replace it, or rad answers with that literal text.</p>
+<p>Only the first colon separates the key from the value, so <code>--reply 6:https://example.com</code> needs no quoting. A blank left unreplaced is taken literally: <code>confirm</code>, <code>pick</code>, and <code>multipick</code> reject it, and <code>input</code> answers with the text <code>&lt;value&gt;</code>.</p>
 <p>A <code>multipick</code> answer must name each option at most once and satisfy the prompt's <code>min</code> and <code>max</code>. Give an empty value (<code>--reply 3:</code>) to select nothing.</p>
 <h4 id="repeating-a-prompt">Repeating a Prompt<a class="headerlink" href="#repeating-a-prompt" title="Permanent link">&para;</a></h4>
 <p>A prompt inside a loop runs more than once. Repeat the key to answer each pass in order:</p>
@@ -10180,7 +10188,7 @@ asks you to say what you meant.</p>
 <p>If a prompt sits on a branch this run won't take, say so instead of inventing a value:</p>
 <div class="highlight"><pre><span></span><code>rad deploy.rad --dry-run --reply-na 20
 </code></pre></div>
-<p>If the script reaches it anyway, rad fails cleanly (see RAD20047) rather than acting on a guess. Use this for a <code>pick</code> given a filter too - a filtered pick often narrows to a single option and never asks, which is why rad suggests <code>--reply-na</code> for those rather than a value.</p>
+<p>If the script reaches it anyway, rad fails cleanly (see RAD20047) rather than acting on a guess. Use this for a <code>pick</code> given a filter too, since a filtered pick often narrows to a single option and never asks. Where the options and the filter are both literal, rad works out the survivor itself and writes the <code>--reply-na</code> for you; where either is computed while the script runs, that call is yours to make.</p>
 <h4 id="secret-inputs">Secret Inputs<a class="headerlink" href="#secret-inputs" title="Permanent link">&para;</a></h4>
 <p>A secret <code>input</code> cannot be answered this way at all. Command-line arguments are visible to other processes on the machine, so a password there would leak. Run the script where a terminal is available, or use <code>--reply-na</code> if this run won't reach it. Rad refuses the answer whether <code>secret</code> is a literal or computed while the script runs, though only a literal can be reported here rather than at the prompt.</p>
 <h4 id="interactive-functions-used-as-values">Interactive Functions Used As Values<a class="headerlink" href="#interactive-functions-used-as-values" title="Permanent link">&para;</a></h4>
