@@ -355,3 +355,87 @@ y = 1
     }
   ]
 }
+
+### TITLE ###
+ComputedShellCommandOffersParenthesesFix
+### DOCUMENT ###
+cmds = ["echo a", "echo b"]
+$cmds[1]
+### CODE_ACTION 1:0 1:8 ###
+### STDOUT ###
+{
+  "jsonrpc": "2.0",
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "diagnostics": [
+      {
+        "message": "`$` now takes only the command, so an index here reads the command's result rather than building it. This used to index the value first and run the result.",
+        "range": {
+          "end": {
+            "character": 8,
+            "line": 1
+          },
+          "start": {
+            "character": 0,
+            "line": 1
+          }
+        },
+        "severity": 1,
+        "source": "Rad Language Server"
+      }
+    ],
+    "uri": "file:///test.rad"
+  }
+}
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "#!/usr/bin/env rad\n",
+              "range": {
+                "end": {
+                  "character": 0,
+                  "line": 0
+                },
+                "start": {
+                  "character": 0,
+                  "line": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "title": "Add shebang"
+    },
+    {
+      "edit": {
+        "changes": {
+          "file:///test.rad": [
+            {
+              "newText": "$(cmds[1])",
+              "range": {
+                "end": {
+                  "character": 8,
+                  "line": 1
+                },
+                "start": {
+                  "character": 0,
+                  "line": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "kind": "quickfix",
+      "title": "Wrap the command in parentheses"
+    }
+  ]
+}

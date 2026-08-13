@@ -144,6 +144,8 @@ const (
 	ErrDefaultOnNamespace               Error = "40022"
 	ErrShellInterpolationQuoted         Error = "40023"
 	ErrConstraintTypeMismatch           Error = "40024"
+	ErrShellExprNoAccessor              Error = "40025"
+	ErrShellPostfixNotAccessor          Error = "40026"
 )
 
 func (e Error) String() string {

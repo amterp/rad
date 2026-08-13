@@ -1,0 +1,126 @@
+### TITLE ###
+AccessorsTypeTheirResult
+### DESCRIPTION ###
+Each accessor decides the type of the whole invocation: the two output
+accessors are strings, `.code` is an int and `.ok` is a bool. These are the
+same types the matching capture targets get, because both come from
+rl.shellStreamType.
+### INPUT ###
+out = $`cmd`.stdout
+err = $`cmd`.stderr
+code = $`cmd`.code
+ok = $`cmd`.ok
+### CHECK ###
+# Identifier types
+  out @ 1:1 -> <no-type>
+  err @ 2:1 -> <no-type>
+  code @ 3:1 -> <no-type>
+  ok @ 4:1 -> <no-type>
+
+# Symbol types
+  code (local): int
+  err (local): str
+  ok (local): bool
+  out (local): str
+
+# Diagnostics
+  (none)
+
+### TITLE ###
+BareInvocationInExpressionPositionIsRejected
+### DESCRIPTION ###
+A command has no value on its own, so using one where a value is wanted is an
+error rather than a guess. Shell's ambiguity between "succeeded" and "printed
+something" is exactly what naming the accessor removes.
+### INPUT ###
+if $`cmd`:
+    pass
+### CHECK ###
+# Identifier types
+  (none)
+
+# Symbol types
+  (none)
+
+# Diagnostics
+  [error] RAD40025 @ 1:4 - A shell command has no value on its own. Say which result you want: `.stdout`, `.stderr`, `.code`, or `.ok`
+    help: `.stdout` and `.stderr` give you the output and fail if the command did. `.ok` (bool) and `.code` (int) describe the outcome and never fail, so use those to test a command rather than read it.
+
+### TITLE ###
+ComputedCommandGetsTheMigrationFix
+### DESCRIPTION ###
+`$cmds[1]` ran what `cmds[1]` held before v0.12. It still parses, so the
+checker can say what it used to mean and hand over the parenthesized spelling
+rather than failing as a syntax error that could do neither.
+### INPUT ###
+cmds = ["echo a", "echo b"]
+$cmds[1]
+### CHECK ###
+# Identifier types
+  cmds @ 1:1 -> <no-type>
+  cmds @ 2:2 -> str[]
+
+# Symbol types
+  cmds (local): str[]
+
+# Diagnostics
+  [error] RAD40026 @ 2:1 - `$` now takes only the command, so an index here reads the command's result rather than building it. This used to index the value first and run the result.
+    help: Wrap the command in parentheses: `$(cmds[1])`. See https://amterp.dev/rad/migrations/v0.12/
+
+### TITLE ###
+MethodOnCommandIsRejected
+### DESCRIPTION ###
+This ran ECHO HI before v0.12 - the method transformed the command text rather
+than its output, and nothing reported it.
+### INPUT ###
+x = $`echo hi`.upper()
+### CHECK ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+
+# Symbol types
+  x (local): dynamic
+
+# Diagnostics
+  [error] RAD40026 @ 1:16 - A method here would have been applied to the command text, not its output - read a result first, then transform it.
+    help: Insert an accessor: `$`cmd`.stdout.upper()` rather than `$`cmd`.upper()`.
+
+### TITLE ###
+UnknownAccessorGetsDidYouMean
+### DESCRIPTION ###
+There are four results and no others, so a near-miss name is worth correcting
+rather than just rejecting.
+### INPUT ###
+x = $`cmd`.output
+### CHECK ###
+# Identifier types
+  x @ 1:1 -> <no-type>
+
+# Symbol types
+  x (local): dynamic
+
+# Diagnostics
+  [error] RAD40026 @ 1:12 - 'output' is not a shell result. Use one of: `.stdout`, `.stderr`, `.code`, or `.ok`
+    help: did you mean 'stdout'?
+
+### TITLE ###
+InterpolationQuotingIsCheckedInlineToo
+### DESCRIPTION ###
+RAD40023 has to see both invocation forms. Checking only the statement form
+would silently cover half the language.
+### INPUT ###
+msg = "a b"
+x = $`git commit -m "{msg}"`.stdout
+### CHECK ###
+# Identifier types
+  msg @ 1:1 -> <no-type>
+  x @ 2:1 -> <no-type>
+  msg @ 2:23 -> <no-type>
+
+# Symbol types
+  msg (local): str
+  x (local): str
+
+# Diagnostics
+  [error] RAD40023 @ 2:22 - Quotes around this interpolation end up in the argument itself
+    help: Remove them - Rad quotes shell interpolations for you. For literal text plus a value, build the string first and interpolate that.
