@@ -59,5 +59,6 @@ new_section = """
 ```
 """
 
-readme = replace(readme, "## Benchmark History\n\n(.*)", "## Benchmark History\n\n{new_section}\n\n$1")
-quiet $`echo -n '{readme}' > README.md`
+header = "## Benchmark History\n\n"
+readme = replace(readme, header, "{header}{new_section}\n\n")
+write_file("README.md", readme)
