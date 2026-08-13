@@ -22,6 +22,14 @@ cmd = `ls -la`
 $cmd
 ```
 
+`$` takes the command and nothing else. Anything after it reads the command's
+*result*, so a command you compute on the spot goes in parentheses:
+
+```rad
+cmds = [`ls -la`, `ls -l`]
+$(cmds[0])
+```
+
 By default, the stdout/stderr will be printed directly to the user's terminal as if they had invoked it directly themselves.
 
 **Tip: Prefer backticks for shell command strings**
@@ -128,6 +136,107 @@ Note that the two rules agree as long as you keep to the canonical order - `stdo
 
     Use `_` to discard a stream you don't want printed: `_ = $cmd` swallows stdout,
     and `_, _ = $cmd` swallows both streams for fully silent execution.
+
+## Reading One Result Inline
+
+Capturing into a variable is right when you want several results, or want to
+keep working with them. When you want one value, put the accessor on the command
+and use it where you stand:
+
+```rad
+branch = $`git branch --show-current`.stdout.trim() catch "unknown"
+
+if not $`which docker`.ok:
+    print_err("docker is not installed")
+    exit(1)
+```
+
+There are four accessors, and one of them must immediately follow the command:
+
+| Accessor  | Type   | Fails if the command failed |
+| --------- | ------ | --------------------------- |
+| `.stdout` | `str`  | yes                         |
+| `.stderr` | `str`  | yes                         |
+| `.code`   | `int`  | no                          |
+| `.ok`     | `bool` | no                          |
+
+Capture works the same way it does for assignment: the stream you name is
+captured, the other still reaches the terminal, and the two status accessors
+capture neither.
+
+### Which One To Reach For
+
+`.stdout` and `.stderr` give you what the command produced, and fail if it
+failed - output a failed command never produced isn't an answer, so you get an
+error rather than an empty string:
+
+```rad
+files = $`git ls-files`.stdout.split("\n")
+```
+
+`.ok` and `.code` describe the outcome and never fail. Asking about the outcome
+*is* handling it, which is what makes them the right way to test a command:
+
+```rad
+if not $`git diff --quiet`.ok:
+    print("you have uncommitted changes")
+
+// grep exits 1 for "no match" - that's data, not a failure
+matched = $`grep -q TODO src.rad`.code == 0
+```
+
+**Note: This differs from `code = $cmd`**
+
+    Capturing the code in an assignment still propagates the error, because a
+    statement's only product is its effect. Reading `.code` doesn't, because
+    you've asked about the failure directly.
+
+### Failing Softly
+
+Since the output accessors propagate, everything you'd use on a fallible
+function works here too:
+
+```rad
+tag = $`git describe --tags`.stdout.trim() catch "untagged"
+tag = $`git describe --tags`.stdout.trim() ?? "untagged"
+
+tag = $`git describe --tags`.stdout.trim() catch:
+    print_err("no tags yet")
+    tag = "untagged"
+```
+
+### An Accessor Is Required
+
+A command on its own isn't a value:
+
+```rad
+if $`git status --porcelain`:      // Error: RAD40025
+    print("dirty")
+```
+
+This is deliberate. In shell, `if cmd` tests the exit code but `if $(cmd)` tests
+whether it printed anything - two different questions that look nearly the same.
+Naming the accessor means the reader never has to guess which you meant:
+
+```rad
+// "did it print anything?"
+if $`git status --porcelain`.stdout.trim():
+    print("dirty")
+
+// "did it succeed?"
+if $`git diff --quiet`.ok:
+    print("clean")
+```
+
+Modifiers work inline, and the ⚡️ echo stays on so you can see which commands
+actually ran when `and` / `or` short-circuits:
+
+```rad
+tag = quiet $`git describe --tags`.stdout.trim() catch "untagged"
+```
+
+One last limit: the inline form gives you one value per run. When you want both
+streams from one command, capture them.
 
 ## Error Handling
 
@@ -414,7 +523,7 @@ Verifying that required tools are installed:
 tools = ["git", "docker", "make"]
 
 for tool in tools:
-    _, _ = $`which {tool}` catch:
+    if not quiet $`which {tool}`.ok:
         print_err("Required tool not found: {tool}")
         print_err("Please install {tool} before running this script")
         exit(1)
@@ -425,6 +534,8 @@ print("All prerequisites installed ✅".green())
 ## Summary
 
 - Shell commands use the `$` prefix and follow the same error model as functions
+- **Reading one value:** put `.stdout`, `.stderr`, `.code` or `.ok` on the command
+  and use it in place; `.stdout`/`.stderr` fail if the command did, `.code`/`.ok` don't
 - **Error handling:** Non-zero exit codes propagate errors unless handled with `catch:` blocks
 - **Capture modes:**
     - None: output goes to terminal

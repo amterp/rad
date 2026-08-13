@@ -125,6 +125,12 @@ Subsystems within the one Go module:
 - `docs-web/` - MkDocs site; `tools/` - codegen generators; `vsc-extension/` -
   VS Code extension; `ci/` - Rad scripts run by GitHub Actions.
 
+The `.rad` scripts in `ci/` and `benchmark/` are executed by the **released**
+`rad`, not by the build under test - so they must stay compatible with the last
+release, not with HEAD. A script written against unreleased semantics passes
+`make test` locally and fails CI. Verify changes to them with the installed
+`rad`, not `./bin/radd`.
+
 ### Execution pipeline
 
 `main.go` → `core.RadRunner` (`core/runner.go`): reads the script, parses via

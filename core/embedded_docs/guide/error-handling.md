@@ -249,6 +249,16 @@ you already hold - see Holding an Error. A `catch:` block instead
 catches an operation that failed, so a statement that merely assigns an error you already
 had doesn't trigger it.
 
+All three work on a shell command read inline, since a non-zero exit is an ordinary error:
+
+```rad
+tag = $`git describe --tags`.stdout.trim() catch "untagged"
+```
+
+That holds for `.stdout` and `.stderr`. `.code` and `.ok` never produce an error - reading
+them is how you handle a failure - so wrapping those in `??` or `catch` does nothing. See
+Reading One Result Inline (rad docs guide/shell-commands).
+
 ## Creating Your Own Errors
 
 When writing your own functions, you can return errors using the `error(str)` function.

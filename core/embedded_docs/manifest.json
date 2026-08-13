@@ -115,6 +115,7 @@
         "Invoking Commands",
         "Which Shell Runs My Command?",
         "Capturing Output",
+        "Reading One Result Inline",
         "Error Handling",
         "String Interpolation",
         "Commands As Lists",
