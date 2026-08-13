@@ -1486,6 +1486,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breaking-change-takes-the-command-not-the-whole-expression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: $ Takes The Command, Not The Whole Expression
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: $ Takes The Command, Not The Whole Expression">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What To Change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-get-for-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Get For It
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#breaking-change-list-args-collect-every-positional-value" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2154,6 +2193,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breaking-change-takes-the-command-not-the-whole-expression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breaking Change: $ Takes The Command, Not The Whole Expression
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breaking Change: $ Takes The Command, Not The Whole Expression">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-to-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What To Change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-you-get-for-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You Get For It
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#breaking-change-list-args-collect-every-positional-value" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2446,7 +2524,7 @@
 
 
 <h1 id="migrating-to-rad-v012">Migrating to Rad v0.12<a class="headerlink" href="#migrating-to-rad-v012" title="Permanent link">&para;</a></h1>
-<p>Version 0.12 has seven breaking changes.</p>
+<p>Version 0.12 has eight breaking changes.</p>
 <p>Two concern text you pass through Rad, and share a shape: each took a default that
 quietly did the wrong thing, and now makes the safe reading the default instead.</p>
 <ul>
@@ -2454,10 +2532,14 @@ quietly did the wrong thing, and now makes the safe reading the default instead.
 <li>Values interpolated into a shell command are now quoted, so they arrive as one
   argument instead of as shell syntax.</li>
 </ul>
-<p>One concerns what a shell command hands back:</p>
+<p>Two concern what a shell command hands back:</p>
 <ul>
 <li>Capturing into names of your own now fills <code>(stdout, stderr, code)</code> instead of
   <code>(code, stdout, stderr)</code>.</li>
+<li><code>$</code> now takes only the command. Anything written after it reads the command's
+  <em>result</em>, which is how a command can now be read inline as
+  <code>$`cmd`.stdout</code>, and which breaks three spellings that used to build the
+  command instead. Two of those failed silently.</li>
 </ul>
 <p>Three concern how the command line is parsed:</p>
 <ul>
@@ -2474,7 +2556,7 @@ quietly did the wrong thing, and now makes the safe reading the default instead.
 </ul>
 <p>Most of these can change what a script does without raising an error, so they are
 worth reading rather than waiting to be told.</p>
-<p>Four of the seven ship a diagnostic. To find every affected script you've run
+<p>Five of the eight ship a diagnostic. To find every affected script you've run
 recently:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
@@ -2808,6 +2890,81 @@ signal either way is invisible to it:</p>
 is the instructive one: it reads as "exit status", but <code>status = $</code>git status``
 is a perfectly good v0.12 capture of stdout, so flagging it would fire on correct
 new code. If a script captures into names like these, read it by hand.</p>
+<h2 id="breaking-change-takes-the-command-not-the-whole-expression">Breaking Change: <code>$</code> Takes The Command, Not The Whole Expression<a class="headerlink" href="#breaking-change-takes-the-command-not-the-whole-expression" title="Permanent link">&para;</a></h2>
+<p><code>$</code> used to bind an entire expression, so everything written after a command
+became part of <em>building</em> it. Three spellings meant something other than what
+they read like, and <code>rad check</code> reported none of them:</p>
+<div class="highlight"><pre><span></span><code>x = $`echo hi`.upper()       // ran ECHO HI
+x = $`cmd` catch &quot;fallback&quot;  // caught the command string; the handler never ran
+x = $`cmd` ?? &quot;fallback&quot;     // the same
+</code></pre></div>
+<p>The last two are the ones worth stopping on. They look exactly like working
+error handling. What actually happened is that <code>catch</code> and <code>??</code> applied to the
+string <code>`cmd`</code>, which never fails, so the command's own failure went
+unhandled and ended the script:</p>
+<div class="highlight"><pre><span></span><code>⚡️ false
+error[RAD20000]: Command exited with code 1
+  --&gt; script.rad:1:1
+  |
+1 | x = $`false` catch &quot;fallback&quot;
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+</code></pre></div>
+<p><code>$</code> now takes only the command: a string, a list, a variable, or a parenthesized
+expression. Everything after it reads the command's result.</p>
+<h3 id="what-to-change">What To Change<a class="headerlink" href="#what-to-change" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Old</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$cmds[1]</code></td>
+<td><code>$(cmds[1])</code></td>
+</tr>
+<tr>
+<td><code>$parts.join(" ")</code></td>
+<td><code>$(parts.join(" "))</code></td>
+</tr>
+<tr>
+<td><code>$`echo hi`.upper()</code></td>
+<td><code>$`echo hi`.stdout.upper()</code></td>
+</tr>
+<tr>
+<td><code>$`cmd` catch "x"</code></td>
+<td><code>$`cmd`.stdout catch "x"</code></td>
+</tr>
+<tr>
+<td><code>$`cmd` ?? "x"</code></td>
+<td><code>$`cmd`.stdout ?? "x"</code></td>
+</tr>
+</tbody>
+</table>
+<p>All of them are check-time errors (<a href="../../reference/errors/">RAD40025</a>,
+<a href="../../reference/errors/">RAD40026</a>), so nothing changes meaning quietly. The
+computed-command rows are mechanical, and editors offer the parenthesized form as
+a quick fix. <code>$(...)</code> has always parsed and run, so the fix works on older
+versions too.</p>
+<p>Statement forms are untouched:</p>
+<div class="highlight"><pre><span></span><code>$`make build`
+stdout, stderr, code = $`cmd`
+$`make build` catch:
+    pass
+</code></pre></div>
+<h3 id="what-you-get-for-it">What You Get For It<a class="headerlink" href="#what-you-get-for-it" title="Permanent link">&para;</a></h3>
+<p>The reason <code>$</code> had to stop swallowing expressions is that a command can now be
+read where it stands:</p>
+<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch &quot;unknown&quot;
+
+if not $`which docker`.ok:
+    exit(1)
+</code></pre></div>
+<p><code>.stdout</code> and <code>.stderr</code> give you the output and fail if the command did. <code>.code</code>
+and <code>.ok</code> describe the outcome and never fail, which is what makes them the way
+to test a command. See
+<a href="../../guide/shell-commands/#reading-one-result-inline">Reading One Result Inline</a>.</p>
 <h2 id="breaking-change-list-args-collect-every-positional-value">Breaking Change: List Args Collect Every Positional Value<a class="headerlink" href="#breaking-change-list-args-collect-every-positional-value" title="Permanent link">&para;</a></h2>
 <h3 id="what-changed_3">What Changed<a class="headerlink" href="#what-changed_3" title="Permanent link">&para;</a></h3>
 <p>A list arg used to fill exactly one positional slot. Now it collects every bare

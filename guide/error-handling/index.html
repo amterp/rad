@@ -2005,6 +2005,12 @@ Use <code>catch:</code> when you need to log, inspect, or conditionally handle t
 you already hold - see <a href="#holding-an-error">Holding an Error</a>. A <code>catch:</code> block instead
 catches an operation that failed, so a statement that merely assigns an error you already
 had doesn't trigger it.</p>
+<p>All three work on a shell command read inline, since a non-zero exit is an ordinary error:</p>
+<div class="highlight"><pre><span></span><code>tag = $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
+</code></pre></div>
+<p>That holds for <code>.stdout</code> and <code>.stderr</code>. <code>.code</code> and <code>.ok</code> never produce an error - reading
+them is how you handle a failure - so wrapping those in <code>??</code> or <code>catch</code> does nothing. See
+<a href="../shell-commands/#reading-one-result-inline">Reading One Result Inline</a>.</p>
 <h2 id="creating-your-own-errors">Creating Your Own Errors<a class="headerlink" href="#creating-your-own-errors" title="Permanent link">&para;</a></h2>
 <p>When writing your own functions, you can return errors using the <code>error(str)</code> function.
 If you're using type annotations, then functions that may return errors should reflect that in its return type: <code>T|error</code>.</p>

@@ -689,6 +689,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reading-one-result-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading One Result Inline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading One Result Inline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#which-one-to-reach-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which One To Reach For
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failing-softly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failing Softly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#an-accessor-is-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        An Accessor Is Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1727,6 +1777,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#reading-one-result-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading One Result Inline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading One Result Inline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#which-one-to-reach-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which One To Reach For
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failing-softly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failing Softly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#an-accessor-is-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        An Accessor Is Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1923,6 +2023,11 @@ into shell syntax.</p>
 <div class="highlight"><pre><span></span><code>cmd = `ls -la`
 $cmd
 </code></pre></div>
+<p><code>$</code> takes the command and nothing else. Anything after it reads the command's
+<em>result</em>, so a command you compute on the spot goes in parentheses:</p>
+<div class="highlight"><pre><span></span><code>cmds = [`ls -la`, `ls -l`]
+$(cmds[0])
+</code></pre></div>
 <p>By default, the stdout/stderr will be printed directly to the user's terminal as if they had invoked it directly themselves.</p>
 <div class="admonition tip">
 <p class="admonition-title">Prefer backticks for shell command strings</p>
@@ -1993,6 +2098,103 @@ wrong slot silently gets something else:</p>
 <p>Use <code>_</code> to discard a stream you don't want printed: <code>_ = $cmd</code> swallows stdout,
 and <code>_, _ = $cmd</code> swallows both streams for fully silent execution.</p>
 </div>
+<h2 id="reading-one-result-inline">Reading One Result Inline<a class="headerlink" href="#reading-one-result-inline" title="Permanent link">&para;</a></h2>
+<p>Capturing into a variable is right when you want several results, or want to
+keep working with them. When you want one value, put the accessor on the command
+and use it where you stand:</p>
+<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch &quot;unknown&quot;
+
+if not $`which docker`.ok:
+    print_err(&quot;docker is not installed&quot;)
+    exit(1)
+</code></pre></div>
+<p>There are four accessors, and one of them must immediately follow the command:</p>
+<table>
+<thead>
+<tr>
+<th>Accessor</th>
+<th>Type</th>
+<th>Fails if the command failed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.stdout</code></td>
+<td><code>str</code></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>.stderr</code></td>
+<td><code>str</code></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>.code</code></td>
+<td><code>int</code></td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>.ok</code></td>
+<td><code>bool</code></td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>Capture works the same way it does for assignment: the stream you name is
+captured, the other still reaches the terminal, and the two status accessors
+capture neither.</p>
+<h3 id="which-one-to-reach-for">Which One To Reach For<a class="headerlink" href="#which-one-to-reach-for" title="Permanent link">&para;</a></h3>
+<p><code>.stdout</code> and <code>.stderr</code> give you what the command produced, and fail if it
+failed - output a failed command never produced isn't an answer, so you get an
+error rather than an empty string:</p>
+<div class="highlight"><pre><span></span><code>files = $`git ls-files`.stdout.split(&quot;\n&quot;)
+</code></pre></div>
+<p><code>.ok</code> and <code>.code</code> describe the outcome and never fail. Asking about the outcome
+<em>is</em> handling it, which is what makes them the right way to test a command:</p>
+<div class="highlight"><pre><span></span><code>if not $`git diff --quiet`.ok:
+    print(&quot;you have uncommitted changes&quot;)
+
+// grep exits 1 for &quot;no match&quot; - that&#39;s data, not a failure
+matched = $`grep -q TODO src.rad`.code == 0
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">This differs from <code>code = $cmd</code></p>
+<p>Capturing the code in an assignment still propagates the error, because a
+statement's only product is its effect. Reading <code>.code</code> doesn't, because
+you've asked about the failure directly.</p>
+</div>
+<h3 id="failing-softly">Failing Softly<a class="headerlink" href="#failing-softly" title="Permanent link">&para;</a></h3>
+<p>Since the output accessors propagate, everything you'd use on a fallible
+function works here too:</p>
+<div class="highlight"><pre><span></span><code>tag = $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
+tag = $`git describe --tags`.stdout.trim() ?? &quot;untagged&quot;
+
+tag = $`git describe --tags`.stdout.trim() catch:
+    print_err(&quot;no tags yet&quot;)
+    tag = &quot;untagged&quot;
+</code></pre></div>
+<h3 id="an-accessor-is-required">An Accessor Is Required<a class="headerlink" href="#an-accessor-is-required" title="Permanent link">&para;</a></h3>
+<p>A command on its own isn't a value:</p>
+<div class="highlight"><pre><span></span><code>if $`git status --porcelain`:      // Error: RAD40025
+    print(&quot;dirty&quot;)
+</code></pre></div>
+<p>This is deliberate. In shell, <code>if cmd</code> tests the exit code but <code>if $(cmd)</code> tests
+whether it printed anything - two different questions that look nearly the same.
+Naming the accessor means the reader never has to guess which you meant:</p>
+<div class="highlight"><pre><span></span><code>// &quot;did it print anything?&quot;
+if $`git status --porcelain`.stdout.trim():
+    print(&quot;dirty&quot;)
+
+// &quot;did it succeed?&quot;
+if $`git diff --quiet`.ok:
+    print(&quot;clean&quot;)
+</code></pre></div>
+<p>Modifiers work inline, and the ⚡️ echo stays on so you can see which commands
+actually ran when <code>and</code> / <code>or</code> short-circuits:</p>
+<div class="highlight"><pre><span></span><code>tag = quiet $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
+</code></pre></div>
+<p>One last limit: the inline form gives you one value per run. When you want both
+streams from one command, capture them.</p>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Now that you understand how to capture output, let's talk about error handling.</p>
 <p>When a shell command exits with a non-zero exit code, it triggers error propagation - just like functions that return errors.
@@ -2224,7 +2426,7 @@ print(&quot;Docker image built successfully&quot;.green())
 <div class="highlight"><pre><span></span><code>tools = [&quot;git&quot;, &quot;docker&quot;, &quot;make&quot;]
 
 for tool in tools:
-    _, _ = $`which {tool}` catch:
+    if not quiet $`which {tool}`.ok:
         print_err(&quot;Required tool not found: {tool}&quot;)
         print_err(&quot;Please install {tool} before running this script&quot;)
         exit(1)
@@ -2234,6 +2436,8 @@ print(&quot;All prerequisites installed ✅&quot;.green())
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Shell commands use the <code>$</code> prefix and follow the same error model as functions</li>
+<li><strong>Reading one value:</strong> put <code>.stdout</code>, <code>.stderr</code>, <code>.code</code> or <code>.ok</code> on the command
+  and use it in place; <code>.stdout</code>/<code>.stderr</code> fail if the command did, <code>.code</code>/<code>.ok</code> don't</li>
 <li><strong>Error handling:</strong> Non-zero exit codes propagate errors unless handled with <code>catch:</code> blocks</li>
 <li><strong>Capture modes:</strong><ul>
 <li>None: output goes to terminal</li>

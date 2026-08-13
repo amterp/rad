@@ -1705,6 +1705,81 @@ Rad prints the remaining prompts along with the failure, so a single re-run with
 - **RAD20046** - prompts need answers, raised before the script runs.
 - **RAD20010** - an interactive prompt failed or was canceled.
 
+### RAD20048: Shell Command Exited Non-Zero
+
+A shell command finished with a non-zero exit code and nothing handled it.
+
+Shell commands are *critical by default* in Rad: a command that fails raises an
+error, and an error nobody handles ends the script. That's the opposite of
+bash, where a failing command is ignored unless you opt into `set -e`.
+
+#### Examples
+
+```rad
+$`false`            // Error: Command exited with code 1
+print("unreached")
+```
+
+The exit code carries through from whatever ran, so it tells you what happened:
+
+```rad
+$`grep nothing /etc/hosts`   // Error: Command exited with code 1 - grep found no match
+```
+
+#### How to Fix
+
+Decide whether the failure is fatal. If it is, you may want a better message
+than the default:
+
+```rad
+$`make build` catch:
+    print_err("Build failed - is the toolchain installed?")
+    exit(1)
+```
+
+If it isn't, say so. `catch: pass` continues without comment:
+
+```rad
+$`rm -f /tmp/scratch` catch:
+    pass
+```
+
+If the exit code is *data* rather than a failure - `grep` exiting 1 means "no
+match", not "something went wrong" - capture it. Capturing the code doesn't stop
+the error, so pair it with `catch:`:
+
+```rad
+code, stdout = $`grep hello /etc/hosts` catch:
+    stdout = ""
+
+if code == 0:
+    print("found: {stdout.trim()}")
+else:
+    print("no match")
+```
+
+#### Two Failures That Aren't The Command's
+
+Two cases report through this error even though the command never produced the
+code itself:
+
+- **You declined a `confirm`.** Declining reports exit code 1, so a declined
+  command behaves exactly like one that ran and failed. Capture targets are set
+  to empty output rather than left undefined.
+- **The command couldn't be started at all.** A binary that isn't installed
+  reports 127, and one that isn't executable reports 126 - the same numbers a
+  POSIX shell uses. A line on stderr names what went wrong.
+
+```rad
+$["definitely_not_installed"] catch:
+    print("not available, skipping")
+```
+
+#### See Also
+
+- `rad docs guide/shell-commands` - capture, modifiers, and the three command forms
+- `rad docs guide/error-handling` - `??`, the `catch` operator, and `catch:` blocks
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch
@@ -3132,3 +3207,127 @@ preference, so Rad reports it instead of guessing at what was meant.
 #### See Also
 
 - `rad docs guide/args` - declaring args and their constraints
+
+### RAD40025: Shell Command Used Without a Result Accessor
+
+A shell command was used where a value is wanted, but nothing said *which*
+result. Add `.stdout`, `.stderr`, `.code`, or `.ok`.
+
+```rad
+if $`git status --porcelain`:      // Error: which result?
+    print_err("Uncommitted changes!")
+```
+
+#### How to Fix
+
+Pick the accessor that matches the question you're asking:
+
+```rad
+// "did it print anything?"
+if $`git status --porcelain`.stdout.trim():
+    print_err("Uncommitted changes!")
+
+// "did it succeed?"
+if not $`which docker`.ok:
+    exit(1)
+```
+
+#### Which Accessor
+
+| Accessor  | Type  | Fails on non-zero exit |
+|-----------|-------|------------------------|
+| `.stdout` | `str` | yes                    |
+| `.stderr` | `str` | yes                    |
+| `.code`   | `int` | no                     |
+| `.ok`     | `bool`| no                     |
+
+`.stdout` and `.stderr` fail because output a failed command never produced
+isn't an answer. `.code` and `.ok` never fail - asking about the outcome *is*
+handling it, which is what makes them the right choice for testing a command.
+
+Capture follows the accessor, exactly as it follows target names in a named
+assignment: reading `.stdout` still lets stderr through to the terminal.
+
+#### Why There's No Default
+
+A bare command is ambiguous in a way that bites. In shell, `if cmd` tests the
+exit code, but `if $(cmd)` tests whether it printed anything - two different
+questions that look nearly identical. Requiring the accessor means the reader
+never has to guess which one you meant.
+
+#### Running a Command, Not Reading One
+
+If you only want to *run* the command, it's already a statement - no accessor
+needed:
+
+```rad
+$`make build`
+stdout = $`make build`
+```
+
+#### See Also
+
+- `rad docs guide/shell-commands` - capture, modifiers, and the three command forms
+- `rad docs RAD40026` - postfix that isn't an accessor
+
+### RAD40026: Postfix After a Shell Command Isn't a Result Accessor
+
+`$` takes only the command, so whatever follows reads the command's *result*.
+The only things that can follow are `.stdout`, `.stderr`, `.code`, and `.ok`.
+
+This fires on three shapes, and the first two used to mean something else.
+
+#### An Index or a Call on the Command
+
+```rad
+cmds = ["echo a", "echo b"]
+$cmds[1]                  // Error
+```
+
+`$` used to swallow the whole expression, so this indexed `cmds` *first* and ran
+whatever came back. Now `$` takes `cmds` as the command, and `[1]` is postfix
+with nothing to index. Wrap the command in parentheses to get the old meaning:
+
+```rad
+$(cmds[1])
+```
+
+That form has always parsed and always run, so this is a mechanical fix. The
+same applies to any computed command:
+
+```rad
+$(parts.join(" "))
+```
+
+#### A Method on the Command
+
+```rad
+$`echo hi`.upper()        // Error
+```
+
+This one ran `ECHO HI` - the method transformed the command text before it ran,
+not the output afterwards, and nothing reported it. Read a result first:
+
+```rad
+$`echo hi`.stdout.upper()
+```
+
+#### A Name That Isn't a Result
+
+```rad
+$`echo hi`.output         // Error: did you mean 'stdout'?
+```
+
+There are four results and no others. See `rad docs RAD40025` for what each one
+gives you.
+
+#### Why This Is an Error, Not a Warning
+
+Every one of these shapes either did something other than what it reads like, or
+has no meaning at all. There's no version of them worth keeping working.
+
+#### See Also
+
+- [Migrating to v0.12](https://amterp.dev/rad/migrations/v0.12/) - the full change and its rationale
+- `rad docs RAD40025` - using a command as a value with no accessor
+- `rad docs guide/shell-commands` - the three command forms

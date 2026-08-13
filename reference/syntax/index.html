@@ -1738,6 +1738,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reading-one-result-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading one result inline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#handling-failures-with-a-catch-block" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3359,6 +3370,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reading-one-result-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading one result inline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#handling-failures-with-a-catch-block" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4700,6 +4722,16 @@ stdout = $`cmd`
 stdout, stderr = $`cmd`
 stdout, stderr, code = $`cmd`
 </code></pre></div>
+<p><code>$</code> takes the command and nothing more: a command literal, a list, a variable
+holding a command string, or a parenthesized expression. Anything written <em>after</em>
+it reads the command's result (see <a href="#reading-one-result-inline">Reading one result inline</a>),
+so a computed command goes in parentheses:</p>
+<div class="highlight"><pre><span></span><code>cmds = [`ls -la`, `ls -l`]
+parts = [&quot;git&quot;, &quot;status&quot;]
+
+$(cmds[1])
+$(parts.join(&quot; &quot;))
+</code></pre></div>
 <h3 id="capture-assignment">Capture &amp; assignment<a class="headerlink" href="#capture-assignment" title="Permanent link">&para;</a></h3>
 <p><strong>Capture behavior</strong> depends on how many variables you assign. A stream you don't
 capture goes to the terminal; a stream you do capture goes only to your variable.</p>
@@ -4735,6 +4767,65 @@ code = $`cmd`             // only way to get the code without capturing a stream
 you <em>mix</em> reserved and unreserved names, because one unreserved name makes the
 whole statement positional:</p>
 <div class="highlight"><pre><span></span><code>code, output = $`cmd`     // &#39;code&#39; gets stdout! Warns: RAD40018
+</code></pre></div>
+<h3 id="reading-one-result-inline">Reading one result inline<a class="headerlink" href="#reading-one-result-inline" title="Permanent link">&para;</a></h3>
+<p>A shell command can be used as an expression when it's immediately followed by
+one of four accessors: <code>.stdout</code>, <code>.stderr</code>, <code>.code</code>, or <code>.ok</code>.</p>
+<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch &quot;unknown&quot;
+
+if $`git status --porcelain`.stdout.trim():
+    print_err(&quot;Uncommitted changes!&quot;)
+
+if not $`which docker`.ok:
+    exit(1)
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Accessor</th>
+<th>Type</th>
+<th>Fails on non-zero exit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.stdout</code></td>
+<td><code>str</code></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>.stderr</code></td>
+<td><code>str</code></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>.code</code></td>
+<td><code>int</code></td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>.ok</code></td>
+<td><code>bool</code></td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Capture follows the accessor</strong>, exactly as it follows target names in a named
+assignment: <code>.stdout</code> captures stdout and lets stderr through to the terminal,
+<code>.stderr</code> the reverse, and the two status accessors capture nothing.</p>
+<p><strong>The output accessors fail, the status accessors don't.</strong> <code>.stdout</code> and
+<code>.stderr</code> propagate a non-zero exit and compose with <code>??</code>, <code>catch</code> and <code>catch:</code>.
+<code>.code</code> and <code>.ok</code> never propagate - using them <em>is</em> handling the failure, which
+is what makes them the right way to test a command. Note this differs from
+statement-form <code>code = $cmd</code>, which still propagates.</p>
+<p><strong>There is no truthiness.</strong> A command with no accessor is a check-time error
+(<code>RAD40025</code>), because shell's <code>if cmd</code> (exit code) and <code>if $(cmd)</code> (printed
+anything) are different questions that look alike.</p>
+<p><strong>One value inline.</strong> The expression form never gives you both streams from one
+run; use assignment when you need more than one.</p>
+<p><code>quiet</code> and <code>confirm</code> work here too, and the ⚡️ echo stays on - under <code>and</code> /
+<code>or</code> short-circuit it shows which commands actually ran.</p>
+<div class="highlight"><pre><span></span><code>tag = quiet $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
 </code></pre></div>
 <h3 id="handling-failures-with-a-catch-block">Handling failures with a <code>catch</code> block<a class="headerlink" href="#handling-failures-with-a-catch-block" title="Permanent link">&para;</a></h3>
 <p>Use a suffix <code>catch:</code> block to handle non‑zero exit codes. Variables are already assigned to the actual results inside the block; you may log or reassign fallbacks, then execution continues.</p>
