@@ -125,11 +125,13 @@ Subsystems within the one Go module:
 - `docs-web/` - MkDocs site; `tools/` - codegen generators; `vsc-extension/` -
   VS Code extension; `ci/` - Rad scripts run by GitHub Actions.
 
-The `.rad` scripts in `ci/` and `benchmark/` are executed by the **released**
-`rad`, not by the build under test - so they must stay compatible with the last
-release, not with HEAD. A script written against unreleased semantics passes
-`make test` locally and fails CI. Verify changes to them with the installed
-`rad`, not `./bin/radd`.
+The `.rad` scripts in `ci/` are executed by the **released** `rad`, not by the
+build under test - so they must stay compatible with the last release, not with
+HEAD. A script written against unreleased semantics passes `make test` locally
+and fails CI. Verify changes to them with the installed `rad`, not `./bin/radd`.
+
+`benchmark/` is different: nothing in CI runs it. It is a macOS-only harness you
+run by hand, and it measures `./bin/radd`, so it tracks HEAD.
 
 ### Execution pipeline
 
@@ -185,8 +187,12 @@ built-in:
 the runtime function registry to `rts/embedded/functions.txt` for the checker's
 did-you-mean suggestions. `make generate` handles it.
 
-Code snippets in the user docs are themselves executed by tests
-(`core/testing/docs_snippets_test.go`), so docs edits can fail the suite.
+Code snippets in the user docs are run through `rad check` by tests
+(`core/testing/docs_snippets_test.go`), so docs edits can fail the suite. They
+are checked, never executed - a snippet may shell out or hit the network
+without CI doing either. A snippet that is *meant* to be invalid (error docs
+are full of them) needs an entry in `core/testing/docs_snippet_tolerances.go`
+naming the codes it may emit.
 
 ### Error codes
 
