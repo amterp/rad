@@ -159,9 +159,37 @@ Code: `print_stmt.go` `formatWhile`
 ### F31 - Typed assignment `implemented`
 A space after the type colon and around `=`. The declared type is emitted
 verbatim for now (canonical `|`-union spacing is a follow-up). A trailing
-`catch` block falls back to verbatim until postfix-catch is handled.
+`catch` block falls back to verbatim - see F45.
 `x:int=1` → `x: int = 1`
 Code: `print_stmt.go` `formatTypedAssign`
+
+### F45 - Statements with a trailing `catch:` block `implemented`
+A statement carrying a postfix `catch:` block is emitted verbatim, whole. The
+block's body would otherwise be dropped, which the structural-equivalence guard
+rejects - so before this rule the formatter silently declined to format the file
+at all.
+
+This is a placeholder for real formatting, not a decision that these should stay
+unformatted. It covers assignment, typed assignment and expression statements,
+which is every statement that can carry one. Shell commands hit it constantly
+now that they are ordinary statements rather than their own rule, so it is worth
+more than the three call sites suggest.
+`$\`make build\` catch:` → unchanged
+Code: `print_stmt.go` `formatAssign`, `formatTypedAssign`, `formatExprStmt`
+
+### F46 - Shell command `implemented`
+A shell invocation is emitted verbatim, modifiers included. What is inside `$`
+is shell, not Rad, so a Rad formatter has nothing to canonicalize there. The
+`quiet` / `confirm` prefixes are Rad and could be normalized, but they are part
+of the same node - splitting them out is follow-on work, not a decision that
+their spacing is fine.
+
+Stated as a rule rather than left to the default, because shell used to be its
+own statement rule that never reached the expression printer at all. Now that it
+is an ordinary primary, inheriting verbatim silently would look like an
+oversight rather than the decision it is.
+`x   =   $\`ls\`` → `x = $\`ls\`` (the assignment is formatted; the command is not)
+Code: `print_expr.go` `formatExpr`
 
 ---
 

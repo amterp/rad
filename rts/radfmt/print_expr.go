@@ -80,6 +80,16 @@ func (p *printer) formatExpr(n *ts.Node) Doc {
 		// normalization is a deliberate follow-up.)
 		return p.verbatim(n)
 
+	case rl.K_SHELL_CMD:
+		// The command text is shell, not Rad, so there is nothing here for a
+		// Rad formatter to canonicalize. Stated explicitly rather than left to
+		// the default: shell used to be a statement rule that never reached
+		// this switch, so inheriting verbatim by accident would hide the fact
+		// that it is a choice.
+		//
+		// [F46] a shell invocation is emitted verbatim
+		return p.verbatim(n)
+
 	case rl.K_OR_EXPR, rl.K_AND_EXPR, rl.K_COMPARE_EXPR, rl.K_ADD_EXPR, rl.K_MULT_EXPR:
 		return p.formatBinary(n)
 

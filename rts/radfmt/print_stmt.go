@@ -12,7 +12,12 @@ const (
 )
 
 // formatExprStmt formats a bare expression statement (e.g. a call).
+//
+// [F45] a statement with a trailing `catch:` block is emitted verbatim
 func (p *printer) formatExprStmt(n *ts.Node) Doc {
+	if childByField(n, rl.F_CATCH) != nil {
+		return p.verbatim(n)
+	}
 	if e := childByField(n, rl.F_EXPR); e != nil {
 		return p.formatExpr(e)
 	}
@@ -22,7 +27,11 @@ func (p *printer) formatExprStmt(n *ts.Node) Doc {
 // formatAssign formats `a = expr` and multi-assign `a, b = expr`.
 //
 // [F12] one space around `=`    [F13] multi-assign: ", " between targets
+// [F45] a statement with a trailing `catch:` block is emitted verbatim
 func (p *printer) formatAssign(n *ts.Node) Doc {
+	if childByField(n, rl.F_CATCH) != nil {
+		return p.verbatim(n)
+	}
 	var lefts []Doc
 	var right *ts.Node
 	for i, c := range childPtrs(n) {
