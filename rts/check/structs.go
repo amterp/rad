@@ -157,6 +157,18 @@ func NewDiagnosticErrorFromSpan(span rl.Span, originalSrc string, msg string, co
 	return NewDiagnosticFromSpan(span, originalSrc, Error, msg, &code)
 }
 
+func NewDiagnosticErrorFromSpanWithSuggestion(
+	span rl.Span,
+	originalSrc string,
+	msg string,
+	code rl.Error,
+	suggestion string,
+) Diagnostic {
+	diag := NewDiagnosticFromSpan(span, originalSrc, Error, msg, &code)
+	diag.Suggestion = &suggestion
+	return diag
+}
+
 func NewDiagnosticHintFromSpan(span rl.Span, originalSrc string, msg string, code rl.Error) Diagnostic {
 	return NewDiagnosticFromSpan(span, originalSrc, Hint, msg, &code)
 }

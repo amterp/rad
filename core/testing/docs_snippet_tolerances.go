@@ -325,6 +325,12 @@ var docSnippetTolerances = map[string]Tolerance{
 		Reason:        "demo: exact-duplicate `case \"a\":` arms.",
 	},
 
+	"core/error_docs/40025.md#f3f3b5db": {ExpectedCodes: []string{"RAD40025"}, Reason: "error_docs demo: shows a command used as a value with no accessor"},
+	"core/error_docs/40026.md#72836e4f": {ExpectedCodes: []string{"RAD40026"}, Reason: "error_docs demo: shows a method on the command instead of its result"},
+	"core/error_docs/40026.md#f3a70890": {ExpectedCodes: []string{"RAD40026"}, Reason: "error_docs demo: shows an accessor name that isn't one of the four"},
+	"core/error_docs/40026.md#f515e1ea": {ExpectedCodes: []string{"RAD40026"}, Reason: "error_docs demo: shows the pre-v0.12 computed-command spelling"},
+	"core/error_docs/40026.md#86daec83": {ExpectedCodes: []string{"RAD20028"}, Reason: "error_docs fix example: `parts` stands in for the reader's own variable"},
+	"core/error_docs/40026.md#ca1b628a": {ExpectedCodes: []string{"RAD20028"}, Reason: "error_docs fix example: `cmds` stands in for the reader's own variable"},
 	// ---- docs-web/docs/examples/* ----------------------------------
 	// Tutorial pages build up scripts incrementally. Intermediate
 	// snippets call into functions defined later, show fragments

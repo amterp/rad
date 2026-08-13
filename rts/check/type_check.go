@@ -2394,6 +2394,31 @@ func (tc *typeChecker) walkShell(s *rl.Shell) {
 	}
 }
 
+// synthShellExpr types an inline invocation by its accessor. The stream
+// accessors reuse shellStreamType, so an inline `.stdout` and a captured
+// `stdout` target can never disagree about being a string.
+//
+// The command operand is walked for its own sake - it may hold identifiers and
+// interpolations that need binding - but contributes nothing to the result
+// type, which the accessor alone decides.
+func (tc *typeChecker) synthShellExpr(n *rl.ShellExpr) rl.TypingT {
+	_ = tc.synth(n.Cmd)
+
+	switch n.Accessor {
+	case rl.ShellAccessorStdout:
+		return shellStreamType(rl.ShellStdout)
+	case rl.ShellAccessorStderr:
+		return shellStreamType(rl.ShellStderr)
+	case rl.ShellAccessorCode:
+		return shellStreamType(rl.ShellCode)
+	case rl.ShellAccessorOk:
+		return rl.NewBoolType()
+	}
+	// No accessor: addShellExprAccessorErrors is about to reject this, so
+	// stay quiet rather than piling a type error on top of the real one.
+	return rl.NewDynamicType()
+}
+
 // shellStreamType maps a captured stream to its static type. An unrecognized
 // stream can't arise from a well-formed statement; Dynamic keeps it harmless.
 func shellStreamType(stream rl.ShellStream) rl.TypingT {
@@ -2781,6 +2806,8 @@ func (tc *typeChecker) synth(n rl.Node) rl.TypingT {
 		return tc.record(v, rl.NewNullType())
 	case *rl.Identifier:
 		return tc.synthIdentifier(v)
+	case *rl.ShellExpr:
+		return tc.record(v, tc.synthShellExpr(v))
 	case *rl.Call:
 		return tc.synthCall(v, nil)
 	case *rl.VarPath:

@@ -210,11 +210,7 @@ func (c *RadCheckerImpl) addShellInterpolationQuoteErrors(d *[]Diagnostic) {
 	}
 
 	walkAST(c.ast, func(node rl.Node) {
-		shell, ok := node.(*rl.Shell)
-		if !ok {
-			return
-		}
-		lit, ok := shell.Cmd.(*rl.LitString)
+		lit, ok := shellCommandLiteral(node)
 		if !ok || lit.Simple {
 			return
 		}
@@ -228,6 +224,24 @@ func (c *RadCheckerImpl) addShellInterpolationQuoteErrors(d *[]Diagnostic) {
 			*d = append(*d, diag)
 		}
 	})
+}
+
+// shellCommandLiteral returns the command literal of a shell invocation in
+// either form. Both quote their interpolations identically, so anything
+// checking command text has to look at both or it silently covers half the
+// language.
+func shellCommandLiteral(node rl.Node) (*rl.LitString, bool) {
+	var cmd rl.Node
+	switch n := node.(type) {
+	case *rl.Shell:
+		cmd = n.Cmd
+	case *rl.ShellExpr:
+		cmd = n.Cmd
+	default:
+		return nil, false
+	}
+	lit, ok := cmd.(*rl.LitString)
+	return lit, ok
 }
 
 // quotedInterpolations returns the interpolation segments of a command literal

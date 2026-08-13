@@ -91,6 +91,21 @@ func structuredFixFor(snap *DocumentVersion, d check.Diagnostic) (lsp.CodeAction
 		// users typically need.
 		target := fromByteRange(checkRangeToLSP(d.Range), snap)
 		return lsp.NewQuickFix("Rename to '"+names[0]+"'", snap.uri, target, names[0]), true
+	case rl.ErrShellPostfixNotAccessor:
+		// Only the computed-command shape gets a fix. `$cmds[1]` meant
+		// `$(cmds[1])` before v0.12, so the edit is mechanical and always
+		// right. The other two shapes under this code - a method on the
+		// command, an unknown accessor name - have no single correct
+		// rewrite, and offering a confident wrong one is worse than
+		// leaving the message to explain. ParenthesizedCommandFix returns
+		// the placeholder shape when the source isn't what we expect, so
+		// gate on RangedSrc holding a real invocation.
+		if !strings.Contains(d.RangedSrc, "$") {
+			return lsp.CodeAction{}, false
+		}
+		replacement := check.ParenthesizedCommandFix(d.RangedSrc)
+		target := fromByteRange(checkRangeToLSP(d.Range), snap)
+		return lsp.NewQuickFix("Wrap the command in parentheses", snap.uri, target, replacement), true
 	}
 	return lsp.CodeAction{}, false
 }
