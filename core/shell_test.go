@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"io/fs"
 	"os/exec"
 	"testing"
 
@@ -199,4 +200,43 @@ func TestShellExecFlag(t *testing.T) {
 			assert.Equal(t, tt.want, shellExecFlag(tt.shellPath))
 		})
 	}
+}
+
+func Test_SpawnExitCode(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want int
+	}{
+		{"not found in PATH", exec.ErrNotFound, 127},
+		{"no such file", &fs.PathError{Op: "fork/exec", Err: fs.ErrNotExist}, 127},
+		{"not executable", &fs.PathError{Op: "fork/exec", Err: fs.ErrPermission}, 126},
+		{"wrapped by exec.Error", &exec.Error{Name: "foo", Err: fs.ErrPermission}, 126},
+		// Anything we can't classify still didn't run, so 127 rather than a
+		// code the script might mistake for the command's own.
+		{"unclassified", errors.New("something else"), 127},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, spawnExitCode(tt.err))
+		})
+	}
+}
+
+func Test_SpawnFailureMessage(t *testing.T) {
+	argv := ShellInvocation{Argv: []string{"mytool", "--flag"}}
+
+	assert.Equal(t, "mytool: command not found\n",
+		spawnFailureMessage(argv, exec.ErrNotFound))
+	assert.Equal(t, "mytool: permission denied\n",
+		spawnFailureMessage(argv, &fs.PathError{Op: "fork/exec", Err: fs.ErrPermission}))
+	assert.Equal(t, "mytool: could not start: boom\n",
+		spawnFailureMessage(argv, errors.New("boom")))
+
+	// The string form only fails to start when there's no shell at all, and
+	// resolveShell's message already explains that in full - so it passes
+	// through rather than being re-worded around a binary name.
+	str := ShellInvocation{Command: "echo hi"}
+	assert.Equal(t, "no shell found\n",
+		spawnFailureMessage(str, errors.New("no shell found")))
 }

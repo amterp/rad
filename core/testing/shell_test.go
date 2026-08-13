@@ -613,3 +613,32 @@ func Test_ShellCmd_StringVariableStaysVerbatim(t *testing.T) {
 	assertShellInvoked(t, core.ShellInvocation{Command: `echo a b`})
 	assertNoErrors(t)
 }
+
+// A command that cannot be started is an ordinary mistake - a binary that isn't
+// installed - not a Rad bug. Before this was fixed it panicked with a bare Go
+// string, which isn't a RadPanic, so `catch:` couldn't see it and the user got
+// RAD20042 "This is a bug in Rad" plus a Go stack trace. These two run the real
+// executor because spawning is exactly the part the mock stands in for.
+func Test_ShellCmd_Argv_SpawnFailureIsCatchable(t *testing.T) {
+	script := `
+code = $["rad_no_such_binary_zzz"] catch:
+    print("caught {code}")
+print("continued")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").RealShell())
+
+	assertOutput(t, stdOutBuffer, "caught 127\ncontinued\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellCmd_Argv_SpawnFailureExitsWith127(t *testing.T) {
+	script := `$["rad_no_such_binary_zzz"]`
+	setupAndRun(t, NewTestParams(script, "--color=never").RealShell())
+
+	// Same surface the string form gets from the shell: 127, and a stderr line
+	// naming what couldn't be found.
+	assertErrorContains(t, 1,
+		"rad_no_such_binary_zzz: command not found",
+		"Command exited with code 127",
+	)
+}

@@ -100,6 +100,9 @@ var (
 	// needs distinguishable values.
 	shellResponder func(invocation core.ShellInvocation) (stdout, stderr string, exitCode int)
 	runnerInput    = newRunnerInput()
+	// mockShellExec is the executor newRunnerInput built, kept so resetTestState
+	// can restore it after a TestParams.RealShell() run swapped it out.
+	mockShellExec *func(ctx context.Context, invocation core.ShellInvocation) (string, string, int)
 )
 
 type ErrorOrExit struct {
@@ -146,6 +149,7 @@ func newRunnerInput() core.RunnerInput {
 		}
 		return true, nil
 	}
+	mockShellExec = &shellExec
 	requester := core.NewRequester()
 	requester.SetCaptureCallback(func(inv core.HttpRequest) {
 		httpInvocations = append(httpInvocations, inv)
@@ -161,7 +165,7 @@ func newRunnerInput() core.RunnerInput {
 		RForceExit: &testForceExitFunc,
 		RClock:     core.NewFixedClock(2019, 12, 13, 14, 15, 16, 123123123, time.UTC),
 		RSleep:     &sleepFunc,
-		RShell:     &shellExec,
+		RShell:     mockShellExec,
 		RConfirm:   &confirmExec,
 		// Default to a fake signal source so tests do not mutate the real
 		// process's signal handlers (signal.Notify / signal.Ignore are
@@ -206,6 +210,7 @@ type TestParams struct {
 	shellResponder   func(invocation core.ShellInvocation) (string, string, int)
 	keys             []string
 	noTerminal       bool
+	realShell        bool
 }
 
 func NewTestParams(script string, args ...string) *TestParams {
@@ -264,6 +269,15 @@ func (tp *TestParams) Keys(keys ...string) *TestParams {
 // a cron run, or an agent's tool call. This is what exercises the pre-flight
 // guard and the --reply paths; without it, tests inherit "a terminal exists" so
 // the rest of the suite can keep driving prompts with scripted keys.
+// RealShell runs commands through the production executor instead of the mock,
+// so the test exercises process spawning for real. Reserve it for behavior the
+// mock cannot express - a command that cannot be started at all, say - since
+// everything else is cheaper and more controllable through ShellResponder.
+func (tp *TestParams) RealShell() *TestParams {
+	tp.realShell = true
+	return tp
+}
+
 func (tp *TestParams) NoTerminal() *TestParams {
 	tp.noTerminal = true
 	return tp
@@ -301,6 +315,12 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 
 	if tp.shellResponder != nil {
 		shellResponder = tp.shellResponder
+	}
+
+	if tp.realShell {
+		// nil hands RunnerInput back to realShellExecutor; resetTestState puts
+		// the mock back so this doesn't leak into the next test.
+		runnerInput.RShell = nil
 	}
 
 	args := tp.args
@@ -404,6 +424,7 @@ func resetTestState() {
 	confirmInvocations = make([]string, 0)
 	confirmResponder = nil
 	shellResponder = nil
+	runnerInput.RShell = mockShellExec
 	core.ResetGlobals()
 	// ResetGlobals sets color.NoColor = false (production default).
 	// Tests should default to no color; individual tests opt in via --color=always.

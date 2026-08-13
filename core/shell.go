@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"strings"
@@ -386,7 +387,17 @@ func newShellResult(exitCode int, stdout, stderr string, captureStdout, captureS
 // realShellExecutor is the production implementation of shell command execution
 // warning: as of writing, this is *not* covered in tests
 func realShellExecutor(ctx context.Context, invocation ShellInvocation) (string, string, int) {
-	cmd := resolveCmd(invocation)
+	// Echo before anything can fail, so a command we couldn't even start still
+	// tells the user which command that was.
+	if !invocation.IsQuiet {
+		RP.RadStderrf("⚡️ %s\n", invocation.Display())
+	}
+
+	cmd, resolveErr := resolveCmd(invocation)
+	if resolveErr != nil {
+		return reportSpawnFailure(invocation, resolveErr)
+	}
+
 	var stdoutBuf, stderrBuf bytes.Buffer
 
 	if invocation.CaptureStdout {
@@ -401,17 +412,13 @@ func realShellExecutor(ctx context.Context, invocation ShellInvocation) (string,
 		cmd.Stderr = RIo.StdErr
 	}
 
-	if !invocation.IsQuiet {
-		RP.RadStderrf("⚡️ %s\n", invocation.Display())
-	}
-
 	// Start+Wait with a select on ctx, so a signal arriving during the
 	// subprocess wakes us promptly. Because we use a shared process group
 	// (today's default), the subprocess will have received the same signal
 	// and is expected to terminate on its own. We still wait for its actual
 	// exit code so we can report it accurately.
 	if err := cmd.Start(); err != nil {
-		panic(fmt.Sprintf("Failed to start command: %v\n", err))
+		return reportSpawnFailure(invocation, err)
 	}
 
 	waitErr := make(chan error, 1)
@@ -437,6 +444,9 @@ func realShellExecutor(ctx context.Context, invocation ShellInvocation) (string,
 		if errors.As(err, &exitErr) {
 			exitCode = exitErr.ExitCode()
 		} else {
+			// Deliberately an internal bug, unlike a spawn failure: the command
+			// started, so waiting on it should not be able to fail for any
+			// reason the script author could have caused or can act on.
 			panic(fmt.Sprintf("Failed to run command: %v\nStderr: %s\n", err, stderrBuf.String()))
 		}
 	}
@@ -453,30 +463,82 @@ func realShellExecutor(ctx context.Context, invocation ShellInvocation) (string,
 	return stdout, stderr, exitCode
 }
 
-// resolveCmd prepares an *exec.Cmd for either invocation form. Panics with a
-// user-facing message if the shell-string form can't find a shell.
+// reportSpawnFailure turns "we could not start this at all" into the shape a
+// command that ran and failed already has: a message on stderr, and a non-zero
+// exit code the script can catch.
+//
+// This used to panic with a bare Go string. That isn't a *RadPanic, so
+// `catch:` couldn't catch it and naming a binary that isn't installed - an
+// ordinary mistake - reported as an internal Rad bug with a stack trace and
+// asked the user to file an issue.
+func reportSpawnFailure(invocation ShellInvocation, err error) (string, string, int) {
+	msg := spawnFailureMessage(invocation, err)
+	code := spawnExitCode(err)
+	if invocation.CaptureStderr {
+		return "", msg, code
+	}
+	// Not captured, so nothing downstream will surface it. Print it, or the
+	// script sees an exit code with no explanation.
+	RP.RadStderrf("%s", msg)
+	return "", "", code
+}
+
+// spawnExitCode maps a failure to start onto the code a POSIX shell reports for
+// the same failure. The string form already gets these numbers from the shell
+// it runs under, so this is the argv form catching up: `.ok`, `.code` and
+// `catch:` then mean the same thing whichever form the author wrote.
+func spawnExitCode(err error) int {
+	if errors.Is(err, fs.ErrPermission) {
+		return 126 // found, but not executable
+	}
+	return 127 // not found, and anything else we couldn't get off the ground
+}
+
+// spawnFailureMessage explains a spawn failure in the register a shell uses,
+// since that's what the string form of the same mistake prints.
+func spawnFailureMessage(invocation ShellInvocation, err error) string {
+	var name string
+	if invocation.IsArgv() {
+		name = invocation.Argv[0]
+	} else {
+		// The string form only fails to start when there's no shell to run it
+		// under, and resolveShell's error already says so in full.
+		return fmt.Sprintf("%v\n", err)
+	}
+
+	switch {
+	case errors.Is(err, fs.ErrPermission):
+		return fmt.Sprintf("%s: permission denied\n", name)
+	case errors.Is(err, exec.ErrNotFound), errors.Is(err, fs.ErrNotExist):
+		return fmt.Sprintf("%s: command not found\n", name)
+	default:
+		return fmt.Sprintf("%s: could not start: %v\n", name, err)
+	}
+}
+
+// resolveCmd prepares an *exec.Cmd for either invocation form. Returns an error
+// if the shell-string form can't find a shell to run under.
 //
 // The argv form deliberately does not resolve a shell at all - that's the whole
 // point of it, and it's why this form works on platforms where we have no
 // usable shell story.
-func resolveCmd(invocation ShellInvocation) *exec.Cmd {
+func resolveCmd(invocation ShellInvocation) (*exec.Cmd, error) {
 	if invocation.IsArgv() {
 		cmd := exec.Command(invocation.Argv[0], invocation.Argv[1:]...)
 		cmd.Stdin = RIo.StdIn.Unwrap()
-		return cmd
+		return cmd, nil
 	}
 	return resolveCmdSimple(invocation.Command)
 }
 
 // resolveCmdSimple resolves the shell to use for the given command string and
-// returns a prepared *exec.Cmd. Panics with a user-facing message if no shell
-// can be found.
-func resolveCmdSimple(cmdStr string) *exec.Cmd {
+// returns a prepared *exec.Cmd, or an error if no shell can be found.
+func resolveCmdSimple(cmdStr string) (*exec.Cmd, error) {
 	path, flag, err := resolveShell(os.Getenv, exec.LookPath, IsWindows())
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
-	return buildCmd(path, flag, cmdStr)
+	return buildCmd(path, flag, cmdStr), nil
 }
 
 // resolveShell picks a shell to use for executing a command string. It is a
