@@ -1705,6 +1705,81 @@ Rad prints the remaining prompts along with the failure, so a single re-run with
 - **RAD20046** - prompts need answers, raised before the script runs.
 - **RAD20010** - an interactive prompt failed or was canceled.
 
+### RAD20048: Shell Command Exited Non-Zero
+
+A shell command finished with a non-zero exit code and nothing handled it.
+
+Shell commands are *critical by default* in Rad: a command that fails raises an
+error, and an error nobody handles ends the script. That's the opposite of
+bash, where a failing command is ignored unless you opt into `set -e`.
+
+#### Examples
+
+```rad
+$`false`            // Error: Command exited with code 1
+print("unreached")
+```
+
+The exit code carries through from whatever ran, so it tells you what happened:
+
+```rad
+$`grep nothing /etc/hosts`   // Error: Command exited with code 1 - grep found no match
+```
+
+#### How to Fix
+
+Decide whether the failure is fatal. If it is, you may want a better message
+than the default:
+
+```rad
+$`make build` catch:
+    print_err("Build failed - is the toolchain installed?")
+    exit(1)
+```
+
+If it isn't, say so. `catch: pass` continues without comment:
+
+```rad
+$`rm -f /tmp/scratch` catch:
+    pass
+```
+
+If the exit code is *data* rather than a failure - `grep` exiting 1 means "no
+match", not "something went wrong" - capture it. Capturing the code doesn't stop
+the error, so pair it with `catch:`:
+
+```rad
+code, stdout = $`grep hello /etc/hosts` catch:
+    stdout = ""
+
+if code == 0:
+    print("found: {stdout.trim()}")
+else:
+    print("no match")
+```
+
+#### Two Failures That Aren't The Command's
+
+Two cases report through this error even though the command never produced the
+code itself:
+
+- **You declined a `confirm`.** Declining reports exit code 1, so a declined
+  command behaves exactly like one that ran and failed. Capture targets are set
+  to empty output rather than left undefined.
+- **The command couldn't be started at all.** A binary that isn't installed
+  reports 127, and one that isn't executable reports 126 - the same numbers a
+  POSIX shell uses. A line on stderr names what went wrong.
+
+```rad
+$["definitely_not_installed"] catch:
+    print("not available, skipping")
+```
+
+#### See Also
+
+- `rad docs guide/shell-commands` - capture, modifiers, and the three command forms
+- `rad docs guide/error-handling` - `??`, the `catch` operator, and `catch:` blocks
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch

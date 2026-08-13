@@ -114,7 +114,9 @@ func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 		assignResults(result)
 
 		if result.exitCode != 0 {
-			err := NewErrorStrf("Command exited with code %d", result.exitCode).SetSpan(nodeSpanPtr(shell))
+			err := NewErrorStrf("Command exited with code %d", result.exitCode).
+				SetCode(rl.ErrShellNonZeroExit).
+				SetSpan(nodeSpanPtr(shell))
 			rp := &RadPanic{
 				ErrV:        newRadValue(i, shell, err),
 				ShellResult: &result,

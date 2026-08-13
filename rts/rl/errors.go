@@ -104,6 +104,7 @@ const (
 	ErrShellCmdValue              = "20045"
 	ErrPromptsNeedAnswers         = "20046"
 	ErrPromptUnanswerable         = "20047"
+	ErrShellNonZeroExit           = "20048"
 
 	// 3xxxx Type Errors
 	ErrTypeMismatch              Error = "30001"

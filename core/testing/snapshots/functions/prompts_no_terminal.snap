@@ -257,14 +257,14 @@ print("after")
 1:no
 ### NO_TERMINAL ###
 ### STDERR ###
-error[RAD20000]: Command exited with code 1
+error[RAD20048]: Command exited with code 1
   --> <script>:1:1
   |
 1 | confirm $`echo ran-it`
   | ^^^^^^^^^^^^^^^^^^^^^^
 2 | print("after")
   |
-  = info: rad docs RAD20000
+  = info: rad docs RAD20048
 ### EXIT ###
 1
 
