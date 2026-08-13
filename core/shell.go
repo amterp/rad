@@ -74,6 +74,36 @@ func (s ShellInvocation) Display() string {
 // it's canceled (the subprocess shares Rad's process group, so it will have received the signal too).
 type ShellExecutor func(ctx context.Context, invocation ShellInvocation) (string, string, int)
 
+// shellSpec is everything the executor needs, independent of how the
+// invocation was written. The statement form and the inline form differ in what
+// they capture and in when a non-zero exit raises - but the command echo, the
+// confirm prompt, --reply handling and command evaluation have to stay
+// identical between them. Sharing one struct makes that structural, rather than
+// two implementations kept in step by hand.
+type shellSpec struct {
+	// node is what spans, --reply lookups and errors are attributed to.
+	node rl.Node
+	// cmd is the command operand: a string literal, an identifier holding a
+	// command string, or a list of arguments.
+	cmd           rl.Node
+	captureStdout bool
+	captureStderr bool
+	isQuiet       bool
+	isConfirm     bool
+}
+
+func shellSpecOf(shell *rl.Shell) shellSpec {
+	captureStdout, captureStderr := rl.ShellCaptures(shell.Targets)
+	return shellSpec{
+		node:          shell,
+		cmd:           shell.Cmd,
+		captureStdout: captureStdout,
+		captureStderr: captureStderr,
+		isQuiet:       shell.IsQuiet,
+		isConfirm:     shell.IsConfirm,
+	}
+}
+
 func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 	targets := shell.Targets
 
@@ -109,7 +139,7 @@ func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 		return VoidNormal
 	}, func() EvalResult {
 		// Normal execution
-		result := i.executeShellCmd(shell)
+		result := i.executeShellCmd(shellSpecOf(shell))
 
 		assignResults(result)
 
@@ -128,47 +158,45 @@ func (i *Interpreter) executeShellStmt(shell *rl.Shell) EvalResult {
 	})
 }
 
-func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
-	command, argv := i.evalShellCommand(shell)
-
-	captureStdout, captureStderr := rl.ShellCaptures(shell.Targets)
+func (i *Interpreter) executeShellCmd(spec shellSpec) shellResult {
+	command, argv := i.evalShellCommand(spec)
 
 	invocation := ShellInvocation{
 		Command:       command,
 		Argv:          argv,
-		CaptureStdout: captureStdout,
-		CaptureStderr: captureStderr,
-		IsQuiet:       shell.IsQuiet,
-		IsConfirm:     shell.IsConfirm,
+		CaptureStdout: spec.captureStdout,
+		CaptureStderr: spec.captureStderr,
+		IsQuiet:       spec.isQuiet,
+		IsConfirm:     spec.isConfirm,
 	}
 
-	if FlagConfirmShellCommands.Value || shell.IsConfirm {
+	if FlagConfirmShellCommands.Value || spec.isConfirm {
 		// Only author-marked `confirm $` commands are addressable by --reply:
 		// they're the ones the static walk can see. A blanket --confirm-shell run
 		// with no terminal is refused up front (see runPromptPreflight), so it
 		// never reaches here expecting an answer.
 		approved := false
 
-		if answer, outcome := takeReply(shell); outcome != prompts.NoReply {
+		if answer, outcome := takeReply(spec.node); outcome != prompts.NoReply {
 			if outcome != prompts.Answered {
-				errVal := newRadValue(i, shell,
+				errVal := newRadValue(i, spec.node,
 					unansweredPromptErr(outcome, "The shell confirmation for "+invocation.Display()))
-				i.NewRadPanic(shell, errVal).Panic()
+				i.NewRadPanic(spec.node, errVal).Panic()
 			}
 			approved = answer.Bool
 		} else {
 			ok, err := RConfirm(invocation.Display(), "Run above command? [Y/n] > ")
 			if err != nil {
 				if errors.Is(err, radish.ErrNotInteractive) {
-					errVal := newRadValue(i, shell,
+					errVal := newRadValue(i, spec.node,
 						unansweredPromptErr(prompts.NoReply, "The shell confirmation for "+invocation.Display()))
-					i.NewRadPanic(shell, errVal).Panic()
+					i.NewRadPanic(spec.node, errVal).Panic()
 				}
 				// User aborted the prompt (Ctrl-C / Esc). Surface a catchable
 				// user-input error, consistent with confirm()/pick()/input(),
 				// rather than crashing as an internal bug.
-				errVal := newRadValue(i, shell, NewErrorStrf("Shell command aborted: %v", err).SetCode(rl.ErrUserInput))
-				i.NewRadPanic(shell, errVal).Panic()
+				errVal := newRadValue(i, spec.node, NewErrorStrf("Shell command aborted: %v", err).SetCode(rl.ErrUserInput))
+				i.NewRadPanic(spec.node, errVal).Panic()
 			}
 			approved = ok
 		}
@@ -178,12 +206,12 @@ func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 			// (a catchable "Command exited with code 1"). Populate captures with
 			// empty output so capture targets stay defined, just like a command
 			// that actually ran and exited non-zero would.
-			return newShellResult(1, "", "", captureStdout, captureStderr)
+			return newShellResult(1, "", "", spec.captureStdout, spec.captureStderr)
 		}
 	}
 
 	stdout, stderr, exitCode := RShell(i.signals.Ctx(), invocation)
-	return newShellResult(exitCode, stdout, stderr, captureStdout, captureStderr)
+	return newShellResult(exitCode, stdout, stderr, spec.captureStdout, spec.captureStderr)
 }
 
 // evalShellCommand evaluates a shell command expression into the pieces of a
@@ -195,19 +223,19 @@ func (i *Interpreter) executeShellCmd(shell *rl.Shell) shellResult {
 //	$`literal {x}`  - a command literal; the text is shell, {x} is data
 //	$list           - an argument vector, exec'd with no shell involved
 //	$str_expr       - a command string the script assembled itself, used verbatim
-func (i *Interpreter) evalShellCommand(shell *rl.Shell) (command string, argv []string) {
-	if lit, ok := shell.Cmd.(*rl.LitString); ok {
+func (i *Interpreter) evalShellCommand(spec shellSpec) (command string, argv []string) {
+	if lit, ok := spec.cmd.(*rl.LitString); ok {
 		return i.evalShellCmdString(lit), nil
 	}
 
-	val := i.eval(shell.Cmd).Val
+	val := i.eval(spec.cmd).Val
 	switch val.Type() {
 	case rl.RadStrT:
-		return val.RequireStr(i, shell).Plain(), nil
+		return val.RequireStr(i, spec.node).Plain(), nil
 	case rl.RadListT:
-		return "", i.shellArgvFromList(shell, val.RequireList(i, shell.Cmd))
+		return "", i.shellArgvFromList(spec.cmd, val.RequireList(i, spec.cmd))
 	default:
-		i.emitErrorf(rl.ErrShellCmdValue, shell.Cmd,
+		i.emitErrorf(rl.ErrShellCmdValue, spec.cmd,
 			"Shell commands must be a string or a list of arguments, got %s", TypeAsString(val))
 		panic(UNREACHABLE)
 	}
@@ -330,16 +358,16 @@ func (i *Interpreter) shellScalarString(node rl.Node, val RadValue) string {
 // shellArgvFromList converts a list command into an argument vector. Every
 // element becomes exactly one argument, so a list is the safe way to build a
 // command out of values that might contain spaces or shell metacharacters.
-func (i *Interpreter) shellArgvFromList(shell *rl.Shell, list *RadList) []string {
+func (i *Interpreter) shellArgvFromList(cmdNode rl.Node, list *RadList) []string {
 	if list.IsEmpty() {
-		i.emitError(rl.ErrShellCmdValue, shell.Cmd,
+		i.emitError(rl.ErrShellCmdValue, cmdNode,
 			"Shell command list is empty, so there is no program to run")
 		panic(UNREACHABLE)
 	}
 
 	argv := make([]string, 0, list.LenInt())
 	for idx, elem := range list.Values {
-		argv = append(argv, i.shellArgString(shell, elem, idx))
+		argv = append(argv, i.shellArgString(cmdNode, elem, idx))
 	}
 	return argv
 }
@@ -347,14 +375,14 @@ func (i *Interpreter) shellArgvFromList(shell *rl.Shell, list *RadList) []string
 // shellArgString renders one list element as a single argument. Scalars have an
 // obvious one-argument spelling; anything else does not, and guessing one is how
 // a `null` silently becomes the four-character word "null" in a command.
-func (i *Interpreter) shellArgString(shell *rl.Shell, val RadValue, idx int) string {
+func (i *Interpreter) shellArgString(cmdNode rl.Node, val RadValue, idx int) string {
 	switch val.Type() {
 	case rl.RadStrT:
-		return val.RequireStr(i, shell.Cmd).Plain()
+		return val.RequireStr(i, cmdNode).Plain()
 	case rl.RadIntT, rl.RadFloatT, rl.RadBoolT:
 		return ToPrintable(val)
 	default:
-		i.emitErrorf(rl.ErrShellCmdValue, shell.Cmd,
+		i.emitErrorf(rl.ErrShellCmdValue, cmdNode,
 			"Shell command argument %d is a %s, which has no single-argument form. %s",
 			idx, TypeAsString(val), shellArgFixHint(val.Type()))
 		panic(UNREACHABLE)
