@@ -308,7 +308,7 @@ func Test_ShellCmd_Confirm_Decline(t *testing.T) {
 	// command failure with exit code 1.
 	assertConfirmCount(t, 1)
 	assertShellNotInvoked(t)
-	assertErrorContains(t, 1, "RAD20000", "Command exited with code 1")
+	assertErrorContains(t, 1, "RAD20048", "Command exited with code 1")
 }
 
 func Test_ShellCmd_Confirm_DeclineCaught(t *testing.T) {
