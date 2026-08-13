@@ -22,7 +22,8 @@ type printer struct {
 //   - strings: quote-style normalization and interpolation reflow
 //   - cmd_block, rad_block
 //   - fn_named / fn_lambda
-//   - switch_stmt, defer_block, shell_stmt
+//   - switch_stmt, defer_block
+//   - shell_cmd (the command text is shell, not Rad - see F46)
 //   - list_comprehension
 //
 // To add one: handle its kind here (or in formatExpr for expressions), build a

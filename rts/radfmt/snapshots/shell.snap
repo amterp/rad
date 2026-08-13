@@ -1,0 +1,29 @@
+### TITLE ###
+[F46] Shell command emitted verbatim
+### INPUT ###
+x   =   $`ls -la  |  grep foo`
+quiet   confirm   $`make build`
+y = quiet $`ls`.stdout
+z = $["git", "commit", "-m", msg]
+### FORMATTED ###
+x = $`ls -la  |  grep foo`
+quiet   confirm   $`make build`
+y = quiet $`ls`.stdout
+z = $["git", "commit", "-m", msg]
+
+### TITLE ###
+[F45] Statement with a trailing catch block
+### INPUT ###
+$`make build` catch:
+    pass
+x   =   $`ls` catch:
+    x = ""
+y = parse_int("a") catch:
+    y = 0
+### FORMATTED ###
+$`make build` catch:
+    pass
+x   =   $`ls` catch:
+    x = ""
+y = parse_int("a") catch:
+    y = 0
