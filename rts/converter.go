@@ -97,8 +97,6 @@ func (c *converter) convertStmt(node *ts.Node) rl.Node {
 		return c.convertForLoop(node)
 	case rl.K_WHILE_LOOP:
 		return c.convertWhileLoop(node)
-	case rl.K_SHELL_STMT:
-		return c.convertShellStmt(node)
 	case rl.K_DEL_STMT:
 		return c.convertDel(node)
 	case rl.K_DEFER_BLOCK:
@@ -118,8 +116,13 @@ func (c *converter) convertStmt(node *ts.Node) rl.Node {
 	case rl.K_RAD_BLOCK:
 		return c.convertRadBlock(node)
 
-	// Expression node kinds that can appear as statements
+	// Expression node kinds that can appear as statements. A lambda body is
+	// one of these, so `fn() $cmd` arrives here rather than via expr_stmt and
+	// needs the same statement-form peel.
 	case rl.K_EXPR:
+		if shellCmdNode := bareShellCmd(node); shellCmdNode != nil {
+			return c.convertBareShell(node, shellCmdNode, nil, nil)
+		}
 		return c.convertExpr(node)
 
 	default:
@@ -127,7 +130,7 @@ func (c *converter) convertStmt(node *ts.Node) rl.Node {
 	}
 }
 
-func (c *converter) convertAssign(node *ts.Node) *rl.Assign {
+func (c *converter) convertAssign(node *ts.Node) rl.Node {
 	catchNode := rl.GetChild(node, rl.F_CATCH)
 	var catch *rl.CatchBlock
 	if catchNode != nil {
@@ -135,17 +138,26 @@ func (c *converter) convertAssign(node *ts.Node) *rl.Assign {
 	}
 
 	rightNodes := rl.GetChildren(node, rl.F_RIGHT)
-	values := c.convertExprs(rightNodes)
 
 	leftNodes := rl.GetChildren(node, rl.F_LEFT)
-	if len(leftNodes) > 0 {
-		targets := c.convertExprs(leftNodes)
-		return rl.NewAssign(c.makeSpan(node), targets, values, false, catch)
+	isMulti := len(leftNodes) == 0
+	if isMulti {
+		leftNodes = rl.GetChildren(node, rl.F_LEFTS)
+	}
+	targets := c.convertExprs(leftNodes)
+
+	// A single bare invocation on the right is the capture form: `stdout = $cmd`,
+	// `stdout, stderr, code = $cmd`. One right-hand side spreading across
+	// several targets is what makes it a shell statement rather than an
+	// assignment of a value.
+	if len(rightNodes) == 1 {
+		if shellCmdNode := bareShellCmd(&rightNodes[0]); shellCmdNode != nil {
+			return c.convertBareShell(node, shellCmdNode, targets, catch)
+		}
 	}
 
-	leftsNodes := rl.GetChildren(node, rl.F_LEFTS)
-	targets := c.convertExprs(leftsNodes)
-	return rl.NewAssign(c.makeSpan(node), targets, values, true, catch)
+	values := c.convertExprs(rightNodes)
+	return rl.NewAssign(c.makeSpan(node), targets, values, isMulti, catch)
 }
 
 // convertTypedAssign desugars `x: int = 5` into the same Assign AST
@@ -225,12 +237,17 @@ func (c *converter) convertIncrDecr(node *ts.Node) *rl.Assign {
 	return assign
 }
 
-func (c *converter) convertExprStmt(node *ts.Node) *rl.ExprStmt {
+func (c *converter) convertExprStmt(node *ts.Node) rl.Node {
 	exprNode := rl.GetChild(node, rl.F_EXPR)
 	catchNode := rl.GetChild(node, rl.F_CATCH)
 	var catch *rl.CatchBlock
 	if catchNode != nil {
 		catch = c.convertCatchBlock(catchNode)
+	}
+	// `$cmd` with no capture: an expression statement in the grammar, but the
+	// statement form of a shell invocation to everything downstream.
+	if shellCmdNode := bareShellCmd(exprNode); shellCmdNode != nil {
+		return c.convertBareShell(node, shellCmdNode, nil, catch)
 	}
 	return rl.NewExprStmt(c.makeSpan(node), c.convertExpr(exprNode), catch)
 }
@@ -342,38 +359,107 @@ func (c *converter) convertWhileLoop(node *ts.Node) *rl.WhileLoop {
 	return rl.NewWhileLoop(c.makeSpan(node), condition, body)
 }
 
-func (c *converter) convertShellStmt(node *ts.Node) *rl.Shell {
-	leftNode := rl.GetChildren(node, rl.F_LEFT)
-	leftNodes := rl.GetChildren(node, rl.F_LEFTS)
-	leftNodes = append(leftNode, leftNodes...)
+// bareShellCmd returns the shell_cmd node when `node` is a shell invocation and
+// nothing else - no accessor, no index, no operator wrapped around it.
+//
+// That exact shape is the statement form: `$cmd`, `x = $cmd`, `x, y = $cmd`.
+// It lowers to rl.Shell, which binds capture targets and always raises on a
+// non-zero exit. Anything else is the invocation being read as a value, and
+// lowers to rl.ShellExpr.
+//
+// Returns nil when the node is not a bare invocation.
+func bareShellCmd(node *ts.Node) *ts.Node {
+	for node != nil {
+		// An operator around the invocation means it is an operand, not the
+		// statement - stop before mistaking `$a and $b` for a bare command.
+		if rl.GetChild(node, rl.F_LEFT) != nil || rl.GetChild(node, rl.F_OP) != nil {
+			return nil
+		}
+		if delegate := rl.GetChild(node, rl.F_DELEGATE); delegate != nil {
+			node = delegate
+			continue
+		}
+		switch node.Kind() {
+		case rl.K_SHELL_CMD:
+			return node
+		case rl.K_INDEXED_EXPR:
+			// Any indexing at all means postfix was written, so the author is
+			// reading the result rather than running a command as a statement.
+			if len(rl.GetChildren(node, rl.F_INDEXING)) > 0 {
+				return nil
+			}
+			node = rl.GetChild(node, rl.F_ROOT)
+		case rl.K_PRIMARY_EXPR:
+			node = onlyNamedChild(node)
+		case rl.K_PARENTHESIZED_EXPR:
+			// Parentheses don't change what an invocation means, so `($cmd)`
+			// captures exactly like `$cmd`. Note this is the parens *around* an
+			// invocation - the ones inside it, `$(cmds[1])`, are the command
+			// operand and never reach here.
+			node = rl.GetChild(node, rl.F_EXPR)
+		default:
+			return nil
+		}
+	}
+	return nil
+}
 
-	targets := c.convertExprs(leftNodes)
+// onlyNamedChild returns a node's single named child, or nil if it has any
+// other number of them.
+func onlyNamedChild(node *ts.Node) *ts.Node {
+	if node.NamedChildCount() != 1 {
+		return nil
+	}
+	return node.NamedChild(0)
+}
 
-	shellCmdNode := rl.GetChild(node, rl.F_SHELL_CMD)
-
-	// Extract modifiers
-	modifierNodes := rl.GetChildren(shellCmdNode, rl.F_MODIFIER)
-	var isQuiet, isConfirm bool
-	for _, modNode := range modifierNodes {
-		modText := c.getSrc(&modNode)
-		switch modText {
+// shellModifiers reads the `quiet` / `confirm` prefixes off a shell_cmd.
+func (c *converter) shellModifiers(shellCmdNode *ts.Node) (isQuiet, isConfirm bool) {
+	for _, modNode := range rl.GetChildren(shellCmdNode, rl.F_MODIFIER) {
+		switch c.getSrc(&modNode) {
 		case "quiet":
 			isQuiet = true
 		case "confirm":
 			isConfirm = true
 		}
 	}
+	return isQuiet, isConfirm
+}
 
-	cmdNode := rl.GetChild(shellCmdNode, rl.F_COMMAND)
-	cmd := c.convertExpr(cmdNode)
+// convertBareShell lowers a bare invocation to the statement form, carrying
+// whatever capture targets and catch block the surrounding statement supplied.
+func (c *converter) convertBareShell(
+	stmtNode, shellCmdNode *ts.Node,
+	targets []rl.Node,
+	catch *rl.CatchBlock,
+) *rl.Shell {
+	isQuiet, isConfirm := c.shellModifiers(shellCmdNode)
+	cmd := c.convertExpr(rl.GetChild(shellCmdNode, rl.F_COMMAND))
+	return rl.NewShell(c.makeSpan(stmtNode), targets, cmd, catch, isQuiet, isConfirm)
+}
 
-	catchNode := rl.GetChild(node, rl.F_CATCH)
-	var catch *rl.CatchBlock
-	if catchNode != nil {
-		catch = c.convertCatchBlock(catchNode)
+// convertShellExpr lowers an invocation being read as a value. accessorNode is
+// the first postfix segment, or nil when none was written - the checker rejects
+// that case, so the accessor is left as ShellAccessorNone rather than guessed.
+func (c *converter) convertShellExpr(span rl.Span, shellCmdNode, accessorNode *ts.Node) *rl.ShellExpr {
+	isQuiet, isConfirm := c.shellModifiers(shellCmdNode)
+	cmd := c.convertExpr(rl.GetChild(shellCmdNode, rl.F_COMMAND))
+
+	accessor := rl.ShellAccessorNone
+	accessorSpan := span
+	var bad *rl.PathSegment
+	if accessorNode != nil {
+		accessorSpan = c.makeSpan(accessorNode)
+		if parsed, ok := rl.ParseShellAccessor(c.getSrc(accessorNode)); ok && accessorNode.Kind() == rl.K_IDENTIFIER {
+			accessor = parsed
+		} else {
+			seg := c.convertPathSegment(accessorNode)
+			bad = &seg
+		}
 	}
-
-	return rl.NewShell(c.makeSpan(node), targets, cmd, catch, isQuiet, isConfirm)
+	expr := rl.NewShellExpr(span, cmd, accessor, accessorSpan, isQuiet, isConfirm)
+	expr.BadAccessor = bad
+	return expr
 }
 
 func (c *converter) convertDel(node *ts.Node) *rl.Del {
@@ -1075,6 +1161,14 @@ func (c *converter) convertExpr(node *ts.Node) rl.Node {
 	case rl.K_INDEXED_EXPR:
 		return c.convertIndexedExpr(node)
 
+	// A bare invocation that reached expression position - `if $cmd:`,
+	// `f($cmd)`. Meaningless without an accessor, but it has to produce a node
+	// rather than panic: a converter panic is swallowed upstream and takes
+	// every AST-based diagnostic with it, so the checker would go silent on
+	// exactly the code it needs to explain.
+	case rl.K_SHELL_CMD:
+		return c.convertShellExpr(c.makeSpan(node), node, nil)
+
 	// Structural wrappers (collapsed by the converter)
 	case rl.K_PRIMARY_EXPR, rl.K_LITERAL:
 		return c.convertExpr(c.getOnlyChild(node))
@@ -1172,6 +1266,23 @@ func (c *converter) convertIndexedExpr(node *ts.Node) rl.Node {
 
 	if len(indexingNodes) == 0 {
 		return c.convertExpr(rootNode)
+	}
+
+	// Postfix on an invocation reads its result, so the first segment is the
+	// accessor and the rest apply to whatever that yielded:
+	// `$`cmd`.stdout.trim()` trims the stdout, not the command.
+	if shellCmdNode := bareShellCmd(rootNode); shellCmdNode != nil {
+		accessorSeg := &indexingNodes[0]
+		shellExpr := c.convertShellExpr(c.makeSpan(node), shellCmdNode, accessorSeg)
+		rest := indexingNodes[1:]
+		if len(rest) == 0 {
+			return shellExpr
+		}
+		segments := make([]rl.PathSegment, 0, len(rest))
+		for _, indexNode := range rest {
+			segments = append(segments, c.convertPathSegment(&indexNode))
+		}
+		return rl.NewVarPath(c.makeSpan(node), shellExpr, segments)
 	}
 
 	// Build a VarPath with segments

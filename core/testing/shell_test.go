@@ -642,3 +642,158 @@ func Test_ShellCmd_Argv_SpawnFailureExitsWith127(t *testing.T) {
 		"Command exited with code 127",
 	)
 }
+
+// --- Reading a result inline: `$`cmd`.stdout` and friends ------------------
+
+// Capture follows the accessor, exactly as it follows the target names in a
+// named assignment. The stream you didn't ask for still reaches the terminal.
+func Test_ShellExpr_Stdout_CapturesStdoutOnly(t *testing.T) {
+	setupAndRunCode(t, `x = $"cmd".stdout`, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Command:       "cmd",
+		CaptureStdout: true,
+		CaptureStderr: false,
+	})
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_Stderr_CapturesStderrOnly(t *testing.T) {
+	setupAndRunCode(t, `x = $"cmd".stderr`, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Command:       "cmd",
+		CaptureStdout: false,
+		CaptureStderr: true,
+	})
+	assertNoErrors(t)
+}
+
+// Asking only about the outcome captures nothing, so both streams pass
+// through - a `code` target behaves the same way.
+func Test_ShellExpr_Code_CapturesNeither(t *testing.T) {
+	setupAndRunCode(t, `x = $"cmd".code`, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Command:       "cmd",
+		CaptureStdout: false,
+		CaptureStderr: false,
+	})
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_Ok_CapturesNeither(t *testing.T) {
+	setupAndRunCode(t, `x = $"cmd".ok`, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Command:       "cmd",
+		CaptureStdout: false,
+		CaptureStderr: false,
+	})
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_AccessorValues(t *testing.T) {
+	script := `
+print($"cmd".stdout.trim())
+print($"cmd".code)
+print(type_of($"cmd".code))
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("OUT\n", "ERR", 0))
+	assertOnlyOutput(t, stdOutBuffer, "OUT\n0\nint\n")
+	assertNoErrors(t)
+}
+
+// The output accessors raise on a non-zero exit: stdout the command never
+// produced is not an answer.
+func Test_ShellExpr_Stdout_PropagatesNonZero(t *testing.T) {
+	script := `
+x = $"cmd".stdout
+print("unreached")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("", "", 3))
+	assertErrorContains(t, 1, "RAD20048", "Command exited with code 3")
+}
+
+// .ok and .code never raise - using them IS the handling. grep exiting 1 is
+// data, not failure, and `if not $`which x`.ok:` has to be writable.
+func Test_ShellExpr_Ok_DoesNotPropagate(t *testing.T) {
+	script := `
+if not $"cmd".ok:
+    print("failed, handled")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("", "", 3))
+	assertOnlyOutput(t, stdOutBuffer, "failed, handled\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_Code_DoesNotPropagate(t *testing.T) {
+	script := `
+code = $"cmd".code
+print("code={code}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("", "", 3))
+	assertOnlyOutput(t, stdOutBuffer, "code=3\n")
+	assertNoErrors(t)
+}
+
+// The regression test for the footgun this feature exists to remove. Before
+// the grammar change `catch` bound to the command *string*, so the handler
+// never ran and the failure killed the script.
+func Test_ShellExpr_ComposesWithCatchOperator(t *testing.T) {
+	script := `
+x = $"cmd".stdout catch "fallback"
+print("x={x}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("", "", 1))
+	assertOnlyOutput(t, stdOutBuffer, "x=fallback\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_ComposesWithFallbackOperator(t *testing.T) {
+	script := `
+x = $"cmd".stdout ?? "fallback"
+print("x={x}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("", "", 1))
+	assertOnlyOutput(t, stdOutBuffer, "x=fallback\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_ComposesWithCatchBlock(t *testing.T) {
+	script := `
+x = $"cmd".stdout catch:
+    x = "fallback"
+print("x={x}")
+`
+	setupAndRun(t, NewTestParams(script, "--color=never").ShellOutput("", "", 1))
+	assertOnlyOutput(t, stdOutBuffer, "x=fallback\n")
+	assertNoErrors(t)
+}
+
+func Test_ShellExpr_QuietModifier(t *testing.T) {
+	setupAndRunCode(t, `x = quiet $"cmd".stdout`, "--color=never")
+
+	assertShellInvoked(t, core.ShellInvocation{
+		Command:       "cmd",
+		CaptureStdout: true,
+		IsQuiet:       true,
+	})
+	assertNoErrors(t)
+}
+
+// Declining a confirm reports exit 1 without running, so `.ok` is false and
+// nothing new had to be invented for the inline form.
+func Test_ShellExpr_ConfirmDeclineIsNotOk(t *testing.T) {
+	script := `
+if not confirm $"rm -rf /".ok:
+    print("declined")
+`
+	decline := func(title, prompt string) (bool, error) { return false, nil }
+	setupAndRun(t, NewTestParams(script, "--color=never").ConfirmResponder(decline))
+
+	assertConfirmCount(t, 1)
+	assertShellNotInvoked(t)
+	assertOnlyOutput(t, stdOutBuffer, "declined\n")
+	assertNoErrors(t)
+}

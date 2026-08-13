@@ -41,6 +41,7 @@ const (
 	NForLoop                   // for ... in ...
 	NWhileLoop                 // while ...
 	NShell                     // shell statement ($...)
+	NShellExpr                 // shell invocation read as a value ($....stdout)
 	NDel                       // del statement
 	NDefer                     // defer/errdefer block
 	NBreak                     // break
@@ -106,6 +107,7 @@ var nodeKindNames = [...]string{
 	NForLoop:         "ForLoop",
 	NWhileLoop:       "WhileLoop",
 	NShell:           "Shell",
+	NShellExpr:       "ShellExpr",
 	NDel:             "Del",
 	NDefer:           "Defer",
 	NBreak:           "Break",

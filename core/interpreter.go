@@ -491,6 +491,9 @@ func (i *Interpreter) eval(node rl.Node) (out EvalResult) {
 
 	// --- Expressions ---
 
+	case *rl.ShellExpr:
+		return i.evalShellExpr(n)
+
 	case *rl.OpBinary:
 		return NormalVal(newRadValues(i, n, i.executeOp(n, n.Left, n.Right, n.Op, n.IsCompound)))
 

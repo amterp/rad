@@ -89,6 +89,9 @@ func findASTMaxSpans(node Node) (maxRow, maxCol int) {
 			children = append(children, n.Catch.Stmts...)
 		}
 
+	case *ShellExpr:
+		children = append(children, n.Cmd)
+
 	case *Del:
 		children = append(children, n.Targets...)
 	case *Defer:
@@ -412,6 +415,16 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 		fmt.Fprintf(sb, "%sShell quiet=%v confirm=%v\n", indent, n.IsQuiet, n.IsConfirm)
 		astDumpNode(sb, fmtStr, spacePad, n.Cmd, depth+1)
 
+	case *ShellExpr:
+		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
+		accessor := n.Accessor.Name()
+		if accessor == "" {
+			accessor = "<none>"
+		}
+		fmt.Fprintf(sb, "%sShellExpr accessor=%s%s quiet=%v confirm=%v\n",
+			indent, accessor, badAccessorNote(n.BadAccessor), n.IsQuiet, n.IsConfirm)
+		astDumpNode(sb, fmtStr, spacePad, n.Cmd, depth+1)
+
 	case *Del:
 		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		fmt.Fprintf(sb, "%sDel\n", indent)
@@ -646,5 +659,22 @@ func astDumpNode(sb *strings.Builder, fmtStr string, spacePad string, node Node,
 	default:
 		fmt.Fprintf(sb, fmtStr, span.StartRow, span.StartCol, span.EndRow, span.EndCol)
 		fmt.Fprintf(sb, "%s<%T>\n", indent, node)
+	}
+}
+
+// badAccessorNote describes postfix that isn't an accessor, so a dump shows
+// which of the three wrong shapes was written rather than just "<none>".
+func badAccessorNote(seg *PathSegment) string {
+	switch {
+	case seg == nil:
+		return ""
+	case seg.IsUFCS:
+		return " bad=call"
+	case seg.Field != nil:
+		return fmt.Sprintf(" bad=field(%s)", *seg.Field)
+	case seg.IsSlice:
+		return " bad=slice"
+	default:
+		return " bad=index"
 	}
 }
