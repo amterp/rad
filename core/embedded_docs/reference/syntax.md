@@ -838,6 +838,19 @@ stdout, stderr = $`cmd`
 stdout, stderr, code = $`cmd`
 ```
 
+`$` takes the command and nothing more: a command literal, a list, a variable
+holding a command string, or a parenthesized expression. Anything written *after*
+it reads the command's result (see Reading one result inline),
+so a computed command goes in parentheses:
+
+```rad
+cmds = [`ls -la`, `ls -l`]
+parts = ["git", "status"]
+
+$(cmds[1])
+$(parts.join(" "))
+```
+
 ### Capture & assignment
 
 **Capture behavior** depends on how many variables you assign. A stream you don't
@@ -881,6 +894,52 @@ whole statement positional:
 
 ```rad
 code, output = $`cmd`     // 'code' gets stdout! Warns: RAD40018
+```
+
+### Reading one result inline
+
+A shell command can be used as an expression when it's immediately followed by
+one of four accessors: `.stdout`, `.stderr`, `.code`, or `.ok`.
+
+```rad
+branch = $`git branch --show-current`.stdout.trim() catch "unknown"
+
+if $`git status --porcelain`.stdout.trim():
+    print_err("Uncommitted changes!")
+
+if not $`which docker`.ok:
+    exit(1)
+```
+
+| Accessor  | Type   | Fails on non-zero exit |
+| --------- | ------ | ---------------------- |
+| `.stdout` | `str`  | yes                    |
+| `.stderr` | `str`  | yes                    |
+| `.code`   | `int`  | no                     |
+| `.ok`     | `bool` | no                     |
+
+**Capture follows the accessor**, exactly as it follows target names in a named
+assignment: `.stdout` captures stdout and lets stderr through to the terminal,
+`.stderr` the reverse, and the two status accessors capture nothing.
+
+**The output accessors fail, the status accessors don't.** `.stdout` and
+`.stderr` propagate a non-zero exit and compose with `??`, `catch` and `catch:`.
+`.code` and `.ok` never propagate - using them *is* handling the failure, which
+is what makes them the right way to test a command. Note this differs from
+statement-form `code = $cmd`, which still propagates.
+
+**There is no truthiness.** A command with no accessor is a check-time error
+(`RAD40025`), because shell's `if cmd` (exit code) and `if $(cmd)` (printed
+anything) are different questions that look alike.
+
+**One value inline.** The expression form never gives you both streams from one
+run; use assignment when you need more than one.
+
+`quiet` and `confirm` work here too, and the ⚡️ echo stays on - under `and` /
+`or` short-circuit it shows which commands actually ran.
+
+```rad
+tag = quiet $`git describe --tags`.stdout.trim() catch "untagged"
 ```
 
 ### Handling failures with a `catch` block

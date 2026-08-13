@@ -8,7 +8,7 @@ decided: 2026-08-10
 released: v0.12.0
 supersedes:
 superseded-by:
-related: 2, 6
+related: 2, 6, 10
 ---
 
 # RED-9: Shell commands quote their interpolations
