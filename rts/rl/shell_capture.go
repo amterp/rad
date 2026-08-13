@@ -127,3 +127,99 @@ func ShellTargetRootName(node Node) string {
 	}
 	return ""
 }
+
+// ShellAccessor is the virtual member an inline invocation reads:
+// `$`cmd`.stdout`. The four names match the capture-target vocabulary above, so
+// there is one thing to learn rather than two.
+//
+// A superset of ShellStream, and deliberately NOT a member of it. `ok` is a
+// predicate over the exit code, not a fourth stream: it never affects what gets
+// captured, and it has no positional slot. Folding it into ShellStream would
+// silently invalidate shellPositionalOrder, which is a [3], and oldOrderStream
+// in rts/check, which is a 3-cycle - neither of which the compiler would catch.
+// If you are here to unify them: don't.
+type ShellAccessor int
+
+const (
+	// ShellAccessorNone is the zero value on purpose: a forgotten accessor is
+	// an error to be reported, never a silent default to stdout.
+	ShellAccessorNone ShellAccessor = iota
+	ShellAccessorStdout
+	ShellAccessorStderr
+	ShellAccessorCode
+	ShellAccessorOk
+)
+
+// ShellAccessorOk is spelled out here rather than in the capture constants
+// because it has no assignment-target counterpart - there is no `ok = $cmd`.
+const ShellAccessorOkName = "ok"
+
+// ShellAccessorNames lists the accessors in the order diagnostics should offer
+// them: the two that yield output first, then the two that describe the outcome.
+var ShellAccessorNames = []string{
+	ShellCaptureStdout,
+	ShellCaptureStderr,
+	ShellCaptureCode,
+	ShellAccessorOkName,
+}
+
+// ParseShellAccessor resolves an accessor name, reporting whether it is one.
+func ParseShellAccessor(name string) (ShellAccessor, bool) {
+	switch name {
+	case ShellCaptureStdout:
+		return ShellAccessorStdout, true
+	case ShellCaptureStderr:
+		return ShellAccessorStderr, true
+	case ShellCaptureCode:
+		return ShellAccessorCode, true
+	case ShellAccessorOkName:
+		return ShellAccessorOk, true
+	default:
+		return ShellAccessorNone, false
+	}
+}
+
+// Name returns the accessor as written in source.
+func (a ShellAccessor) Name() string {
+	switch a {
+	case ShellAccessorStdout:
+		return ShellCaptureStdout
+	case ShellAccessorStderr:
+		return ShellCaptureStderr
+	case ShellAccessorCode:
+		return ShellCaptureCode
+	case ShellAccessorOk:
+		return ShellAccessorOkName
+	default:
+		return ""
+	}
+}
+
+// ShellExprCaptures reports which streams an inline invocation must capture.
+// Capture follows the accessor, exactly as it follows the target names in a
+// named assignment: read stdout and stderr still reaches the terminal, read
+// stderr and stdout does. Asking only about the outcome captures nothing, so
+// both streams pass through - `code` as a target behaves the same way.
+func ShellExprCaptures(a ShellAccessor) (captureStdout, captureStderr bool) {
+	switch a {
+	case ShellAccessorStdout:
+		return true, false
+	case ShellAccessorStderr:
+		return false, true
+	default:
+		return false, false
+	}
+}
+
+// Propagates reports whether a non-zero exit raises for this accessor.
+//
+// The output accessors do: you asked for what the command produced, and a
+// command that failed did not produce it, so handing back a partial or empty
+// string would be answering a question that has no answer.
+//
+// `.code` and `.ok` never do. Asking about the outcome *is* handling the
+// failure - grep exiting 1 is data. Raising there would make the one check
+// these accessors exist for, `if not $`which docker`.ok:`, impossible to write.
+func (a ShellAccessor) Propagates() bool {
+	return a == ShellAccessorStdout || a == ShellAccessorStderr
+}

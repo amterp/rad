@@ -185,6 +185,52 @@ func NewShell(span Span, targets []Node, cmd Node, catch *CatchBlock, isQuiet, i
 func (n *Shell) Kind() NodeKind { return NShell }
 func (n *Shell) Span() Span     { return n.span }
 
+// ShellExpr is a shell invocation read as a value: `$`cmd`.stdout`.
+//
+// Kept separate from Shell rather than folded in as a mode, because the two
+// disagree on everything a consumer asks about. Shell binds capture targets and
+// produces no value; ShellExpr binds nothing and produces exactly one. Shell
+// always raises on a non-zero exit; ShellExpr raises only for the output
+// accessors. One node with an optional accessor would make every consumer
+// re-derive that split from a nil check.
+type ShellExpr struct {
+	span Span
+	Cmd  Node // the command operand: string literal, identifier, or list
+	// Accessor is ShellAccessorNone only on a node the checker is about to
+	// reject - a bare invocation that reached expression position. The
+	// interpreter treats reaching it as an internal bug rather than guessing.
+	Accessor ShellAccessor
+	// AccessorSpan covers the `.stdout` segment, so a diagnostic about the
+	// accessor can point at the accessor rather than the whole invocation.
+	AccessorSpan Span
+	// BadAccessor is postfix that was written but isn't an accessor - `$cmds[1]`,
+	// `$`cmd`.upper()`, `$`cmd`.stdout2`. Kept rather than dropped because each
+	// shape needs a different explanation, and the migration fix for the index
+	// shape depends on knowing it was an index. nil when nothing was written.
+	BadAccessor *PathSegment
+	IsQuiet     bool
+	IsConfirm   bool
+}
+
+func NewShellExpr(
+	span Span,
+	cmd Node,
+	accessor ShellAccessor,
+	accessorSpan Span,
+	isQuiet, isConfirm bool,
+) *ShellExpr {
+	return &ShellExpr{
+		span:         span,
+		Cmd:          cmd,
+		Accessor:     accessor,
+		AccessorSpan: accessorSpan,
+		IsQuiet:      isQuiet,
+		IsConfirm:    isConfirm,
+	}
+}
+func (n *ShellExpr) Kind() NodeKind { return NShellExpr }
+func (n *ShellExpr) Span() Span     { return n.span }
+
 // Del represents a del statement.
 type Del struct {
 	span    Span

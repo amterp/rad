@@ -677,3 +677,52 @@ func (i *Interpreter) assignShellResults(
 		}
 	}
 }
+
+// evalShellExpr runs an invocation written in expression position and yields the
+// accessed value.
+//
+// The split from executeShellStmt is the propagation rule. A statement always
+// raises on a non-zero exit: a statement's only product is its effect, and an
+// effect that failed is a failure. An expression raises only when the value
+// asked for is *output* - handing back stdout the command never produced would
+// be answering a question that has no answer. Asking for the code or the
+// outcome is itself the handling, so those return and let the script decide.
+func (i *Interpreter) evalShellExpr(n *rl.ShellExpr) EvalResult {
+	captureStdout, captureStderr := rl.ShellExprCaptures(n.Accessor)
+	result := i.executeShellCmd(shellSpec{
+		node:          n,
+		cmd:           n.Cmd,
+		captureStdout: captureStdout,
+		captureStderr: captureStderr,
+		isQuiet:       n.IsQuiet,
+		isConfirm:     n.IsConfirm,
+	})
+
+	if n.Accessor.Propagates() && result.exitCode != 0 {
+		err := NewErrorStrf("Command exited with code %d", result.exitCode).
+			SetCode(rl.ErrShellNonZeroExit).
+			SetSpan(nodeSpanPtr(n))
+		panic(&RadPanic{
+			ErrV:        newRadValue(i, n, err),
+			ShellResult: &result,
+		})
+	}
+
+	switch n.Accessor {
+	case rl.ShellAccessorStdout:
+		return NormalVal(newRadValues(i, n, *result.stdout))
+	case rl.ShellAccessorStderr:
+		return NormalVal(newRadValues(i, n, *result.stderr))
+	case rl.ShellAccessorCode:
+		return NormalVal(newRadValues(i, n, int64(result.exitCode)))
+	case rl.ShellAccessorOk:
+		return NormalVal(newRadValues(i, n, result.exitCode == 0))
+	}
+
+	// The checker rejects an invocation with no accessor before anything runs,
+	// so reaching here means a shape it doesn't know about slipped through.
+	// Loud, because the alternative is silently picking a stream.
+	i.emitError(rl.ErrInternalBug, n,
+		"Shell invocation reached the interpreter without a result accessor")
+	panic(UNREACHABLE)
+}

@@ -397,7 +397,7 @@ var docSnippetTolerances = map[string]Tolerance{
 	"docs-web/docs/reference/syntax.md#06decb32": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: switch examples reference placeholder helpers"},
 	"docs-web/docs/reference/syntax.md#0e09fee1": {ExpectedCodes: []string{"RAD10021"}, Reason: "syntax-reference fragment: named-parameter declaration shown out of function context"},
 	"docs-web/docs/reference/syntax.md#1b5cdde1": {ExpectedCodes: []string{"RAD10001", "RAD10009", "RAD10021", "RAD20028"}, Reason: "syntax-reference fragment: function-parameter syntax, not a runnable call"},
-	"docs-web/docs/reference/syntax.md#27f0df7a": {ExpectedCodes: []string{"RAD10001", "RAD10009", "RAD10020", "RAD10021"}, Reason: "syntax-reference fragment: function-signature shape, not runnable Rad"},
+	"docs-web/docs/reference/syntax.md#27f0df7a": {ExpectedCodes: []string{"RAD10001", "RAD10009", "RAD10020"}, Reason: "syntax-reference fragment: function-signature shape, not runnable Rad. Lost RAD10021 when $ stopped binding a whole expression - error recovery over these lines got cleaner"},
 	"docs-web/docs/reference/syntax.md#2d0ec832": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: references placeholder helper functions"},
 	"docs-web/docs/reference/syntax.md#2e1f5722": {ExpectedCodes: []string{"RAD10001", "RAD10002", "RAD10009"}, Reason: "syntax-reference fragment: parser bails on incomplete header"},
 	"docs-web/docs/reference/syntax.md#31052d6a": {ExpectedCodes: []string{"RAD20028"}, Reason: "syntax-reference fragment: references placeholder helper functions"},

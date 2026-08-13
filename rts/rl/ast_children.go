@@ -87,6 +87,8 @@ func (n *Shell) Children() []Node {
 	return c
 }
 
+func (n *ShellExpr) Children() []Node { return []Node{n.Cmd} }
+
 func (n *Del) Children() []Node   { return n.Targets }
 func (n *Defer) Children() []Node { return n.Body }
 
