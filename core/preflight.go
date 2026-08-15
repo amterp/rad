@@ -215,6 +215,17 @@ func preflightMessage(scriptName string, sites, unanswered []prompts.Site) strin
 			"exactly. For a prompt on a branch you know won't run, or a filtered pick you "+
 			"expect to settle itself, use --reply-na instead of choosing for it.")
 	}
+
+	// Only where something above repeats. This run was harmless - nothing has
+	// executed - so the advice is about the run the caller is about to start,
+	// and on a script with no repeating prompt there is nothing to count.
+	if lo.SomeBy(unanswered, func(s prompts.Site) bool { return s.Repeats }) {
+		b.WriteString("\n")
+		writePara(&b, "One --reply answers one pass, and rad can't count the passes - that "+
+			"depends on the script's own data. Too few stops the run partway, after it has "+
+			"already done whatever came before, so read the script and count them where "+
+			"that would cost you.")
+	}
 	fmt.Fprintf(&b, "%s\n", com.CyanS(fmt.Sprintf("  = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers)))
 
 	return b.String()

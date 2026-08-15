@@ -73,7 +73,8 @@ func unansweredPromptErr(node rl.Node, outcome prompts.Outcome, what string) *Ra
 				"Supply one with --reply, or --reply-na if this run shouldn't reach it", what)
 	}
 
-	return NewErrorStrf("%s%s", reason, remainingPromptsHint()).SetCode(rl.ErrPromptUnanswerable)
+	return NewErrorStrf("%s%s%s", reason, remainingPromptsHint(), retryRepeatsHint()).
+		SetCode(rl.ErrPromptUnanswerable)
 }
 
 // passesAnswered is how many answers the caller supplied for this site, which
@@ -86,6 +87,21 @@ func passesAnswered(node rl.Node) int {
 	return RReplies.Supplied(span.StartRow+1, span.StartCol+1)
 }
 
+// retryRepeatsHint warns that fixing the flags and running again is not a
+// resumption. Unlike RAD20046, this fires mid-run, so the script may have
+// already fetched, written or deleted things - and a caller reading a message
+// about flags is about to re-run it without thinking about that.
+//
+// Worded to hold however far the run got: a prompt on line 1 repeats nothing,
+// and saying otherwise there teaches the reader to skip the line everywhere.
+//
+// The leading period continues the sentence before it, as remainingPromptsHint
+// does. The renderer wraps on whitespace, so the newline is for anyone reading
+// the raw string, not a break the reader will see.
+func retryRepeatsHint() string {
+	return ".\nA retry starts from the top, repeating whatever already ran."
+}
+
 // secretNeedsTerminalErr refuses a secret input that has no terminal to read
 // from. A secret can never come off the command line - argv is readable by
 // other processes on the machine - so this points at the only honest way out
@@ -94,8 +110,8 @@ func secretNeedsTerminalErr(prompt string) *RadError {
 	return NewErrorStrf(
 		"The secret input %q needs a terminal. It can't be answered with --reply, "+
 			"because command-line arguments are visible to other processes. Run this "+
-			"where a terminal is available, or use --reply-na if this run shouldn't reach it",
-		prompt,
+			"where a terminal is available, or use --reply-na if this run shouldn't reach it%s",
+		prompt, retryRepeatsHint(),
 	).SetCode(rl.ErrPromptUnanswerable)
 }
 
