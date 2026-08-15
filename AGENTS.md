@@ -19,8 +19,10 @@ Key orientation docs:
 - `NAVIGATE.md` - maps this repo and sibling repos (tree-sitter-rad grammar,
   go-tbl, homebrew-rad).
 - `docs/red/` - Rad Evolution Documents (REDs): decision records for
-  significant design choices. Check them before revisiting a settled design;
-  significant new decisions should get one.
+  significant design choices. Check them before revisiting a settled design.
+  Writing a new one is rare: RED-1 holds the bar, and rationale belongs in
+  the commit message unless a reader would go looking for it without knowing
+  which commit to open. Propose one rather than writing it unasked.
 - Directory-specific agent guides take precedence in their subtrees:
   `core/error_docs/AGENTS.md`, `rts/radfmt/AGENTS.md`,
   `docs-web/docs/guide/AGENTS.md`, `docs-web/docs/reference/AGENTS.md`.
