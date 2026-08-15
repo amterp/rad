@@ -210,15 +210,26 @@ func pickKv[T comparable](
 		// The script's own filter has decided; nothing is asked, so a caller who
 		// supplied no answer is fine. That is what keeps --reply-na valid here.
 		//
-		// An answer that *is* waiting gets consumed and then ignored. Consuming
-		// is what keeps a per-line queue in step with executions - a pass that
-		// quietly took nothing would hand every later answer to the wrong pass.
-		// Ignoring it is the other half: the caller answers prompts, and no
-		// prompt happened, so there is nothing here for their answer to override.
-		// Failing instead would break every pick whose list simply happens to
-		// hold one entry on this run.
+		// An answer that *is* waiting is still consumed, which is what keeps a
+		// per-line queue in step with executions - a pass that quietly took
+		// nothing would hand every later answer to the wrong pass. It is only
+		// dropped when it names what the filter chose. Otherwise the caller
+		// asked for one option, the filter took another, and going quiet acts
+		// on the filter's choice while the caller believes theirs was used.
+		//
+		// Agreement stays silent, so a pick whose list happens to hold one entry
+		// keeps working. The same wrong answer already fails below when the pick
+		// does prompt, so this closes a gap rather than tightening a rule.
 		if replyPending(f.callNode) {
-			takeReply(f.callNode)
+			if answer, outcome := takeReply(f.callNode); outcome == prompts.Answered &&
+				answer.Text != settled {
+				return []T{}, NewErrorStrf(
+					"The pick %q settled on %q without asking, but --reply said %q. rad won't "+
+						"override the script's own filter: change what the script filters on, "+
+						"or answer with %q%s",
+					prompt, settled, answer.Text, settled, retryRepeatsHint(),
+				).SetCode(rl.ErrPromptUnanswerable)
+			}
 		}
 		return matchedKeyValues[settled], nil
 	}

@@ -244,7 +244,7 @@ Each listed prompt may also carry a note about how it behaves:
 
 | Note | Meaning |
 |---|---|
-| `filtered - may not prompt, and then ignores its answer` | A `pick` whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped. |
+| `filtered - may not prompt, and then only accepts what it settles on` | A `pick` whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and an answer naming anything else fails - see [filtered picks](#filtered-picks) below. |
 | `settles on "web-1" - won't ask` | A `pick` whose options and filter are both written literally, leaving one survivor. It takes that option without asking, so rad answers it with `--reply-na` for you. |
 | `used as a value - ...` | An interactive function passed around rather than called. Takes `--reply-na` only. |
 | `may run more than once - repeat --reply per run` | It sits in a loop, or in a function called from several places. One `--reply` answers one execution. |
@@ -293,7 +293,20 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single `yes` approving five hundred deletions is the accident this avoids. When there *is* a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.
 
-One answer is consumed per execution of the line, not per prompt you would have seen. A filtered `pick` that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. That answer is then discarded: you answer prompts, and no prompt happened, so the script's own filter decides. The same applies when a `pick`'s list simply happens to hold one entry on this run.
+Rad can't count the passes for you - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+
+### Filtered picks
+
+One answer is consumed per execution of the line, not per prompt you would have seen. A filtered `pick` that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. The same applies when a `pick`'s list simply happens to hold one entry on this run.
+
+What it does with that answer depends on whether the two agree. Naming the option the filter settled on is fine, and the run carries on. Naming anything else fails with [RAD20047](../reference/errors.md):
+
+```rad
+services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+```
+
+`--reply 2:worker` asks for one service where the script's own filter chose another, and rad won't pick a winner. Usually the filter is the thing to change - it's normally built from an arg, so `worker` belongs there rather than in the answer.
 
 ## `reply-na`
 
