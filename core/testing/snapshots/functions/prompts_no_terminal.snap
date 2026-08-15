@@ -128,8 +128,9 @@ for item in ["a", "b", "c"]:
 a true
 b false
 ### STDERR ###
-error[RAD20047]: The confirm "Delete c?" ran out of answers - it executed more times than --reply
-  accounted for. Repeat the flag once per pass; rad won't reuse the last answer
+error[RAD20047]: The confirm "Delete c?" ran out of answers after 2 passes. Either it runs more
+  times than that, and needs one --reply per pass, or it rejected an answer and re-asked, and needs
+  a value it accepts
   --> <script>:2:10
   |
 1 | for item in ["a", "b", "c"]:
@@ -304,8 +305,9 @@ for x in ["a", "b"]:
 ### STDOUT ###
 a true
 ### STDERR ###
-error[RAD20047]: The confirm "Delete b?" ran out of answers - it executed more times than --reply
-  accounted for. Repeat the flag once per pass; rad won't reuse the last answer
+error[RAD20047]: The confirm "Delete b?" ran out of answers after 1 pass. Either it runs more times
+  than that, and needs one --reply per pass, or it rejected an answer and re-asked, and needs a
+  value it accepts
   --> <script>:2:10
   |
 1 | for x in ["a", "b"]:

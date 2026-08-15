@@ -180,7 +180,7 @@ func (i *Interpreter) executeShellCmd(spec shellSpec) shellResult {
 		if answer, outcome := takeReply(spec.node); outcome != prompts.NoReply {
 			if outcome != prompts.Answered {
 				errVal := newRadValue(i, spec.node,
-					unansweredPromptErr(outcome, "The shell confirmation for "+invocation.Display()))
+					unansweredPromptErr(spec.node, outcome, "The shell confirmation for "+invocation.Display()))
 				i.NewRadPanic(spec.node, errVal).Panic()
 			}
 			approved = answer.Bool
@@ -189,7 +189,7 @@ func (i *Interpreter) executeShellCmd(spec shellSpec) shellResult {
 			if err != nil {
 				if errors.Is(err, radish.ErrNotInteractive) {
 					errVal := newRadValue(i, spec.node,
-						unansweredPromptErr(prompts.NoReply, "The shell confirmation for "+invocation.Display()))
+						unansweredPromptErr(spec.node, prompts.NoReply, "The shell confirmation for "+invocation.Display()))
 					i.NewRadPanic(spec.node, errVal).Panic()
 				}
 				// User aborted the prompt (Ctrl-C / Esc). Surface a catchable

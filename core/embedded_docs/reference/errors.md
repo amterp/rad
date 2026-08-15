@@ -1644,8 +1644,6 @@ A script setting `@enable_global_options = 0` removes `--reply` along with every
 
 The script reached a prompt that `--reply` couldn't answer. Unlike RAD20046, this one fires mid-run, because it depends on something rad could not know before starting.
 
-There are four ways to get here.
-
 #### The Prompt Was Marked Unreachable
 
 You passed `--reply-na` for this line, asserting the run wouldn't reach it, and it did:
@@ -1665,6 +1663,18 @@ rad cleanup.rad --reply 12:yes --reply 12:yes    # ran a third time
 ```
 
 Rad does not reuse the last answer. One `yes` silently approving five hundred deletions is exactly the accident worth failing over. Supply as many answers as the loop has passes, or narrow what the loop iterates over.
+
+A second shape lands here too, and rad cannot tell it from the first. A script that re-asks until it gets a value it accepts spends an answer on every attempt:
+
+```rad
+env = ""
+while env not in ["prod", "staging"]:
+    env = input("Environment? ")
+```
+
+`--reply 3:dev` is rejected, the loop comes back around, and there is nothing left to give it. Adding flags cannot fix this one - `--reply 3:dev --reply 3:dev` fails in exactly the same place. Answer with a value the script takes.
+
+The message names both readings because only you can tell which applies. Count the passes if the prompt sits in a loop; check the value if the script validates it.
 
 #### The Answer Matched No Option
 
