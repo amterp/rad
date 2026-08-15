@@ -1,0 +1,142 @@
+### TITLE ###
+BlockConstructsSpanLinesUntilABlankOne
+### DESCRIPTION ###
+An indentation-scoped language has no closing token, so the blank line is what
+says "that's the block". Everything with a body works this way: if, for, while,
+switch, and named fn.
+### ARGS ###
+repl
+### STDIN ###
+for i in range(3):
+    print(i)
+
+if 2 > 1:
+    print("yes")
+else:
+    print("no")
+
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+0
+1
+2
+yes
+
+### TITLE ###
+NamedFunctionsPersistAcrossTurns
+### DESCRIPTION ###
+A fn typed at the prompt is hoisted and bound like one in a script, so later
+turns can call it. Without running turns through the real top-level path this
+would silently do nothing.
+### ARGS ###
+repl
+### STDIN ###
+fn double(n):
+    return n * 2
+
+double(21)
+fn greet(name):
+    print("hi {name}")
+
+greet("world")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+42
+hi world
+
+### TITLE ###
+DeferRunsAtTheEndOfItsOwnTurn
+### DESCRIPTION ###
+A turn is the REPL's whole notion of a script, so that is where defer fires.
+Holding it until the session ends would mean a defer you type does nothing
+observable for as long as you keep working, and never runs at all if a later
+turn ends badly.
+### ARGS ###
+repl
+### STDIN ###
+fn work():
+    defer print("cleanup")
+    print("working")
+
+work()
+print("after")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+working
+cleanup
+after
+
+### TITLE ###
+ScriptInterfaceBlocksAreRefused
+### DESCRIPTION ###
+args, cmd blocks and file headers describe how a script is invoked from a
+command line, and a session was not invoked from one. They are fields on the
+syntax tree rather than statements, so without an explicit refusal they would
+be accepted and silently ignored.
+### ARGS ###
+repl
+### STDIN ###
+args:
+    name str
+
+print("session continues")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+session continues
+### STDERR ###
+error[RAD20049]: An args block describes a script's interface, which the REPL has no use for.
+  --> <repl>:1:1
+  |
+1 | args:
+  | ^^^^^
+2 |     name str
+  |
+  = help: Put it in a file and load that with ':load <file>'.
+  = info: rad docs RAD20049
+
+### TITLE ###
+ControlFlowOutsideItsConstructIsADiagnostic
+### DESCRIPTION ###
+break, continue, return and yield all need something to belong to. Each reports
+the error it would report in a script rather than an internal message about
+unexpected control flow.
+### ARGS ###
+repl
+### STDIN ###
+break
+return 5
+print("session continues")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+session continues
+### STDERR ###
+error[RAD20030]: Cannot 'break' outside of a loop
+  --> <repl>:1:1
+  |
+1 | break
+  | ^^^^^
+  |
+  = info: rad docs RAD20030
+
+error[RAD40004]: Cannot 'return' outside of a function
+  --> <repl>:1:1
+  |
+1 | return 5
+  | ^^^^^^^^
+  |
+  = info: rad docs RAD40004

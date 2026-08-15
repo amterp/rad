@@ -10,7 +10,7 @@ require (
 	github.com/amterp/go-tbl v0.13.0
 	github.com/amterp/jsoncolor v0.4.0
 	github.com/amterp/ra v0.10.0
-	github.com/amterp/radish v0.2.0
+	github.com/amterp/radish v0.3.0
 	github.com/amterp/tree-sitter-rad v0.10.0
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/uuid v1.6.0

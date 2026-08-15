@@ -1,0 +1,129 @@
+### TITLE ###
+ARuntimeErrorDoesNotEndTheSession
+### DESCRIPTION ###
+The behavior the REPL exists to have. The diagnostic is the same one a script
+would print, the exit code is still zero, and the variable defined before the
+error is still there afterwards.
+### ARGS ###
+repl
+### STDIN ###
+x = 5
+undefined_variable
+x
+print("still here")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+5
+still here
+### STDERR ###
+error[RAD20028]: Undefined variable: undefined_variable
+  --> <repl>:1:1
+  |
+1 | undefined_variable
+  | ^^^^^^^^^^^^^^^^^^
+  |
+  = info: rad docs RAD20028
+
+### TITLE ###
+ASyntaxErrorDoesNotEndTheSessionEither
+### DESCRIPTION ###
+Syntax diagnostics are borrowed from the checker so they name the offending
+text, exactly as they do for a file. The rest of the checker is skipped: it
+rebuilds its scope from the buffer alone, so it would report every variable
+from an earlier turn as undefined.
+### ARGS ###
+repl
+### STDIN ###
+x = 1
+this is not rad!!!
+x
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+1
+### STDERR ###
+error[RAD10009]: Unexpected 'this is not rad!!!'
+  --> <repl>:1:1
+  |
+1 | this is not rad!!!
+  | ^^^^^^^^^^^^^^^^^^
+  |
+  = info: rad docs RAD10009
+
+error[RAD10009]: Unexpected 'is'
+  --> <repl>:1:6
+  |
+1 | this is not rad!!!
+  |      ^^
+  |
+  = info: rad docs RAD10009
+
+error[RAD10001]: Expected 'in'
+  --> <repl>:1:12
+  |
+1 | this is not rad!!!
+  |            ^
+  |
+  = info: rad docs RAD10001
+
+error[RAD10009]: Unexpected '!!!'
+  --> <repl>:1:16
+  |
+1 | this is not rad!!!
+  |                ^^^
+  |
+  = info: rad docs RAD10009
+
+### TITLE ###
+ErrorsInsideBlocksRecoverToo
+### DESCRIPTION ###
+The unwind leaves the environment intact, so a loop that dies part-way through
+keeps whatever it managed to assign.
+### ARGS ###
+repl
+### STDIN ###
+total = 0
+for i in range(3):
+    total = total + i
+    missing_fn(i)
+
+total
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+0
+### STDERR ###
+error[RAD40003]: Cannot invoke unknown function: missing_fn
+  --> <repl>:3:5
+  |
+2 |     total = total + i
+3 |     missing_fn(i)
+  |     ^^^^^^^^^^
+  |
+  = info: rad docs RAD40003
+
+### TITLE ###
+CatchStillHandlesWhatItShould
+### DESCRIPTION ###
+Recovering from a fatal error at the turn boundary must not swallow the errors
+user code meant to handle itself.
+### ARGS ###
+repl
+### STDIN ###
+result = int("abc") catch:
+    result = -1
+
+result
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+-1

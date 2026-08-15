@@ -216,6 +216,20 @@
       ]
     },
     {
+      "slug": "guide/repl",
+      "section": "Guide",
+      "title": "REPL",
+      "h2s": [
+        "Blocks take several lines",
+        "Mistakes don't end the session",
+        "Editing",
+        "Commands",
+        "Two things behave differently than in a script",
+        "Piping input",
+        "What it doesn't do yet"
+      ]
+    },
+    {
       "slug": "guide/shell-completion",
       "section": "Guide",
       "title": "Shell Completion",

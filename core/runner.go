@@ -733,14 +733,30 @@ func readSource(scriptPath string) (string, error) {
 // Like `rad completion`, this is a Go-implemented command handled outside the
 // embedded-script path. Arg parsing and help output are delegated to Ra.
 func (r *RadRunner) handleReplCommand(args []string) error {
-	// The REPL and Rad's exit handler both need the printer, which the normal
-	// flow only sets up later in detectAndSetup.
+	// The exit handler needs a printer to debug-log through, and Ra may exit
+	// during parsing, so wire a plain one up front and refine it below once the
+	// flags that shape it have actually been read.
 	RP = NewPrinter(r, false, false, false, false)
 
 	cmd := ra.NewCmd("rad repl")
 	cmd.SetDescription(replDescription)
 	cmd.SetHelpEnabled(true)
+
+	// The universal flags apply to a session as much as to a script: --debug is
+	// how anyone diagnoses the REPL itself, and --color is what makes its output
+	// deterministic when something is capturing it. Registering as an embedded
+	// command is what keeps the script-only ones out of `rad repl --help`.
+	RRootCmd = cmd
+	CreateAndRegisterGlobalFlags(EmbeddedCommand)
 	cmd.ParseOrExit(args) // handles -h/--help, rejects unknown args
+
+	switch FlagColor.Value {
+	case COLOR_NEVER:
+		color.NoColor = true
+	case COLOR_ALWAYS:
+		color.NoColor = false
+	}
+	RP = NewPrinter(r, false, FlagQuiet.Value, FlagDebug.Value, FlagRadDebug.Value)
 
 	return RunRepl()
 }

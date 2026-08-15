@@ -23,6 +23,9 @@ var snapshotSuite = snap.Suite{
 		// RAW_ARGS is ARGS with the --color=never injection suppressed. Its
 		// presence is the switch, so it is meaningful even with an empty body.
 		{Name: "RAW_ARGS", List: true},
+		// STDIN is what the run reads, as distinct from INPUT which is the
+		// script it runs. A REPL case is all STDIN and no INPUT.
+		{Name: "STDIN"},
 		{Name: "TERM_WIDTH"},
 		// NO_TERMINAL runs the case as if no terminal were reachable. Its
 		// presence is the switch, so it is meaningful with an empty body.
@@ -61,6 +64,9 @@ func runSnapshotCase(t *testing.T, c *snap.Case) {
 
 	tp := NewTestParams(c.Text("INPUT"), args...)
 
+	if c.Has("STDIN") {
+		tp.StdinInput(c.Text("STDIN"))
+	}
 	if w := c.Text("TERM_WIDTH"); w != "" {
 		width, err := strconv.Atoi(w)
 		if err != nil {

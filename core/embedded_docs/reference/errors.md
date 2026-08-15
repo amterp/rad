@@ -1779,6 +1779,64 @@ $["definitely_not_installed"] catch:
 - `rad docs guide/shell-commands` - capture, modifiers, and the three command forms
 - `rad docs guide/error-handling` - `??`, the `catch` operator, and `catch:` blocks
 
+### RAD20049: Construct Not Available In The REPL
+
+You typed an `args` block, a command block, or a file header at the REPL. All
+three describe how a *script* is invoked from the command line, and a REPL
+session was never invoked from anywhere.
+
+An `args` block declares the flags and positionals rad parses out of `argv`
+before the script runs. A command block declares a subcommand. A file header is
+the docstring rad prints in that script's usage. None of them has a meaning at
+a prompt, and the REPL says so rather than accepting them and doing nothing.
+
+#### Examples
+
+```rad
+args:
+    name str
+    count int = 1
+```
+
+```rad
+command greet:
+    name str
+    calls do_greet
+
+fn do_greet():
+    print("hello {name}")
+```
+
+#### How to Fix
+
+Put the script in a file, then load it:
+
+```
+:load ./greet.rad
+```
+
+`:load` runs the file's statements against your session, so functions and
+variables it defines are yours to use afterwards. Its `args` block is skipped,
+because there are still no command-line arguments to parse.
+
+To work on the values an `args` block would have produced, assign them:
+
+```rad
+name = "world"
+count = 3
+```
+
+To try the real argument parsing, run the script:
+
+```
+rad greet.rad --name world
+```
+
+#### See Also
+
+- `rad docs guide/repl` - what a session can and cannot do
+- `rad docs guide/args` - declaring a script's command-line interface
+
 ## Type Errors (RAD3xxxx)
 
 ### RAD30001: Type Mismatch
