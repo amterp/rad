@@ -282,7 +282,29 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single `yes` approving five hundred deletions is the accident this avoids. When there *is* a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.
 
-Rad can't count the passes for you - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+A prompt in a function called from several places repeats for the same reason, and then one key stands for several different questions:
+
+```rad
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+print("{user}@{host}")
+```
+
+Answers bind in the order the calls run - here hostname, then username. Where rad can account for every execution it lists the calls, so you can read that order off the pre-flight rather than opening the script:
+
+```title="stderr"
+  deploy.rad:2  input may run more than once - repeat --reply per run
+      reached from:
+        4  host = ask("hostname")
+        5  user = ask("username")
+```
+
+It says nothing where it can't account for them all: a call inside a loop, a function passed around as a value, a caller that itself runs more than once, or a recursive function. A list missing one call would read exactly like a complete one, and you'd count passes off an undercount.
+
+Rad can't count the passes for you either way - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
 
 ### Filtered picks
 

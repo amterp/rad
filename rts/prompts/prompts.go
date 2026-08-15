@@ -74,6 +74,14 @@ type Site struct {
 	// answers one execution, so such a site usually needs the flag repeated -
 	// and a caller told nothing would run out of answers halfway through.
 	Repeats bool
+	// ReachedFrom is the lines calling the function this prompt sits in, set
+	// only when rad can account for every execution - see traceFor. It exists
+	// because a helper wrapping input() has one line of its own however many
+	// different questions it asks, and answers bind in execution order with
+	// nothing naming that order. The calls name it. Empty means rad either has
+	// nothing to add or cannot prove the list complete; the two are not worth
+	// telling apart, since neither gives the caller anything to act on.
+	ReachedFrom []int
 	// Min and Max are a multipick's literal bounds, valid only when MinSet /
 	// MaxSet is true. Knowing them lets a bad selection count fail here rather
 	// than partway through the run.
@@ -137,10 +145,11 @@ func Find(file *rl.SourceFile, resolved *check.Resolved, cmdPath []string) []Sit
 	f := &finder{
 		resolved:    resolved,
 		entered:     make(map[*rl.FnDef]bool),
-		callCount:   make(map[*rl.FnDef]int),
+		callSites:   make(map[*rl.FnDef][]callSite),
 		usedAsValue: make(map[*rl.FnDef]bool),
 		loopReached: make(map[*rl.FnDef]bool),
 		callees:     make(map[*rl.FnDef][]*rl.FnDef),
+		onceMemo:    make(map[*rl.FnDef]bool),
 		seen:        make(map[[2]int]bool),
 	}
 
@@ -178,16 +187,31 @@ type foundSite struct {
 	inLoop bool
 }
 
+// callSite is one call to a function: where it was written, and the context it
+// was written in. Positions are kept rather than only counted so pre-flight can
+// show a caller the lines a repeated prompt is reached from - a prompt inside a
+// helper has one line of its own but may ask several different questions.
+type callSite struct {
+	line int // 1-based
+	// owner is the function the call was written in; nil for top-level code.
+	owner *rl.FnDef
+	// inLoop records that the call sits inside a loop, so it runs an unknown
+	// number of times.
+	inLoop bool
+}
+
 type finder struct {
 	resolved *check.Resolved
 	entered  map[*rl.FnDef]bool
-	// callCount, usedAsValue and loopReached are how a function earns the
+	// callSites, usedAsValue and loopReached are how a function earns the
 	// "runs more than once" verdict; callees carries that verdict onward to
 	// everything it in turn calls.
-	callCount   map[*rl.FnDef]int
+	callSites   map[*rl.FnDef][]callSite
 	usedAsValue map[*rl.FnDef]bool
 	loopReached map[*rl.FnDef]bool
 	callees     map[*rl.FnDef][]*rl.FnDef
+	// onceMemo caches reachedOnce, which walks back up the call graph.
+	onceMemo map[*rl.FnDef]bool
 	// callTargets marks the identifiers that name a call's target, so a bare
 	// reference to a function can be told apart from calling it.
 	callTargets map[*rl.Identifier]bool
@@ -343,7 +367,11 @@ func (f *finder) visitIdent(ident *rl.Identifier) {
 	}
 
 	if f.callTargets[ident] {
-		f.callCount[fn]++
+		f.callSites[fn] = append(f.callSites[fn], callSite{
+			line:   ident.Span().StartRow + 1,
+			owner:  f.curFn,
+			inLoop: f.loopDepth > 0,
+		})
 	} else {
 		f.usedAsValue[fn] = true
 	}
@@ -385,7 +413,7 @@ func (f *finder) markRepeats() {
 	var queue []*rl.FnDef
 
 	for fn := range f.entered {
-		if f.callCount[fn] > 1 || f.usedAsValue[fn] || f.loopReached[fn] {
+		if len(f.callSites[fn]) > 1 || f.usedAsValue[fn] || f.loopReached[fn] {
 			repeating[fn] = true
 			queue = append(queue, fn)
 		}
@@ -403,7 +431,76 @@ func (f *finder) markRepeats() {
 
 	for i := range f.found {
 		f.found[i].site.Repeats = f.found[i].inLoop || repeating[f.found[i].owner]
+		f.found[i].site.ReachedFrom = f.traceFor(f.found[i])
 	}
+}
+
+// traceFor is the lines a prompt inside a helper is reached from, or nil when
+// rad cannot account for every execution.
+//
+// A prompt keyed by line answers in execution order, and where one helper is
+// called three times with three different arguments, the caller has no way to
+// learn which question comes first. Naming the calls is what makes it readable;
+// what makes it safe is refusing to name them unless they are all of them. A
+// list that silently omits a call reads exactly like a complete one, which
+// leaves the caller counting passes off an undercount.
+//
+// So every execution has to be accounted for: the prompt must not sit in a loop
+// in its own body, its function must not be handed around as a value, no call
+// may sit in a loop, and every calling function must itself be reached exactly
+// once - transitively, or `ask` called twice inside a `connect` that is itself
+// called twice reports two calls for four executions.
+//
+// Where any of that fails, the site keeps the "may run more than once" note and
+// says nothing more.
+func (f *finder) traceFor(fs foundSite) []int {
+	if fs.owner == nil || fs.inLoop || f.usedAsValue[fs.owner] {
+		return nil
+	}
+	calls := f.callSites[fs.owner]
+	if len(calls) < 2 {
+		return nil // one call needs no disambiguating
+	}
+	for _, c := range calls {
+		if c.inLoop || !f.reachedOnce(c.owner) {
+			return nil
+		}
+	}
+
+	seen := make(map[int]bool, len(calls))
+	var lines []int
+	for _, c := range calls {
+		// Two calls on one line share a source line to show, so showing it twice
+		// would only repeat the same text.
+		if !seen[c.line] {
+			seen[c.line] = true
+			lines = append(lines, c.line)
+		}
+	}
+	sort.Ints(lines)
+	return lines
+}
+
+// reachedOnce reports whether this function runs exactly once per run. Top-level
+// code qualifies; anything else has to be called from exactly one place that is
+// itself reached once.
+//
+// The memo is seeded false before recursing, so a cycle resolves to false rather
+// than looping. That is also the right answer: a recursive function runs an
+// unknown number of times.
+func (f *finder) reachedOnce(fn *rl.FnDef) bool {
+	if fn == nil {
+		return true
+	}
+	if v, ok := f.onceMemo[fn]; ok {
+		return v
+	}
+	f.onceMemo[fn] = false
+
+	calls := f.callSites[fn]
+	once := !f.usedAsValue[fn] && len(calls) == 1 && !calls[0].inLoop && f.reachedOnce(calls[0].owner)
+	f.onceMemo[fn] = once
+	return once
 }
 
 func (f *finder) walkCallback(cb *rl.CmdCallback) {

@@ -579,6 +579,179 @@ error[RAD20046]: this script needs to
 7
 
 ### TITLE ###
+A prompt inside a helper names the calls that reach it
+### DESCRIPTION ###
+One line, three questions, answered in execution order. Without the calls the
+caller has no way to learn that order, and a wrong guess binds every value to
+the wrong name and still exits 0.
+### INPUT ###
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+port = ask("port")
+print("{user}@{host}:{port}")
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
+
+  TestCase:2  input may run more than once - repeat --reply per run
+      reached from:
+        4  host = ask("hostname")
+        5  user = ask("username")
+        6  port = ask("port")
+
+    rad TestCase --color=never --reply '2:<value>'
+
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+
+  One --reply answers one pass, and rad can't count the passes - that depends on the script's own
+  data. Too few stops the run partway, after it has already done whatever came before, so read the
+  script and count them where that would cost you.
+  = info: rad docs RAD20046
+### EXIT ###
+7
+
+### TITLE ###
+Calls that reach a prompt from a loop are not listed
+### DESCRIPTION ###
+The call sites are known, the number of executions is not, so a list would
+invite the caller to count passes off it.
+### INPUT ###
+fn ask(label):
+    return input("Enter {label}: ")
+for l in ["a", "b", "c"]:
+    print(ask(l))
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
+
+  TestCase:2  input may run more than once - repeat --reply per run
+
+    rad TestCase --color=never --reply '2:<value>'
+
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+
+  One --reply answers one pass, and rad can't count the passes - that depends on the script's own
+  data. Too few stops the run partway, after it has already done whatever came before, so read the
+  script and count them where that would cost you.
+  = info: rad docs RAD20046
+### EXIT ###
+7
+
+### TITLE ###
+Calls that reach a prompt through a function value are not listed
+### INPUT ###
+fn ask(label):
+    return input("Enter {label}: ")
+f = ask
+print(f("one"))
+print(f("two"))
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
+
+  TestCase:2  input may run more than once - repeat --reply per run
+
+    rad TestCase --color=never --reply '2:<value>'
+
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+
+  One --reply answers one pass, and rad can't count the passes - that depends on the script's own
+  data. Too few stops the run partway, after it has already done whatever came before, so read the
+  script and count them where that would cost you.
+  = info: rad docs RAD20046
+### EXIT ###
+7
+
+### TITLE ###
+Calls are not listed when a calling function itself runs more than once
+### DESCRIPTION ###
+ask is called twice inside connect, and connect is called twice - so the two
+calls stand for four executions. Listing them would undercount by half.
+### INPUT ###
+fn ask(label):
+    return input("Enter {label}: ")
+fn connect():
+    h = ask("host")
+    u = ask("user")
+    return "{u}@{h}"
+print(connect())
+print(connect())
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
+
+  TestCase:2  input may run more than once - repeat --reply per run
+
+    rad TestCase --color=never --reply '2:<value>'
+
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+
+  One --reply answers one pass, and rad can't count the passes - that depends on the script's own
+  data. Too few stops the run partway, after it has already done whatever came before, so read the
+  script and count them where that would cost you.
+  = info: rad docs RAD20046
+### EXIT ###
+7
+
+### TITLE ###
+Calls are listed through a calling function that runs exactly once
+### INPUT ###
+fn ask(label):
+    return input("Enter {label}: ")
+fn connect():
+    h = ask("host")
+    u = ask("user")
+    return "{u}@{h}"
+print(connect())
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to ask you something, but there's no terminal
+
+  TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
+  - so it can't ask. Supply the answers up front, keyed by line number.
+
+  TestCase:2  input may run more than once - repeat --reply per run
+      reached from:
+        4  h = ask("host")
+        5  u = ask("user")
+
+    rad TestCase --color=never --reply '2:<value>'
+
+  Every <...> is a blank - rad writes the shape of the command, never the answers. Fill each one in;
+  rad takes the text literally and matches it exactly. For a prompt on a branch you know won't run,
+  or a filtered pick you expect to settle itself, use --reply-na instead of choosing for it.
+
+  One --reply answers one pass, and rad can't count the passes - that depends on the script's own
+  data. Too few stops the run partway, after it has already done whatever came before, so read the
+  script and count them where that would cost you.
+  = info: rad docs RAD20046
+### EXIT ###
+7
+
+### TITLE ###
 A filtered pick that settles rejects an answer the filter excluded
 ### DESCRIPTION ###
 The repro from the card: prefer_exact settles on the filter's exact match, and
@@ -604,3 +777,53 @@ error[RAD20047]: The pick "Pick an option" settled on "api" without asking, but 
   = info: rad docs RAD20047
 ### EXIT ###
 1
+
+### TITLE ###
+Listed calls are truncated to a narrow terminal
+### INPUT ###
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("a hostname, spelled out at some considerable length for the test")
+user = ask("username")
+print("{user}@{host}")
+### TERM_WIDTH ###
+40
+### NO_TERMINAL ###
+### STDERR ###
+error[RAD20046]: this script needs to
+  ask you something, but there's no
+  terminal
+
+  TestCase prompts in 1 place. rad found
+  no terminal - stdin isn't one and
+  /dev/tty isn't available - so it can't
+  ask. Supply the answers up front,
+  keyed by line number.
+
+  TestCase:2  input may run more than once - repeat --reply per run
+      reached from:
+        4  host = ask("a hostname, sp...
+        5  user = ask("username")
+
+    rad TestCase --color=never --reply '2:<value>'
+
+  Every <...> is a blank - rad writes
+  the shape of the command, never the
+  answers. Fill each one in; rad takes
+  the text literally and matches it
+  exactly. For a prompt on a branch you
+  know won't run, or a filtered pick you
+  expect to settle itself, use
+  --reply-na instead of choosing for it.
+
+  One --reply answers one pass, and rad
+  can't count the passes - that depends
+  on the script's own data. Too few
+  stops the run partway, after it has
+  already done whatever came before, so
+  read the script and count them where
+  that would cost you.
+  = info: rad docs RAD20046
+### EXIT ###
+7
