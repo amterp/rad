@@ -135,7 +135,7 @@ var FuncMultipick = BuiltInFunc{
 
 		if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
 			if outcome != prompts.Answered {
-				return f.Return(unansweredPromptErr(outcome, fmt.Sprintf("The multipick %q", prompt)))
+				return f.Return(unansweredPromptErr(f.callNode, outcome, fmt.Sprintf("The multipick %q", prompt)))
 			}
 			selected, radErr := multipickFromReply(answer.List, options, min, max, prompt)
 			if radErr != nil {
@@ -159,7 +159,7 @@ var FuncMultipick = BuiltInFunc{
 		res, _, err := RInteractive.Run(model)
 		if err != nil {
 			if errors.Is(err, radish.ErrNotInteractive) {
-				return f.Return(unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The multipick %q", prompt)))
+				return f.Return(unansweredPromptErr(f.callNode, prompts.NoReply, fmt.Sprintf("The multipick %q", prompt)))
 			}
 			return f.Return(NewErrorStrf("Error running multipick: %v", err))
 		}

@@ -325,6 +325,22 @@ func (r *Replies) Pending(line, col int) bool {
 	return ok && !entry.unreachable && entry.consumed < len(entry.answers)
 }
 
+// Supplied reports how many answers were given for the site at this position.
+//
+// It exists so a site that runs out can say how far the answers got. "Ran out
+// after 1 pass" is a fact the caller can check against the script; "ran out" on
+// its own leaves them guessing whether they miscounted or the script re-asked.
+func (r *Replies) Supplied(line, col int) int {
+	if r == nil {
+		return 0
+	}
+	entry, ok := r.byPos[[2]int{line, col}]
+	if !ok {
+		return 0
+	}
+	return len(entry.answers)
+}
+
 // Take consumes the next answer for the site at this position.
 //
 // Answers are per-site queues rather than one global queue, so inserting a
