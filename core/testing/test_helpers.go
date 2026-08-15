@@ -117,10 +117,14 @@ type ErrorOrExit struct {
 }
 
 func newRunnerInput() core.RunnerInput {
+	// Unwinding via *core.RadAbort - the same value production uses when a
+	// session hosts execution - rather than a sentinel string. A bare string
+	// looked like an internal bug to the interpreter, which is why
+	// handlePanicRecovery used to need an IsTest guard, and why tests could
+	// observe error recovery that never happened outside them.
 	testExitFunc := func(code int) {
 		errorOrExit.exitCode = &code
-		// errorOrExit.stderrSnapshot = stdErrBuffer.String()
-		panic(ignorePanicMsg)
+		panic(&core.RadAbort{Code: code, Reason: core.ExitError})
 	}
 	testForceExitFunc := func(code int) {
 		errorOrExit.forceExitCode = &code
@@ -394,11 +398,11 @@ func setupAndRun(t *testing.T, tp *TestParams) {
 	runner := setupRunner(t, args...)
 	defer func() {
 		if r := recover(); r != nil {
-			msg := fmt.Sprintf("%v", r)
-			if !strings.Contains(msg, ignorePanicMsg) {
-				// errorOrExit.stderrSnapshot += msg
-				errorOrExit.panicMsg = &msg
+			if _, ok := r.(*core.RadAbort); ok {
+				return // an exit, already recorded by testExitFunc
 			}
+			msg := fmt.Sprintf("%v", r)
+			errorOrExit.panicMsg = &msg
 		}
 	}()
 	err := runner.Run()

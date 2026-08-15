@@ -874,7 +874,7 @@ func (i *Interpreter) emitDiagnostic(d Diagnostic) {
 	renderer := NewDiagnosticRenderer(RIo.StdErr)
 	renderer.Render(d)
 	emitShellExit(1)
-	RExit.Exit(1)
+	RExit.ExitWith(1, ExitError, "")
 }
 
 // emitError creates and emits an error diagnostic with a single span.
@@ -1504,6 +1504,12 @@ func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode rl.Node, m
 		return
 	}
 
+	// An abort is already reported and merely on its way out to whoever owns
+	// this unit of execution. It is not ours to attribute or to swallow.
+	if abort, ok := r.(*RadAbort); ok {
+		panic(abort)
+	}
+
 	// RadPanic is expected - it's how Rad propagates user-facing errors
 	if radPanic, ok := r.(*RadPanic); ok {
 		err := radPanic.Err()
@@ -1525,11 +1531,10 @@ func (i *Interpreter) handlePanicRecovery(r interface{}, fallbackNode rl.Node, m
 		return
 	}
 
-	// Non-RadPanic means an internal bug - this shouldn't happen
-	// Skip in tests since test framework may use panics for control flow (e.g., exit simulation)
-	if !IsTest {
-		i.emitInternalBug(r, fallbackNode, msgArgs...)
-	}
+	// Anything else is an internal bug. Tests see this too: the harness unwinds
+	// with *RadAbort like production does, so nothing here is control flow in
+	// disguise, and a real panic under test fails loudly instead of vanishing.
+	i.emitInternalBug(r, fallbackNode, msgArgs...)
 }
 
 // emitInternalBug reports an internal Rad bug to the user.
