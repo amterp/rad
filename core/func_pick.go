@@ -226,7 +226,7 @@ func pickKv[T comparable](
 	// Only now is a prompt actually going to happen.
 	if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
 		if outcome != prompts.Answered {
-			return []T{}, unansweredPromptErr(outcome, fmt.Sprintf("The pick %q", prompt))
+			return []T{}, unansweredPromptErr(f.callNode, outcome, fmt.Sprintf("The pick %q", prompt))
 		}
 		// Checked against the picker's own list rather than every match, so an
 		// answer can't name an option prefer_exact already narrowed away.
@@ -251,7 +251,7 @@ func pickKv[T comparable](
 	res, _, err := RInteractive.Run(model)
 	if err != nil {
 		if errors.Is(err, radish.ErrNotInteractive) {
-			return []T{}, unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The pick %q", prompt))
+			return []T{}, unansweredPromptErr(f.callNode, prompts.NoReply, fmt.Sprintf("The pick %q", prompt))
 		}
 		return []T{}, NewErrorStrf("Error running pick: %v", err)
 	}

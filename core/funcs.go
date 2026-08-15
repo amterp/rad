@@ -650,7 +650,7 @@ func init() {
 				// each caller has to look up its own answer.
 				if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
 					if outcome != prompts.Answered {
-						return f.Return(unansweredPromptErr(outcome, fmt.Sprintf("The confirm %q", prompt)))
+						return f.Return(unansweredPromptErr(f.callNode, outcome, fmt.Sprintf("The confirm %q", prompt)))
 					}
 					return f.Return(answer.Bool)
 				}
@@ -659,7 +659,7 @@ func init() {
 				if err != nil {
 					// Cancel (Esc/Ctrl-C) and not-a-TTY both surface here as errors.
 					if errors.Is(err, radish.ErrNotInteractive) {
-						return f.Return(unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The confirm %q", prompt)))
+						return f.Return(unansweredPromptErr(f.callNode, prompts.NoReply, fmt.Sprintf("The confirm %q", prompt)))
 					}
 					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}
@@ -745,7 +745,7 @@ func init() {
 
 				if answer, outcome := takeReply(f.callNode); outcome != prompts.NoReply {
 					if outcome != prompts.Answered {
-						return f.Return(unansweredPromptErr(outcome, fmt.Sprintf("The input %q", prompt)))
+						return f.Return(unansweredPromptErr(f.callNode, outcome, fmt.Sprintf("The input %q", prompt)))
 					}
 					// Checked here as well as up front: the static walk only sees
 					// `secret=true` written literally, so a computed one would
@@ -768,7 +768,7 @@ func init() {
 						if secret {
 							return f.Return(secretNeedsTerminalErr(prompt))
 						}
-						return f.Return(unansweredPromptErr(prompts.NoReply, fmt.Sprintf("The input %q", prompt)))
+						return f.Return(unansweredPromptErr(f.callNode, prompts.NoReply, fmt.Sprintf("The input %q", prompt)))
 					}
 					return f.ReturnErrf(rl.ErrUserInput, "Error reading input: %v", err)
 				}

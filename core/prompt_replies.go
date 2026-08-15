@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	com "github.com/amterp/rad/core/common"
 	"github.com/amterp/rad/rts/prompts"
 	"github.com/amterp/rad/rts/rl"
 )
@@ -48,7 +49,7 @@ func replyPending(node rl.Node) bool {
 // unansweredPromptErr is what a prompt raises when it is reached and neither a
 // terminal nor a usable answer is available. The remaining map goes with it, so
 // one re-run can fix everything rather than uncovering the next problem.
-func unansweredPromptErr(outcome prompts.Outcome, what string) *RadError {
+func unansweredPromptErr(node rl.Node, outcome prompts.Outcome, what string) *RadError {
 	var reason string
 	switch outcome {
 	case prompts.Unreachable:
@@ -56,9 +57,16 @@ func unansweredPromptErr(outcome prompts.Outcome, what string) *RadError {
 			"%s was reached, but --reply-na said it wouldn't be. "+
 				"That's an assertion, not a fallback, so rad won't guess an answer", what)
 	case prompts.Exhausted:
+		// Two things land here and rad cannot tell them apart: the prompt runs
+		// more times than the caller counted, or it rejected an answer and
+		// re-asked. Asserting the first is what makes this unusable on the
+		// second - an agent told to add a flag adds one, fails in exactly the
+		// same place, and adds another. So name both and let the reader pick;
+		// the pass count is what they check the script against.
 		reason = fmt.Sprintf(
-			"%s ran out of answers - it executed more times than --reply accounted for. "+
-				"Repeat the flag once per pass; rad won't reuse the last answer", what)
+			"%s ran out of answers after %s. Either it runs more times than that, and needs "+
+				"one --reply per pass, or it rejected an answer and re-asked, and needs a "+
+				"value it accepts", what, com.Pluralize(passesAnswered(node), "pass"))
 	default:
 		reason = fmt.Sprintf(
 			"%s needs an answer, and there's no terminal to ask at. "+
@@ -66,6 +74,16 @@ func unansweredPromptErr(outcome prompts.Outcome, what string) *RadError {
 	}
 
 	return NewErrorStrf("%s%s", reason, remainingPromptsHint()).SetCode(rl.ErrPromptUnanswerable)
+}
+
+// passesAnswered is how many answers the caller supplied for this site, which
+// at exhaustion is how many passes got one.
+func passesAnswered(node rl.Node) int {
+	if node == nil || RReplies == nil {
+		return 0
+	}
+	span := node.Span()
+	return RReplies.Supplied(span.StartRow+1, span.StartCol+1)
 }
 
 // secretNeedsTerminalErr refuses a secret input that has no terminal to read

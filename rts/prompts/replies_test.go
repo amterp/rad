@@ -248,6 +248,19 @@ func TestPendingIsFalseForAnUnreachableSite(t *testing.T) {
 	assert.Equal(t, prompts.Unreachable, outcome)
 }
 
+func TestSuppliedCountsAnswersRegardlessOfConsumption(t *testing.T) {
+	// A site that runs out reports how far the answers got, which is the number
+	// a caller can check the script against.
+	site := prompts.Site{Kind: prompts.Input, Key: "1", Line: 1, Col: 1}
+	r, err := prompts.ParseReplies([]string{"1:a", "1:b"}, nil, []prompts.Site{site})
+	require.NoError(t, err)
+
+	assert.Equal(t, 2, r.Supplied(1, 1))
+	r.Take(1, 1)
+	assert.Equal(t, 2, r.Supplied(1, 1), "consuming doesn't change how many were given")
+	assert.Equal(t, 0, r.Supplied(9, 9), "no site there")
+}
+
 func TestAmbiguousKeyNamesTheAlternativesInColumnOrder(t *testing.T) {
 	sites := []prompts.Site{
 		{Kind: prompts.Confirm, Key: "1.5", Line: 1, Col: 5},
