@@ -457,7 +457,7 @@ func (i *Interpreter) dispatchSignal(name string) {
 	}
 
 	if IsTerminatingSignal(name) {
-		RExit.Exit(ExitCodeFor(name))
+		RExit.ExitWith(ExitCodeFor(name), ExitSignal, name)
 	}
 }
 

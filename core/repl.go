@@ -33,6 +33,11 @@ func RunRepl() error {
 		return fmt.Errorf("failed to create REPL session: %w", err)
 	}
 
+	// A REPL hosts execution rather than being it, so a fatal error unwinds to
+	// the prompt instead of ending the process.
+	RExit.SetUnwinding(true)
+	defer RExit.SetUnwinding(false)
+
 	defer func() {
 		if shutdownErr := session.Shutdown(); shutdownErr != nil {
 			RP.Printf("Warning: REPL shutdown error: %v\n", shutdownErr)

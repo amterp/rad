@@ -104,21 +104,31 @@ func (s *DefaultReplSession) Run() error {
 }
 
 // ExecuteStatement executes a single statement and returns the result
-func (s *DefaultReplSession) ExecuteStatement(input string) (*ExecutionResult, error) {
-	// Use the new EvaluateStatement API on our persistent interpreter
-	resultValue, err := s.interpreter.EvaluateStatement(input)
-	if err != nil {
-		// Convert Go error to RadError for consistent error handling
-		radErr := NewErrorStrf("Execution error: %v", err)
+func (s *DefaultReplSession) ExecuteStatement(input string) (result *ExecutionResult, err error) {
+	// A fatal error unwinds as *RadAbort instead of ending the process, and the
+	// turn is where it stops: the diagnostic is already on screen, so the
+	// session just carries on at the next prompt. The exit latch is cleared so
+	// the following turn's deferred statements still run.
+	defer func() {
+		r := recover()
+		if r == nil {
+			return
+		}
+		if _, ok := r.(*RadAbort); !ok {
+			panic(r)
+		}
+		RExit.ResetExiting()
+		result, err = NewExecutionResult(VOID_SENTINEL, false, nil), nil
+	}()
+
+	resultValue, evalErr := s.interpreter.EvaluateStatement(input)
+	if evalErr != nil {
+		radErr := NewErrorStrf("Execution error: %v", evalErr)
 		return NewExecutionResult(RAD_NULL_VAL, false, radErr), nil
 	}
 
-	// Determine if result should be printed
-	// For MVP: print expressions that return values, don't print assignments or print statements
-
-	shouldPrint := resultValue != VOID_SENTINEL
-
-	return NewExecutionResult(resultValue, shouldPrint, nil), nil
+	// Expressions print their value; assignments and void calls print nothing.
+	return NewExecutionResult(resultValue, resultValue != VOID_SENTINEL, nil), nil
 }
 
 // GetEnvironment returns the current interpreter environment
