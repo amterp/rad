@@ -1,10 +1,12 @@
 # RED Style Guide
 
-[RED-1](0001-red-process.md) defines the process: lifecycle, frontmatter, the section
-skeleton, the freeze rule. This guide covers what RED-1 doesn't - the voice, approach, and
-prose that make a RED read like the others. Before writing one, read a couple of existing
-REDs as models: [RED-5](0005-removing-null.md) (a backfill, including a superseded
-decision) and [RED-C](C-radish.md) (a live, forward-looking draft). The models are where
+[RED-1](0001-red-process.md) defines the process: when a RED is warranted at all,
+lifecycle, frontmatter, the section skeleton, the freeze rule. Check its trigger bar
+before starting - most work belongs in a commit message instead, and everything here
+applies only once something clears that bar. This guide covers what RED-1 doesn't - the
+voice, approach, and prose that make a RED read like the others. Before writing one, read a
+couple of existing REDs as models: [RED-5](0005-removing-null.md) (a backfill, including a
+superseded decision) and [RED-C](C-radish.md) (a live, forward-looking draft). The models are where
 the examples live - emulate their moves at the same altitude, in fresh words; don't reuse
 their phrasing.
 
