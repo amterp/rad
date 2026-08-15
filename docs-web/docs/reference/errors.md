@@ -1607,6 +1607,8 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers are queued per line rather than globally, so adding a prompt earlier in a script never silently re-targets a later answer. Running out mid-loop stops the script rather than reusing the last answer.
 
+Rad cannot count the passes for you - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+
 #### Prompts You Don't Expect To Reach
 
 If a prompt sits on a branch this run won't take, say so instead of inventing a value:
@@ -1644,6 +1646,8 @@ A script setting `@enable_global_options = 0` removes `--reply` along with every
 ### RAD20047: Prompt Reached Without A Usable Answer
 
 The script reached a prompt that `--reply` couldn't answer. Unlike RAD20046, this one fires mid-run, because it depends on something rad could not know before starting.
+
+Whichever way you got here, the script ran up to this point. Check what it already did before you re-run it: a retry starts from the top.
 
 #### The Prompt Was Marked Unreachable
 
@@ -1708,7 +1712,7 @@ A `multipick` answer named an option twice, or gave more or fewer selections tha
 
 #### How to Fix
 
-Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job. Note that the script did execute up to this point - if it has side effects, check what already happened before retrying.
+Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job.
 
 #### Related
 
