@@ -282,64 +282,6 @@ func (i *Interpreter) safelyExecuteCommandCallback(cmd *ScriptCommand) {
 	}
 }
 
-// EvaluateStatement evaluates a single statement string and returns the result
-// This is designed for REPL use where individual statements are evaluated
-// against a persistent interpreter environment
-func (i *Interpreter) EvaluateStatement(input string) (RadValue, error) {
-	// Parse the input statement
-	parser, err := rts.NewRadParser()
-	if err != nil {
-		return RAD_NULL_VAL, fmt.Errorf("failed to create parser: %w", err)
-	}
-	defer parser.Close()
-
-	tree := parser.Parse(input)
-	// Check for parse errors using FindInvalidNodes
-	if tree.HasInvalidNodes() {
-		return RAD_NULL_VAL, fmt.Errorf("parse error in statement: %s", input)
-	}
-
-	// Convert CST to AST
-	astRoot := rts.ConvertCST(tree.Root(), input, "<repl>")
-
-	// Update the interpreter's ScriptData to point to this new tree and source
-	// This ensures that GetSrc and other methods work correctly
-	originalScriptData := i.sd
-	i.sd = &ScriptData{
-		ScriptName:        "<repl>",
-		Tree:              tree,
-		Src:               input,
-		DisableGlobalOpts: true,
-		DisableArgsBlock:  true,
-	}
-
-	// Restore original ScriptData after evaluation
-	defer func() {
-		i.sd = originalScriptData
-	}()
-
-	// REPL: evaluate each statement from the AST.
-	// safelyEvaluate catches all panics via handlePanicRecovery
-	if len(astRoot.Stmts) == 1 {
-		result := i.safelyEvaluate(astRoot.Stmts[0])
-		if result.Ctrl != CtrlNormal {
-			return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %v", result.Ctrl)
-		}
-		return result.Val, nil
-	}
-
-	// Multiple statements: evaluate all, return last
-	var lastResult EvalResult
-	for _, stmt := range astRoot.Stmts {
-		lastResult = i.safelyEvaluate(stmt)
-	}
-
-	if lastResult.Ctrl != CtrlNormal {
-		return RAD_NULL_VAL, fmt.Errorf("unexpected control flow: %v", lastResult.Ctrl)
-	}
-	return lastResult.Val, nil
-}
-
 func (i *Interpreter) safelyEvaluate(node rl.Node) EvalResult {
 	defer func() {
 		i.handlePanicRecovery(recover(), node)

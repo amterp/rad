@@ -1,0 +1,83 @@
+### TITLE ###
+StateCarriesBetweenTurns
+### DESCRIPTION ###
+The point of a session: one interpreter, one environment, many turns. Note
+assignments print nothing and expressions print their value, so the output is
+the result of what you asked for and nothing else.
+### ARGS ###
+repl
+### STDIN ###
+x = 10
+y = 32
+x + y
+x = x * 2
+x
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+42
+20
+
+### TITLE ###
+ValuesPrintAsTheyWouldBeWritten
+### DESCRIPTION ###
+Strings come back quoted so you can tell "5" from 5. This is repr, not print -
+print() is still available and still unquoted.
+### ARGS ###
+repl
+### STDIN ###
+"hello"
+[1, 2, 3]
+{"a": 1}
+1 == 1
+print("unquoted")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+"hello"
+[ 1, 2, 3 ]
+{ "a": 1 }
+true
+unquoted
+
+### TITLE ###
+ExitEndsTheSessionWithItsCode
+### DESCRIPTION ###
+exit() is the ordinary builtin, not a magic word the reader intercepts, so it
+takes an exit code like it does anywhere else.
+### ARGS ###
+repl
+### STDIN ###
+print("before")
+exit(3)
+print("never runs")
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+before
+### EXIT ###
+3
+
+### TITLE ###
+EmptyLinesAreSkipped
+### DESCRIPTION ###
+A blank line at the top level is not an empty turn to evaluate, it is nothing.
+### ARGS ###
+repl
+### STDIN ###
+x = 1
+
+
+x
+### NO_TERMINAL ###
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+1

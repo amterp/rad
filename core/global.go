@@ -42,6 +42,25 @@ func GetTermWidth() int {
 	return width
 }
 
+// defaultTermHeight is what we assume when there is no terminal to ask. It only
+// bounds how tall an editor may draw, and off a terminal nothing is drawn at
+// all, so a conventional 24 is as good an answer as any.
+const defaultTermHeight = 24
+
+// GetTermHeight returns the terminal height to use for rendering. Unlike width,
+// nothing truncates to it - it exists so an inline editor knows how many rows it
+// can redraw over without scrolling its own top off the screen.
+func GetTermHeight() int {
+	if RTermHeight != nil {
+		return *RTermHeight
+	}
+	_, height, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil || height <= 0 {
+		return defaultTermHeight
+	}
+	return height
+}
+
 var (
 	RRootCmd     *ra.Cmd
 	RConfig      *RadConfig
@@ -72,6 +91,7 @@ var (
 	RawArgs                  []string
 	AlreadyExportedShellVars bool
 	RTermWidth               *int // nil = use real terminal width; non-nil overrides for tests
+	RTermHeight              *int // nil = use real terminal height; non-nil overrides for tests
 
 	StartEpochMillis int64
 )
@@ -82,15 +102,16 @@ type RunnerInput struct {
 	// RForceExit is the raw hard-exit (no defers/callbacks), distinct from
 	// RExit which wraps into a RadExitHandler. Tests inject a record-only
 	// variant; see global RForceExit.
-	RForceExit *func(int)
-	RReq       *Requester
-	RClock     Clock
-	RSleep     *func(ctx context.Context, duration time.Duration)
-	RShell     *func(ctx context.Context, invocation ShellInvocation) (string, string, int)
-	RConfirm   *func(title string, prompt string) (bool, error)
-	RSignal    SignalSource
-	RadHome    *string
-	RTermWidth *int
+	RForceExit  *func(int)
+	RReq        *Requester
+	RClock      Clock
+	RSleep      *func(ctx context.Context, duration time.Duration)
+	RShell      *func(ctx context.Context, invocation ShellInvocation) (string, string, int)
+	RConfirm    *func(title string, prompt string) (bool, error)
+	RSignal     SignalSource
+	RadHome     *string
+	RTermWidth  *int
+	RTermHeight *int
 	// RInteractive overrides the interactive-prompt driver. nil uses the real
 	// terminal; tests inject a scripted driver. See InteractiveDriver.
 	RInteractive InteractiveDriver
@@ -139,6 +160,7 @@ func ResetGlobals() {
 	RawArgs = nil
 	AlreadyExportedShellVars = false
 	RTermWidth = nil
+	RTermHeight = nil
 
 	FlagHelp = BoolRadArg{}
 	FlagDebug = BoolRadArg{}
@@ -253,6 +275,7 @@ func setGlobals(runnerInput RunnerInput) {
 	}
 
 	RTermWidth = runnerInput.RTermWidth
+	RTermHeight = runnerInput.RTermHeight
 
 	// Initialize RNG with clock-based seed (respects RClock abstraction)
 	RNG = rand.New(rand.NewSource(RClock.Now().UnixNano()))

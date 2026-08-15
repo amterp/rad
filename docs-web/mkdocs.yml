@@ -21,6 +21,7 @@ nav:
       - ./guide/stashes.md
       - ./guide/config.md
       - ./guide/built-in-commands.md
+      - ./guide/repl.md
       - ./guide/shell-completion.md
   - Examples:
       - ./examples/index.md
