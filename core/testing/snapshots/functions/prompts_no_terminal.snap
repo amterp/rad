@@ -392,7 +392,10 @@ error[RAD20046]: "a" is selected twice for the multipick at 1; list each option 
 7
 
 ### TITLE ###
-A pick that resolves itself consumes its answer but does not fight it
+A pick that resolves itself rejects an answer naming something else
+### DESCRIPTION ###
+The options are computed, so the answer cannot be checked up front. Left alone
+the pick takes "only" and the caller never learns their instruction was dropped.
 ### INPUT ###
 opts = ["only"]
 print("side effect")
@@ -403,6 +406,31 @@ print(x)
 3:something
 ### STDOUT ###
 side effect
+### STDERR ###
+error[RAD20047]: The pick "Pick an option" settled on "only" without asking, but --reply said
+  "something". rad won't override the script's own filter: change what the script filters on, or
+  answer with "only". A retry starts from the top, repeating whatever already ran.
+  --> <script>:3:5
+  |
+2 | print("side effect")
+3 | x = pick(opts)
+  |     ^^^^^^^^^^
+4 | print(x)
+  |
+  = info: rad docs RAD20047
+### EXIT ###
+1
+
+### TITLE ###
+A pick that resolves itself takes an answer that agrees
+### INPUT ###
+opts = ["only"]
+x = pick(opts)
+print(x)
+### ARGS ###
+--reply
+2:only
+### STDOUT ###
 only
 
 ### TITLE ###
@@ -417,7 +445,7 @@ error[RAD20046]: this script needs to ask you something, but there's no terminal
   TestCase prompts in 1 place. rad found no terminal - stdin isn't one and /dev/tty isn't available
   - so it can't ask. Supply the answers up front, keyed by line number.
 
-  TestCase:1  pick options: alpha, beta  filtered - may not prompt, and then ignores its answer
+  TestCase:1  pick options: alpha, beta  filtered - may not prompt, and then only accepts what it settles on
 
     rad TestCase --color=never --reply '1:<option>'
 
@@ -549,3 +577,30 @@ error[RAD20046]: this script needs to
   = info: rad docs RAD20046
 ### EXIT ###
 7
+
+### TITLE ###
+A filtered pick that settles rejects an answer the filter excluded
+### DESCRIPTION ###
+The repro from the card: prefer_exact settles on the filter's exact match, and
+the answer naming a different service was dropped silently.
+### INPUT ###
+services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+print("tailing {target}")
+### ARGS ###
+--reply
+2:worker
+### STDERR ###
+error[RAD20047]: The pick "Pick an option" settled on "api" without asking, but --reply said
+  "worker". rad won't override the script's own filter: change what the script filters on, or answer
+  with "api". A retry starts from the top, repeating whatever already ran.
+  --> <script>:2:10
+  |
+1 | services = ["api", "worker", "scheduler"]
+2 | target = pick(services, "api", prefer_exact=true)
+  |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 | print("tailing {target}")
+  |
+  = info: rad docs RAD20047
+### EXIT ###
+1

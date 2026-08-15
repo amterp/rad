@@ -1693,6 +1693,19 @@ server = pick(fetch_servers())
 
 Rad can't check that up front, because the options don't exist until the script builds them. The error lists the real options, so the next run can name one exactly. Matching is exact by design: a near-miss fails rather than quietly acting on the wrong choice.
 
+#### The Filter Already Chose
+
+A `pick` given a filter that leaves one option takes it without asking. An answer naming anything else is a disagreement, and rad won't settle it by picking a side:
+
+```rad
+services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+```
+
+Here `--reply 2:worker` asks for one service and the script's own filter chose another. Usually the filter is the thing to change - it is normally built from an arg, so `worker` belongs there rather than in the answer.
+
+An answer that names the option the filter settled on is consumed and the run carries on. Consuming it either way is what keeps a loop's answers in step with its passes, so a pick that settles on some passes and asks on others still lines up.
+
 #### The Input Was Secret
 
 `input` with `secret` set can't be answered from the command line at all - other processes on the machine can read your arguments. Where `secret` is written literally, RAD20046 says so before the script runs. Where it's computed, rad only finds out on reaching the prompt:

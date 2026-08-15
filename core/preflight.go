@@ -257,9 +257,9 @@ func describeSite(s prompts.Site) string {
 		// caller to apply the filter by eye.
 		parts = append(parts, fmt.Sprintf("settles on %q - won't ask", survivingOptions(s)[0]))
 	} else if s.Filtered {
-		// The second clause matters: an answer for a call the filter settles on
-		// its own is consumed and dropped, which is surprising unless said.
-		parts = append(parts, "filtered - may not prompt, and then ignores its answer")
+		// The second clause matters: a caller who supplies an answer here may
+		// never be asked, and then only the filter's own choice is accepted.
+		parts = append(parts, "filtered - may not prompt, and then only accepts what it settles on")
 	}
 	if s.Repeats {
 		// Without this the suggested command runs one pass, does whatever that
