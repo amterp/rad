@@ -300,7 +300,7 @@ func (p *stdPrinter) errorExit(errorCode int) {
 	if p.isRadDebug {
 		fmt.Fprintf(p.stdErr, "Stacktrace because --rad-debug is enabled:\n%s", debug.Stack())
 	}
-	RExit.Exit(errorCode)
+	RExit.ExitWith(errorCode, ExitError, "")
 }
 
 type NullWriter struct{}
