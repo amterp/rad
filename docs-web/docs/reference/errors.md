@@ -1607,7 +1607,29 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers are queued per line rather than globally, so adding a prompt earlier in a script never silently re-targets a later answer. Running out mid-loop stops the script rather than reusing the last answer.
 
-Rad cannot count the passes for you - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+A prompt in a function called from several places repeats too, and then one key stands for several different questions:
+
+```rad
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+print("{user}@{host}")
+```
+
+Answers bind in the order the calls run. Where rad can account for every execution it lists them, so that order is readable without opening the file:
+
+```
+deploy.rad:2  input may run more than once - repeat --reply per run
+    reached from:
+      4  host = ask("hostname")
+      5  user = ask("username")
+```
+
+It says nothing where it cannot account for them all - a call inside a loop, a function passed around as a value, a caller that itself runs more than once, or a recursive function. A list missing one call would read exactly like a complete one.
+
+Rad cannot count the passes for you either way; that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
 
 #### Prompts You Don't Expect To Reach
 

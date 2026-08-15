@@ -437,3 +437,131 @@ a = ps[0].input()
 	require.Len(t, sites, 1)
 	assert.Empty(t, sites[0].Prompt)
 }
+
+// A prompt inside a helper has one line however many different questions it
+// asks. ReachedFrom is what lets pre-flight name the questions, and every test
+// below is about the cases where naming them would be a lie.
+
+func TestCallsReachingAPromptAreListed(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+port = ask("port")
+`)
+
+	require.Len(t, sites, 1)
+	assert.Equal(t, []int{4, 5, 6}, sites[0].ReachedFrom)
+}
+
+func TestCallsAreListedThroughACallerThatRunsOnce(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+fn connect():
+    h = ask("host")
+    u = ask("user")
+    return "{u}@{h}"
+connect()
+`)
+
+	require.Len(t, sites, 1)
+	assert.Equal(t, []int{4, 5}, sites[0].ReachedFrom,
+		"connect runs exactly once, so its two calls account for both executions")
+}
+
+func TestCallsAreNotListedWhenACallerRunsMoreThanOnce(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+fn connect():
+    h = ask("host")
+    u = ask("user")
+    return "{u}@{h}"
+connect()
+connect()
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom,
+		"two calls stand for four executions; listing them undercounts by half")
+}
+
+func TestCallsAreNotListedFromALoop(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+for l in ["a", "b"]:
+    ask(l)
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom, "a loop gives a location but never a count")
+}
+
+func TestCallsAreNotListedForAFunctionUsedAsAValue(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+f = ask
+f("one")
+f("two")
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom, "rad cannot follow where the value ends up")
+}
+
+func TestCallsAreNotListedForARecursiveFunction(t *testing.T) {
+	sites := find(t, `fn ask(n):
+    v = input("Value {n}: ")
+    if n > 0:
+        return ask(n - 1)
+    return v
+ask(2)
+ask(1)
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom, "recursion runs an unknown number of times")
+}
+
+func TestCallsAreNotListedForAPromptInALoopInsideItsOwnHelper(t *testing.T) {
+	sites := find(t, `fn ask(labels):
+    for l in labels:
+        input("Enter {l}: ")
+ask(["a"])
+ask(["b"])
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom, "the calls are known, the passes per call are not")
+}
+
+func TestASingleCallIsNotListed(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+ask("only")
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom, "one call needs no disambiguating")
+}
+
+func TestATopLevelPromptIsNotListed(t *testing.T) {
+	sites := find(t, `for x in ["a", "b"]:
+    input("Value?")
+`)
+
+	require.Len(t, sites, 1)
+	assert.Empty(t, sites[0].ReachedFrom, "the site's own line is already the call site")
+}
+
+func TestTwoCallsOnOneLineAreListedOnce(t *testing.T) {
+	sites := find(t, `fn ask(label):
+    return input("Enter {label}: ")
+both = ask("a") + ask("b")
+other = ask("c")
+`)
+
+	require.Len(t, sites, 1)
+	assert.Equal(t, []int{3, 4}, sites[0].ReachedFrom,
+		"one source line shows both calls, so repeating it adds nothing")
+}
