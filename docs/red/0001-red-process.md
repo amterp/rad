@@ -42,17 +42,26 @@ We adopt REDs as described below.
 
 ### When to write a RED
 
-Write a RED for a decision that is **hard to reverse** or whose **rationale is worth
-preserving**. Rules of thumb - write one when:
+**Rationale lives in the commit message by default.** That is where the *why* for a change
+belongs: beside the code, reachable from `git blame`, written by whoever had the context. A RED
+is the exception, for decisions a commit message cannot serve because the reader will go looking
+without knowing which commit to open. Write one when:
 
-- it shapes the language, architecture, tooling, or process in a way users or future maintainers will
-  question;
-- the choice is hard to undo (breaking changes, established syntax, muscle memory);
-- the interesting part is *why this and not the obvious alternative*.
+- it shapes the language, architecture, tooling, or process in a way users or future maintainers
+  will question, without knowing where the question was settled;
+- reversing it costs more than a revert - breaking changes, established syntax, muscle memory,
+  anything people have built on;
+- the reasoning spans more commits than any one of them can carry, or predates the code entirely.
 
-Don't write one for routine bugfixes, mechanical refactors, or easily-reversible choices. When
-in doubt: would you want to know the *why* in a year? If yes, write it. Don't write a RED for
-every small thing - the bar is high.
+**Building something large is not the trigger.** A substantial feature whose whole story fits in
+the commits that built it needs no RED, however much thinking went into it, and most features are
+that. Routine bugfixes, mechanical refactors and easily-reversible choices are out for the same
+reason, more obviously.
+
+"Would I want to know the *why* in a year?" is not the test - the answer is nearly always yes,
+and the commit message already answers it. The test is whether, in a year, I would know to go
+looking and be able to find it. The bar is high, and writing too many is the failure mode to
+guard against, not writing too few.
 
 ### Lifecycle and statuses
 
@@ -237,3 +246,4 @@ explicitly *future* work; those will be born at `Implemented`.
 ## History
 
 - 2026-06-04 Accepted
+- 2026-08-15 Sharpened the trigger bar (clarification; decision unchanged)
