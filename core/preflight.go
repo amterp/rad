@@ -87,7 +87,7 @@ func (r *RadRunner) runPromptPreflight(invoked *ScriptCommand) {
 		return
 	}
 
-	emitPreflight(preflightMessage(preflightScriptName(), sites, unanswered))
+	emitPreflight(preflightMessage(preflightScriptName(), r.scriptData.Src, sites, unanswered))
 	RExit.Exit(exitPromptsNeedAnswers)
 }
 
@@ -157,7 +157,7 @@ func writePara(b *strings.Builder, text string) {
 // preflightMessage explains the situation to a person first. The caller may
 // well be an AI agent, but writing for a human keeps it readable for both, and
 // the machine-facing part - the exact command to run - is unambiguous either way.
-func preflightMessage(scriptName string, sites, unanswered []prompts.Site) string {
+func preflightMessage(scriptName, src string, sites, unanswered []prompts.Site) string {
 	var b strings.Builder
 
 	writeDiagnosticHeader(&b, rl.ErrPromptsNeedAnswers,
@@ -200,6 +200,7 @@ func preflightMessage(scriptName string, sites, unanswered []prompts.Site) strin
 		line := fmt.Sprintf("  %s%s:%-*s  %-*s %s",
 			marker, scriptName, keyWidth, s.Key, labelWidth, s.Label(), describeSite(s))
 		b.WriteString(strings.TrimRight(line, " ") + "\n")
+		writeCallTrace(&b, src, s.ReachedFrom)
 	}
 
 	b.WriteString("\n")
@@ -229,6 +230,49 @@ func preflightMessage(scriptName string, sites, unanswered []prompts.Site) strin
 	fmt.Fprintf(&b, "%s\n", com.CyanS(fmt.Sprintf("  = info: rad docs RAD%s", rl.ErrPromptsNeedAnswers)))
 
 	return b.String()
+}
+
+// maxTracedCalls bounds how much of the table one prompt can take. A helper
+// called nine times is already past the point where reading the calls helps,
+// and the count says so without printing them all.
+const maxTracedCalls = 8
+
+// writeCallTrace shows the calls that reach a prompt, source and all. A caller
+// who has to answer three questions through one key needs to know which comes
+// first, and `ask("hostname")` says that where a line number alone would send
+// them to the file to find out.
+//
+// Only ever called with a list rts/prompts proved complete - see traceFor.
+func writeCallTrace(b *strings.Builder, src string, lines []int) {
+	if len(lines) == 0 {
+		return
+	}
+
+	shown := lines
+	if len(shown) > maxTracedCalls {
+		shown = shown[:maxTracedCalls]
+	}
+
+	srcLines := strings.Split(src, "\n")
+	// Sorted ascending, so the last number is the widest.
+	numWidth := len(fmt.Sprintf("%d", shown[len(shown)-1]))
+
+	b.WriteString("      reached from:\n")
+	for _, n := range shown {
+		var text string
+		if n >= 1 && n <= len(srcLines) {
+			text = strings.TrimSpace(strings.TrimSuffix(srcLines[n-1], "\r"))
+		}
+		prefix := fmt.Sprintf("        %-*d  ", numWidth, n)
+		budget := DiagnosticProseWidth() - com.DisplayWidth(prefix)
+		if budget > 3 && com.DisplayWidth(text) > budget {
+			text = com.SliceColumns(text, 0, budget-3) + "..."
+		}
+		b.WriteString(strings.TrimRight(prefix+text, " ") + "\n")
+	}
+	if len(lines) > len(shown) {
+		fmt.Fprintf(b, "        ... and %d more\n", len(lines)-len(shown))
+	}
 }
 
 func describeSite(s prompts.Site) string {
