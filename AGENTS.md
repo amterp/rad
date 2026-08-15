@@ -62,11 +62,14 @@ source), then:
 
 | Suite | Sections |
 |---|---|
-| `core/testing` | `ARGS` / `RAW_ARGS` / `TERM_WIDTH` / `KEYS` in; `STDOUT` / `STDERR` / `FRAMES` / `EXIT` out |
+| `core/testing` | `ARGS` / `RAW_ARGS` / `STDIN` / `TERM_WIDTH` / `KEYS` in; `STDOUT` / `STDERR` / `FRAMES` / `EXIT` out |
 | `rts` (syntax trees) | `CST` (tree-sitter dump) and `AST` out |
 | `rts/check` | `ARGS` in; `CHECK` (binder + type checker dump) out |
 | `rts/radfmt` | `FORMATTED` out |
 | `radls/lstesting` | repeatable action headers (`### HOVER 1:6 ###`, ...); `STDOUT` out |
+
+`INPUT` is the script a case runs; `STDIN` is what that run reads. A `rad repl`
+case is all `STDIN` and no `INPUT`.
 
 A header naming a section its suite never declared is a parse error, not
 content. An absent output section asserts that channel is empty, so accepting an
@@ -142,6 +145,12 @@ registers script args and command blocks as CLI flags via the `ra` library,
 then hands off to `core.Interpreter` (`core/interpreter.go`), a tree-walking
 evaluator. `eval(node)` returns `EvalResult{RadValue, Ctrl}`, carrying both
 value and control flow (break/continue/return).
+
+`rad repl` (`core/repl*.go`) is the other host: it drives the same interpreter a
+turn at a time. Ending execution is a policy rather than a hardcoded exit -
+`RadExitHandler.SetUnwinding` makes a fatal diagnostic raise `*RadAbort` instead
+of exiting, which the REPL catches at the turn boundary. Anything else that wants
+to run Rad without owning the process uses that seam.
 
 Runtime values are `RadValue` (`core/type_rad_value.go`), a tagged union over
 Go types (`int64`, `float64`, `RadString`, `*RadList`, `*RadMap`, `RadFn`,

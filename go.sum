@@ -14,10 +14,8 @@ github.com/amterp/jsoncolor v0.4.0 h1:X8QegRunhKC0HZ4PBQbUsSa5mfMqMIai9a3ipQbi+u
 github.com/amterp/jsoncolor v0.4.0/go.mod h1:/tXCJaCsrNNd8QpW/hqc0uz1yT2VzzaTbk9svkczlDM=
 github.com/amterp/ra v0.10.0 h1:0oPnPrGIonc/FKdK/7NcPz7E3/pzRQpmwu7lrhCje3g=
 github.com/amterp/ra v0.10.0/go.mod h1:qJArkWMZ8kLiC1a4uavxpWlqvuUSopSmY8GZBLhwdP8=
-github.com/amterp/radish v0.2.0 h1:5Pzx26JJpL22hvKDkc6RS+oefV+bhs6Q6UJOolsu/9k=
-github.com/amterp/radish v0.2.0/go.mod h1:thDlYBM/Qlf+yu4ZikU6AQikmlczNIWvAwr1mcQPFog=
-github.com/amterp/tree-sitter-rad v0.9.0 h1:rVyEsM6l3RZ74Tci2X0hKek8Kn8Yl18aHmi+/OFrBUc=
-github.com/amterp/tree-sitter-rad v0.9.0/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
+github.com/amterp/radish v0.3.0 h1:kBtO4p5g9M39EO3YeGhv8SNPS9P3kvwIt5C0bEwf7uE=
+github.com/amterp/radish v0.3.0/go.mod h1:XaWUi7fwaGGy/n1xj9zf4WwQ2tgrEB3lmd6XdUV75Mo=
 github.com/amterp/tree-sitter-rad v0.10.0 h1:7DWOW0g+vhQ0ClPOuEAKiCKBCF8ErpIXh6depoPTAJA=
 github.com/amterp/tree-sitter-rad v0.10.0/go.mod h1:fR5N3qdLIGrvgyu037DuBYHgVdQM+PtvK0X9JWDAkgw=
 github.com/clipperhouse/stringish v0.1.1 h1:+NSqMOr3GR6k1FdRhhnXrLfztGzuG+VuFDfatpWHKCs=

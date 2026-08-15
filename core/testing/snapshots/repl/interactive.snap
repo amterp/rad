@@ -1,0 +1,443 @@
+### TITLE ###
+TypingASessionAtThePrompt
+### DESCRIPTION ###
+The interactive path end to end. One key list drives the whole session, because
+the scripted driver carries its events across prompts the way a real terminal
+does. FRAMES shows what the user saw, with the caret standing in for the
+terminal's own cursor. Ctrl-D on an empty buffer ends it.
+### ARGS ###
+repl
+### KEYS ###
+"x = 41"
+enter
+"x + 1"
+enter
+ctrl-d
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+42
+### FRAMES ###
+--- frame 0 (initial) ---
+> ‸
+--- frame 1 (x) ---
+> x‸
+--- frame 2 (space) ---
+> x ‸
+--- frame 3 (=) ---
+> x =‸
+--- frame 4 (space) ---
+> x = ‸
+--- frame 5 (4) ---
+> x = 4‸
+--- frame 6 (1) ---
+> x = 41‸
+--- frame 7 (enter) ---
+> x = 41
+--- frame 8 (initial) ---
+> ‸
+--- frame 9 (x) ---
+> x‸
+--- frame 10 (space) ---
+> x ‸
+--- frame 11 (+) ---
+> x +‸
+--- frame 12 (space) ---
+> x + ‸
+--- frame 13 (1) ---
+> x + 1‸
+--- frame 14 (enter) ---
+> x + 1
+--- frame 15 (initial) ---
+> ‸
+
+### TITLE ###
+EditingTheLineBeforeRunningIt
+### DESCRIPTION ###
+Cursor motion and the readline chords, which the terminal previously dropped
+before any model could see them. The line is fixed in place rather than
+retyped.
+### ARGS ###
+repl
+### KEYS ###
+"print(WRONG)"
+ctrl-a
+ctrl-k
+"6 * 8"
+backspace
+"7"
+enter
+ctrl-d
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+42
+### FRAMES ###
+--- frame 0 (initial) ---
+> ‸
+--- frame 1 (p) ---
+> p‸
+--- frame 2 (r) ---
+> pr‸
+--- frame 3 (i) ---
+> pri‸
+--- frame 4 (n) ---
+> prin‸
+--- frame 5 (t) ---
+> print‸
+--- frame 6 (() ---
+> print(‸
+--- frame 7 (W) ---
+> print(W‸
+--- frame 8 (R) ---
+> print(WR‸
+--- frame 9 (O) ---
+> print(WRO‸
+--- frame 10 (N) ---
+> print(WRON‸
+--- frame 11 (G) ---
+> print(WRONG‸
+--- frame 12 ()) ---
+> print(WRONG)‸
+--- frame 13 (ctrl-a) ---
+> ‸print(WRONG)
+--- frame 14 (ctrl-k) ---
+> ‸
+--- frame 15 (6) ---
+> 6‸
+--- frame 16 (space) ---
+> 6 ‸
+--- frame 17 (*) ---
+> 6 *‸
+--- frame 18 (space) ---
+> 6 * ‸
+--- frame 19 (8) ---
+> 6 * 8‸
+--- frame 20 (backspace) ---
+> 6 * ‸
+--- frame 21 (7) ---
+> 6 * 7‸
+--- frame 22 (enter) ---
+> 6 * 7
+--- frame 23 (initial) ---
+> ‸
+
+### TITLE ###
+BlockEntryIndentsAndTheBlankLineCloses
+### DESCRIPTION ###
+Enter opens a line instead of running when the buffer is incomplete, and the
+indent is supplied for you. The continuation prompt marks the lines that are
+still being gathered.
+### ARGS ###
+repl
+### KEYS ###
+"if true:"
+enter
+"print('in')"
+enter
+enter
+ctrl-d
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+in
+### FRAMES ###
+--- frame 0 (initial) ---
+> ‸
+--- frame 1 (i) ---
+> i‸
+--- frame 2 (f) ---
+> if‸
+--- frame 3 (space) ---
+> if ‸
+--- frame 4 (t) ---
+> if t‸
+--- frame 5 (r) ---
+> if tr‸
+--- frame 6 (u) ---
+> if tru‸
+--- frame 7 (e) ---
+> if true‸
+--- frame 8 (:) ---
+> if true:‸
+--- frame 9 (enter) ---
+> if true:
+.     ‸
+--- frame 10 (p) ---
+> if true:
+.     p‸
+--- frame 11 (r) ---
+> if true:
+.     pr‸
+--- frame 12 (i) ---
+> if true:
+.     pri‸
+--- frame 13 (n) ---
+> if true:
+.     prin‸
+--- frame 14 (t) ---
+> if true:
+.     print‸
+--- frame 15 (() ---
+> if true:
+.     print(‸
+--- frame 16 (') ---
+> if true:
+.     print('‸
+--- frame 17 (i) ---
+> if true:
+.     print('i‸
+--- frame 18 (n) ---
+> if true:
+.     print('in‸
+--- frame 19 (') ---
+> if true:
+.     print('in'‸
+--- frame 20 ()) ---
+> if true:
+.     print('in')‸
+--- frame 21 (enter) ---
+> if true:
+.     print('in')
+.     ‸
+--- frame 22 (enter) ---
+> if true:
+.     print('in')
+\".     "
+--- frame 23 (initial) ---
+> ‸
+
+### TITLE ###
+UpRecallsTheLastInput
+### DESCRIPTION ###
+History is per session and lives in the editor, so Up reaches for it only once
+the cursor cannot move up within the buffer.
+### ARGS ###
+repl
+### KEYS ###
+"40 + 2"
+enter
+up
+enter
+ctrl-d
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+42
+42
+### FRAMES ###
+--- frame 0 (initial) ---
+> ‸
+--- frame 1 (4) ---
+> 4‸
+--- frame 2 (0) ---
+> 40‸
+--- frame 3 (space) ---
+> 40 ‸
+--- frame 4 (+) ---
+> 40 +‸
+--- frame 5 (space) ---
+> 40 + ‸
+--- frame 6 (2) ---
+> 40 + 2‸
+--- frame 7 (enter) ---
+> 40 + 2
+--- frame 8 (initial) ---
+> ‸
+--- frame 9 (up) ---
+> 40 + 2‸
+--- frame 10 (enter) ---
+> 40 + 2
+--- frame 11 (initial) ---
+> ‸
+
+### TITLE ###
+CtrlCAbandonsTheLineWithoutEndingTheSession
+### DESCRIPTION ###
+Ctrl-C throws away what you were typing and gives you a fresh prompt. Nothing
+runs, and the session is still there afterwards - which is why the editor
+reports a typed outcome rather than a single canceled bit.
+### ARGS ###
+repl
+### KEYS ###
+"this would be a syntax error"
+ctrl-c
+"1 + 1"
+enter
+ctrl-d
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+2
+### FRAMES ###
+--- frame 0 (initial) ---
+> ‸
+--- frame 1 (t) ---
+> t‸
+--- frame 2 (h) ---
+> th‸
+--- frame 3 (i) ---
+> thi‸
+--- frame 4 (s) ---
+> this‸
+--- frame 5 (space) ---
+> this ‸
+--- frame 6 (w) ---
+> this w‸
+--- frame 7 (o) ---
+> this wo‸
+--- frame 8 (u) ---
+> this wou‸
+--- frame 9 (l) ---
+> this woul‸
+--- frame 10 (d) ---
+> this would‸
+--- frame 11 (space) ---
+> this would ‸
+--- frame 12 (b) ---
+> this would b‸
+--- frame 13 (e) ---
+> this would be‸
+--- frame 14 (space) ---
+> this would be ‸
+--- frame 15 (a) ---
+> this would be a‸
+--- frame 16 (space) ---
+> this would be a ‸
+--- frame 17 (s) ---
+> this would be a s‸
+--- frame 18 (y) ---
+> this would be a sy‸
+--- frame 19 (n) ---
+> this would be a syn‸
+--- frame 20 (t) ---
+> this would be a synt‸
+--- frame 21 (a) ---
+> this would be a synta‸
+--- frame 22 (x) ---
+> this would be a syntax‸
+--- frame 23 (space) ---
+> this would be a syntax ‸
+--- frame 24 (e) ---
+> this would be a syntax e‸
+--- frame 25 (r) ---
+> this would be a syntax er‸
+--- frame 26 (r) ---
+> this would be a syntax err‸
+--- frame 27 (o) ---
+> this would be a syntax erro‸
+--- frame 28 (r) ---
+> this would be a syntax error‸
+--- frame 29 (ctrl-c) ---
+> this would be a syntax error
+--- frame 30 (initial) ---
+> ‸
+--- frame 31 (1) ---
+> 1‸
+--- frame 32 (space) ---
+> 1 ‸
+--- frame 33 (+) ---
+> 1 +‸
+--- frame 34 (space) ---
+> 1 + ‸
+--- frame 35 (1) ---
+> 1 + 1‸
+--- frame 36 (enter) ---
+> 1 + 1
+--- frame 37 (initial) ---
+> ‸
+
+### TITLE ###
+AMetaCommandListsTheSessionVariables
+### DESCRIPTION ###
+Meta commands are recognized only at the start of a fresh turn, where no Rad
+statement can begin with a colon. :vars skips the builtins seeded into the
+environment and shows what you defined.
+### ARGS ###
+repl
+### KEYS ###
+"name = 'bob'"
+enter
+"count = 3"
+enter
+":vars"
+enter
+ctrl-d
+### STDOUT ###
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+  count            int      3
+  name             str      "bob"
+### FRAMES ###
+--- frame 0 (initial) ---
+> ‸
+--- frame 1 (n) ---
+> n‸
+--- frame 2 (a) ---
+> na‸
+--- frame 3 (m) ---
+> nam‸
+--- frame 4 (e) ---
+> name‸
+--- frame 5 (space) ---
+> name ‸
+--- frame 6 (=) ---
+> name =‸
+--- frame 7 (space) ---
+> name = ‸
+--- frame 8 (') ---
+> name = '‸
+--- frame 9 (b) ---
+> name = 'b‸
+--- frame 10 (o) ---
+> name = 'bo‸
+--- frame 11 (b) ---
+> name = 'bob‸
+--- frame 12 (') ---
+> name = 'bob'‸
+--- frame 13 (enter) ---
+> name = 'bob'
+--- frame 14 (initial) ---
+> ‸
+--- frame 15 (c) ---
+> c‸
+--- frame 16 (o) ---
+> co‸
+--- frame 17 (u) ---
+> cou‸
+--- frame 18 (n) ---
+> coun‸
+--- frame 19 (t) ---
+> count‸
+--- frame 20 (space) ---
+> count ‸
+--- frame 21 (=) ---
+> count =‸
+--- frame 22 (space) ---
+> count = ‸
+--- frame 23 (3) ---
+> count = 3‸
+--- frame 24 (enter) ---
+> count = 3
+--- frame 25 (initial) ---
+> ‸
+--- frame 26 (:) ---
+> :‸
+--- frame 27 (v) ---
+> :v‸
+--- frame 28 (a) ---
+> :va‸
+--- frame 29 (r) ---
+> :var‸
+--- frame 30 (s) ---
+> :vars‸
+--- frame 31 (enter) ---
+> :vars
+--- frame 32 (initial) ---
+> ‸
