@@ -101,7 +101,8 @@ print(ok)
 ### NO_TERMINAL ###
 ### STDERR ###
 error[RAD20047]: The confirm "Actually asked" was reached, but --reply-na said it wouldn't be.
-  That's an assertion, not a fallback, so rad won't guess an answer
+  That's an assertion, not a fallback, so rad won't guess an answer. A retry starts from the top,
+  repeating whatever already ran.
   --> <script>:1:6
   |
 1 | ok = confirm("Actually asked")
@@ -130,7 +131,7 @@ b false
 ### STDERR ###
 error[RAD20047]: The confirm "Delete c?" ran out of answers after 2 passes. Either it runs more
   times than that, and needs one --reply per pass, or it rejected an answer and re-asked, and needs
-  a value it accepts
+  a value it accepts. A retry starts from the top, repeating whatever already ran.
   --> <script>:2:10
   |
 1 | for item in ["a", "b", "c"]:
@@ -307,7 +308,7 @@ a true
 ### STDERR ###
 error[RAD20047]: The confirm "Delete b?" ran out of answers after 1 pass. Either it runs more times
   than that, and needs one --reply per pass, or it rejected an answer and re-asked, and needs a
-  value it accepts
+  value it accepts. A retry starts from the top, repeating whatever already ran.
   --> <script>:2:10
   |
 1 | for x in ["a", "b"]:
@@ -351,7 +352,8 @@ print(pw)
 ### STDERR ###
 error[RAD20047]: The secret input "Password" needs a terminal. It can't be answered with --reply,
   because command-line arguments are visible to other processes. Run this where a terminal is
-  available, or use --reply-na if this run shouldn't reach it
+  available, or use --reply-na if this run shouldn't reach it. A retry starts from the top,
+  repeating whatever already ran.
   --> <script>:2:6
   |
 1 | is_secret = true
