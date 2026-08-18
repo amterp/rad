@@ -76,3 +76,8 @@ build: generate
 test:
 	@echo "⚙️ Running tests..."
 	go test ./core/testing/... ./rts/... ./radls/lstesting/...
+
+.PHONY: hooks
+hooks: ## Enable the repo's git hooks (commit subject linting)
+	git config core.hooksPath .githooks
+	@echo "core.hooksPath -> .githooks"

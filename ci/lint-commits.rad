@@ -1,0 +1,65 @@
+#!/usr/bin/env rad
+---
+Checks commit subjects against the conventions in AGENTS.md.
+
+Run over a range for CI, or over a single message file for the commit-msg hook:
+
+    ./ci/lint-commits.rad --range origin/main..HEAD
+    ./ci/lint-commits.rad --file .git/COMMIT_EDITMSG
+---
+args:
+    range str?    # Git revision range to check, e.g. "abc123..def456". Defaults to the newest commit.
+    file f str?   # Commit message file to check instead of a range.
+
+    range mutually excludes file
+
+// Keep in step with .goreleaser.yml's changelog filters, which key off these.
+types = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert", "ux"]
+max_subject = 72
+
+// Scope allows the "radls, check" style already in this repo's history.
+conventional = "({types.join("|")})(\([a-z0-9;,/._ -]+\))?!?: .+"
+// git writes these itself, so there is no author to hold to the convention.
+generated = "(Merge .*|Revert \".*|fixup!.*|squash!.*|amend!.*)"
+
+if file:
+    read = read_file(file) catch:
+        print_err("Could not read {file}: {read}")
+        exit(1)
+    // git strips comment lines after this runs, so ignore them here too -
+    // otherwise a commented template line reads as the subject.
+    body = [l for l in split(read.content, "\n") if not starts_with(l, "#") and l.trim()]
+    subjects = body[:1]
+else:
+    rev = range ?? "HEAD~1..HEAD"
+    stdout = quiet $`git log --no-merges --format=%s {rev}`
+    subjects = [l for l in split(stdout, "\n") if l.trim()]
+
+failures = []
+for s in subjects:
+    if matches(s, generated):
+        continue
+    if not matches(s, conventional):
+        failures += ["not a conventional commit: {s}"]
+    else if len(s) > max_subject:
+        failures += ["subject is {len(s)} chars, limit is {max_subject}: {s}"]
+
+if not failures:
+    noun = len(subjects) == 1 ? "subject" : "subjects"
+    print("Checked {len(subjects)} commit {noun}, all good.")
+    exit()
+
+for f in failures:
+    print_err(f)
+
+print_err("")
+print_err("Commit subjects must read '<type>(<scope>)!: <subject>', at most {max_subject} chars.")
+print_err("Valid types: {types.join(", ")}")
+print_err("")
+print_err("Why this is enforced: .goreleaser.yml builds the release notes by filtering")
+print_err("on these prefixes, so an unprefixed commit lands in the published changelog")
+print_err("as noise, and a breaking change without '!' is not flagged to anyone upgrading.")
+print_err("")
+print_err("To fix the most recent commit:   git commit --amend")
+print_err("For an earlier one:              git rebase -i <commit>^   (reword)")
+exit(1)

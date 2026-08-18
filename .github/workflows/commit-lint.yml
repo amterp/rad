@@ -1,0 +1,47 @@
+# Backstop for the commit-msg hook in .githooks, which not every clone will
+# have enabled and which --no-verify skips. Runs on PRs and on pushes to main,
+# because this repo commits to main directly as well as through PRs.
+name: Commit Lint
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  subjects:
+    name: Commit Subjects
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ci/lint-commits.rad runs under the released rad, like every other
+      # script in ci/ - so it must stay compatible with the last release
+      # rather than with HEAD. See AGENTS.md.
+      - name: Install rad
+        run: ./ci/install-rad.sh
+
+      - name: Check commit subjects
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          # A new branch or a force-push gives an all-zero or unreachable BASE,
+          # in which case there is no range to walk - check the tip alone
+          # rather than every commit since the beginning of the repo.
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            range="$HEAD_SHA~1..$HEAD_SHA"
+            git cat-file -e "$HEAD_SHA~1^{commit}" 2>/dev/null || range="$HEAD_SHA"
+          else
+            range="$BASE..$HEAD_SHA"
+          fi
+          ./ci/lint-commits.rad --range "$range"

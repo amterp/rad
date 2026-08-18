@@ -18,6 +18,7 @@ binary size comparison, and benchmarking.
 - `benchmark-compare.rad` - Compares benchmark performance between PR and base branch
 - `pr-comment.rad` - Generates comprehensive PR comment with all check results
 - `test-runner.rad` - Runs test suite for CI
+- `lint-commits.rad` - Checks commit subjects against the repo's conventions
 - `install-rad.sh` - Installs Rad from GitHub releases
 
 ## Adding New Benchmarks

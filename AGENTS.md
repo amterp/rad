@@ -262,7 +262,10 @@ Use `feat!:` / `fix!:` commit prefixes for breaking changes.
 
 - Conventional commit prefixes (`feat:`, `fix:`, `docs:`, `refactor:`,
   `test:`). Commit messages explain the why; `git blame` is treated as
-  documentation here.
+  documentation here. The subject must match `<type>(<scope>)!: <subject>` and
+  stay within 72 characters - `ci/lint-commits.rad` holds the rule, the
+  `commit-msg` hook enforces it locally (`make hooks`), and the Commit Lint
+  workflow re-checks it on PRs and pushes to `main`.
 - Keep this file current: if a change alters the dev workflow, project
   structure, or invalidates anything stated here, update AGENTS.md in the
   same commit. Stale agent guidance is worse than none - it gets followed.

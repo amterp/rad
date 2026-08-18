@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Rejects a commit whose subject doesn't follow the repo's conventions.
+# Enable with `make hooks` (points core.hooksPath at this directory).
+#
+# The rule itself lives in ci/lint-commits.rad, which CI runs too, so a commit
+# that passes here passes there.
+set -uo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+
+if ! command -v rad >/dev/null 2>&1; then
+    echo "commit-msg: rad is not on PATH, skipping the subject check." >&2
+    echo "            CI will still run it. Install rad to catch this at commit time." >&2
+    exit 0
+fi
+
+exec "$repo_root/ci/lint-commits.rad" --file "$1"

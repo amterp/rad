@@ -158,13 +158,23 @@ This is particularly useful when debugging issues that only reproduce on specifi
 
 #### Commit Message Prefixes
 
-To help with automated release notes, consider using [conventional commit](https://www.conventionalcommits.org/) prefixes:
+Subjects must follow [conventional commit](https://www.conventionalcommits.org/)
+form - `<type>(<scope>)!: <subject>`, at most 72 characters. CI checks this on
+every PR and every push to `main`, because `.goreleaser.yml` builds the release
+notes by filtering on these prefixes: an unprefixed commit lands in the
+published changelog as noise, and a breaking change without `!` reaches nobody
+upgrading.
 
 - `feat:` for new features
 - `fix:` for bug fixes
 - `docs:` for documentation changes
 - `refactor:` for code refactoring
 - `test:` for adding tests
+- `chore:`, `style:`, `perf:`, `build:`, `ci:`, `revert:`, `ux:` are also accepted
+
+Run `make hooks` once per clone to catch a bad subject at commit time rather
+than in CI. It points `core.hooksPath` at `.githooks/`, whose `commit-msg` hook
+runs the same check CI does (`ci/lint-commits.rad`).
 
 ### Code Style & Conventions
 
