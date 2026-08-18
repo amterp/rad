@@ -2647,7 +2647,7 @@ are left alone - the analyzer can't prove they collide.
 
 A `switch` case key has a value that the discriminant can never
 hold. The arm is unreachable not because of an earlier `case`
-(that's [RAD40012](40012.md)), but because the discriminant's
+(that's `RAD40012`), but because the discriminant's
 *type* statically forbids the value.
 
 This typically surfaces after a refactor: an enum variant gets
@@ -2712,7 +2712,7 @@ analyzer can't prove they fall outside the domain.
 ### RAD40014: Unknown Map Key
 
 A map access reads a key that the map's *type* doesn't declare. The
-access is guaranteed to fail at runtime ([RAD20041](20041.md),
+access is guaranteed to fail at runtime (`RAD20041`,
 key not found), so the analyzer flags it statically.
 
 This fires only when the receiver has a closed map shape the
@@ -2741,7 +2741,7 @@ print(gp.full_path)
 If the key you want is optional (marked `?` in the type, e.g.
 `get_path`'s `size_bytes?`), it's a valid key and won't fire this -
 but it may be absent at runtime. Guard the access so a missing key
-doesn't error ([RAD20041](20041.md)).
+doesn't error (`RAD20041`).
 
 #### When the check fires
 
