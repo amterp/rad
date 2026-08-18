@@ -33,11 +33,11 @@ rad defer.rl
 ```
 
 ```
-⚡️ Running: mv notes.txt notes-tmp.txt
-⚡️ Running: echo "hi!" >> notes.txt
-⚡️ Running: cat notes.txt
+⚡️ mv notes.txt notes-tmp.txt
+⚡️ echo "hi!" >> notes.txt
+⚡️ cat notes.txt
 hi!
-⚡️ Running: mv notes-tmp.txt notes.txt
+⚡️ mv notes-tmp.txt notes.txt
 Moved back!
 ```
 
@@ -122,9 +122,9 @@ rad bump.rl 2
 ```
 
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 2/" VERSION
-⚡️ Running: git add VERSION
-⚡️ Running: git commit -m "Bump version to 2"
+⚡️ sed -i '' "s/Version = .*/Version = 2/" VERSION
+⚡️ git add VERSION
+⚡️ git commit -m "Bump version to 2"
 [main 6ce2ebb] Bump version to 2
  1 file changed, 1 insertion(+), 1 deletion(-)
 Done!
@@ -139,10 +139,10 @@ rad bump.rl 3
 ```
 
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
 Oh no! ERROR!
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 ```
 
 If you run this locally, you should see with `git status` that there are no changes to the `VERSION` file, thanks to our `errdefer` block rolling back the `sed` replacement.
@@ -154,13 +154,13 @@ rad bump.rl 3
 ```
 
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
-⚡️ Running: git add VERSION
+⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ git add VERSION
 Bah! ERROR!
 Resetting VERSION...
-⚡️ Running: git reset VERSION
+⚡️ git reset VERSION
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 ```
 
 Here we see a very important detail about defer blocks that applies both to `defer` and `errdefer` - if you have multiple, they run in LIFO (last in, first out) order. In other words, the defer blocks defined *later* run *first*.

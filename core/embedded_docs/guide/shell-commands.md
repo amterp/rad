@@ -106,8 +106,7 @@ code, stderr = $`make format`       // code=1, stderr=""
 stderr, stdout, code = $`ls`        // All three, any order
 ```
 
-This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
-It's also the only way to capture the exit code without also capturing the streams:
+It's the only way to capture the exit code without also capturing the streams:
 `code = $cmd` leaves stdout and stderr going to the terminal.
 
 **The rule:** If ALL variables use exactly `code`, `stdout`, or `stderr`, assignment is by name. Otherwise, it's positional:
@@ -315,7 +314,7 @@ characters intact rather than being expanded or run.
     $`git commit -m {message}`
     ```
 
-Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:
+Because the shell joins adjacent quoted fragments, values glue onto neighboring text without any help:
 
 ```rad
 name = "My Notes.txt"

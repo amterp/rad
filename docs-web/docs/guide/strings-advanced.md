@@ -13,7 +13,7 @@ In this section, we'll explore:
 - **Escape sequences** - include special characters like newlines and tabs
 - **String attributes** - add color, bold, and other terminal styling
 
-These features make it easy to generate well-formatted output, build complex strings, and create polished CLI experiences.
+
 
 ## String Interpolation
 
@@ -51,6 +51,13 @@ print("{tokens.join(" ")}")
 print("Count: {tokens.len() > 1 ? "several" : "just one"}")
 ```
 
+<div class="result">
+```
+Hello World
+Count: several
+```
+</div>
+
 The one exception is a nested string *immediately* after the `{`, because
 `"{"` is also how you write a literal opening brace, and the two cannot be
 told apart. Switch delimiters there, or add a space:
@@ -59,13 +66,6 @@ told apart. Switch delimiters there, or add a space:
 print("{'ERROR'.red()}")     // fine
 print("{ "ERROR".red() }")   // also fine
 ```
-
-<div class="result">
-```
-Hello World
-Count: several
-```
-</div>
 
 ## Formatting
 

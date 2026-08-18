@@ -133,7 +133,7 @@ error string, as returned by `parse_int`, which we can log or inspect. We then r
 To summarize:
 
 - **Suffix** form: write `... catch:` directly after the error-able expression.
-- **Binding**: the target variable is first bound to the error value; inside the block, interpolating it (e.g. `{age}`) prints the error’s message.
+- **Binding**: the target variable is first bound to the error value; inside the block, interpolating it (e.g. `{age}`) prints the error's message.
 - **Control**: you can log, reassign a fallback, or exit(code).
 - **Flow**: execution continues after the block unless you exit.
 
@@ -315,7 +315,7 @@ This pattern is used throughout Rad's built-in functions:
 - `read_file(path) -> error|{ "size_bytes": int, "content": str }`
 - `round(num, decimals) -> error|int|float`
 
-The error union makes your code self-documenting - anyone reading your function signature knows immediately that it can fail.
+
 
 !!! info "More on Union Types"
 

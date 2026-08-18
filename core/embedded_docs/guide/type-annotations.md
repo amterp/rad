@@ -644,8 +644,6 @@ especially as they grow in complexity or get reused across projects.
     - **Nested structures**: Complex combinations of the above
 - **Special parameters**: Work with variadic (`*param: <type>`) and named-only parameters
 
-Type annotations make your code clearer to both humans and tools, catching errors early and making your intentions explicit.
-
 ## Next
 
 We've briefly seen `error|T` union types in this section - functions that return either a value or an error.

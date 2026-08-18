@@ -155,7 +155,7 @@ Commands:
 ```
 </div>
 
-Notice how Rad automatically generates a usage string listing all available commands.
+
 
 !!! tip "Multi-line descriptions"
 
@@ -503,7 +503,7 @@ When you run `./script.rad deploy staging`, the flow is:
 2. Run shared logic (lines 12-14)
 3. Run the callback (`on_deploy`)
 
-This pattern is useful for loading configuration files, setting up connections, or validating preconditions that apply to all commands.
+
 
 ## Getting Help
 
@@ -609,23 +609,21 @@ if not get_path("package.json")["exists"]:
 fn on_start():
     print("🚀 Starting server on http://localhost:{port}...")
 
-    cmd = "npm start -- --port {port}"
-
     if detach:
-        $`{cmd} &`
+        $`npm start -- --port {port} &`
         print("Server started in background".green())
     else:
-        $`{cmd}`
+        $`npm start -- --port {port}`
 
 fn on_test():
-    opts = ""
+    opts = []
     if watch:
-        opts = "{opts} --watch"
-    if grep: 
-        opts = "{opts} -t '{grep}'"
+        opts += ["--watch"]
+    if grep:
+        opts += ["-t", grep]
 
     if verbose:
-        print("Running: pytest {opts}".yellow())
+        print("Running: pytest {opts.join(" ")}".yellow())
 
     print("🧪 Running tests...")
     $`pytest {opts}` catch:

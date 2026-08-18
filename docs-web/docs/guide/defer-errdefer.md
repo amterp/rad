@@ -37,11 +37,11 @@ rad defer.rl
 
 <div class="result">
 ```
-⚡️ Running: mv notes.txt notes-tmp.txt
-⚡️ Running: echo "hi!" >> notes.txt
-⚡️ Running: cat notes.txt
+⚡️ mv notes.txt notes-tmp.txt
+⚡️ echo "hi!" >> notes.txt
+⚡️ cat notes.txt
 hi!
-⚡️ Running: mv notes-tmp.txt notes.txt
+⚡️ mv notes-tmp.txt notes.txt
 Moved back!
 ```
 </div>
@@ -128,9 +128,9 @@ rad bump.rl 2
 
 <div class="result">
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 2/" VERSION
-⚡️ Running: git add VERSION
-⚡️ Running: git commit -m "Bump version to 2"
+⚡️ sed -i '' "s/Version = .*/Version = 2/" VERSION
+⚡️ git add VERSION
+⚡️ git commit -m "Bump version to 2"
 [main 6ce2ebb] Bump version to 2
  1 file changed, 1 insertion(+), 1 deletion(-)
 Done!
@@ -147,10 +147,10 @@ rad bump.rl 3
 
 <div class="result">
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
 Oh no! ERROR!
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 ```
 </div>
 
@@ -164,13 +164,13 @@ rad bump.rl 3
 
 <div class="result">
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
-⚡️ Running: git add VERSION
+⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ git add VERSION
 Bah! ERROR!
 Resetting VERSION...
-⚡️ Running: git reset VERSION
+⚡️ git reset VERSION
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 ```
 </div>
 

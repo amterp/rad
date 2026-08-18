@@ -40,7 +40,7 @@ This script defines two mandatory arguments: `word` that is expected to be a str
 
 Some important things to note:
 
-- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. See How Argument Parsing Works below for the full details.
+- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. Bools are the one exception: they are flags only. See How Argument Parsing Works below for the full details.
 - The positional ordering of args follows the order of declaration in the args block.
 - Flags (like `--word` and `--repeats`) are generated for you based on each argument's name.
 
@@ -119,7 +119,7 @@ This section explains that model and a few related parsing behaviors that are us
 
 ### The Dual-Nature Model
 
-When you declare an argument, Rad generates both a positional slot and a named flag for it.
+When you declare an argument, Rad generates both a positional slot and a named flag for it - except for bools, which are flags only.
 Your users can then invoke your script whichever way is most convenient - or mix both styles in the same call.
 
 Consider this script:
@@ -143,9 +143,6 @@ All of these invocations are equivalent:
 # Mixed - positional for src, flag for dest
 ./script myfile.txt --dest /backup/
 ```
-
-This means script authors get a great CLI experience for free. Users who know the positional order can be terse;
-users who want clarity can use flags; and anyone can mix and match as needed.
 
 ### Parsing Order
 
