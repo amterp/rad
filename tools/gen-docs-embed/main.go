@@ -21,8 +21,9 @@
 //
 // Behaviour:
 //   - Parses `nav`, keeping only the sections whose pages we embed
-//     (Guide, Reference, Examples) - the same set the Python hook
-//     inlines into llms-full.txt.
+//     (Guide, Reference, Examples, Migrations). Migrations ship but
+//     stay out of `rad docs all`, so the bulk dump matches the set the
+//     Python hook inlines into llms-full.txt.
 //   - For each page reads docs-web/docs/<path> (following the
 //     reference/syntax.md symlink to root SYNTAX.md, and reading the
 //     already-generated functions.md / errors.md), strips YAML front
@@ -33,7 +34,7 @@
 //     renderer, so docir converts them to clean markdown that reads
 //     well both rendered in a TTY and piped raw into LLM context.
 //   - Writes the normalized body to core/embedded_docs/<slug>.md and a
-//     manifest.json capturing ordered {slug, section, title, h2s}.
+//     manifest.json capturing ordered {slug, section, title, h2s, in_all}.
 //   - Idempotent (no mtime bump when unchanged) and prunes stale
 //     slugs, like tools/gen-funcs-go.
 //
@@ -58,11 +59,25 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// embeddedSections are the nav sections whose pages we embed. Kept
-// in sync with FULL_CONTENT_SECTIONS in
+// embeddedSections are the nav sections whose pages ship in the
+// binary, addressable as `rad docs <slug>`.
+var embeddedSections = map[string]bool{
+	"Guide":      true,
+	"Reference":  true,
+	"Examples":   true,
+	"Migrations": true,
+}
+
+// fullCorpusSections are the subset additionally poured into
+// `rad docs all`. Kept in sync with FULL_CONTENT_SECTIONS in
 // docs-web/hooks/generate_llms_txt.py so `rad docs all` and
 // llms-full.txt cover the same corpus.
-var embeddedSections = map[string]bool{
+//
+// Migrations ship but are deliberately excluded: they're full of
+// before/after code labelled "no longer works", which is exactly the
+// wrong thing to hand an LLM asked to write a script. Someone
+// migrating reaches for `rad docs migrations/v0.12` directly.
+var fullCorpusSections = map[string]bool{
 	"Guide":     true,
 	"Reference": true,
 	"Examples":  true,
@@ -73,9 +88,20 @@ var embeddedSections = map[string]bool{
 // such as examples/index.md are kept.)
 var skipPaths = map[string]bool{"index.md": true}
 
+// indexSuffix marks a section's landing page. `rad docs migrations`
+// resolves to migrations/index, so that's the form to advertise -
+// mirrors sectionIndexLeaf in core/docs.go.
+const indexSuffix = "/index"
+
 // skipH2s mirrors SKIP_H2S - navigational headings that are noise in
 // a table of contents.
 var skipH2s = map[string]bool{"Summary": true, "Next": true}
+
+// skipH2sSections drop their H2 preview from the TOC entirely,
+// mirroring SKIP_H2S_PAGES in the Python hook. One migration guide
+// carries a dozen "Breaking Change: ..." headings; listing them across
+// every version would swamp the `rad docs` index.
+var skipH2sSections = map[string]bool{"Migrations": true}
 
 var (
 	h2Pattern      = regexp.MustCompile(`(?m)^## (.+)$`)
@@ -110,6 +136,9 @@ type docPageMeta struct {
 	Section string   `json:"section"`
 	Title   string   `json:"title"`
 	H2s     []string `json:"h2s"`
+	// InAll marks a page as part of `rad docs all`. Every embedded
+	// page is addressable by slug; only these join the bulk dump.
+	InAll bool `json:"in_all"`
 }
 
 type manifest struct {
@@ -154,11 +183,24 @@ func run(navFile, docsDir, funcsDir, target string, dryRun bool) error {
 	}
 	sort.Slice(funcDocs, func(i, j int) bool { return funcDocs[i].Name < funcDocs[j].Name })
 
+	// `rad docs <section>` is shorthand for that section's index page,
+	// and a bare topic tries the function lookup first - so a function
+	// sharing the name would make the section unreachable.
+	sectionAliases := make(map[string]bool)
+	for _, p := range kept {
+		if dir, ok := strings.CutSuffix(p.path, "/index.md"); ok {
+			sectionAliases[dir] = true
+		}
+	}
+
 	funcNames := make([]string, 0, len(funcDocs))
 	funcSet := make(map[string]bool, len(funcDocs))
 	for _, fn := range funcDocs {
 		if fn.Name == "all" {
 			return fmt.Errorf("a function named %q would shadow `rad docs all`", fn.Name)
+		}
+		if sectionAliases[fn.Name] {
+			return fmt.Errorf("a function named %q would shadow `rad docs %s`", fn.Name, fn.Name)
 		}
 		funcNames = append(funcNames, fn.Name)
 		funcSet[fn.Name] = true
@@ -207,12 +249,17 @@ func run(navFile, docsDir, funcsDir, target string, dryRun bool) error {
 		}
 		text := string(raw)
 		slug := strings.TrimSuffix(p.path, ".md")
+		var h2s []string
+		if !skipH2sSections[p.section] {
+			h2s = extractH2s(text)
+		}
 		stagedPages = append(stagedPages, staged{
 			meta: docPageMeta{
 				Slug:    slug,
 				Section: p.section,
 				Title:   resolveTitle(text, p.title, p.path),
-				H2s:     extractH2s(text),
+				H2s:     h2s,
+				InAll:   fullCorpusSections[p.section],
 			},
 			body: normalize(stripFrontMatter(text), slug),
 		})
@@ -327,7 +374,7 @@ func resolveDocLink(text, href, baseSlug string, slugs, funcs map[string]bool) s
 		return text + " (rad docs " + anchor + ")"
 	}
 	if slugs[target] {
-		return text + " (rad docs " + target + ")"
+		return text + " (rad docs " + strings.TrimSuffix(target, indexSuffix) + ")"
 	}
 	return text
 }

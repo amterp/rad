@@ -25,6 +25,11 @@ type DocPage struct {
 	Section string   `json:"section"`
 	Title   string   `json:"title"`
 	H2s     []string `json:"h2s"`
+	// InAll marks a page as part of `rad docs all`. Every embedded page
+	// is addressable by slug; only these join the bulk dump. Migration
+	// guides ship without it - see fullCorpusSections in
+	// tools/gen-docs-embed.
+	InAll bool `json:"in_all"`
 }
 
 var (
@@ -62,17 +67,6 @@ func GetDocFuncs() []string {
 	return docsFuncs
 }
 
-// GetDocSlugs returns every page slug, in nav order. Used to
-// validate `rad docs <topic>` and to list valid topics on a miss.
-func GetDocSlugs() []string {
-	pages := GetDocsManifest()
-	slugs := make([]string, 0, len(pages))
-	for _, p := range pages {
-		slugs = append(slugs, p.Slug)
-	}
-	return slugs
-}
-
 // GetDocPage returns the raw markdown for one page slug (e.g.
 // "guide/basics"), or false if no such page is embedded.
 func GetDocPage(slug string) (string, bool) {
@@ -99,13 +93,20 @@ func GetFuncDoc(name string) (string, bool) {
 	return strings.TrimSpace(rts.StripGeneratedBanner(string(content))), true
 }
 
+// sectionIndexLeaf is the slug leaf marking a section's landing page
+// (e.g. "migrations/index"). Such a page is addressable by its section
+// name alone, and its website URL is the directory, not the slug.
+const sectionIndexLeaf = "index"
+
 // GetDocTopic resolves a `rad docs <topic>` argument to raw markdown.
 // It's the single entry point, accepting (in precedence order) error
-// codes, built-in function names, and page slugs: `rad docs RAD10001`
-// explains an error, `rad docs len` prints a function's doc, and
-// `rad docs guide/basics` prints a page. Precedence is unambiguous -
-// error codes are digits, function names are bare identifiers, and
-// page slugs always contain a "/". Returns false if nothing matches.
+// codes, built-in function names, section names, and page slugs:
+// `rad docs RAD10001` explains an error, `rad docs len` prints a
+// function's doc, `rad docs migrations` prints a section's index, and
+// `rad docs guide/basics` prints a page. Error codes are digits and
+// slugs contain a "/", so the only namespace that can collide is
+// function names against section names - gen-docs-embed rejects that
+// at build time. Returns false if nothing matches.
 func GetDocTopic(topic string) (string, bool) {
 	if m := errorCodePattern.FindStringSubmatch(topic); m != nil {
 		if doc := GetErrorDoc(m[1]); doc != "" {
@@ -117,8 +118,66 @@ func GetDocTopic(topic string) (string, bool) {
 		if doc, ok := GetFuncDoc(topic); ok {
 			return doc, true
 		}
+		// A section name alone means its index page, so `rad docs
+		// migrations` works without knowing the slug is
+		// migrations/index. gen-docs-embed refuses a built-in whose
+		// name would shadow one of these.
+		if doc, ok := GetDocPage(topic + "/" + sectionIndexLeaf); ok {
+			return doc, true
+		}
 	}
 	return GetDocPage(topic)
+}
+
+// DocTopicSlug reports the page slug a `rad docs` topic addresses,
+// resolving the bare-section shorthand. Empty if the topic isn't a page.
+func DocTopicSlug(topic string) string {
+	if _, ok := GetDocPage(topic); ok {
+		return topic
+	}
+	if !strings.Contains(topic, "/") {
+		alias := topic + "/" + sectionIndexLeaf
+		if _, ok := GetDocPage(alias); ok {
+			return alias
+		}
+	}
+	return ""
+}
+
+// docsSiteURL is the root of the documentation website. `--web` maps a
+// topic onto it, and `rad docs` and the site are generated from the
+// same sources, so the two stay addressable the same way.
+const docsSiteURL = "https://amterp.dev/rad"
+
+// GetDocURL maps a `rad docs` topic to its page on the documentation
+// website, or false if the topic resolves to nothing. Mirrors
+// GetDocTopic's precedence: error codes, then built-ins, then pages.
+func GetDocURL(topic string) (string, bool) {
+	// No topic is the index, and `all` has no page of its own; both
+	// land on the site home.
+	if topic == "" || topic == "all" {
+		return docsSiteURL, true
+	}
+	if m := errorCodePattern.FindStringSubmatch(topic); m != nil {
+		if doc := GetErrorDoc(m[1]); doc != "" {
+			// Error docs aren't their own pages on the site; they're
+			// banded into the errors reference.
+			return docsSiteURL + "/reference/errors", true
+		}
+		return "", false
+	}
+	if !strings.Contains(topic, "/") {
+		if _, ok := GetFuncDoc(topic); ok {
+			return docsSiteURL + "/reference/functions#" + topic, true
+		}
+	}
+	slug := DocTopicSlug(topic)
+	if slug == "" {
+		return "", false
+	}
+	// mkdocs serves a section index at its directory, so the "/index"
+	// the slug carries would 404.
+	return docsSiteURL + "/" + strings.TrimSuffix(slug, "/"+sectionIndexLeaf), true
 }
 
 // BuildDocsTOC renders the topic index: sections, titles, the
@@ -142,7 +201,7 @@ func BuildDocsTOC() string {
 		b.WriteString("- **")
 		b.WriteString(p.Title)
 		b.WriteString("** (`rad docs ")
-		b.WriteString(p.Slug)
+		b.WriteString(strings.TrimSuffix(p.Slug, "/"+sectionIndexLeaf))
 		b.WriteString("`)")
 		if len(p.H2s) > 0 {
 			b.WriteString(": ")
@@ -153,14 +212,19 @@ func BuildDocsTOC() string {
 	return b.String()
 }
 
-// BuildDocsFull renders the entire embedded corpus: the TOC followed
-// by every page's content, H1-wrapped and separated by horizontal
-// rules. This mirrors llms-full.txt so `rad docs all` is the
-// "load everything" mode agents reach for.
+// BuildDocsFull renders the bulk corpus: the TOC followed by the
+// content of every page marked InAll, H1-wrapped and separated by
+// horizontal rules. This mirrors llms-full.txt so `rad docs all` is the
+// "load everything" mode agents reach for. Migration guides are listed
+// in the TOC but left out of the dump - they teach syntax that no
+// longer works.
 func BuildDocsFull() string {
 	var b strings.Builder
 	b.WriteString(BuildDocsTOC())
 	for _, p := range GetDocsManifest() {
+		if !p.InAll {
+			continue
+		}
 		body, ok := GetDocPage(p.Slug)
 		if !ok {
 			continue

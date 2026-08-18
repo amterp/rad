@@ -252,9 +252,18 @@ change ships with migration help on three layers:
    function's old name gets an `emitErrorWithHint` case). Prefer static
    detection in `rts/check/` where possible, so editors surface it too.
 2. An **error doc** in `core/error_docs/<code>.md` with a before/after example
-   and fix steps.
+   and fix steps, pointing on to `rad docs migrations/v0.X`. Reference it as
+   bare text, not a markdown link - error docs skip the `tools/docir` pass, so
+   `[text](url)` renders as literal brackets in a terminal.
 3. A **migration guide entry** in `docs-web/docs/migrations/v0.X.md` with the
-   full context and rationale.
+   full context and rationale, added to the mkdocs nav (short title: `v0.X`)
+   and to the table in `docs-web/docs/migrations/index.md`.
+
+Layers 2 and 3 are reachable offline via `rad docs`, so someone who upgrades
+and hits an error can follow it all the way to the rationale without leaving
+the terminal - which is also what lets an agent migrate scripts unattended.
+Migration guides are embedded but excluded from `rad docs all`; see
+`fullCorpusSections` in `tools/gen-docs-embed`.
 
 Use `feat!:` / `fix!:` commit prefixes for breaking changes.
 

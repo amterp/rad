@@ -143,6 +143,9 @@ Prints the 'basics' guide page.
 > rad docs reference/functions
 Prints the function reference.
 
+> rad docs migrations/v0.12
+Prints the v0.12 migration guide. 'rad docs migrations' lists them.
+
 > rad docs len
 Prints the doc for the 'len' built-in function.
 
@@ -192,6 +195,9 @@ Prints the 'basics' guide page.
 
 > rad docs reference/functions
 Prints the function reference.
+
+> rad docs migrations/v0.12
+Prints the v0.12 migration guide. 'rad docs migrations' lists them.
 
 > rad docs len
 Prints the doc for the 'len' built-in function.

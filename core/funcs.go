@@ -157,8 +157,7 @@ const (
 	INTERNAL_FUNC_DOCS_TOC        = "_rad_docs_toc"
 	INTERNAL_FUNC_DOCS_GET        = "_rad_docs_get"
 	INTERNAL_FUNC_DOCS_FULL       = "_rad_docs_full"
-	INTERNAL_FUNC_DOCS_SLUGS      = "_rad_docs_slugs"
-	INTERNAL_FUNC_DOCS_FUNCS      = "_rad_docs_funcs"
+	INTERNAL_FUNC_DOCS_URL        = "_rad_docs_url"
 	INTERNAL_FUNC_RENDER          = "_rad_render"
 
 	namedArgPreferExact    = "prefer_exact"

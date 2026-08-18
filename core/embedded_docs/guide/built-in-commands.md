@@ -77,8 +77,15 @@ rad docs                     # list all topics grouped by section
 rad docs guide/basics        # read the Basics guide page
 rad docs len                 # look up a single built-in function
 rad docs reference/functions # read the functions reference
+rad docs migrations          # list the migration guides
+rad docs migrations/v0.12    # read one of them
 rad docs all                 # dump the full doc corpus
 ```
+
+`rad docs all` covers the guide, reference, and examples - the same set as
+llms-full.txt (https://amterp.dev/rad/llms-full.txt). Migration guides are
+addressable but stay out of it, since they demonstrate syntax that no longer
+works.
 
 Error codes are also accessible this way:
 

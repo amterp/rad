@@ -410,7 +410,7 @@ that doesn't compile is an error rather than a silent fallback.
 **Info: Changed in v0.12**
 
     `split` and `replace` used to treat their pattern as a regex by default. See the
-    v0.12 migration guide if you're upgrading.
+    v0.12 migration guide (rad docs migrations/v0.12) if you're upgrading.
 
 ## Summary
 

@@ -74,8 +74,7 @@ var internalSignatures = []FnSignature{
 	newInternalFnSignature(`_rad_docs_toc() -> str`),
 	newInternalFnSignature(`_rad_docs_get(_slug: str) -> str?`),
 	newInternalFnSignature(`_rad_docs_full() -> str`),
-	newInternalFnSignature(`_rad_docs_slugs() -> str[]`),
-	newInternalFnSignature(`_rad_docs_funcs() -> str[]`),
+	newInternalFnSignature(`_rad_docs_url(_topic: str) -> str?`),
 	newInternalFnSignature(`_rad_render(_md: str, _mode: str) -> str`),
 }
 

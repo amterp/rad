@@ -34,10 +34,10 @@ nav:
       - ./reference/errors.md
   - Migrations:
       - How to Migrate: ./migrations/index.md
-      - ./migrations/v0.12.md
-      - ./migrations/v0.9.md
-      - ./migrations/v0.8.md
-      - ./migrations/v0.7.md
+      - v0.12: ./migrations/v0.12.md
+      - v0.9: ./migrations/v0.9.md
+      - v0.8: ./migrations/v0.8.md
+      - v0.7: ./migrations/v0.7.md
   - Project Status: status.md
   - Releases: releases.md
 

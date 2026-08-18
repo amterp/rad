@@ -7,6 +7,8 @@ func TestResolveDocLink(t *testing.T) {
 		"guide/shell-commands": true,
 		"guide/args":           true,
 		"reference/functions":  true,
+		"migrations/index":     true,
+		"migrations/v0.12":     true,
 	}
 	funcs := map[string]bool{"pick": true, "len": true}
 
@@ -24,6 +26,8 @@ func TestResolveDocLink(t *testing.T) {
 		{"external url keeps bare link", "site", "https://example.com", "guide/x", "site (https://example.com)"},
 		{"image is not a topic", "img", "./pic.png", "guide/x", "img"},
 		{"unknown page collapses to text", "missing", "../guide/missing.md", "guide/x", "missing"},
+		{"bare relative filename", "v0.12", "v0.12.md", "migrations/index", "v0.12 (rad docs migrations/v0.12)"},
+		{"section index advertises the shorthand", "how to", "index.md", "migrations/v0.12", "how to (rad docs migrations)"},
 	}
 	for _, c := range cases {
 		if got := resolveDocLink(c.text, c.href, c.base, slugs, funcs); got != c.want {

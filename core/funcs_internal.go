@@ -181,23 +181,14 @@ func AddInternalFuncs() {
 			},
 		},
 		{
-			Name: INTERNAL_FUNC_DOCS_SLUGS,
+			Name: INTERNAL_FUNC_DOCS_URL,
 			Execute: func(f FuncInvocation) RadValue {
-				list := NewRadList()
-				for _, slug := range GetDocSlugs() {
-					list.Append(newRadValueStr(slug))
+				topic := f.GetStr("_topic").Plain()
+				url, ok := GetDocURL(topic)
+				if !ok {
+					return RAD_NULL_VAL
 				}
-				return newRadValues(f.i, f.callNode, list)
-			},
-		},
-		{
-			Name: INTERNAL_FUNC_DOCS_FUNCS,
-			Execute: func(f FuncInvocation) RadValue {
-				list := NewRadList()
-				for _, name := range GetDocFuncs() {
-					list.Append(newRadValueStr(name))
-				}
-				return newRadValues(f.i, f.callNode, list)
+				return newRadValues(f.i, f.callNode, NewRadString(url))
 			},
 		},
 		{

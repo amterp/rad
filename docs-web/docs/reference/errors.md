@@ -623,7 +623,7 @@ a = parse_epoch(1712345678000, unit="millis")
 - `"nanos"`
 
 The longer aliases (`milliseconds`, `microseconds`, `nanoseconds`) were
-removed in v0.9. See the [v0.9 migration guide](/migrations/v0.9/).
+removed in v0.9. See `rad docs migrations/v0.9`.
 
 ### RAD20009: Invalid Timezone
 
@@ -1972,7 +1972,7 @@ Use interpolation to mix types in strings - it handles any type automatically:
 `"Value: {x}"`. Alternatively, convert types explicitly with `int()`, `float()`, or `str()`.
 
 > **v0.9 Migration Note:** The `+` operator no longer coerces types. If you're seeing this
-> error after upgrading, see the [v0.9 migration guide](https://amterp.dev/rad/migrations/v0.9/).
+> error after upgrading, see `rad docs migrations/v0.9`.
 
 ### RAD30003: Cannot Format
 
@@ -2461,8 +2461,7 @@ The `rad` keyword now handles all source types:
 - **List/map source**: `rad myData:` (replaces `display`)
 - **No source**: `rad:` (replaces `display` with no argument)
 
-See the [migration guide](https://amterp.dev/rad/migrations/v0.9/)
-for full details.
+See `rad docs migrations/v0.9` for full details.
 
 ### RAD40009: Duplicate Parameter
 
@@ -2844,9 +2843,8 @@ sides, or a leading `^` / trailing `$`. Real text does sometimes contain those -
 `"C++"` and `"a|b"` are perfectly good literal separators. The warning is advice,
 not a verdict.
 
-See the [v0.12 migration guide](https://amterp.dev/rad/migrations/v0.12/) for the
-full picture, and `rad check --from-logs all` to sweep every script you've run
-recently.
+See `rad docs migrations/v0.12` for the full picture, and
+`rad check --from-logs all` to sweep every script you've run recently.
 
 ### RAD40017: Interpolating a Constant Literal
 
@@ -2995,8 +2993,7 @@ a, b = $`cmd`   // no warning possible
 ```
 
 Sweep every script you've run recently with `rad check --from-logs all`, and see
-the [v0.12 migration guide](https://amterp.dev/rad/migrations/v0.12/) for the
-full picture.
+`rad docs migrations/v0.12` for the full picture.
 
 ### RAD40019: Two Default Commands At One Level
 
@@ -3435,6 +3432,6 @@ has no meaning at all. There's no version of them worth keeping working.
 
 #### See Also
 
-- [Migrating to v0.12](https://amterp.dev/rad/migrations/v0.12/) - the full change and its rationale
+- `rad docs migrations/v0.12` - the full change and its rationale
 - `rad docs RAD40025` - using a command as a value with no accessor
 - `rad docs guide/shell-commands` - the three command forms

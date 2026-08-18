@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var embeddedDocSections = map[string]bool{"Guide": true, "Reference": true, "Examples": true}
+var embeddedDocSections = map[string]bool{"Guide": true, "Reference": true, "Examples": true, "Migrations": true}
 
 // TestDocsManifestConsistency verifies the embedded docs manifest and
 // the embedded .md tree are in lockstep: every manifest page has a
@@ -134,11 +134,52 @@ func TestDocsTopicResolution(t *testing.T) {
 	require.True(t, ok, "rad docs len should resolve to a function page")
 	assert.Contains(t, fnDoc, "len", "function page should mention the function")
 
+	// A bare section name is shorthand for its index page, so users
+	// don't have to know the slug carries "/index".
+	for _, section := range []string{"migrations", "examples"} {
+		viaAlias, ok := core.GetDocTopic(section)
+		require.Truef(t, ok, "rad docs %s should resolve to the section index", section)
+		viaSlug, ok := core.GetDocTopic(section + "/index")
+		require.True(t, ok)
+		assert.Equal(t, viaSlug, viaAlias, "the alias and the slug serve the same page")
+	}
+
 	// Unknown topics miss.
 	_, ok = core.GetDocTopic("nonsense")
 	assert.False(t, ok, "unknown topic should not resolve")
 	_, ok = core.GetDocTopic("RAD99999")
 	assert.False(t, ok, "unknown error code should not resolve")
+}
+
+// TestDocsURLMapping covers `rad docs <topic> --web`. The mapping used
+// to live in the Rad script untested, where an unknown topic silently
+// opened the site root and a section index produced a 404 URL (mkdocs
+// serves those at the directory).
+func TestDocsURLMapping(t *testing.T) {
+	for _, tc := range []struct {
+		topic string
+		want  string
+	}{
+		{"", "https://amterp.dev/rad"},
+		{"all", "https://amterp.dev/rad"},
+		{"guide/basics", "https://amterp.dev/rad/guide/basics"},
+		{"migrations/v0.12", "https://amterp.dev/rad/migrations/v0.12"},
+		{"migrations", "https://amterp.dev/rad/migrations"},
+		{"examples", "https://amterp.dev/rad/examples"},
+		{"examples/index", "https://amterp.dev/rad/examples"},
+		{"len", "https://amterp.dev/rad/reference/functions#len"},
+		{"RAD10001", "https://amterp.dev/rad/reference/errors"},
+		{"10001", "https://amterp.dev/rad/reference/errors"},
+	} {
+		url, ok := core.GetDocURL(tc.topic)
+		require.Truef(t, ok, "%q should map to a URL", tc.topic)
+		assert.Equalf(t, tc.want, url, "URL for %q", tc.topic)
+	}
+
+	for _, topic := range []string{"nonsense", "RAD99999", "guide/nope"} {
+		_, ok := core.GetDocURL(topic)
+		assert.Falsef(t, ok, "%q should not map to a URL", topic)
+	}
 }
 
 // TestDocsFullCoversWholeCorpus verifies `rad docs all` inlines every
@@ -147,10 +188,21 @@ func TestDocsFullCoversWholeCorpus(t *testing.T) {
 	toc := core.BuildDocsTOC()
 	full := core.BuildDocsFull()
 
-	for _, section := range []string{"## Guide", "## Reference", "## Examples"} {
+	for _, section := range []string{"## Guide", "## Reference", "## Examples", "## Migrations"} {
 		assert.Contains(t, toc, section, "TOC should list every embedded section")
 	}
 	assert.Contains(t, toc, "rad docs guide/basics", "TOC should show the per-page command")
+	// Section index pages advertise the shorthand, not the raw slug.
+	assert.Contains(t, toc, "rad docs migrations`", "TOC should offer the section shorthand")
+	assert.NotContains(t, toc, "rad docs migrations/index", "TOC should not show the /index slug")
+
+	// Migration guides are addressable and listed, but stay out of the
+	// bulk dump - they demonstrate syntax that no longer works, which is
+	// the last thing an LLM loading the corpus should absorb.
+	assert.Contains(t, toc, "rad docs migrations/v0.12", "migrations belong in the TOC")
+	assert.NotContains(t, full, "Migrating to Rad v0.12", "migrations must stay out of `rad docs all`")
+	_, ok := core.GetDocTopic("migrations/v0.12")
+	assert.True(t, ok, "migrations are still addressable by slug")
 
 	assert.True(t, strings.HasPrefix(full, toc), "full corpus should lead with the TOC")
 	// The corpus is the TOC plus every page's inlined body, so it dwarfs

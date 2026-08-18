@@ -24,11 +24,11 @@ Run 'rad docs reference/errors' to see all available error codes.
 1
 
 ### TITLE ###
-Docs_PrintsPageBySlug
+Docs_SectionNameResolvesToIndex
 ### INPUT ###
 ### ARGS ###
 docs
-examples/index
+examples
 ### STDOUT ###
 Real-world scripts demonstrating Rad's features in practice.
 
@@ -110,3 +110,4 @@ If `title` is provided, it's printed before sleeping.
 | `ms`         | Milliseconds |
 | `us` or `µs` | Microseconds |
 | `ns`         | Nanoseconds  |
+

@@ -13,7 +13,8 @@
         "Improving The Script Usage String",
         "Shebang",
         "A Complete Example"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/basics",
@@ -30,7 +31,8 @@
         "Truthy / Falsy",
         "Converting Types",
         "Errors"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/args",
@@ -41,7 +43,8 @@
         "How Argument Parsing Works",
         "Argument Types and User Input",
         "Constraints"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/functions",
@@ -52,7 +55,8 @@
         "Function Arguments",
         "Custom Functions",
         "Reference"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/strings-advanced",
@@ -66,7 +70,8 @@
         "Escape Sequences",
         "String Attributes",
         "Patterns: Literal by Default"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/rad-blocks",
@@ -78,7 +83,8 @@
         "Rad Block Options",
         "Source Types",
         "Understanding HTTP Requests"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/type-annotations",
@@ -92,7 +98,8 @@
         "Union Types",
         "Advanced Types",
         "Variadic and Named Parameters"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/error-handling",
@@ -105,7 +112,8 @@
         "The `catch` Operator",
         "Creating Your Own Errors",
         "Holding an Error"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/shell-commands",
@@ -121,7 +129,8 @@
         "Commands As Lists",
         "Modifiers",
         "Practical Examples"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/script-commands",
@@ -139,7 +148,8 @@
         "Shared Logic",
         "Getting Help",
         "Practical Example"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/resources",
@@ -149,7 +159,8 @@
         "`pick`",
         "`pick_kv`",
         "`pick_from_resource`"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/global-flags",
@@ -168,7 +179,8 @@
         "`mock-response`",
         "`reply`",
         "`reply-na`"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/defer-errdefer",
@@ -178,7 +190,8 @@
         "Defer",
         "Errdefer",
         "Errors in defer blocks"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/stashes",
@@ -190,7 +203,8 @@
         "File Storage",
         "Stash Structure",
         "Managing Stashes"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/config",
@@ -198,7 +212,8 @@
       "title": "Configuration",
       "h2s": [
         "Invocation Logging"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/built-in-commands",
@@ -213,7 +228,8 @@
         "`rad gen-id`",
         "`rad home`",
         "`rad completion`"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/repl",
@@ -227,7 +243,8 @@
         "Two things behave differently than in a script",
         "Piping input",
         "What it doesn't do yet"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "guide/shell-completion",
@@ -239,13 +256,15 @@
         "Script Completions",
         "Multiple Scripts \u0026 Globs",
         "Full Example"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "examples/index",
       "section": "Examples",
       "title": "Examples",
-      "h2s": []
+      "h2s": [],
+      "in_all": true
     },
     {
       "slug": "examples/brewi",
@@ -255,7 +274,8 @@
         "Preview",
         "Tutorial: Building `brewi`",
         "Concepts demonstrated"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "examples/epoch",
@@ -265,7 +285,8 @@
         "Preview",
         "Tutorial: Building `epoch`",
         "Concepts demonstrated"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "examples/hm",
@@ -275,7 +296,8 @@
         "Preview",
         "Tutorial: Building `hm`",
         "Concepts demonstrated"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "reference/syntax",
@@ -303,7 +325,8 @@
         "Built-in Types and Methods",
         "Type System",
         "Rad Code Style"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "reference/functions",
@@ -323,7 +346,8 @@
         "Strings",
         "System",
         "Time"
-      ]
+      ],
+      "in_all": true
     },
     {
       "slug": "reference/errors",
@@ -334,7 +358,43 @@
         "Runtime Errors (RAD2xxxx)",
         "Type Errors (RAD3xxxx)",
         "Validation \u0026 Lint Errors (RAD4xxxx)"
-      ]
+      ],
+      "in_all": true
+    },
+    {
+      "slug": "migrations/index",
+      "section": "Migrations",
+      "title": "How to Migrate",
+      "h2s": null,
+      "in_all": false
+    },
+    {
+      "slug": "migrations/v0.12",
+      "section": "Migrations",
+      "title": "v0.12",
+      "h2s": null,
+      "in_all": false
+    },
+    {
+      "slug": "migrations/v0.9",
+      "section": "Migrations",
+      "title": "v0.9",
+      "h2s": null,
+      "in_all": false
+    },
+    {
+      "slug": "migrations/v0.8",
+      "section": "Migrations",
+      "title": "v0.8",
+      "h2s": null,
+      "in_all": false
+    },
+    {
+      "slug": "migrations/v0.7",
+      "section": "Migrations",
+      "title": "v0.7",
+      "h2s": null,
+      "in_all": false
     }
   ],
   "funcs": [
