@@ -8,6 +8,93 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.12.0](https://github.com/amterp/rad/releases/tag/v0.12.0) - 2026-08-18
+
+v0.12 is the biggest release yet for shell commands, and the largest breaking one so far: eight breaking changes, half of which can change what a script does without raising an error. **Read the [migration guide](https://amterp.dev/rad/migrations/v0.12/) before upgrading**, and run `rad check --from-logs all` to find the scripts that need attention.
+
+**✨ Highlights**
+
+**Shell commands are quoted, and readable inline.** Values you interpolate are now quoted, so a filename with a space - or a string from somewhere you don't control - arrives as one argument instead of turning into shell syntax. A command can be read where it stands:
+
+```rad
+branch = $`git branch --show-current`.stdout.trim() catch "unknown"
+
+if not $`which docker`.ok:
+    exit(1)
+```
+
+Captures now bind `(stdout, stderr, code)`, so `out = $cmd` gives you the output rather than the exit code. And a command written as a list skips the shell entirely, so it behaves the same whichever shell is installed.
+
+**A REPL you can work in.** `rad repl` gives you multi-line blocks, auto-indent, an editable line with history, and errors that hand you back the prompt instead of ending the session. Plus `:vars`, `:docs <topic>`, `:load <file>` and `:help`. The old `--repl` flag is gone.
+
+**Commands nest, and one can be the default.** A command block can contain command blocks, so `tool remote add` works the way `git remote add` does, with shared args accepted anywhere along the path. Mark one command per level `default` and it runs when the user names none.
+
+**Scripts that prompt can run without a terminal.** rad reads the script up front and refuses to start until every reachable prompt has an answer, given with `--reply` (keyed by line) or `--reply-na` for branches a run won't take. Nothing executes until they are all answered, so a CI or agent run is never left half-finished. rad also looks for a terminal on `/dev/tty` now, so `echo x | rad script.rad` prompts normally.
+
+**`split()` and `replace()` match literally.** A regex is opt-in with `regex=true`. Most calls were passing literal text and quietly getting regex behavior - a `.` matching every character rather than a dot.
+
+**Error output fits your terminal.** Diagnostics wrap to the width you actually have, and `rad check` renders through the same code as runtime errors. `rad check` also lost a batch of false positives: hints across a 206-script corpus dropped from 15 to 4.
+
+**🧰 New builtins**
+
+- `get_os()` - `"macos"`, `"linux"` or `"windows"`
+- `mkdir()` - recursive and idempotent, like `mkdir -p`
+- `base_name()`, `dir_name()`, `join_paths()` - path helpers that work on paths that don't exist yet
+- `format_epoch()` - turns an epoch into a formatted date string, the counterpart to `parse_date()`
+- `len` bounds on how many values a list or variadic arg takes: `pair len [2,2]`
+
+And plenty of bug fixes, see the list of commits below.
+
+Don't hesitate to ask questions or raise issues!
+
+- Mark 4 cards done after cherry-picking sprint work ([3229dd24](https://github.com/amterp/rad/commit/3229dd24))
+- feat!: answer a script's prompts when there's no terminal ([00cf40bb](https://github.com/amterp/rad/commit/00cf40bb))
+- feat!: list args take several positional values ([b3297b57](https://github.com/amterp/rad/commit/b3297b57))
+- feat!: shell captures bind stdout first, exit code last ([070dda5c](https://github.com/amterp/rad/commit/070dda5c))
+- feat!: shell commands can be read inline ([a75d948d](https://github.com/amterp/rad/commit/a75d948d))
+- feat!: shell commands quote what you interpolate into them ([27280ecc](https://github.com/amterp/rad/commit/27280ecc))
+- feat!: split() and replace() match literally, regex= opts in ([6411a257](https://github.com/amterp/rad/commit/6411a257))
+- feat(repl): make the REPL a command instead of a global flag ([caa05f9d](https://github.com/amterp/rad/commit/caa05f9d))
+- feat: a failed shell command has its own error code ([a6686f13](https://github.com/amterp/rad/commit/a6686f13))
+- feat: a fatal error can unwind instead of ending the process ([fb4b52d1](https://github.com/amterp/rad/commit/fb4b52d1))
+- feat: add get_os, mkdir, path helpers, and format_epoch builtins ([f69ebced](https://github.com/amterp/rad/commit/f69ebced))
+- feat: dedicated error for '#' used as a comment ([5267bcc1](https://github.com/amterp/rad/commit/5267bcc1))
+- feat: hint at variadic form when list args overflow positionals ([bcbbb04c](https://github.com/amterp/rad/commit/bcbbb04c))
+- feat: let a command run when the user names none ([ee56a96d](https://github.com/amterp/rad/commit/ee56a96d))
+- feat: let commands nest, like `git remote add` ([52dfca8b](https://github.com/amterp/rad/commit/52dfca8b))
+- feat: make the REPL a session you can work in ([0f876122](https://github.com/amterp/rad/commit/0f876122))
+- feat: prompt errors warn that a retry starts the script over ([b5fc1f4f](https://github.com/amterp/rad/commit/b5fc1f4f))
+- feat: rad check explains what the shell syntax change did to your script ([c457ddca](https://github.com/amterp/rad/commit/c457ddca))
+- feat: rad shows where a repeated prompt is called from ([2ee6fc2a](https://github.com/amterp/rad/commit/2ee6fc2a))
+- feat: settle what a brace means inside a string ([fdfa395c](https://github.com/amterp/rad/commit/fdfa395c))
+- fix!: constraints on a list arg are enforced, not ignored ([a29621b4](https://github.com/amterp/rad/commit/a29621b4))
+- fix(check): narrow through short-circuits and `in` guards ([5ac6891c](https://github.com/amterp/rad/commit/5ac6891c))
+- fix(check): stop false positives on provably-safe code ([6c7aa76b](https://github.com/amterp/rad/commit/6c7aa76b))
+- fix(ci): benchmark runner survives the v0.12 shell quoting change ([678e4890](https://github.com/amterp/rad/commit/678e4890))
+- fix(ci): regenerate functions.txt, force LF on embedded/fixture paths ([edd61692](https://github.com/amterp/rad/commit/edd61692))
+- fix(ci): trust the homebrew tap before bumping the formula ([e0a28aec](https://github.com/amterp/rad/commit/e0a28aec))
+- fix: ?? and catch fire on an error you already hold ([5d2bb6c2](https://github.com/amterp/rad/commit/5d2bb6c2))
+- fix: a command that can't be started reports 127, not a Rad bug ([cce70428](https://github.com/amterp/rad/commit/cce70428))
+- fix: a negative fallback no longer needs parentheses ([0a7ea3df](https://github.com/amterp/rad/commit/0a7ea3df))
+- fix: a pick that settles itself no longer discards your answer ([a9e68b38](https://github.com/amterp/rad/commit/a9e68b38))
+- fix: a re-raised error names where it re-fired ([108bf7cb](https://github.com/amterp/rad/commit/108bf7cb))
+- fix: compound assign writes the binding it reads ([10137ab3](https://github.com/amterp/rad/commit/10137ab3))
+- fix: deleting during list iteration no longer duplicates an element ([d31f5f53](https://github.com/amterp/rad/commit/d31f5f53))
+- fix: fit error output to the terminal ([70dbaa11](https://github.com/amterp/rad/commit/70dbaa11))
+- fix: interactive prompts encode dash answers with the =-form ([497628fd](https://github.com/amterp/rad/commit/497628fd))
+- fix: list args show their type in --help again ([ebe95d0b](https://github.com/amterp/rad/commit/ebe95d0b))
+- fix: on Windows, prompts draw to the console, not its input buffer ([f8644d4d](https://github.com/amterp/rad/commit/f8644d4d))
+- fix: rad fmt no longer declines files with a catch block ([70da8e8c](https://github.com/amterp/rad/commit/70da8e8c))
+- fix: rad no longer invents answers in its --reply suggestion ([736ccaba](https://github.com/amterp/rad/commit/736ccaba))
+- fix: releasing survives scratch tags and notices a dirty tree ([89aef63a](https://github.com/amterp/rad/commit/89aef63a))
+- fix: running out of --reply answers no longer names one cause ([65e05f40](https://github.com/amterp/rad/commit/65e05f40))
+- fix: shrink ten diagnostics to the budget their own guide sets ([9a89c6ed](https://github.com/amterp/rad/commit/9a89c6ed))
+- fix: the benchmark harness writes its README without a shell ([b82b8da5](https://github.com/amterp/rad/commit/b82b8da5))
+- refactor: drop the arg branches nothing could reach ([a973e9ae](https://github.com/amterp/rad/commit/a973e9ae))
+- refactor: the shell executor works from a spec, not a statement ([df4f07cf](https://github.com/amterp/rad/commit/df4f07cf))
+
+---
+
 ## [v0.11.0](https://github.com/amterp/rad/releases/tag/v0.11.0) - 2026-07-04
 
 - chore(check): tighten resolve types and binder issue plumbing ([176e3e91](https://github.com/amterp/rad/commit/176e3e91))
