@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "give-the-filesystem",
+  "alias_explicit": false,
+  "column": "big-rocks",
+  "created_at_millis": 1786797444835,
+  "creator": "Alexander Terp",
+  "description": "Rad can already be sandboxed for everything except the filesystem, and that gap is one an embedder cannot work around.\n\nRunnerInput (core/global.go) is a complete dependency-injection struct: stdio, exit, HTTP, shell, clock, sleep, signals, confirm, terminal, home, terminal width. Every outside-world edge is a seam, so a host can already deny shell and network per invocation. That is most of a capability model, already built.\n\nThe filesystem escaped the rule. Probed with real scripts through an embedded runtime:\n\n| Call | Result | Blockable today |\n|---|---|---|\n| shell out via dollar-backtick | executed, file created | **yes** - an injected deny-all RShell intercepted it, exit 126, never ran |\n| read_file(\"/etc/hosts\") | read 300 bytes | no |\n| write_file(\"/tmp/rad_pwned.txt\") | file created with content | no |\n| get_env(\"HOME\") | \"/Users/amterp\" | no |\n\nThe call sites go straight to os.* with no seam: core/funcs.go:1136 (ReadFile), :1182 and :1191 (OpenFile, WriteFile), :815 (Getenv), core/func_mkdir.go:30, and :920 **os.RemoveAll**, which means a hostile script can recursively delete. HTTP is adjacent: RReq is a concrete *Requester (core/requester.go:23) rather than an interface, so it cannot be substituted either.\n\n## Why this matters beyond nook\n\n\"Can I safely run a Rad script someone sent me\" is a question every scripting language eventually has to answer, and today the answer is no.\n\nAGENTS.md already mandates that I/O go through the core/global.go seams. The filesystem simply escaped it, so this closes a gap in an existing design rather than introducing a new concept.\n\nFor nook it decides whether third-party Rad plugins can exist at all. Until it lands, Rad plugins are trusted-only, which puts the tier meant to showcase Rad behind the tier that needs no trust.\n\n## Shape\n\nAdd an RFs interface seam, route the ~10 os.* sites through it, make RReq an interface, and add capability flags to RunnerInput so a host can express what a script may touch. Contained and idiomatic - it follows the pattern the other twelve seams already use.\n\nOne note for whoever picks this up: for untrusted scripts, in-process embedding is worse than a subprocess, not better. No OS boundary, and nothing to wrap in sandbox-exec.",
+  "effort": "m",
+  "id": "a_28S95ejGp",
+  "labels": [
+    "security"
+  ],
+  "position": "UUUUUUUUU",
+  "source": [
+    "nook"
+  ],
+  "title": "Give the filesystem an injectable seam, and add capability flags",
+  "type": "feature",
+  "updated_at_millis": 1786797444835,
+  "history": [
+    {"field":"column","value":"big-rocks","at":1786797444835}
+  ]
+}

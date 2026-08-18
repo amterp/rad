@@ -1,0 +1,20 @@
+{
+  "_v": 3,
+  "alias": "make-the-repl-not",
+  "alias_explicit": false,
+  "column": "done",
+  "created_at_millis": 1786658068803,
+  "creator": "Alexander Terp",
+  "description": "use radish?",
+  "effort": "m",
+  "id": "a_27VfHZ1Zk",
+  "position": "6",
+  "title": "make the repl not garbage",
+  "type": "feature",
+  "updated_at_millis": 1786815168933,
+  "history": [
+    {"field":"column","value":"big-rocks","at":1786658068803},
+    {"field":"column","value":"doing","at":1786702952774},
+    {"field":"column","value":"done","at":1786815168933}
+  ]
+}

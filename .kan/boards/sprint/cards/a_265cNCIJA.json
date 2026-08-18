@@ -1,18 +1,32 @@
 {
   "_v": 3,
-  "alias": "syntax-for-fluently",
+  "alias": "allow-shell",
   "alias_explicit": false,
-  "column": "big-rocks",
+  "column": "done",
+  "comments": [
+    {
+      "author": "Alexander Terp",
+      "body": "Implemented on branch `rad-sprint1` (7 commits) + `tree-sitter-rad` main (2 commits).\n\nGrammar: `shell_stmt` is dissolved. `$` takes only a primary and `shell_cmd` is an ordinary `primary_expr`, so `$cmd` is an expr_stmt and `x = $cmd` an assign - capture targets, `catch:` blocks and precedence come from rules that already define them. Accessors are plain `.name` postfix validated by the checker, not new grammar (making `.stdout` a literal would keyword-extract `stdout`, which is the canonical capture target name). Generated with zero new conflicts.\n\nFound while checking whether it could parse: a third silent footgun the card didn't know about. ``$`cmd` catch \"x\"`` and ``$`cmd` ?? \"x\"`` bound the handler to the *command string*, so it never ran and the failure killed the script - and `rad check` said nothing. That is now the lead of the migration guide.\n\nCard's Edges, all closed:\n\n- Spawn failure on `$list` was worse than described: an uncatchable RAD20042 internal bug with a Go stack trace, not just a missing code. Now 127/126, catchable, with `TestParams.RealShell()` added so the real executor is testable at all (it had no coverage).\n- tree-sitter-rad, `rad fmt`, checker diagnostics, docs: done. Highlighting needed nothing - the tmLanguage grammar matches a bare `$` by regex.\n- `rad fmt` turned up a pre-existing bug: statements with a trailing `catch:` block had the block dropped, so fmt declined the whole file. Latent because shell was the common carrier of `catch:` and used to be emitted verbatim.\n\nNot blessed, as agreed: ``$`cmd`.ok`` as a bare statement works and is undocumented.\n\nEvidence the statement form is untouched: of 7 syntax-tree snapshots that moved, every AST is byte-identical - only parse trees changed. One exception, a span that grew to cover parens that used to belong to lambda body syntax.\n\nRED-10 written (Implemented). Migration guide, error docs RAD40025/40026/20048, SYNTAX.md, both guides.\n\nBLOCKED ON YOU: go.mod still carries a local `replace` for tree-sitter-rad, uncommitted per AGENTS.md. Tag the grammar v0.10.0 and bump the dep to make the branch build standalone.",
+      "created_at_millis": 1786652339313,
+      "id": "c_27TGEV4cJ"
+    }
+  ],
   "created_at_millis": 1786448228319,
   "creator": "Alexander Terp",
-  "effort": "m",
+  "description": "From the 2026-08-13 design session on the \"ONE LAST TANGENT THOUGHT\" in\n`docs/thinking/shell_cmds.md` (2025-10-13 entry).\n\n## Motivation\n\nConsuming a command's output takes an assignment dance today, even when only\none value is wanted:\n\n    stdout = $`git branch --show-current` catch:\n        print_err(\"Failed to get branch\")\n        exit(1)\n    branch = stdout.trim()\n\nQuery-style commands (`git status --porcelain`, `which x`, `git branch\n--show-current`) are among the most common shell uses in real scripts, and\neach costs a throwaway variable and extra lines. Shell invocations are\nstatements-only, so output can't feed an `if` or a function argument directly.\n\n## Design: virtual accessors\n\nA shell invocation becomes legal in expression position only when immediately\nfollowed by one of four accessors: `.stdout`, `.stderr`, `.code`, `.ok`.\nThere is no result object type - the accessor is part of the invocation\nsyntax, and the four names match named-assignment vocabulary.\n\n    branch = $`git branch --show-current`.stdout.trim() catch \"unknown\"\n\n    if $`git status --porcelain`.stdout.trim():\n        print_err(\"Uncommitted changes!\")\n\n    if not $`which docker`.ok:\n        exit(1)\n\nSettled semantics:\n\n- **Capture follows the accessor**, exactly like named assignment: `.stdout`\n  captures stdout and streams stderr; `.stderr` the reverse; `.code`/`.ok`\n  capture nothing. So ``x = $`cmd`.stdout`` behaves identically to\n  ``x = $`cmd` ``.\n- **Stream accessors throw, status accessors don't.** `.stdout`/`.stderr`\n  propagate on non-zero exit, composing with `??`/`catch`/`catch:` as usual.\n  `.ok` (bool) and `.code` (int) never propagate - using them is the\n  handling (grep's exit 1 is data, not failure). This deliberately differs\n  from statement-form `code = $cmd`, which still propagates; the docs should\n  own that asymmetry in a sentence.\n- **No truthiness.** A bare invocation in expression position (``if $`cmd`:``)\n  is a check-time error. Forcing `.ok` vs `.stdout` kills the shell ambiguity\n  between \"succeeded\" and \"printed something\".\n- **One value inline, several via assignment.** Expression form never yields\n  both streams from one run; multi-capture assignment already covers that.\n- **⚡️ echo stays on** in expression position - under `and`/`or`\n  short-circuit it shows which commands actually ran. `quiet` and `confirm`\n  remain prefix modifiers and work in expressions. Declining a `confirm`\n  already synthesizes \"exited 1 without running\" (`core/shell.go:174`), so it\n  composes with no new semantics.\n\n## Grammar change and migration\n\nToday `$` swallows a whole expression and postfix *builds the command*:\n`$cmds[1]` and `$parts.join(\" \")` both run today. New binding: `$` takes only\na primary (backtick/quoted literal, bare identifier, list literal, or\nparenthesized expression); postfix after that refers to the *result* and must\nstart with an accessor. Computed commands move into parens - `$(cmds[1])` -\nwhich already parses and runs today, so no new form is added.\n\nBreaking, but loudly: old computed-postfix like `$cmds[1]` becomes a\ncheck-time error with a fixit (`$(cmds[1])`). Zero silent reinterpretations:\naccessor names on a command string already crash at runtime today. Related\ngap to close while here: postfix currently binding to the command string is\nitself a silent footgun - ``$`echo hi`.upper()`` runs `ECHO HI` and the\nchecker says nothing.\n\n## Not blessed\n\n``$`cmd`.ok`` as a bare statement (run, stream, never fail) falls out of the\ngrammar. Allowed, but do not document it as the idiom over `catch: pass` -\nwe expect a better, less cryptic syntax for that case later.\n\n## Edges\n\n- Spawn failure on the `$list` no-shell form (binary missing, not\n  executable) must map to code 127 / `.ok == false`, or the status\n  accessors' no-throw contract has a hidden crash path.\n- tree-sitter-rad, highlighting, and `rad fmt` need the new binding.\n- Checker: diagnostics for illegal postfix after an invocation, bare\n  invocation in expression position, and the migration fixit.\n- Docs: guide/shell-commands, guide/error-handling cross-ref,\n  reference/syntax.",
+  "effort": "l",
   "id": "a_265cNCIJA",
-  "position": "UUUUUU",
-  "title": "syntax for fluently doing work on stdout of a shell command",
+  "labels": [
+    "breaking"
+  ],
+  "position": "E",
+  "title": "Allow shell invocations in expressions via result accessors",
   "type": "feature",
-  "updated_at_millis": 1786448255388,
+  "updated_at_millis": 1786652344912,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786448228319},
-    {"field":"column","value":"big-rocks","at":1786448235903}
+    {"field":"column","value":"big-rocks","at":1786448235903},
+    {"field":"column","value":"doing","at":1786649939746},
+    {"field":"column","value":"done","at":1786652344912}
   ]
 }

@@ -1,193 +1,197 @@
-kan_schema = "board/12"
-id = "b_25NZSqFz2"
-name = "sprint"
 default_column = "p2"
+id = "b_25NZSqFz2"
+kan_schema = "board/13"
+name = "sprint"
+
+[card_display]
+  badges = ["source", "labels"]
+  tint = "effort"
+  type_indicator = "type"
 
 [[columns]]
-  name = "verify-first"
   color = "#8b5cf6"
   description = "Cheap checks to run before building anything. Some of these delete cards below. Budget under two hours for the whole column."
   limit = 0
+  name = "verify-first"
 
 [[columns]]
-  name = "big-rocks"
   color = "#7c3aed"
   description = "The four large items called out as this sprint's priorities. Deliberately unranked - they are peers. Two are already in flight in worktrees, so they are continuations rather than cold starts. Everything to the right waits on these having a slot."
   limit = 0
+  name = "big-rocks"
 
 [[columns]]
-  name = "p0-tier1"
   color = "#dc2626"
   description = "Silent wrong behavior and shell injection. Rad produces a wrong answer with no error, or executes text it shouldn't. The spine of the week; work top-down."
   limit = 0
+  name = "p0-tier1"
 
 [[columns]]
-  name = "p1"
   color = "#f59e0b"
   description = "Strong evidence from more than one source, and small enough to finish. Pull from here once p0-tier1 is clear."
   limit = 0
+  name = "p1"
 
 [[columns]]
-  name = "p2"
   color = "#3b82f6"
   description = "Real value, thinner evidence or lower leverage. Overflow for a week that goes well."
   limit = 0
+  name = "p2"
 
 [[columns]]
-  name = "stretch"
   color = "#64748b"
   description = "Design calls and large items that gate future quarters. Starting one costs the rest of the week."
   limit = 0
+  name = "stretch"
 
 [[columns]]
-  name = "parked"
   color = "#4b5563"
   description = "Considered and ruled out for this sprint. Each card says why, so the merge back into main keeps the reasoning."
   limit = 0
+  name = "parked"
 
 [[columns]]
-  name = "approved"
   color = "#0d9488"
   description = "Checked and ready for an agent to pick up. The premise holds and the scope is agreed, so what's left is the work itself. Vetted, not frozen - if something stops making sense once you are in the code, say so rather than pushing through."
   limit = 0
+  name = "approved"
 
 [[columns]]
-  name = "doing"
   color = "#ec4899"
   description = "Currently being worked on."
   limit = 0
+  name = "doing"
 
 [[columns]]
-  name = "done"
   color = "#16a34a"
   description = "Finished this sprint."
   limit = 0
+  name = "done"
 
 [custom_fields]
   [custom_fields.effort]
+    description = "Rough size. Tints the card so cheap work is visible at a glance."
     type = "enum"
     wanted = true
-    description = "Rough size. Tints the card so cheap work is visible at a glance."
 
     [[custom_fields.effort.options]]
-      value = "xs"
       color = "#86efac"
       description = "Under 30 minutes"
+      value = "xs"
 
     [[custom_fields.effort.options]]
-      value = "s"
       color = "#bef264"
       description = "1-2 hours"
+      value = "s"
 
     [[custom_fields.effort.options]]
-      value = "m"
       color = "#fde047"
       description = "Half a day"
+      value = "m"
 
     [[custom_fields.effort.options]]
-      value = "l"
       color = "#fdba74"
       description = "1-2 days"
+      value = "l"
 
     [[custom_fields.effort.options]]
-      value = "xl"
       color = "#fca5a5"
       description = "More than two days; does not fit this sprint alongside anything else"
+      value = "xl"
   [custom_fields.labels]
-    type = "enum-set"
     description = "Cross-cutting flags"
+    type = "enum-set"
 
     [[custom_fields.labels.options]]
-      value = "breaking"
       description = "Would be a breaking change"
+      value = "breaking"
 
     [[custom_fields.labels.options]]
-      value = "needs-decision"
       description = "Blocked on a design call, usually a card in stretch"
+      value = "needs-decision"
 
     [[custom_fields.labels.options]]
-      value = "security"
       description = "Executes or leaks something it shouldn't"
+      value = "security"
 
     [[custom_fields.labels.options]]
-      value = "ai-hi"
       description = "Well-suited for autonomous AI work"
+      value = "ai-hi"
 
     [[custom_fields.labels.options]]
-      value = "ai-lo"
       description = "Likely suitable for AI but needs oversight"
+      value = "ai-lo"
   [custom_fields.source]
+    description = "Where the evidence for this card came from. Cards citing more than one source are the strongest signals."
     type = "enum-set"
     wanted = true
-    description = "Where the evidence for this card came from. Cards citing more than one source are the strongest signals."
 
     [[custom_fields.source.options]]
-      value = "friction-153"
       description = "GitHub #153, the standing dogfooding friction log"
+      value = "friction-153"
 
     [[custom_fields.source.options]]
-      value = "takehome"
       description = "The 2026-07-24 multi-agent review of ~195 real scripts and 41k invocations"
+      value = "takehome"
 
     [[custom_fields.source.options]]
-      value = "vision"
       description = "docs/VISION.md roadmap"
+      value = "vision"
 
     [[custom_fields.source.options]]
-      value = "main-board"
       description = "Already tracked on the main kan board"
+      value = "main-board"
 
     [[custom_fields.source.options]]
-      value = "clig-audit"
       description = "The clig.dev conformance audit card filed 2026-07-14"
+      value = "clig-audit"
 
     [[custom_fields.source.options]]
-      value = "agent-redteam"
       description = "An agent session that adversarially probed a shipped feature and reproduced each failure it reports"
+      value = "agent-redteam"
+
+    [[custom_fields.source.options]]
+      description = "Surfaced by embedding Rad in nook, a macOS clipboard editor that runs Rad scripts as plugins. Measured against a real embedding harness rather than reasoned about."
+      value = "nook"
   [custom_fields.type]
+    description = "The category of work this card represents"
     type = "enum"
     wanted = true
-    description = "The category of work this card represents"
 
     [[custom_fields.type.options]]
-      value = "bug"
       color = "#dc2626"
       description = "Existing functionality produces a wrong result"
+      value = "bug"
 
     [[custom_fields.type.options]]
-      value = "feature"
       color = "#16a34a"
       description = "New functionality"
+      value = "feature"
 
     [[custom_fields.type.options]]
-      value = "enhancement"
       color = "#2563eb"
       description = "An improvement to existing functionality"
+      value = "enhancement"
 
     [[custom_fields.type.options]]
-      value = "docs"
       color = "#0891b2"
       description = "Documentation that is wrong, missing, or unfindable"
+      value = "docs"
 
     [[custom_fields.type.options]]
-      value = "chore"
       color = "#4b5563"
       description = "Maintenance, housekeeping, repo hygiene"
+      value = "chore"
 
     [[custom_fields.type.options]]
-      value = "decision"
       color = "#9333ea"
       description = "A design call to make, not code to write. Blocks the work that depends on it."
+      value = "decision"
 
     [[custom_fields.type.options]]
-      value = "probe"
       color = "#8b5cf6"
       description = "A check that resolves whether other cards are real"
-
-[card_display]
-  type_indicator = "type"
-  tint = "effort"
-  badges = ["source", "labels"]
+      value = "probe"
 
 [[link_rules]]
   name = "github"

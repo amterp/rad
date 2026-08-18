@@ -1,0 +1,16 @@
+{
+  "_v": 3,
+  "id": "a_28JrpwNqX",
+  "alias": "one-syntax-error",
+  "alias_explicit": false,
+  "title": "One syntax error prints several diagnostics",
+  "description": "A single typo produces one diagnostic per error node in the tree, so\nthe user reads the same mistake described two or three times.\n\n    $ printf 'bad syntax here!!!\\n' | rad -\n    error[RAD10009]: Unexpected 'bad syntax here!!!'\n      --\u003e t.rad:1:1\n    error[RAD10009]: Unexpected '!!!'\n      --\u003e t.rad:1:16\n\nNoticed while building the REPL (RED-11), where it stings more than in\na script: you see it on every mistyped line rather than once before\nexiting. The REPL borrows its syntax diagnostics from the checker\nprecisely so the two paths agree, so this is one behavior in two\nplaces, not two bugs.\n\nLikely fix: report only the outermost invalid node, dropping nested\nones whose span is contained by an ancestor's. Worth checking whether\nany existing case genuinely wants the inner report - two unrelated\nerrors on one line should still produce two.\n\nTouches rts/check (where the diagnostics come from) and will churn\nsnapshots in core/testing and rts/check.",
+  "creator": "Alexander Terp",
+  "created_at_millis": 1786777715364,
+  "updated_at_millis": 1786777715364,
+  "column": "todo-lo",
+  "position": "w2U",
+  "history": [
+    {"field":"column","value":"todo-lo","at":1786777715364}
+  ]
+}

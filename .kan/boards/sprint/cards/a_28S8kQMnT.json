@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "add-a-warm-worker",
+  "alias_explicit": false,
+  "column": "big-rocks",
+  "created_at_millis": 1786797431676,
+  "creator": "Alexander Terp",
+  "description": "Rad costs 20.7ms to run as a subprocess and 0.29ms in-process. A host that wants to run many small Rad scripts pays 70x more than it needs to, and the only way to avoid that today is to be written in Go.\n\nA worker mode fixes it for every language at once: start rad once, hand it scripts over stdin, get results back. The host pays startup once and never again, with no FFI, no cgo, and no Go runtime inside its own process.\n\n## Measurements (M2 Pro, macOS 26.4.1, rad v0.11.0, hyperfine)\n\n| Path | Mean | Min |\n|---|---|---|\n| Cold subprocess, stdin to stdout script | 20.7ms | 17.8ms |\n| rad --version | 21.8ms | 17.5ms |\n| Baseline /bin/echo hi | 1.5ms | 0.5ms |\n| In-process, fresh RadRunner per eval | 0.29ms | 0.25ms |\n| In-process, persistent Interpreter | 0.074ms | 0.066ms |\n\nrad --version costing the same as running a script is the tell: the cost is fixed startup, not parsing. rts/signatures.go:82 builds a tree-sitter parser and parses 142 builtin signatures as Rad source at process init. The in-line TODO at rts/signatures.go:105 already flags it - \"this is actually a bit slow. ~7 millis as of 2025-06-24 ... lazy load?\" - and fixing that helps every rad invocation, worker or not.\n\n## Evaluate each request in a fresh RadRunner, not a shared Interpreter\n\nThe 0.074ms path looks tempting and is the wrong one. Verified empirically: a shared Interpreter leaks state between evals, does no function hoisting, so a script calling a function defined lower down fails RAD40003 where the CLI succeeds, and skips the rts/check static checker. Plugins behaving differently under the worker than under the CLI is a bug factory.\n\nIsolation costs 50-70us. Fresh runners also survive errors: after a syntax error, a runtime error, and an exit(7), the next eval ran correctly.\n\nSerialize evals. Rad is not reentrant - 8 concurrent evals under -race gave 195 data races and 7 of 8 goroutines panicked with nil map writes, index out of range [-1], and nil derefs. A host wanting concurrency runs N workers.\n\nTurn off invocation logging in worker mode. core/logging_invocation.go:11 appends JSONL to ~/.rad/logs and checks rotation on every run.\n\n## Two gaps this will hit\n\nexit() unwinds by panic, and handlePanicRecovery (core/interpreter.go:1527) reports it as RAD20042 \"This is a bug in Rad\" with a ~2KB Go stack trace on stderr. The only suppression is core.IsTest = true, which then rewrites ScriptName to \"TestCase\" in every diagnostic (core/global.go:112). There is no honest embedded mode, only test mode.\n\nos.Args must be set globally - read at 8 sites in core/runner.go, mutated at :179. No API accepts argv.\n\n## Why now\n\nnook needs it. nook has a Rust core, so there is no in-process fallback: without a worker every Rad plugin costs 20.7ms inside an interaction that is supposed to feel instant.\n\nBut the feature is not nook-shaped. It is the portable answer to \"how do I embed Rad\", and the obvious alternative - compiling to WASM - is blocked by the cgo tree-sitter dependency.\n\nThe protocol shape is a real design call, hence needs-decision. git log --all --grep=embed returns only go:embed work, so this is undocumented territory and per AGENTS.md probably warrants a RED.",
+  "effort": "l",
+  "id": "a_28S8kQMnT",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUUUUU",
+  "source": [
+    "nook"
+  ],
+  "title": "Add a warm worker mode so other programs can embed Rad",
+  "type": "feature",
+  "updated_at_millis": 1786797431676,
+  "history": [
+    {"field":"column","value":"big-rocks","at":1786797431676}
+  ]
+}
