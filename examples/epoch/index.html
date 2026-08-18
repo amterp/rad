@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -1781,16 +1809,16 @@ args:
 
 if not epoch:
     epoch = now().epoch.millis
-    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+    print("Epoch millis: {epoch.yellow()}")
 
 tz_to_flag = [
-    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
-    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
-    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
-    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+    ['Europe/London', '🇬🇧'],
+    ['America/New_York', '🇺🇸'],
+    ['Asia/Tokyo', '🇯🇵'],
+    ['Australia/Melbourne', '🇦🇺'],
 ]
 
-Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
+Timezone = tz_to_flag.map(fn(x) "{x[1]} {x[0]}")
 
 Time = []
 for tz, _ in tz_to_flag:
@@ -1802,7 +1830,7 @@ rad:
 
 fn parse_time(epoch: int, tz: str) -&gt; str:
     time = parse_epoch(epoch, tz=tz)
-    return &quot;{time.date} {time.time}&quot;
+    return "{time.date} {time.time}"
 </code></pre></div></td></tr></table></div>
 <div class="highlight"><pre><span></span><code>&gt; epoch -h
 Convert epoch timestamps to human-readable times across multiple timezones.
@@ -1882,7 +1910,7 @@ args:
 
 <span class="hll">if not epoch:
 </span><span class="hll">    epoch = now().epoch.millis
-</span><span class="hll">    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+</span><span class="hll">    print("Epoch millis: {epoch.yellow()}")
 </span></code></pre></div></td></tr></table></div>
 <p>The <a href="../../reference/functions/#now"><code>now()</code></a> function returns a map with various time fields. We access <code>.epoch.millis</code> to get the current epoch in milliseconds, then print it so the user knows what value we're working with.</p>
 <h3 id="setting-up-our-timezone-data">Setting up our timezone data<a class="headerlink" href="#setting-up-our-timezone-data" title="Permanent link">&para;</a></h3>
@@ -1912,13 +1940,13 @@ args:
 
 if not epoch:
     epoch = now().epoch.millis
-    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+    print("Epoch millis: {epoch.yellow()}")
 
 <span class="hll">tz_to_flag = [
-</span><span class="hll">    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
-</span><span class="hll">    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
-</span><span class="hll">    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
-</span><span class="hll">    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+</span><span class="hll">    ['Europe/London', '🇬🇧'],
+</span><span class="hll">    ['America/New_York', '🇺🇸'],
+</span><span class="hll">    ['Asia/Tokyo', '🇯🇵'],
+</span><span class="hll">    ['Australia/Melbourne', '🇦🇺'],
 </span><span class="hll">]
 </span></code></pre></div></td></tr></table></div>
 <h3 id="building-the-display-columns">Building the display columns<a class="headerlink" href="#building-the-display-columns" title="Permanent link">&para;</a></h3>
@@ -1951,22 +1979,22 @@ args:
 
 if not epoch:
     epoch = now().epoch.millis
-    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+    print("Epoch millis: {epoch.yellow()}")
 
 tz_to_flag = [
-    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
-    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
-    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
-    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+    ['Europe/London', '🇬🇧'],
+    ['America/New_York', '🇺🇸'],
+    ['Asia/Tokyo', '🇯🇵'],
+    ['Australia/Melbourne', '🇦🇺'],
 ]
 
-<span class="hll">Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
+<span class="hll">Timezone = tz_to_flag.map(fn(x) "{x[1]} {x[0]}")
 </span></code></pre></div></td></tr></table></div>
 <p>Each <code>x</code> is a <code>[timezone, flag]</code> pair, so <code>x[1]</code> is the flag and <code>x[0]</code> is the timezone name. We interpolate them into a string with the flag first.</p>
 <div class="admonition tip">
 <p class="admonition-title">List comprehension alternative</p>
 <p>You could also write this as a list comprehension, which is a bit more concise in this case:
-<div class="highlight"><pre><span></span><code>Timezone = [&quot;{x[1]} {x[0]}&quot; for x in tz_to_flag]
+<div class="highlight"><pre><span></span><code>Timezone = ["{x[1]} {x[0]}" for x in tz_to_flag]
 </code></pre></div></p>
 </div>
 <h3 id="iterating-with-unpacking">Iterating with unpacking<a class="headerlink" href="#iterating-with-unpacking" title="Permanent link">&para;</a></h3>
@@ -2003,16 +2031,16 @@ args:
 
 if not epoch:
     epoch = now().epoch.millis
-    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+    print("Epoch millis: {epoch.yellow()}")
 
 tz_to_flag = [
-    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
-    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
-    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
-    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+    ['Europe/London', '🇬🇧'],
+    ['America/New_York', '🇺🇸'],
+    ['Asia/Tokyo', '🇯🇵'],
+    ['Australia/Melbourne', '🇦🇺'],
 ]
 
-Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
+Timezone = tz_to_flag.map(fn(x) "{x[1]} {x[0]}")
 
 <span class="hll">Time = []
 </span><span class="hll">for tz, _ in tz_to_flag:
@@ -2066,16 +2094,16 @@ args:
 
 if not epoch:
     epoch = now().epoch.millis
-    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+    print("Epoch millis: {epoch.yellow()}")
 
 tz_to_flag = [
-    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
-    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
-    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
-    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+    ['Europe/London', '🇬🇧'],
+    ['America/New_York', '🇺🇸'],
+    ['Asia/Tokyo', '🇯🇵'],
+    ['Australia/Melbourne', '🇦🇺'],
 ]
 
-Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
+Timezone = tz_to_flag.map(fn(x) "{x[1]} {x[0]}")
 
 Time = []
 for tz, _ in tz_to_flag:
@@ -2086,7 +2114,7 @@ for tz, _ in tz_to_flag:
 
 <span class="hll">fn parse_time(epoch: int, tz: str) -&gt; str:
 </span><span class="hll">    time = parse_epoch(epoch, tz=tz)
-</span><span class="hll">    return &quot;{time.date} {time.time}&quot;
+</span><span class="hll">    return "{time.date} {time.time}"
 </span></code></pre></div></td></tr></table></div>
 <p>The <a href="../../reference/functions/#parse_epoch"><code>parse_epoch()</code></a> function converts an epoch timestamp to a time map, accepting a <code>tz</code> parameter for the timezone. We then format the <code>.date</code> and <code>.time</code> fields into a string.</p>
 <p>Note the type annotations <code>epoch: int, tz: str</code> and <code>-&gt; str</code> - these are optional but help document what the function expects and returns.</p>
@@ -2131,16 +2159,16 @@ args:
 
 if not epoch:
     epoch = now().epoch.millis
-    print(&quot;Epoch millis: {epoch.yellow()}&quot;)
+    print("Epoch millis: {epoch.yellow()}")
 
 tz_to_flag = [
-    [&#39;Europe/London&#39;, &#39;🇬🇧&#39;],
-    [&#39;America/New_York&#39;, &#39;🇺🇸&#39;],
-    [&#39;Asia/Tokyo&#39;, &#39;🇯🇵&#39;],
-    [&#39;Australia/Melbourne&#39;, &#39;🇦🇺&#39;],
+    ['Europe/London', '🇬🇧'],
+    ['America/New_York', '🇺🇸'],
+    ['Asia/Tokyo', '🇯🇵'],
+    ['Australia/Melbourne', '🇦🇺'],
 ]
 
-Timezone = tz_to_flag.map(fn(x) &quot;{x[1]} {x[0]}&quot;)
+Timezone = tz_to_flag.map(fn(x) "{x[1]} {x[0]}")
 
 Time = []
 for tz, _ in tz_to_flag:
@@ -2152,7 +2180,7 @@ for tz, _ in tz_to_flag:
 </span>
 fn parse_time(epoch: int, tz: str) -&gt; str:
     time = parse_epoch(epoch, tz=tz)
-    return &quot;{time.date} {time.time}&quot;
+    return "{time.date} {time.time}"
 </code></pre></div></td></tr></table></div>
 <p>The <code>rad</code> block (with no source) takes our pre-populated lists and renders them as aligned columns. The variable names (<code>Timezone</code>, <code>Time</code>) become the column headers.</p>
 <h3 id="try-it-out">Try it out<a class="headerlink" href="#try-it-out" title="Permanent link">&para;</a></h3>

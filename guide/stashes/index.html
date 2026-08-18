@@ -1022,6 +1022,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1838,18 +1866,18 @@ Stashes are Rad's built-in mechanism for persistent, per-script storage.</p>
 To use a stash, you need to declare a <strong>stash ID</strong> in your script's file header using the <code>@stash_id</code> macro:</p>
 <div class="highlight"><span class="filename">counter.rad</span><pre><span></span><code>#!/usr/bin/env rad
 ---
-A simple counter that remembers how many times it&#39;s been run.
+A simple counter that remembers how many times it's been run.
 @stash_id = JJRNBOSKHpa
 ---
 
 state = load_state()
 defer save_state(state)
 
-count = state[&quot;count&quot;] ?? 0
+count = state["count"] ?? 0
 count++
-state[&quot;count&quot;] = count
+state["count"] = count
 
-print(&quot;This script has been run {count} time(s)!&quot;)
+print("This script has been run {count} time(s)!")
 </code></pre></div>
 <p>Let's run it a few times:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>counter.rad
@@ -1898,7 +1926,7 @@ print(state)  // {} on first run, or previously saved data
 </code></pre></div>
 <h3 id="saving-state">Saving State<a class="headerlink" href="#saving-state" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/functions/#save_state"><code>save_state(map)</code></a> persists the map to disk:</p>
-<div class="highlight"><pre><span></span><code>state = {&quot;username&quot;: &quot;alice&quot;, &quot;theme&quot;: &quot;dark&quot;}
+<div class="highlight"><pre><span></span><code>state = {"username": "alice", "theme": "dark"}
 save_state(state)
 </code></pre></div>
 <p>The state is stored as JSON at <code>~/.rad/stashes/&lt;stash_id&gt;/state.json</code>, making it easy to inspect or debug.</p>
@@ -1919,17 +1947,17 @@ defer save_state(state)
 
 // Update preferences if provided
 if set_editor:
-    state[&quot;editor&quot;] = set_editor
-    print(&quot;Editor set to: {set_editor}&quot;)
+    state["editor"] = set_editor
+    print("Editor set to: {set_editor}")
 
 if set_theme:
-    state[&quot;theme&quot;] = set_theme
-    print(&quot;Theme set to: {set_theme}&quot;)
+    state["theme"] = set_theme
+    print("Theme set to: {set_theme}")
 
 // Show current preferences
-editor = state[&quot;editor&quot;] ?? &quot;vim&quot;
-theme = state[&quot;theme&quot;] ?? &quot;dark&quot;
-print(&quot;Current preferences: editor={editor}, theme={theme}&quot;)
+editor = state["editor"] ?? "vim"
+theme = state["theme"] ?? "dark"
+print("Current preferences: editor={editor}, theme={theme}")
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>preferences.rad
 </code></pre></div>
@@ -1958,16 +1986,16 @@ Current preferences: editor=nano, theme=light
 <p>Beyond state, stashes can also store arbitrary files. This is useful for caching larger data, storing user-created content, or managing configuration files.</p>
 <h3 id="writing-files">Writing Files<a class="headerlink" href="#writing-files" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/functions/#write_stash_file"><code>write_stash_file(path, content)</code></a> writes a file to your stash:</p>
-<div class="highlight"><pre><span></span><code>write_stash_file(&quot;cache.json&quot;, r&#39;{&quot;data&quot;: [1, 2, 3]}&#39;)
-write_stash_file(&quot;logs/run.log&quot;, &quot;Script executed at {now().time}&quot;)
+<div class="highlight"><pre><span></span><code>write_stash_file("cache.json", r'{"data": [1, 2, 3]}')
+write_stash_file("logs/run.log", "Script executed at {now().time}")
 </code></pre></div>
 <p>Nested paths work automatically - Rad creates any necessary directories.</p>
 <h3 id="loading-files">Loading Files<a class="headerlink" href="#loading-files" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/functions/#load_stash_file"><code>load_stash_file(path, default)</code></a> loads a file from your stash, creating it with the default content if it doesn't exist:</p>
-<div class="highlight"><pre><span></span><code>result = load_stash_file(&quot;config.txt&quot;, &quot;# Default config\nkey=value&quot;)
-print(&quot;Path: {result.full_path}&quot;)
-print(&quot;Was just created: {result.created}&quot;)
-print(&quot;Content: {result.content}&quot;)
+<div class="highlight"><pre><span></span><code>result = load_stash_file("config.txt", "# Default config\nkey=value")
+print("Path: {result.full_path}")
+print("Was just created: {result.created}")
+print("Content: {result.content}")
 </code></pre></div>
 <p>The return value is a map containing:</p>
 <ul>
@@ -1984,29 +2012,29 @@ A simple notes manager.
 args:
     add str?  # Add a new note
 
-result = load_stash_file(&quot;notes.txt&quot;, &quot;&quot;)
+result = load_stash_file("notes.txt", "")
 
 if result.created:
-    print(&quot;Created new notes file!&quot;)
+    print("Created new notes file!")
 
 if add:
     // Append the new note
-    new_content = result.content + add + &quot;\n&quot;
-    write_stash_file(&quot;notes.txt&quot;, new_content)
-    print(&quot;Note added!&quot;)
+    new_content = result.content + add + "\n"
+    write_stash_file("notes.txt", new_content)
+    print("Note added!")
 else:
     if result.content:
-        print(&quot;Your notes:&quot;)
+        print("Your notes:")
         print(result.content)
     else:
-        print(&quot;No notes yet. Use --add to create one.&quot;)
+        print("No notes yet. Use --add to create one.")
 </code></pre></div>
 <h3 id="getting-the-stash-path">Getting the Stash Path<a class="headerlink" href="#getting-the-stash-path" title="Permanent link">&para;</a></h3>
 <p><a href="../../reference/functions/#get_stash_path"><code>get_stash_path(subpath?)</code></a> returns the path to your stash directory:</p>
 <div class="highlight"><pre><span></span><code>stash_path = get_stash_path()
 print(stash_path)  // ~/.rad/stashes/&lt;stash_id&gt;
 
-file_path = get_stash_path(&quot;data/config.json&quot;)
+file_path = get_stash_path("data/config.json")
 print(file_path)  // ~/.rad/stashes/&lt;stash_id&gt;/data/config.json
 </code></pre></div>
 <p>This is useful when you need to work with stash files using other Rad functions like <a href="../../reference/functions/#read_file"><code>read_file</code></a> or <a href="../../reference/functions/#get_path"><code>get_path</code></a>.</p>

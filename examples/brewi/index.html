@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -1604,11 +1632,11 @@ Facilitates checking a brew formula before installing it.
 ---
 args:
     formula str    # Name of the formula to install.
-    cask c bool    # Enable if it&#39;s a cask.
+    cask c bool    # Enable if it's a cask.
 
 $`brew info {formula}`
 if confirm():
-    $`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
+    $`brew install{cask ? " --cask" : ""} {formula}`
 </code></pre></div></td></tr></table></div>
 <div class="highlight"><pre><span></span><code>&gt; brewi -h
 Facilitates checking a brew formula before installing it.
@@ -1618,7 +1646,7 @@ Usage:
 
 Script args:
       --formula str      Name of the formula to install.
-  -c, --cask             Enable if it&#39;s a cask.
+  -c, --cask             Enable if it's a cask.
 </code></pre></div>
 <h2 id="tutorial-building-brewi">Tutorial: Building <code>brewi</code><a class="headerlink" href="#tutorial-building-brewi" title="Permanent link">&para;</a></h2>
 <h3 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h3>
@@ -1715,11 +1743,11 @@ Facilitates checking a brew formula before installing it.
 ---
 args:
     formula str # Name of the formula to install.
-<span class="hll">    cask c bool    # Enable if it&#39;s a cask.
+<span class="hll">    cask c bool    # Enable if it's a cask.
 </span>
 $`brew info {formula}`
 if confirm():
-<span class="hll">    $`brew install{cask ? &quot; --cask&quot; : &quot;&quot;} {formula}`
+<span class="hll">    $`brew install{cask ? " --cask" : ""} {formula}`
 </span></code></pre></div></td></tr></table></div>
 <p>Note the shorthand flag in <code>cask c bool</code>.</p>
 <p>Done! You've now got a great, convenient helper script for installing things with brew :)</p>

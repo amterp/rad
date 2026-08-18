@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -2422,14 +2450,14 @@
 <li><strong>No source</strong> - operates on existing variables (replaces sourceless <code>display</code>)</li>
 </ul>
 <h3 id="old-syntax-no-longer-works">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>request &quot;https://api.example.com/users&quot;:
+<div class="highlight"><pre><span></span><code>request "https://api.example.com/users":
     fields Name, Age
 
 display data:
     fields Name, Age
 </code></pre></div>
 <h3 id="new-syntax">New Syntax<a class="headerlink" href="#new-syntax" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>rad &quot;https://api.example.com/users&quot;:
+<div class="highlight"><pre><span></span><code>rad "https://api.example.com/users":
     noprint
     fields Name, Age
 
@@ -2450,11 +2478,11 @@ rad data:
 <p><code>get_stash_dir</code> was renamed to <code>get_stash_path</code> to better reflect its behavior - it returns a <em>path</em> (often to a file), not necessarily a directory.</p>
 <h3 id="old-syntax-no-longer-works_1">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works_1" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>path = get_stash_dir()
-path = get_stash_dir(&quot;data/config.json&quot;)
+path = get_stash_dir("data/config.json")
 </code></pre></div>
 <h3 id="new-syntax_1">New Syntax<a class="headerlink" href="#new-syntax_1" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>path = get_stash_path()
-path = get_stash_path(&quot;data/config.json&quot;)
+path = get_stash_path("data/config.json")
 </code></pre></div>
 <h2 id="migration-steps_1">Migration Steps<a class="headerlink" href="#migration-steps_1" title="Permanent link">&para;</a></h2>
 <ol>
@@ -2465,21 +2493,21 @@ path = get_stash_path(&quot;data/config.json&quot;)
 <h3 id="what-changed_2">What Changed<a class="headerlink" href="#what-changed_2" title="Permanent link">&para;</a></h3>
 <p><code>??</code> is now a true null-coalescing operator. It fires when the left side is <strong>null or an error</strong>, where previously it only fired on errors.</p>
 <h3 id="before-v08">Before (v0.8)<a class="headerlink" href="#before-v08" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
-print(m[&quot;key&quot;] ?? &quot;fallback&quot;)   // printed: null
-print(null ?? &quot;default&quot;)         // printed: null
+<div class="highlight"><pre><span></span><code>m = {"key": null}
+print(m["key"] ?? "fallback")   // printed: null
+print(null ?? "default")         // printed: null
 </code></pre></div>
 <h3 id="after-v09">After (v0.9)<a class="headerlink" href="#after-v09" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
-print(m[&quot;key&quot;] ?? &quot;fallback&quot;)   // prints: fallback
-print(null ?? &quot;default&quot;)         // prints: default
+<div class="highlight"><pre><span></span><code>m = {"key": null}
+print(m["key"] ?? "fallback")   // prints: fallback
+print(null ?? "default")         // prints: default
 </code></pre></div>
 <h3 id="why">Why<a class="headerlink" href="#why" title="Permanent link">&para;</a></h3>
 <p>This aligns <code>??</code> with developer expectations from JS/Kotlin/Swift where <code>??</code> is a null-coalescing operator. The old error-only behavior is now available via the new <code>catch</code> operator (see below).</p>
 <h3 id="migration">Migration<a class="headerlink" href="#migration" title="Permanent link">&para;</a></h3>
 <p>If you relied on null passing through <code>??</code>, use <code>catch</code> instead:</p>
 <div class="highlight"><pre><span></span><code>// If you want error-only catching (old behavior), use catch:
-result = maybe_error_value catch &quot;default&quot;
+result = maybe_error_value catch "default"
 </code></pre></div>
 <h2 id="new-catch-operator">New: <code>catch</code> Operator<a class="headerlink" href="#new-catch-operator" title="Permanent link">&para;</a></h2>
 <p>The <code>catch</code> operator provides the old <code>??</code> error-only behavior as an inline expression. It catches errors but lets null values pass through.</p>
@@ -2491,19 +2519,19 @@ data = parse_json(raw) catch {}
 <h3 id="what-changed_3">What Changed<a class="headerlink" href="#what-changed_3" title="Permanent link">&para;</a></h3>
 <p>The <code>+</code> operator no longer implicitly converts <code>int</code>, <code>float</code>, or <code>bool</code> to strings. Both operands must be the same type (with the exception that errors behave like strings for concatenation).</p>
 <h3 id="before-v08_1">Before (v0.8)<a class="headerlink" href="#before-v08_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>print(&quot;count: &quot; + 5)       // printed: count: 5
-print(&quot;pi: &quot; + 3.14)       // printed: pi: 3.14
-print(&quot;flag: &quot; + true)     // printed: flag: true
+<div class="highlight"><pre><span></span><code>print("count: " + 5)       // printed: count: 5
+print("pi: " + 3.14)       // printed: pi: 3.14
+print("flag: " + true)     // printed: flag: true
 
-err = error(&quot;oops&quot;)
+err = error("oops")
 print(err + 123)            // printed: oops123
 </code></pre></div>
 <h3 id="after-v09_1">After (v0.9)<a class="headerlink" href="#after-v09_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>print(&quot;count: &quot; + 5)       // error: RAD30002
-print(&quot;pi: &quot; + 3.14)       // error: RAD30002
-print(&quot;flag: &quot; + true)     // error: RAD30002
+<div class="highlight"><pre><span></span><code>print("count: " + 5)       // error: RAD30002
+print("pi: " + 3.14)       // error: RAD30002
+print("flag: " + true)     // error: RAD30002
 
-err = error(&quot;oops&quot;)
+err = error("oops")
 print(err + 123)            // error: RAD30002
 </code></pre></div>
 <h3 id="why_1">Why<a class="headerlink" href="#why_1" title="Permanent link">&para;</a></h3>
@@ -2514,39 +2542,39 @@ print(err + 123)            // error: RAD30002
 pi = 3.14
 
 // Interpolation - handles any type, recommended
-print(&quot;count: {count}&quot;)
-print(&quot;pi: {pi}&quot;)
+print("count: {count}")
+print("pi: {pi}")
 
 // Explicit conversion with str()
-print(&quot;count: &quot; + str(count))
-print(&quot;pi: &quot; + str(pi))
+print("count: " + str(count))
+print("pi: " + str(pi))
 </code></pre></div>
 <p>Note: errors still behave like strings for concatenation (<code>"s" + error("e")</code>, <code>error("e") + "s"</code>, and <code>error("a") + error("b")</code> all work).</p>
 <h2 id="breaking-change-parse_epoch-unit-names-shortened">Breaking Change: <code>parse_epoch</code> Unit Names Shortened<a class="headerlink" href="#breaking-change-parse_epoch-unit-names-shortened" title="Permanent link">&para;</a></h2>
 <h3 id="what-changed_4">What Changed<a class="headerlink" href="#what-changed_4" title="Permanent link">&para;</a></h3>
 <p>The <code>unit</code> parameter for <code>parse_epoch</code> now uses short names to match the rest of the API (<code>now()</code> epoch keys, <code>convert_duration</code>/<code>parse_duration</code> enums).</p>
 <h3 id="old-syntax-no-longer-works_2">Old Syntax (No Longer Works)<a class="headerlink" href="#old-syntax-no-longer-works_2" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>time = parse_epoch(1712345678000, unit=&quot;milliseconds&quot;)
-time = parse_epoch(1712345678000000, unit=&quot;microseconds&quot;)
-time = parse_epoch(1712345678000000000, unit=&quot;nanoseconds&quot;)
+<div class="highlight"><pre><span></span><code>time = parse_epoch(1712345678000, unit="milliseconds")
+time = parse_epoch(1712345678000000, unit="microseconds")
+time = parse_epoch(1712345678000000000, unit="nanoseconds")
 </code></pre></div>
 <h3 id="new-syntax_2">New Syntax<a class="headerlink" href="#new-syntax_2" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>time = parse_epoch(1712345678000, unit=&quot;millis&quot;)
-time = parse_epoch(1712345678000000, unit=&quot;micros&quot;)
-time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
+<div class="highlight"><pre><span></span><code>time = parse_epoch(1712345678000, unit="millis")
+time = parse_epoch(1712345678000000, unit="micros")
+time = parse_epoch(1712345678000000000, unit="nanos")
 </code></pre></div>
 <h3 id="migration_2">Migration<a class="headerlink" href="#migration_2" title="Permanent link">&para;</a></h3>
 <p>Replace <code>"milliseconds"</code> with <code>"millis"</code>, <code>"microseconds"</code> with <code>"micros"</code>, and <code>"nanoseconds"</code> with <code>"nanos"</code> in any <code>parse_epoch</code> calls.</p>
 <h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
 <p>If you run a script that still uses <code>request</code> or <code>display</code>, you'll see:</p>
-<div class="highlight"><pre><span></span><code>error[RAD40008]: &#39;request&#39; blocks have been removed
+<div class="highlight"><pre><span></span><code>error[RAD40008]: 'request' blocks have been removed
   --&gt; script.rad:1:1
   |
-1 | request &quot;https://api.example.com/users&quot;:
+1 | request "https://api.example.com/users":
   | ^^^^^^^
 2 |     fields Name
   |
-  = help: Use a &#39;rad&#39; block instead. See https://amterp.dev/rad/migrations/v0.9/
+  = help: Use a 'rad' block instead. See https://amterp.dev/rad/migrations/v0.9/
   = info: rad docs RAD40008
 </code></pre></div>
 <p>If you run a script that still uses <code>get_stash_dir</code>, you'll see a helpful error:</p>
@@ -2556,9 +2584,9 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
   See: https://amterp.dev/rad/migrations/v0.9/
 </code></pre></div>
 <p>If you use the old long-form unit names with <code>parse_epoch</code>, you'll see:</p>
-<div class="highlight"><pre><span></span><code>error: parse_epoch unit &quot;milliseconds&quot; is no longer valid
+<div class="highlight"><pre><span></span><code>error: parse_epoch unit "milliseconds" is no longer valid
 
-  help: Unit names were shortened in v0.9. Use &quot;millis&quot; instead.
+  help: Unit names were shortened in v0.9. Use "millis" instead.
   See: https://amterp.dev/rad/migrations/v0.9/
 </code></pre></div>
 <h2 id="behavior-change-invocation-logging-enabled-by-default">Behavior Change: Invocation Logging Enabled by Default<a class="headerlink" href="#behavior-change-invocation-logging-enabled-by-default" title="Permanent link">&para;</a></h2>
@@ -2578,21 +2606,21 @@ time = parse_epoch(1712345678000000000, unit=&quot;nanos&quot;)
 <p><code>trim_prefix</code> and <code>trim_suffix</code> now remove a <strong>literal prefix/suffix string</strong>, rather than stripping a character set. The old character-set stripping behavior is available via <code>trim_left</code> and <code>trim_right</code>.</p>
 <h3 id="before-v08-character-set-stripping">Before (v0.8) - Character-Set Stripping<a class="headerlink" href="#before-v08-character-set-stripping" title="Permanent link">&para;</a></h3>
 <p>In v0.8, <code>trim_prefix</code> removed all leading characters that appeared in the given string, similar to Go's <code>strings.TrimLeft</code>. It treated the argument as a <em>set of characters</em>, not a literal string:</p>
-<div class="highlight"><pre><span></span><code>trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)    // -&gt; &quot;bbb&quot;  (stripped all leading &#39;a&#39; chars)
-trim_suffix(&quot;bbbccc&quot;, &quot;c&quot;)    // -&gt; &quot;bbb&quot;  (stripped all trailing &#39;c&#39; chars)
-trim_prefix(&quot;abcfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;  (stripped all leading &#39;a&#39;, &#39;b&#39;, or &#39;c&#39; chars)
-trim_prefix(&quot;cabfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;  (same result - order didn&#39;t matter, it was a char set)
+<div class="highlight"><pre><span></span><code>trim_prefix("aaabbb", "a")    // -&gt; "bbb"  (stripped all leading 'a' chars)
+trim_suffix("bbbccc", "c")    // -&gt; "bbb"  (stripped all trailing 'c' chars)
+trim_prefix("abcfoo", "abc")  // -&gt; "foo"  (stripped all leading 'a', 'b', or 'c' chars)
+trim_prefix("cabfoo", "abc")  // -&gt; "foo"  (same result - order didn't matter, it was a char set)
 </code></pre></div>
 <h3 id="after-v09-literal-prefixsuffix-removal">After (v0.9) - Literal Prefix/Suffix Removal<a class="headerlink" href="#after-v09-literal-prefixsuffix-removal" title="Permanent link">&para;</a></h3>
 <p>Now, <code>trim_prefix</code> removes the argument as a <em>literal prefix</em>. If the string doesn't start with that exact prefix, it's returned unchanged:</p>
-<div class="highlight"><pre><span></span><code>trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)    // -&gt; &quot;aabbb&quot;  (removed one literal &quot;a&quot; prefix)
-trim_suffix(&quot;bbbccc&quot;, &quot;c&quot;)    // -&gt; &quot;bbbcc&quot;  (removed one literal &quot;c&quot; suffix)
-trim_prefix(&quot;abcfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;foo&quot;    (removed literal &quot;abc&quot; prefix)
-trim_prefix(&quot;cabfoo&quot;, &quot;abc&quot;)  // -&gt; &quot;cabfoo&quot; (no match - &quot;cabfoo&quot; doesn&#39;t start with &quot;abc&quot;)
+<div class="highlight"><pre><span></span><code>trim_prefix("aaabbb", "a")    // -&gt; "aabbb"  (removed one literal "a" prefix)
+trim_suffix("bbbccc", "c")    // -&gt; "bbbcc"  (removed one literal "c" suffix)
+trim_prefix("abcfoo", "abc")  // -&gt; "foo"    (removed literal "abc" prefix)
+trim_prefix("cabfoo", "abc")  // -&gt; "cabfoo" (no match - "cabfoo" doesn't start with "abc")
 </code></pre></div>
 <p>The old character-set behavior is now available as <code>trim_left</code> and <code>trim_right</code>:</p>
-<div class="highlight"><pre><span></span><code>trim_left(&quot;aaabbb&quot;, &quot;a&quot;)      // -&gt; &quot;bbb&quot;  (old trim_prefix behavior)
-trim_right(&quot;bbbccc&quot;, &quot;c&quot;)     // -&gt; &quot;bbb&quot;  (old trim_suffix behavior)
+<div class="highlight"><pre><span></span><code>trim_left("aaabbb", "a")      // -&gt; "bbb"  (old trim_prefix behavior)
+trim_right("bbbccc", "c")     // -&gt; "bbb"  (old trim_suffix behavior)
 </code></pre></div>
 <h3 id="migration_3">Migration<a class="headerlink" href="#migration_3" title="Permanent link">&para;</a></h3>
 <p>If you were using <code>trim_prefix</code> or <code>trim_suffix</code> to strip characters from a set, switch to <code>trim_left</code> / <code>trim_right</code> respectively.</p>

@@ -855,6 +855,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filtered-picks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtered picks
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1001,6 +1012,34 @@
     
   
     Built-in Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
   
 
     
@@ -1769,6 +1808,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filtered-picks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtered picks
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1840,7 +1890,7 @@
       --rad-debug           Enables Rad debug output. Intended for Rad developers.
       --color mode          Control output colorization. Valid values: [auto, always, never] (default auto)
   -q, --quiet               Suppresses some output.
-      --shell               Outputs shell/bash exports of variables, so they can be eval&#39;d
+      --shell               Outputs shell/bash exports of variables, so they can be eval'd
   -v, --version             Print rad version information.
       --confirm-shell       Confirm all shell commands before running them.
       --tls-insecure        Skip TLS certificate verification for all HTTP requests.
@@ -1849,8 +1899,8 @@
       --ast-tree            Instead of running the target script, print out its AST (abstract syntax tree).
       --rad-args-dump       Instead of running the target script, print out an args dump for debugging argument parsing.
       --mock-response str   (optional) Add mock response for json requests (pattern:filePath)
-      --reply line:value    Answer a prompt when there&#39;s no terminal. Repeatable; repeat a line to answer it again.
-      --reply-na line       Assert a prompt won&#39;t be reached on this run; rad fails cleanly if it is.
+      --reply line:value    Answer a prompt when there's no terminal. Repeatable; repeat a line to answer it again.
+      --reply-na line       Assert a prompt won't be reached on this run; rad fails cleanly if it is.
 </code></pre></div>
 <p>Note that when <code>--shell</code> is enabled, help output goes to stderr instead of stdout, and stdout gets an <code>exit 0</code> statement.
 This keeps stdout safe to <code>eval</code>: wrappers using <code>eval "$(rad - --shell "$@" &lt;&lt;&lt; "$script")"</code> won't execute usage text as shell code, and stop cleanly after showing help.</p>
@@ -1874,9 +1924,9 @@ This keeps stdout safe to <code>eval</code>: wrappers using <code>eval "$(rad - 
 <h2 id="debug"><code>debug</code><a class="headerlink" href="#debug" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/functions/#debug"><code>debug</code></a> is an built-in function which behaves exactly like <code>print</code>, except that it only prints if the global flag <code>--debug</code> is enabled. You can use them in your script for debugging as desired.</p>
 <p>For example, given this example:</p>
-<div class="highlight"><span class="filename">debug.rad</span><pre><span></span><code>print(&quot;1&quot;)
-debug(&quot;2&quot;)
-print(&quot;3&quot;)
+<div class="highlight"><span class="filename">debug.rad</span><pre><span></span><code>print("1")
+debug("2")
+print("3")
 </code></pre></div>
 <p>the following invocations will give the respective outputs:</p>
 <div class="highlight"><pre><span></span><code>rad debug.rad
@@ -1939,27 +1989,27 @@ In other words, you can mock responses based on a regex match of the queried URL
 <p>For example, if you wanted to mock a response from GitHub's API, you could define an example response in a file:</p>
 <div class="highlight"><span class="filename">commits.json</span><pre><span></span><code><span class="p">[</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;306f3a4ddb3b09747d61a5eab264c3d72fbbc36e&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice Smith&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-11T04:15:06Z&quot;</span>
+<span class="w">    </span><span class="nt">"sha"</span><span class="p">:</span><span class="w"> </span><span class="s2">"306f3a4ddb3b09747d61a5eab264c3d72fbbc36e"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"commit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"author"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alice Smith"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-11T04:15:06Z"</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2b642c482b32e4d87924839b2f5a9592670dee69&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Charlie Johnson&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-10T12:21:03Z&quot;</span>
+<span class="w">    </span><span class="nt">"sha"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2b642c482b32e4d87924839b2f5a9592670dee69"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"commit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"author"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Charlie Johnson"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-10T12:21:03Z"</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">]</span>
 </code></pre></div>
 <p>And then define it as the mock response with the following example invocation:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rl<span class="w"> </span>--mock-response<span class="w"> </span><span class="s2">&quot;api.github.*:commits.json&quot;</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>commits.rl<span class="w"> </span>--mock-response<span class="w"> </span><span class="s2">"api.github.*:commits.json"</span>
 </code></pre></div>
 <p>Before executing the HTTP request, Rad checks for defined mock responses and if there's a regex match against the URL, it will short circuit,
 avoiding the HTTP request, and simply returning the contents of the mocked response.</p>
@@ -1973,17 +2023,17 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 <p>Rather than run until it hits a prompt and dies, rad stops first and prints what the script would ask:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>deploy.rad<span class="w"> </span>prod
 </code></pre></div>
-<div class="highlight"><span class="filename">stderr</span><pre><span></span><code>error[RAD20046]: this script needs to ask you something, but there&#39;s no terminal
+<div class="highlight"><span class="filename">stderr</span><pre><span></span><code>error[RAD20046]: this script needs to ask you something, but there's no terminal
 
-  deploy.rad prompts in 3 places. rad found no terminal - stdin isn&#39;t one and
-  /dev/tty isn&#39;t available - so it can&#39;t ask. Supply the answers up front,
+  deploy.rad prompts in 3 places. rad found no terminal - stdin isn't one and
+  /dev/tty isn't available - so it can't ask. Supply the answers up front,
   keyed by line number.
 
-  deploy.rad:5  confirm &quot;Deploy to prod?&quot;
-  deploy.rad:6  input   &quot;Release notes&quot;
+  deploy.rad:5  confirm "Deploy to prod?"
+  deploy.rad:6  input   "Release notes"
   deploy.rad:7  pick    options: web-1, web-2, db-1
 
-    rad deploy.rad prod --reply &#39;5:&lt;yes|no&gt;&#39; --reply &#39;6:&lt;value&gt;&#39; --reply &#39;7:&lt;option&gt;&#39;
+    rad deploy.rad prod --reply '5:&lt;yes|no&gt;' --reply '6:&lt;value&gt;' --reply '7:&lt;option&gt;'
 </code></pre></div>
 <p>Nothing in the script has run yet, so there is no half-finished work to reason about before you retry. The last line is your own command with a <code>--reply</code> per prompt: keys in place, answers blank. Rad won't guess those - whether you mean yes, or which server you want, isn't in the script. Fill in each <code>&lt;...&gt;</code> and run it; rad takes whatever you put there literally.</p>
 <p>Rad exits <code>7</code> when it stops like this, so a wrapper can tell "this run needs input" apart from "this run failed" without reading the message.</p>
@@ -1997,8 +2047,8 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 </thead>
 <tbody>
 <tr>
-<td><code>filtered - may not prompt, and then ignores its answer</code></td>
-<td>A <code>pick</code> whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped.</td>
+<td><code>filtered - may not prompt, and then only accepts what it settles on</code></td>
+<td>A <code>pick</code> whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and an answer naming anything else fails - see <a href="#filtered-picks">filtered picks</a> below.</td>
 </tr>
 <tr>
 <td><code>settles on "web-1" - won't ask</code></td>
@@ -2025,7 +2075,7 @@ Instead, you can just write <code>.*</code> e.g. <code>.*:commits.json</code>.</
 <h3 id="prompts-rad-cant-answer">Prompts rad can't answer<a class="headerlink" href="#prompts-rad-cant-answer" title="Permanent link">&para;</a></h3>
 <p>One shape takes no <code>--reply</code>: passing an interactive function around as a value rather than calling it.</p>
 <div class="highlight"><pre><span></span><code>ask = pick
-answer = ask([&quot;dev&quot;, &quot;prod&quot;])
+answer = ask(["dev", "prod"])
 </code></pre></div>
 <p>Answers are addressed by the position of the call, and rad can't see where such a value ends up or how many times it runs - so there is nothing for a value to attach to. It's still listed and still keyed, so <code>--reply-na</code> can assert the value is never invoked:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>dispatch.rad<span class="w"> </span>--reply-na<span class="w"> </span><span class="m">1</span>
@@ -2071,7 +2121,29 @@ answer = ask([&quot;dev&quot;, &quot;prod&quot;])
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>cleanup.rad<span class="w"> </span>--reply<span class="w"> </span><span class="m">12</span>:yes<span class="w"> </span>--reply<span class="w"> </span><span class="m">12</span>:no
 </code></pre></div>
 <p>Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single <code>yes</code> approving five hundred deletions is the accident this avoids. When there <em>is</em> a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.</p>
-<p>One answer is consumed per execution of the line, not per prompt you would have seen. A filtered <code>pick</code> that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. That answer is then discarded: you answer prompts, and no prompt happened, so the script's own filter decides. The same applies when a <code>pick</code>'s list simply happens to hold one entry on this run.</p>
+<p>A prompt in a function called from several places repeats for the same reason, and then one key stands for several different questions:</p>
+<div class="highlight"><pre><span></span><code>fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+print("{user}@{host}")
+</code></pre></div>
+<p>Answers bind in the order the calls run - here hostname, then username. Where rad can account for every execution it lists the calls, so you can read that order off the pre-flight rather than opening the script:</p>
+<div class="highlight"><span class="filename">stderr</span><pre><span></span><code>  deploy.rad:2  input may run more than once - repeat --reply per run
+      reached from:
+        4  host = ask("hostname")
+        5  user = ask("username")
+</code></pre></div>
+<p>It says nothing where it can't account for them all: a call inside a loop, a function passed around as a value, a caller that itself runs more than once, or a recursive function. A list missing one call would read exactly like a complete one, and you'd count passes off an undercount.</p>
+<p>Rad can't count the passes for you either way - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.</p>
+<h3 id="filtered-picks">Filtered picks<a class="headerlink" href="#filtered-picks" title="Permanent link">&para;</a></h3>
+<p>One answer is consumed per execution of the line, not per prompt you would have seen. A filtered <code>pick</code> that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. The same applies when a <code>pick</code>'s list simply happens to hold one entry on this run.</p>
+<p>What it does with that answer depends on whether the two agree. Naming the option the filter settled on is fine, and the run carries on. Naming anything else fails with <a href="../../reference/errors/">RAD20047</a>:</p>
+<div class="highlight"><pre><span></span><code>services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+</code></pre></div>
+<p><code>--reply 2:worker</code> asks for one service where the script's own filter chose another, and rad won't pick a winner. Usually the filter is the thing to change - it's normally built from an arg, so <code>worker</code> belongs there rather than in the answer.</p>
 <h2 id="reply-na"><code>reply-na</code><a class="headerlink" href="#reply-na" title="Permanent link">&para;</a></h2>
 <p>Some prompts sit on branches a given run won't take. Rather than invent a value you expect to go unused, assert that the prompt won't be reached:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>deploy.rad<span class="w"> </span>--dry-run<span class="w"> </span>--reply-na<span class="w"> </span><span class="m">20</span>

@@ -1027,6 +1027,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1862,7 +1890,7 @@ command greet:
     calls greet_user
 
 fn greet_user():
-    print(&quot;Hello, {name}!&quot;)
+    print("Hello, {name}!")
 </code></pre></div></td></tr></table></div>
 <p>This script defines a single command called <code>greet</code> that takes a <code>name</code> argument.</p>
 <p>Invoke it by specifying the command name followed by its arguments:</p>
@@ -1919,12 +1947,12 @@ This matches standard CLI conventions (like <code>kubectl</code>, <code>docker-c
 </span><span class="hll">    calls do_status
 </span><span class="hll">
 </span><span class="hll">fn do_deploy():
-</span>    print(&quot;Deploying to {env}...&quot;.yellow())
-<span class="hll">    print(&quot;Deployment complete!&quot;.green())
+</span>    print("Deploying to {env}...".yellow())
+<span class="hll">    print("Deployment complete!".green())
 </span><span class="hll">
 </span><span class="hll">fn do_status():
-</span><span class="hll">    print(&quot;Checking status of {env}...&quot;.yellow())
-</span>    print(&quot;Environment {env} is healthy&quot;.green())
+</span><span class="hll">    print("Checking status of {env}...".yellow())
+</span>    print("Environment {env} is healthy".green())
 </code></pre></div></td></tr></table></div>
 <p>Now you can invoke either command:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging
@@ -1983,10 +2011,10 @@ command status:
     calls do_status
 
 fn do_deploy():
-    print(&quot;Deploying to {env}...&quot;.yellow())
+    print("Deploying to {env}...".yellow())
 
 fn do_status():
-    print(&quot;Environment {env} is healthy&quot;.green())
+    print("Environment {env} is healthy".green())
 </code></pre></div></td></tr></table></div>
 <p>These descriptions appear in the help output:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./tool.rad -h
@@ -2042,18 +2070,18 @@ command deploy:
 </span><span class="hll">    Deploy the application to an environment
 </span><span class="hll">    ---
 </span><span class="hll">    env str              # Environment to deploy to
-</span><span class="hll">    branch str = &quot;main&quot;  # Branch to deploy from
+</span><span class="hll">    branch str = "main"  # Branch to deploy from
 </span><span class="hll">    skip_tests bool      # Skip running tests before deploy
 </span><span class="hll">    calls do_deploy
 </span>
 fn do_deploy():
     if skip_tests:
-        print(&quot;⚠️  Skipping tests&quot;.yellow())
+        print("⚠️  Skipping tests".yellow())
     else:
-        print(&quot;Running tests...&quot;.yellow())
+        print("Running tests...".yellow())
 
-    print(&quot;Deploying {branch} to {env}...&quot;.yellow())
-    print(&quot;✅ Deployment complete!&quot;.green())
+    print("Deploying {branch} to {env}...".yellow())
+    print("✅ Deployment complete!".green())
 </code></pre></div></td></tr></table></div>
 <p>The arguments work exactly as they do in the <code>args:</code> block - you can use defaults, optional types, constraints, and
 comments for help text.</p>
@@ -2114,7 +2142,7 @@ an <code>args:</code> block to share them across commands:</p>
 
 <span class="hll">args:
 </span><span class="hll">    verbose v bool   # Enable verbose output
-</span><span class="hll">    config str = &quot;~/.config/tool.yaml&quot;
+</span><span class="hll">    config str = "~/.config/tool.yaml"
 </span>
 command deploy:
     ---
@@ -2132,15 +2160,15 @@ command status:
 
 fn do_deploy():
     if verbose:
-        print(&quot;Config: {config}&quot;.yellow())
-        print(&quot;Deploying to {env}...&quot;.yellow())
-    print(&quot;✅ Deployed!&quot;.green())
+        print("Config: {config}".yellow())
+        print("Deploying to {env}...".yellow())
+    print("✅ Deployed!".green())
 
 fn do_status():
     if verbose:
-        print(&quot;Config: {config}&quot;.yellow())
-        print(&quot;Checking {env}...&quot;.yellow())
-    print(&quot;Environment healthy&quot;.green())
+        print("Config: {config}".yellow())
+        print("Checking {env}...".yellow())
+    print("Environment healthy".green())
 </code></pre></div></td></tr></table></div>
 <p>Shared args are available to all commands:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./tool.rad deploy staging --verbose
@@ -2216,10 +2244,10 @@ command remote:
         calls do_remove
 
 fn do_add():
-    print(&quot;Adding {name} -&gt; {url} (timeout {timeout})&quot;)
+    print("Adding {name} -&gt; {url} (timeout {timeout})")
 
 fn do_remove():
-    print(&quot;Removing {name}&quot;)
+    print("Removing {name}")
 </code></pre></div></td></tr></table></div>
 <p>Name the full path to reach the command you want:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./tool.rad remote add origin https://github.com/me/repo.git
@@ -2269,15 +2297,15 @@ command list:
     calls do_list
 
 fn do_add():
-    print(&quot;Adding: {tokens}&quot;)
+    print("Adding: {tokens}")
 
 fn do_list():
-    print(&quot;Listing&quot;)
+    print("Listing")
 </code></pre></div></td></tr></table></div>
 <div class="highlight"><pre><span></span><code>&gt; ./remind.rad 15m standup
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Adding: [ &quot;15m&quot;, &quot;standup&quot; ]
+<div class="highlight"><pre><span></span><code>Adding: [ "15m", "standup" ]
 </code></pre></div>
 </div>
 
@@ -2287,7 +2315,7 @@ fn do_list():
 <div class="highlight"><pre><span></span><code>&gt; ./remind.rad list          # runs do_list, no reminder added
 </code></pre></div>
 <p>Two ways to say you meant the value. Name the default explicitly, or use <code>--</code>:</p>
-<div class="highlight"><pre><span></span><code>&gt; ./remind.rad add list      # adds a reminder saying &quot;list&quot;
+<div class="highlight"><pre><span></span><code>&gt; ./remind.rad add list      # adds a reminder saying "list"
 &gt; ./remind.rad -- list       # same
 </code></pre></div>
 <div class="admonition note">
@@ -2323,10 +2351,10 @@ command remote:
         calls do_add
 
 fn do_list():
-    print(&quot;Listing remotes&quot;)
+    print("Listing remotes")
 
 fn do_add():
-    print(&quot;Adding {name}&quot;)
+    print("Adding {name}")
 </code></pre></div></td></tr></table></div>
 <p><code>./tool.rad remote</code> lists remotes, exactly as <code>./tool.rad remote list</code> would.</p>
 <p>Only leaf commands can be marked. A namespace routes rather than runs, so marking one would leave the question unanswered - mark one of its sub-commands instead.</p>
@@ -2368,12 +2396,12 @@ However, for very short implementations, you can also use inline lambdas:</p>
 </span><span class="hll">    ---
 </span><span class="hll">    env str
 </span><span class="hll">    calls fn():
-</span><span class="hll">        print(&quot;Rolling back {env}...&quot;.yellow())
-</span><span class="hll">        print(&quot;✅ Rollback complete!&quot;.green())
+</span><span class="hll">        print("Rolling back {env}...".yellow())
+</span><span class="hll">        print("✅ Rollback complete!".green())
 </span>
 <span class="hll">fn on_deploy():
-</span><span class="hll">    print(&quot;Deploying to {env}...&quot;.yellow())
-</span><span class="hll">    print(&quot;✅ Done!&quot;.green())
+</span><span class="hll">    print("Deploying to {env}...".yellow())
+</span><span class="hll">    print("✅ Done!".green())
 </span></code></pre></div></td></tr></table></div>
 <h2 id="shared-logic">Shared Logic<a class="headerlink" href="#shared-logic" title="Permanent link">&para;</a></h2>
 <p>You can write code after all command blocks that runs before any callback is invoked. This is useful for setup logic that all commands need:</p>
@@ -2409,17 +2437,17 @@ command rollback:
     calls on_rollback
 
 // This runs before any callback
-print(&quot;Initializing...&quot;.yellow())
-config = read_file(&quot;config.yaml&quot;)
-print(&quot;Config loaded&quot;.green())
+print("Initializing...".yellow())
+config = read_file("config.yaml")
+print("Config loaded".green())
 
 fn on_deploy():
     // config is available here
-    print(&quot;Deploying to {env} using config...&quot;)
+    print("Deploying to {env} using config...")
 
 fn on_rollback():
     // config is available here too
-    print(&quot;Rolling back {env}...&quot;)
+    print("Rolling back {env}...")
 </code></pre></div></td></tr></table></div>
 <p>When you run <code>./script.rad deploy staging</code>, the flow is:</p>
 <ol>
@@ -2455,10 +2483,10 @@ Usage:
 
 Command args:
       --env str       Environment to deploy to
-      --branch str    Branch to deploy from (default &quot;main&quot;)
+      --branch str    Branch to deploy from (default "main")
       --skip-tests    Skip running tests before deploy
   -v, --verbose       Enable verbose output
-      --config str    (default &quot;~/.config/tool.yaml&quot;)
+      --config str    (default "~/.config/tool.yaml")
 </code></pre></div>
 </div>
 
@@ -2550,7 +2578,7 @@ single <code>dev.rad</code> script. This demonstrates shared arguments, boolean 
 <span class="normal">73</span>
 <span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 ---
-Facilitates working with this repo&#39;s project.
+Facilitates working with this repo's project.
 ---
 
 args:
@@ -2580,48 +2608,48 @@ command build:
 
 // Shared setup logic runs before any callback
 if verbose:
-    print(&quot;Checking project structure...&quot;.yellow())
+    print("Checking project structure...".yellow())
 
-if not get_path(&quot;package.json&quot;)[&quot;exists&quot;]:
-    print_err(&quot;Error: package.json not found&quot;.red())
-    print_err(&quot;Run this script from the project root&quot;.yellow())
+if not get_path("package.json")["exists"]:
+    print_err("Error: package.json not found".red())
+    print_err("Run this script from the project root".yellow())
     exit(1)
 
 fn on_start():
-    print(&quot;🚀 Starting server on http://localhost:{port}...&quot;)
+    print("🚀 Starting server on http://localhost:{port}...")
 
-    cmd = &quot;npm start -- --port {port}&quot;
+    cmd = "npm start -- --port {port}"
 
     if detach:
         $`{cmd} &amp;`
-        print(&quot;Server started in background&quot;.green())
+        print("Server started in background".green())
     else:
         $`{cmd}`
 
 fn on_test():
-    opts = &quot;&quot;
+    opts = ""
     if watch:
-        opts = &quot;{opts} --watch&quot;
+        opts = "{opts} --watch"
     if grep: 
-        opts = &quot;{opts} -t &#39;{grep}&#39;&quot;
+        opts = "{opts} -t '{grep}'"
 
     if verbose:
-        print(&quot;Running: pytest {opts}&quot;.yellow())
+        print("Running: pytest {opts}".yellow())
 
-    print(&quot;🧪 Running tests...&quot;)
+    print("🧪 Running tests...")
     $`pytest {opts}` catch:
-        print_err(&quot;Tests failed!&quot;.red())
+        print_err("Tests failed!".red())
         exit(1)
 
 fn on_build():
-    print(&quot;📦 Building for production...&quot;.yellow())
+    print("📦 Building for production...".yellow())
 
     $`rm -rf ./dist`
     $`npm run build` catch:
-        print_err(&quot;Build failed&quot;.red())
+        print_err("Build failed".red())
         exit(1)
 
-    print(&quot;✅ Build complete in ./dist&quot;.green())
+    print("✅ Build complete in ./dist".green())
 </code></pre></div></td></tr></table></div>
 <p><strong>Usage:</strong></p>
 <div class="highlight"><pre><span></span><code>&gt; ./dev.rad start
@@ -2631,7 +2659,7 @@ fn on_build():
 🚀 Starting server on http://localhost:8080...
 Server started in background
 
-&gt; ./dev.rad test --grep &quot;login_flow&quot; --watch
+&gt; ./dev.rad test --grep "login_flow" --watch
 🧪 Running tests...
 
 &gt; ./dev.rad build

@@ -20,6 +20,7 @@
 - [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes
 - [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging
 - [Built-in Commands](https://amterp.dev/rad/guide/built-in-commands.md): `rad new`, `rad check`, `rad fmt`, `rad docs`, `rad stash`, `rad gen-id`, `rad home`, `rad completion`
+- [REPL](https://amterp.dev/rad/guide/repl.md): Blocks take several lines, Mistakes don't end the session, Editing, Commands, Two things behave differently than in a script, Piping input, What it doesn't do yet
 - [Shell Completion](https://amterp.dev/rad/guide/shell-completion.md): Quick Setup, What Gets Completed, Script Completions, Multiple Scripts & Globs, Full Example
 
 ## Examples
@@ -6511,14 +6512,14 @@ Rad exits `7` when it stops like this, so a wrapper can tell "this run needs inp
 
 Each listed prompt may also carry a note about how it behaves:
 
-| Note                                                     | Meaning                                                                                                                                                               |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `filtered - may not prompt, and then ignores its answer` | A `pick` whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and any answer you gave is consumed and dropped.             |
-| `settles on "web-1" - won't ask`                         | A `pick` whose options and filter are both written literally, leaving one survivor. It takes that option without asking, so rad answers it with `--reply-na` for you. |
-| `used as a value - ...`                                  | An interactive function passed around rather than called. Takes `--reply-na` only.                                                                                    |
-| `may run more than once - repeat --reply per run`        | It sits in a loop, or in a function called from several places. One `--reply` answers one execution.                                                                  |
-| `secret - cannot be answered on the command line`        | See secret inputs below.                                                                                                                                              |
-| `options computed at runtime`                            | Rad can't list the choices without running the script. They're checked when the prompt is reached.                                                                    |
+| Note                                                                  | Meaning                                                                                                                                                                       |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filtered - may not prompt, and then only accepts what it settles on` | A `pick` whose filter rad can't work through ahead of time. If it narrows to one option it asks nothing, and an answer naming anything else fails - see filtered picks below. |
+| `settles on "web-1" - won't ask`                                      | A `pick` whose options and filter are both written literally, leaving one survivor. It takes that option without asking, so rad answers it with `--reply-na` for you.         |
+| `used as a value - ...`                                               | An interactive function passed around rather than called. Takes `--reply-na` only.                                                                                            |
+| `may run more than once - repeat --reply per run`                     | It sits in a loop, or in a function called from several places. One `--reply` answers one execution.                                                                          |
+| `secret - cannot be answered on the command line`                     | See secret inputs below.                                                                                                                                                      |
+| `options computed at runtime`                                         | Rad can't list the choices without running the script. They're checked when the prompt is reached.                                                                            |
 
 ### Prompts rad can't answer
 
@@ -6562,7 +6563,42 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers queue per line rather than globally, so adding a prompt earlier in the script never silently re-targets a later answer. If the loop runs out of answers, rad stops. It does not reuse the last one - a single `yes` approving five hundred deletions is the accident this avoids. When there *is* a terminal, running out just means rad asks you for the rest, so you can pre-answer the first few passes and type the others.
 
-One answer is consumed per execution of the line, not per prompt you would have seen. A filtered `pick` that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. That answer is then discarded: you answer prompts, and no prompt happened, so the script's own filter decides. The same applies when a `pick`'s list simply happens to hold one entry on this run.
+A prompt in a function called from several places repeats for the same reason, and then one key stands for several different questions:
+
+```rad
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+print("{user}@{host}")
+```
+
+Answers bind in the order the calls run - here hostname, then username. Where rad can account for every execution it lists the calls, so you can read that order off the pre-flight rather than opening the script:
+
+```title="stderr"
+  deploy.rad:2  input may run more than once - repeat --reply per run
+      reached from:
+        4  host = ask("hostname")
+        5  user = ask("username")
+```
+
+It says nothing where it can't account for them all: a call inside a loop, a function passed around as a value, a caller that itself runs more than once, or a recursive function. A list missing one call would read exactly like a complete one, and you'd count passes off an undercount.
+
+Rad can't count the passes for you either way - that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+
+### Filtered picks
+
+One answer is consumed per execution of the line, not per prompt you would have seen. A filtered `pick` that narrows to one option asks nothing, but still takes its answer - otherwise a pass that quietly skipped would hand every later answer to the wrong one. The same applies when a `pick`'s list simply happens to hold one entry on this run.
+
+What it does with that answer depends on whether the two agree. Naming the option the filter settled on is fine, and the run carries on. Naming anything else fails with RAD20047 (rad docs reference/errors):
+
+```rad
+services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+```
+
+`--reply 2:worker` asks for one service where the script's own filter chose another, and rad won't pick a winner. Usually the filter is the thing to change - it's normally built from an arg, so `worker` belongs there rather than in the answer.
 
 ## `reply-na`
 
@@ -7301,6 +7337,155 @@ One of those commands - `rad completion` - deserves a closer look: tab completio
 rad commands, script flags, and even enum values.
 
 Continue to Shell Completion (rad docs guide/shell-completion).
+
+---
+
+# REPL
+
+`rad repl` starts an interactive session. You type Rad, it runs it, and
+whatever you define stays defined until you leave.
+
+```
+$ rad repl
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+> name = "world"
+> upper(name)
+"WORLD"
+```
+
+An expression prints its value; an assignment prints nothing. Values print the
+way you would write them, so a string comes back quoted and you can tell `"5"`
+from `5`. `print()` is still there when you want the unquoted form.
+
+## Blocks take several lines
+
+A block construct keeps taking lines until you enter a blank one. Rad scopes
+blocks by indentation, so there is no closing token to look for - the blank
+line is what says you are done. The prompt changes to `.` while the REPL is
+still gathering, and the next line is indented for you.
+
+```
+> fn greet(name):
+.     print("hi {name}")
+.
+> greet("world")
+hi world
+```
+
+Everything with a body works this way: `if`, `for`, `while`, `switch`, named
+`fn`, and `catch:` blocks. A blank line also gets you out of a buffer you would
+rather abandon - though Ctrl+C is quicker, and throws the whole thing away.
+
+Pasting a multi-line block works too. The REPL can tell a pasted newline from a
+pressed Enter, so the whole snippet arrives before anything runs.
+
+## Mistakes don't end the session
+
+An error prints the same diagnostic it would print in a script, and then you
+get your prompt back:
+
+```
+> x = 5
+> undefined_variable
+error[RAD20028]: Undefined variable: undefined_variable
+  --> <repl>:1:1
+  |
+1 | undefined_variable
+  | ^^^^^^^^^^^^^^^^^^
+  |
+  = info: rad docs RAD20028
+
+> x
+5
+```
+
+Ctrl+C interrupts whatever is running - a slow shell command, an HTTP request,
+a loop that turned out to be infinite - and returns you to the prompt with the
+session intact. Press it twice if something is truly wedged; the second one
+exits immediately.
+
+## Editing
+
+The line you are typing is editable:
+
+| Key                 | Does                              |
+| ------------------- | --------------------------------- |
+| `←` `→`             | move the cursor                   |
+| `Ctrl+A` / `Ctrl+E` | jump to start / end of line       |
+| `Ctrl+W`            | delete the word behind the cursor |
+| `Ctrl+K`            | delete to end of line             |
+| `Ctrl+U`            | delete the line                   |
+| `↑` `↓`             | recall earlier input              |
+| `Ctrl+C`            | abandon this line                 |
+| `Ctrl+D`            | leave (on an empty line)          |
+
+Inside a multi-line block, `↑` and `↓` move between the lines you are typing
+and only reach for history once the cursor is already at the top or bottom.
+
+History lasts for the session and is not written to disk.
+
+## Commands
+
+A line starting with `:` is a REPL command rather than Rad:
+
+| Command          | Does                                                |
+| ---------------- | --------------------------------------------------- |
+| `:help`          | the summary                                         |
+| `:vars`          | variables you have defined                          |
+| `:docs <topic>`  | docs for a function, an error code, or a guide page |
+| `:load <file>`   | run a `.rad` file into this session                 |
+| `:clear`         | clear the screen                                    |
+| `:reset`         | forget every variable and start over                |
+| `:exit`, `:quit` | leave                                               |
+
+`:docs` takes anything `rad docs` takes:
+
+```
+> :docs upper
+> :docs RAD20028
+> :docs guide/shell-commands
+```
+
+`:load` runs a file's statements against your session, so the functions and
+variables it defines are yours afterwards. It is the way to work on a script
+and try its pieces without pasting them.
+
+## Two things behave differently than in a script
+
+**`defer` runs at the end of the turn that registered it**, not when the
+session ends. A turn is the REPL's whole notion of a script. Holding a defer
+until you quit would mean it does nothing observable for as long as you keep
+working, and never runs at all if a later turn ends badly.
+
+**`args` blocks, command blocks, and file headers are refused.** All three
+describe how a script is invoked from a command line, and a session was not
+invoked from one. Put the script in a file and `:load` it, or run it normally
+to exercise its argument parsing. See
+RAD20049 (rad docs reference/errors) for the details.
+
+## Piping input
+
+With no terminal to draw on - a pipe, CI, an agent's tool call - `rad repl`
+reads lines and prints results without drawing a prompt:
+
+```
+$ printf 'x = 20\nx * 2\n' | rad repl
+🤙 Rad REPL v0.11.0
+Type ':help' for help, ':exit' or Ctrl+D to quit.
+
+40
+```
+
+Blocks work the same way, blank line and all. This is also how the REPL's own
+tests drive it.
+
+## What it doesn't do yet
+
+No tab completion, no syntax highlighting, no `Ctrl+R` search, and no history
+file that survives the session. None of these are ruled out; they just aren't
+built.
 
 ---
 
@@ -14640,6 +14825,30 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers are queued per line rather than globally, so adding a prompt earlier in a script never silently re-targets a later answer. Running out mid-loop stops the script rather than reusing the last answer.
 
+A prompt in a function called from several places repeats too, and then one key stands for several different questions:
+
+```rad
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+print("{user}@{host}")
+```
+
+Answers bind in the order the calls run. Where rad can account for every execution it lists them, so that order is readable without opening the file:
+
+```
+deploy.rad:2  input may run more than once - repeat --reply per run
+    reached from:
+      4  host = ask("hostname")
+      5  user = ask("username")
+```
+
+It says nothing where it cannot account for them all - a call inside a loop, a function passed around as a value, a caller that itself runs more than once, or a recursive function. A list missing one call would read exactly like a complete one.
+
+Rad cannot count the passes for you either way; that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+
 #### Prompts You Don't Expect To Reach
 
 If a prompt sits on a branch this run won't take, say so instead of inventing a value:
@@ -14678,7 +14887,7 @@ A script setting `@enable_global_options = 0` removes `--reply` along with every
 
 The script reached a prompt that `--reply` couldn't answer. Unlike RAD20046, this one fires mid-run, because it depends on something rad could not know before starting.
 
-There are four ways to get here.
+Whichever way you got here, the script ran up to this point. Check what it already did before you re-run it: a retry starts from the top.
 
 #### The Prompt Was Marked Unreachable
 
@@ -14700,6 +14909,18 @@ rad cleanup.rad --reply 12:yes --reply 12:yes    # ran a third time
 
 Rad does not reuse the last answer. One `yes` silently approving five hundred deletions is exactly the accident worth failing over. Supply as many answers as the loop has passes, or narrow what the loop iterates over.
 
+A second shape lands here too, and rad cannot tell it from the first. A script that re-asks until it gets a value it accepts spends an answer on every attempt:
+
+```rad
+env = ""
+while env not in ["prod", "staging"]:
+    env = input("Environment? ")
+```
+
+`--reply 3:dev` is rejected, the loop comes back around, and there is nothing left to give it. Adding flags cannot fix this one - `--reply 3:dev --reply 3:dev` fails in exactly the same place. Answer with a value the script takes.
+
+The message names both readings because only you can tell which applies. Count the passes if the prompt sits in a loop; check the value if the script validates it.
+
 #### The Answer Matched No Option
 
 A `pick` or `multipick` over runtime data - a fetched list, a resource file, a computed set - got an answer that isn't in it:
@@ -14712,6 +14933,19 @@ server = pick(fetch_servers())
 ```
 
 Rad can't check that up front, because the options don't exist until the script builds them. The error lists the real options, so the next run can name one exactly. Matching is exact by design: a near-miss fails rather than quietly acting on the wrong choice.
+
+#### The Filter Already Chose
+
+A `pick` given a filter that leaves one option takes it without asking. An answer naming anything else is a disagreement, and rad won't settle it by picking a side:
+
+```rad
+services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+```
+
+Here `--reply 2:worker` asks for one service and the script's own filter chose another. Usually the filter is the thing to change - it is normally built from an arg, so `worker` belongs there rather than in the answer.
+
+An answer that names the option the filter settled on is consumed and the run carries on. Consuming it either way is what keeps a loop's answers in step with its passes, so a pick that settles on some passes and asks on others still lines up.
 
 #### The Input Was Secret
 
@@ -14731,7 +14965,7 @@ A `multipick` answer named an option twice, or gave more or fewer selections tha
 
 #### How to Fix
 
-Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job. Note that the script did execute up to this point - if it has side effects, check what already happened before retrying.
+Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job.
 
 #### Related
 
@@ -14812,6 +15046,64 @@ $["definitely_not_installed"] catch:
 
 - `rad docs guide/shell-commands` - capture, modifiers, and the three command forms
 - `rad docs guide/error-handling` - `??`, the `catch` operator, and `catch:` blocks
+
+### RAD20049: Construct Not Available In The REPL
+
+You typed an `args` block, a command block, or a file header at the REPL. All
+three describe how a *script* is invoked from the command line, and a REPL
+session was never invoked from anywhere.
+
+An `args` block declares the flags and positionals rad parses out of `argv`
+before the script runs. A command block declares a subcommand. A file header is
+the docstring rad prints in that script's usage. None of them has a meaning at
+a prompt, and the REPL says so rather than accepting them and doing nothing.
+
+#### Examples
+
+```rad
+args:
+    name str
+    count int = 1
+```
+
+```rad
+command greet:
+    name str
+    calls do_greet
+
+fn do_greet():
+    print("hello {name}")
+```
+
+#### How to Fix
+
+Put the script in a file, then load it:
+
+```
+:load ./greet.rad
+```
+
+`:load` runs the file's statements against your session, so functions and
+variables it defines are yours to use afterwards. Its `args` block is skipped,
+because there are still no command-line arguments to parse.
+
+To work on the values an `args` block would have produced, assign them:
+
+```rad
+name = "world"
+count = 3
+```
+
+To try the real argument parsing, run the script:
+
+```
+rad greet.rad --name world
+```
+
+#### See Also
+
+- `rad docs guide/repl` - what a session can and cannot do
+- `rad docs guide/args` - declaring a script's command-line interface
 
 ## Type Errors (RAD3xxxx)
 

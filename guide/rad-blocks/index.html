@@ -1156,6 +1156,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -2113,7 +2141,7 @@ its latest commits.</p>
     repo str        # The repo to query. Format: user/project
     limit int = 20  # The max commits to return.
 
-url = &quot;https://api.github.com/repos/{repo}/commits?per_page={limit}&quot;
+url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 
 Time = json[].commit.author.date
 Author = json[].commit.author.name
@@ -2143,7 +2171,7 @@ Time                  Author          SHA
     repo str        # The repo to query. Format: user/project
     limit int = 20  # The max commits to return.
 
-url = &quot;https://api.github.com/repos/{repo}/commits?per_page={limit}&quot;
+url = "https://api.github.com/repos/{repo}/commits?per_page={limit}"
 </code></pre></div>
 <p>Here we have an <a href="../args/">args block</a> where we declare a <code>repo</code> string and a <code>limit</code> int with a default of 20.
 After the args block, we create a <code>url</code> string using <a href="../strings-advanced/#string-interpolation">string interpolation</a> to fill in the repo name, and the limit for how many commits we want GitHub to give us.</p>
@@ -2160,20 +2188,20 @@ Example URL if you want to see for yourself:</p>
 <p>Here's a simplified example response with two commits, showing the structure we're interested in:</p>
 <div class="highlight"><pre><span></span><code><span class="p">[</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;306f3a4ddb3b09747d61a5eab264c3d72fbbc36e&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alexander Terp&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-11T04:15:06Z&quot;</span>
+<span class="w">    </span><span class="nt">"sha"</span><span class="p">:</span><span class="w"> </span><span class="s2">"306f3a4ddb3b09747d61a5eab264c3d72fbbc36e"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"commit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"author"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alexander Terp"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-11T04:15:06Z"</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;sha&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2b642c482b32e4d87924839b2f5a9592670dee69&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alexander Terp&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-01-10T12:21:03Z&quot;</span>
+<span class="w">    </span><span class="nt">"sha"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2b642c482b32e4d87924839b2f5a9592670dee69"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"commit"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"author"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alexander Terp"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-01-10T12:21:03Z"</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
@@ -2285,7 +2313,7 @@ Copenhagen   Denmark  640000
 <div class="highlight"><pre><span></span><code>rad url:
     fields City, Country, Population
     Population:
-        map fn(p) &quot;{p/1e6:.1}&quot;
+        map fn(p) "{p/1e6:.1}"
 </code></pre></div>
 <p>The syntax here is <code>map &lt;lambda&gt;</code>. In this example, the lambda is <code>fn(p) "{p/1e6:.1}"</code>.</p>
 <p>You can read about lambdas in an earlier section here: <a href="../functions/#lambdas">Functions: Lambdas</a>.</p>
@@ -2298,7 +2326,7 @@ Copenhagen   Denmark  0.6
 </code></pre></div>
 <p>Let's break down this syntax more. After declaring the fields:</p>
 <div class="highlight"><pre><span></span><code>Population:
-    map fn(p) &quot;{p/1e6:.1}&quot;
+    map fn(p) "{p/1e6:.1}"
 </code></pre></div>
 <p><code>Population:</code> begins a column modifier block. The identifier prior to the colon is expected to be one of the fields. Inside one of these blocks, you can apply modifiers on that column, such as <code>map</code> or <a href="#color"><code>color</code></a>.</p>
 <p><code>map</code> is considered a keyword in the context of rad blocks. After <code>map</code>, a lambda expression is expected, which you can think of as a mini-function.</p>
@@ -2322,7 +2350,7 @@ use formatting syntax (right of the colon) to specify that we want the resulting
 <div class="highlight"><pre><span></span><code>rad url:
     fields City, Country, Population
     Population:
-        map fn(p, ctx) &quot;{p / sum(ctx.src) * 100:.1}%&quot;
+        map fn(p, ctx) "{p / sum(ctx.src) * 100:.1}%"
 </code></pre></div>
 <p>This shows each city's population as a percentage of the total.</p>
 <p>The context object provides three fields:</p>
@@ -2334,13 +2362,13 @@ use formatting syntax (right of the colon) to specify that we want the resulting
 <p>This is useful for operations that need to know about the overall dataset:</p>
 <div class="highlight"><pre><span></span><code>// Highlight the largest city
 City:
-    map fn(city, ctx) ctx.idx == 0 ? &quot;{city} ★&quot; : city
+    map fn(city, ctx) ctx.idx == 0 ? "{city} ★" : city
 </code></pre></div>
 <p>The <code>field</code> property is especially helpful when applying the same transformation to multiple columns:</p>
 <div class="highlight"><pre><span></span><code>// Apply to multiple columns, with field-specific logic
 timestamp, strategy, fund:
     map fn(x, ctx):
-        if ctx.field == &quot;timestamp&quot;:
+        if ctx.field == "timestamp":
             return format_time(x)
         return str(x)
 </code></pre></div>
@@ -2359,7 +2387,7 @@ timestamp, strategy, fund:
     Age:
         filter fn(age) age &gt;= 18
     Status:
-        filter fn(s) s == &quot;active&quot;
+        filter fn(s) s == "active"
 </code></pre></div>
 <p>The syntax is <code>filter &lt;function&gt;</code>. The function receives each value from that column and returns a boolean (or truthy value). If it returns true, that row is kept. If false, the entire row is discarded.</p>
 <p>In this example, we're applying two filters:</p>
@@ -2370,15 +2398,15 @@ timestamp, strategy, fund:
 <p>When multiple fields have filters, a row must pass <strong>all filters</strong> to be displayed (AND logic). In our example, both the age and status filters must pass.</p>
 <p>Let's see this in action with some mock data:</p>
 <div class="highlight"><pre><span></span><code>Ages = [25, 15, 30, 20, 12]
-Names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;Diana&quot;, &quot;Eve&quot;]
-Status = [&quot;active&quot;, &quot;active&quot;, &quot;inactive&quot;, &quot;active&quot;, &quot;active&quot;]
+Names = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+Status = ["active", "active", "inactive", "active", "active"]
 
 rad:
     fields Names, Ages, Status
     Ages:
         filter fn(a) a &gt;= 18
     Status:
-        filter fn(s) s == &quot;active&quot;
+        filter fn(s) s == "active"
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Names   Ages  Status
@@ -2420,9 +2448,9 @@ Age:
 <div class="highlight"><pre><span></span><code>rad url:
     fields City, Country, Population
     Country:
-        color &quot;pink&quot; &quot;.*&quot;
-        color &quot;red&quot; &quot;Denmark&quot;
-        color &quot;blue&quot; &quot;USA&quot;
+        color "pink" ".*"
+        color "red" "Denmark"
+        color "blue" "USA"
 </code></pre></div>
 <p>The syntax is <code>color &lt;color&gt; &lt;regex&gt;</code>. You can apply multiple rules, and later rules override earlier ones. 
 For example, here we start off by coloring <em>everything</em> pink.
@@ -2436,8 +2464,8 @@ Then, we add three more rules: any sequence "Denmark" should be colored red, and
 <div class="highlight"><pre><span></span><code>rad url:
     fields Status, Priority, Assignee, DueDate
     Status, Priority:
-        color &quot;green&quot; &quot;complete|high&quot;
-        color &quot;red&quot; &quot;blocked|low&quot;
+        color "green" "complete|high"
+        color "red" "blocked|low"
     Status, Priority, Assignee:
         map fn(s) upper(s)
 </code></pre></div>
@@ -2473,7 +2501,7 @@ to process the extracted data further without displaying it.</p>
 // From here, the field lists are populated and sorted
 // City[0] is now the city with the largest population
 largest_city = City[0]
-print(&quot;The largest city is {largest_city}&quot;)
+print("The largest city is {largest_city}")
 </code></pre></div>
 <p>Note that <code>filter</code>, <code>sort</code>, and <code>map</code> all work with <code>noprint</code> since they modify the underlying data. However, <code>color</code> has no effect since nothing gets displayed.</p>
 <h3 id="quiet-suppress-http-log">quiet: Suppress HTTP Log<a class="headerlink" href="#quiet-suppress-http-log" title="Permanent link">&para;</a></h3>
@@ -2485,7 +2513,7 @@ print(&quot;The largest city is {largest_city}&quot;)
 <p>Both <code>noprint</code> and <code>quiet</code> support explicit boolean values: <code>noprint true</code>, <code>noprint false</code>, <code>noprint some_variable</code>.</p>
 <h3 id="transpose-swap-rows-and-columns">transpose: Swap Rows and Columns<a class="headerlink" href="#transpose-swap-rows-and-columns" title="Permanent link">&para;</a></h3>
 <p>By default, fields become column headers and each record is a row. Add <code>transpose</code> to flip the table on its side - the original headers become the first column, and each record becomes a subsequent column:</p>
-<div class="highlight"><pre><span></span><code>Name = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+<div class="highlight"><pre><span></span><code>Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 rad:
     fields Name, Age
@@ -2530,7 +2558,7 @@ rad resp.body:
 <h3 id="no-source">No Source<a class="headerlink" href="#no-source" title="Permanent link">&para;</a></h3>
 <p>When no source is given, Rad displays already-populated data as a table:</p>
 <div class="highlight"><pre><span></span><code>Nums = [1, 2]
-Words = [&quot;hi&quot;, &quot;hello&quot;]
+Words = ["hi", "hello"]
 rad:
     fields Nums, Words
 </code></pre></div>
@@ -2558,11 +2586,11 @@ This happens behind the scenes - you don't need to explicitly call any HTTP func
     token str  # API authentication token
 
 headers = {
-    &quot;Authorization&quot;: &quot;Bearer {token}&quot;,
-    &quot;Accept&quot;: &quot;application/json&quot;
+    "Authorization": "Bearer {token}",
+    "Accept": "application/json"
 }
 
-url = &quot;https://api.github.com/user/repos&quot;
+url = "https://api.github.com/user/repos"
 resp = http_get(url, headers=headers)
 
 // Define JSON paths for the response

@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -4806,35 +4834,35 @@ with said error.</p>
 <p>Decodes Base16 (hexadecimal) text back to original string.</p>
 <div class="highlight"><pre><span></span><code>decode_base16(_content: str) -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>decode_base16(&quot;48656c6c6f&quot;)   // -&gt; &quot;Hello&quot;
-decode_base16(&quot;414243&quot;)       // -&gt; &quot;ABC&quot;
+<div class="highlight"><pre><span></span><code>decode_base16("48656c6c6f")   // -&gt; "Hello"
+decode_base16("414243")       // -&gt; "ABC"
 
 // Handle errors - inside the block, `result` is the error
-result = decode_base16(&quot;invalid hex&quot;) catch:
-    print_err(&quot;Invalid hex string: {result}&quot;)
+result = decode_base16("invalid hex") catch:
+    print_err("Invalid hex string: {result}")
     exit(1)
 
 // Or fall back
-result = decode_base16(&quot;invalid hex&quot;) ?? &quot;&quot;
+result = decode_base16("invalid hex") ?? ""
 </code></pre></div>
 <h3 id="decode_base64">decode_base64<a class="headerlink" href="#decode_base64" title="Permanent link">&para;</a></h3>
 <p>Decodes Base64 text back to original string.</p>
 <div class="highlight"><pre><span></span><code>decode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>encoded = encode_base64(&quot;Hello World&quot;)
-decoded = decode_base64(encoded)           // -&gt; &quot;Hello World&quot;
+<div class="highlight"><pre><span></span><code>encoded = encode_base64("Hello World")
+decoded = decode_base64(encoded)           // -&gt; "Hello World"
 
 // URL-safe decoding
-url_encoded = encode_base64(&quot;test&quot;, url_safe=true)
+url_encoded = encode_base64("test", url_safe=true)
 decoded = decode_base64(url_encoded, url_safe=true)
 
 // Handle errors - inside the block, `result` is the error
-result = decode_base64(&quot;invalid base64!&quot;) catch:
-    print_err(&quot;Decode failed: {result}&quot;)
+result = decode_base64("invalid base64!") catch:
+    print_err("Decode failed: {result}")
     exit(1)
 
 // Or fall back
-result = decode_base64(&quot;invalid base64!&quot;) ?? &quot;&quot;
+result = decode_base64("invalid base64!") ?? ""
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4868,16 +4896,16 @@ result = decode_base64(&quot;invalid base64!&quot;) ?? &quot;&quot;
 <p>Encodes text to Base16 (hexadecimal) format.</p>
 <div class="highlight"><pre><span></span><code>encode_base16(_content: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>encode_base16(&quot;Hello&quot;)        // -&gt; &quot;48656c6c6f&quot;
-encode_base16(&quot;ABC&quot;)          // -&gt; &quot;414243&quot;
+<div class="highlight"><pre><span></span><code>encode_base16("Hello")        // -&gt; "48656c6c6f"
+encode_base16("ABC")          // -&gt; "414243"
 </code></pre></div>
 <h3 id="encode_base64">encode_base64<a class="headerlink" href="#encode_base64" title="Permanent link">&para;</a></h3>
 <p>Encodes text to Base64 format.</p>
 <div class="highlight"><pre><span></span><code>encode_base64(_content: str, *, url_safe: bool = false, padding: bool = true) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>encode_base64(&quot;Hello World&quot;)                      // -&gt; &quot;SGVsbG8gV29ybGQ=&quot;
-encode_base64(&quot;Hello World&quot;, url_safe=true)       // -&gt; URL-safe version
-encode_base64(&quot;Hello World&quot;, padding=false)       // -&gt; &quot;SGVsbG8gV29ybGQ&quot;
+<div class="highlight"><pre><span></span><code>encode_base64("Hello World")                      // -&gt; "SGVsbG8gV29ybGQ="
+encode_base64("Hello World", url_safe=true)       // -&gt; URL-safe version
+encode_base64("Hello World", padding=false)       // -&gt; "SGVsbG8gV29ybGQ"
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4911,9 +4939,9 @@ encode_base64(&quot;Hello World&quot;, padding=false)       // -&gt; &quot;SGVsb
 <p>Generates a random <a href="https://github.com/amterp/flexid">flex ID</a> (fid) - a time-ordered, URL-safe identifier.</p>
 <div class="highlight"><pre><span></span><code>gen_fid(*, alphabet: str?, tick_size_ms: int?, num_random_chars: int?) -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>gen_fid()                                    // -&gt; &quot;1a2b3c4d5e&quot;
-gen_fid(alphabet=&quot;0123456789&quot;)               // -&gt; &quot;1234567890&quot;
-gen_fid(num_random_chars=3)                  // -&gt; &quot;1a2b3c&quot;
+<div class="highlight"><pre><span></span><code>gen_fid()                                    // -&gt; "1a2b3c4d5e"
+gen_fid(alphabet="0123456789")               // -&gt; "1234567890"
+gen_fid(num_random_chars=3)                  // -&gt; "1a2b3c"
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4945,14 +4973,14 @@ gen_fid(num_random_chars=3)                  // -&gt; &quot;1a2b3c&quot;
 <p>Defaults: <code>alphabet</code> is base-62 (<code>[0-9][A-Z][a-z]</code>), <code>tick_size_ms</code> is 1ms, <code>num_random_chars</code> is 6.</p>
 <h3 id="hash">hash<a class="headerlink" href="#hash" title="Permanent link">&para;</a></h3>
 <p>Generates a hash of the input text using various algorithms.</p>
-<div class="highlight"><pre><span></span><code>hash(_val: str, algo: [&quot;sha1&quot;, &quot;sha256&quot;, &quot;sha512&quot;, &quot;md5&quot;] = &quot;sha1&quot;) -&gt; str
+<div class="highlight"><pre><span></span><code>hash(_val: str, algo: ["sha1", "sha256", "sha512", "md5"] = "sha1") -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>hash(&quot;hello world&quot;)                    // -&gt; &quot;2aae6c35c94fcfb415dbe95f408b9ce91ee846ed&quot;
-hash(&quot;hello world&quot;, algo=&quot;sha256&quot;)     // -&gt; &quot;b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9&quot;
-hash(&quot;sensitive data&quot;, algo=&quot;sha512&quot;)  // -&gt; Long SHA-512 hash
+<div class="highlight"><pre><span></span><code>hash("hello world")                    // -&gt; "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed"
+hash("hello world", algo="sha256")     // -&gt; "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+hash("sensitive data", algo="sha512")  // -&gt; Long SHA-512 hash
 
 // File checksums, e.g. change detection - no need to shell out to cksum/shasum
-checksum = hash(read_file(&quot;config.yaml&quot;).content, algo=&quot;sha256&quot;)
+checksum = hash(read_file("config.yaml").content, algo="sha256")
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -4983,149 +5011,149 @@ This works for text files; hashing binary files is not yet supported.</p>
 <p>Generates a random V4 UUID.</p>
 <div class="highlight"><pre><span></span><code>uuid_v4() -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>uuid_v4()  // -&gt; &quot;f47ac10b-58cc-4372-a567-0e02b2c3d479&quot;
+<div class="highlight"><pre><span></span><code>uuid_v4()  // -&gt; "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 </code></pre></div>
 <h3 id="uuid_v7">uuid_v7<a class="headerlink" href="#uuid_v7" title="Permanent link">&para;</a></h3>
 <p>Generates a random V7 UUID (time-ordered).</p>
 <div class="highlight"><pre><span></span><code>uuid_v7() -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>uuid_v7()  // -&gt; &quot;01234567-89ab-7def-8123-456789abcdef&quot;
+<div class="highlight"><pre><span></span><code>uuid_v7()  // -&gt; "01234567-89ab-7def-8123-456789abcdef"
 </code></pre></div>
 <h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
 <h3 id="black">black<a class="headerlink" href="#black" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for black text.</p>
 <div class="highlight"><pre><span></span><code>black(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>black(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the black escape
-black(42)             // -&gt; &quot;42&quot; wrapped in the black escape
+<div class="highlight"><pre><span></span><code>black("Hello")        // -&gt; "Hello" wrapped in the black escape
+black(42)             // -&gt; "42" wrapped in the black escape
 </code></pre></div>
 <p>See also: <code>red</code>, <code>blue</code>, <code>color_rgb</code></p>
 <h3 id="blue">blue<a class="headerlink" href="#blue" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for blue text.</p>
 <div class="highlight"><pre><span></span><code>blue(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>blue(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the blue escape
-blue(42)             // -&gt; &quot;42&quot; wrapped in the blue escape
+<div class="highlight"><pre><span></span><code>blue("Hello")        // -&gt; "Hello" wrapped in the blue escape
+blue(42)             // -&gt; "42" wrapped in the blue escape
 </code></pre></div>
 <p>See also: <code>cyan</code>, <code>magenta</code>, <code>color_rgb</code></p>
 <h3 id="bold">bold<a class="headerlink" href="#bold" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for bold text.</p>
 <div class="highlight"><pre><span></span><code>bold(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>bold(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the bold escape
-bold(42)             // -&gt; &quot;42&quot; wrapped in the bold escape
+<div class="highlight"><pre><span></span><code>bold("Hello")        // -&gt; "Hello" wrapped in the bold escape
+bold(42)             // -&gt; "42" wrapped in the bold escape
 </code></pre></div>
 <p>See also: <code>dim</code>, <code>italic</code>, <code>underline</code></p>
 <h3 id="cyan">cyan<a class="headerlink" href="#cyan" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for cyan text.</p>
 <div class="highlight"><pre><span></span><code>cyan(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>cyan(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the cyan escape
-cyan(42)             // -&gt; &quot;42&quot; wrapped in the cyan escape
+<div class="highlight"><pre><span></span><code>cyan("Hello")        // -&gt; "Hello" wrapped in the cyan escape
+cyan(42)             // -&gt; "42" wrapped in the cyan escape
 </code></pre></div>
 <p>See also: <code>blue</code>, <code>green</code>, <code>color_rgb</code></p>
 <h3 id="dim">dim<a class="headerlink" href="#dim" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for dimmed text - the reverse of bold, useful for de-emphasising less important output.</p>
 <div class="highlight"><pre><span></span><code>dim(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>dim(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the dim escape
-dim(42)             // -&gt; &quot;42&quot; wrapped in the dim escape
+<div class="highlight"><pre><span></span><code>dim("Hello")        // -&gt; "Hello" wrapped in the dim escape
+dim(42)             // -&gt; "42" wrapped in the dim escape
 </code></pre></div>
 <p>See also: <code>bold</code>, <code>italic</code></p>
 <h3 id="green">green<a class="headerlink" href="#green" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for green text.</p>
 <div class="highlight"><pre><span></span><code>green(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>green(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the green escape
-green(42)             // -&gt; &quot;42&quot; wrapped in the green escape
+<div class="highlight"><pre><span></span><code>green("Hello")        // -&gt; "Hello" wrapped in the green escape
+green(42)             // -&gt; "42" wrapped in the green escape
 </code></pre></div>
 <p>See also: <code>red</code>, <code>yellow</code>, <code>color_rgb</code></p>
 <h3 id="italic">italic<a class="headerlink" href="#italic" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for italic text. Not every terminal renders italics; some show inverse or coloured text instead.</p>
 <div class="highlight"><pre><span></span><code>italic(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>italic(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the italic escape
-italic(42)             // -&gt; &quot;42&quot; wrapped in the italic escape
+<div class="highlight"><pre><span></span><code>italic("Hello")        // -&gt; "Hello" wrapped in the italic escape
+italic(42)             // -&gt; "42" wrapped in the italic escape
 </code></pre></div>
 <p>See also: <code>bold</code>, <code>underline</code></p>
 <h3 id="magenta">magenta<a class="headerlink" href="#magenta" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for magenta text.</p>
 <div class="highlight"><pre><span></span><code>magenta(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>magenta(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the magenta escape
-magenta(42)             // -&gt; &quot;42&quot; wrapped in the magenta escape
+<div class="highlight"><pre><span></span><code>magenta("Hello")        // -&gt; "Hello" wrapped in the magenta escape
+magenta(42)             // -&gt; "42" wrapped in the magenta escape
 </code></pre></div>
 <p>See also: <code>red</code>, <code>blue</code>, <code>color_rgb</code></p>
 <h3 id="orange">orange<a class="headerlink" href="#orange" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for orange text. Rendered via the closest 256-colour palette entry on terminals that don't support 24-bit colour.</p>
 <div class="highlight"><pre><span></span><code>orange(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>orange(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the orange escape
-orange(42)             // -&gt; &quot;42&quot; wrapped in the orange escape
+<div class="highlight"><pre><span></span><code>orange("Hello")        // -&gt; "Hello" wrapped in the orange escape
+orange(42)             // -&gt; "42" wrapped in the orange escape
 </code></pre></div>
 <p>See also: <code>yellow</code>, <code>red</code>, <code>color_rgb</code></p>
 <h3 id="pink">pink<a class="headerlink" href="#pink" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for pink text. Rendered via the closest 256-colour palette entry on terminals that don't support 24-bit colour.</p>
 <div class="highlight"><pre><span></span><code>pink(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>pink(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the pink escape
-pink(42)             // -&gt; &quot;42&quot; wrapped in the pink escape
+<div class="highlight"><pre><span></span><code>pink("Hello")        // -&gt; "Hello" wrapped in the pink escape
+pink(42)             // -&gt; "42" wrapped in the pink escape
 </code></pre></div>
 <p>See also: <code>magenta</code>, <code>red</code>, <code>color_rgb</code></p>
 <h3 id="plain">plain<a class="headerlink" href="#plain" title="Permanent link">&para;</a></h3>
 <p>Returns its argument as a plain string with no terminal colour or style applied. Useful for stripping styling back out of an expression where some branches have it and others don't.</p>
 <div class="highlight"><pre><span></span><code>plain(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>plain(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the plain escape
-plain(42)             // -&gt; &quot;42&quot; wrapped in the plain escape
+<div class="highlight"><pre><span></span><code>plain("Hello")        // -&gt; "Hello" wrapped in the plain escape
+plain(42)             // -&gt; "42" wrapped in the plain escape
 </code></pre></div>
 <p>See also: <code>colorize</code>, <code>color_rgb</code></p>
 <h3 id="red">red<a class="headerlink" href="#red" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for red text.</p>
 <div class="highlight"><pre><span></span><code>red(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>red(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the red escape
-red(42)             // -&gt; &quot;42&quot; wrapped in the red escape
+<div class="highlight"><pre><span></span><code>red("Hello")        // -&gt; "Hello" wrapped in the red escape
+red(42)             // -&gt; "42" wrapped in the red escape
 </code></pre></div>
 <p>See also: <code>green</code>, <code>yellow</code>, <code>color_rgb</code></p>
 <h3 id="strikethrough">strikethrough<a class="headerlink" href="#strikethrough" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for strikethrough text. Renders with a line through it on terminals that support the attribute.</p>
 <div class="highlight"><pre><span></span><code>strikethrough(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>strikethrough(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the strikethrough escape
-strikethrough(42)             // -&gt; &quot;42&quot; wrapped in the strikethrough escape
+<div class="highlight"><pre><span></span><code>strikethrough("Hello")        // -&gt; "Hello" wrapped in the strikethrough escape
+strikethrough(42)             // -&gt; "42" wrapped in the strikethrough escape
 </code></pre></div>
 <p>See also: <code>underline</code>, <code>dim</code></p>
 <h3 id="underline">underline<a class="headerlink" href="#underline" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for underlined text.</p>
 <div class="highlight"><pre><span></span><code>underline(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>underline(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the underline escape
-underline(42)             // -&gt; &quot;42&quot; wrapped in the underline escape
+<div class="highlight"><pre><span></span><code>underline("Hello")        // -&gt; "Hello" wrapped in the underline escape
+underline(42)             // -&gt; "42" wrapped in the underline escape
 </code></pre></div>
 <p>See also: <code>bold</code>, <code>italic</code></p>
 <h3 id="white">white<a class="headerlink" href="#white" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for white text.</p>
 <div class="highlight"><pre><span></span><code>white(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>white(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the white escape
-white(42)             // -&gt; &quot;42&quot; wrapped in the white escape
+<div class="highlight"><pre><span></span><code>white("Hello")        // -&gt; "Hello" wrapped in the white escape
+white(42)             // -&gt; "42" wrapped in the white escape
 </code></pre></div>
 <p>See also: <code>black</code>, <code>plain</code>, <code>color_rgb</code></p>
 <h3 id="yellow">yellow<a class="headerlink" href="#yellow" title="Permanent link">&para;</a></h3>
 <p>Wraps its argument in the ANSI escape codes for yellow text.</p>
 <div class="highlight"><pre><span></span><code>yellow(_item: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>yellow(&quot;Hello&quot;)        // -&gt; &quot;Hello&quot; wrapped in the yellow escape
-yellow(42)             // -&gt; &quot;42&quot; wrapped in the yellow escape
+<div class="highlight"><pre><span></span><code>yellow("Hello")        // -&gt; "Hello" wrapped in the yellow escape
+yellow(42)             // -&gt; "42" wrapped in the yellow escape
 </code></pre></div>
 <p>See also: <code>red</code>, <code>green</code>, <code>color_rgb</code></p>
 <h2 id="http">HTTP<a class="headerlink" href="#http" title="Permanent link">&para;</a></h2>
 <h3 id="http_connect">http_connect<a class="headerlink" href="#http_connect" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP CONNECT to <code>url</code> and returns the response as a map. Typically used for tunnelling through a proxy.</p>
-<div class="highlight"><pre><span></span><code>http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_connect(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_connect(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_connect("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5142,9 +5170,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_delete">http_delete<a class="headerlink" href="#http_delete" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP DELETE to <code>url</code> and returns the response as a map.</p>
-<div class="highlight"><pre><span></span><code>http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_delete(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_delete(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_delete("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5161,9 +5189,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_get">http_get<a class="headerlink" href="#http_get" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP GET to <code>url</code> and returns the response as a map. See <code>## Notes</code> for the response shape.</p>
-<div class="highlight"><pre><span></span><code>http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_get(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_get(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_get("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5180,9 +5208,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_head">http_head<a class="headerlink" href="#http_head" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP HEAD to <code>url</code> and returns the response as a map. The server returns headers without a body; the response map's <code>body</code> is omitted.</p>
-<div class="highlight"><pre><span></span><code>http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_head(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_head(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_head("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5199,9 +5227,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_options">http_options<a class="headerlink" href="#http_options" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP OPTIONS request to <code>url</code> and returns the response as a map. Typically used to discover the methods supported by a resource.</p>
-<div class="highlight"><pre><span></span><code>http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_options(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_options(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_options("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5218,9 +5246,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_patch">http_patch<a class="headerlink" href="#http_patch" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP PATCH to <code>url</code> and returns the response as a map. Use <code>body</code> for raw payloads or <code>json</code> for automatic JSON serialisation.</p>
-<div class="highlight"><pre><span></span><code>http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_patch(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_patch(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_patch("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5237,9 +5265,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_post">http_post<a class="headerlink" href="#http_post" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP POST to <code>url</code> and returns the response as a map. Use <code>body</code> for raw payloads or <code>json</code> for automatic JSON serialisation.</p>
-<div class="highlight"><pre><span></span><code>http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_post(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_post(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_post("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5256,9 +5284,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_put">http_put<a class="headerlink" href="#http_put" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP PUT to <code>url</code> and returns the response as a map. Use <code>body</code> for raw payloads or <code>json</code> for automatic JSON serialisation.</p>
-<div class="highlight"><pre><span></span><code>http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_put(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_put(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_put("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5275,9 +5303,9 @@ if r.success:
 <p><strong>Insecure:</strong> pass <code>insecure=true</code> to skip TLS certificate verification.</p>
 <h3 id="http_trace">http_trace<a class="headerlink" href="#http_trace" title="Permanent link">&para;</a></h3>
 <p>Sends an HTTP TRACE to <code>url</code> and returns the response as a map. Often disabled at the server for security; expect failures against modern endpoints.</p>
-<div class="highlight"><pre><span></span><code>http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { &quot;success&quot;: bool, &quot;status_code&quot;?: int, &quot;headers&quot;: map, &quot;body&quot;?: any, &quot;error&quot;?: str, &quot;duration_seconds&quot;: float }
+<div class="highlight"><pre><span></span><code>http_trace(url: str, *, body: any?, json: any?, headers: map?, insecure: bool = false) -&gt; { "success": bool, "status_code"?: int, "headers": map, "body"?: any, "error"?: str, "duration_seconds": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>r = http_trace(&quot;https://api.example.com/resource&quot;)
+<div class="highlight"><pre><span></span><code>r = http_trace("https://api.example.com/resource")
 if r.success:
     print(r.body)
 </code></pre></div>
@@ -5297,9 +5325,9 @@ if r.success:
 <p>Returns the last element of a path.</p>
 <div class="highlight"><pre><span></span><code>base_name(_path: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>print(base_name(&quot;/home/alice/notes.txt&quot;))  // -&gt; &quot;notes.txt&quot;
-print(base_name(&quot;src/core/&quot;))              // -&gt; &quot;core&quot; (trailing slashes are ignored)
-print(base_name(&quot;standalone&quot;))             // -&gt; &quot;standalone&quot;
+<div class="highlight"><pre><span></span><code>print(base_name("/home/alice/notes.txt"))  // -&gt; "notes.txt"
+print(base_name("src/core/"))              // -&gt; "core" (trailing slashes are ignored)
+print(base_name("standalone"))             // -&gt; "standalone"
 </code></pre></div>
 <p>Pure string manipulation - the path does not need to exist, unlike
 <a href="#get_path"><code>get_path</code></a>, which only reports <code>base_name</code> for existing paths.</p>
@@ -5309,28 +5337,28 @@ and <code>base_name("")</code> returns <code>"."</code>.</p>
 <h3 id="confirm">confirm<a class="headerlink" href="#confirm" title="Permanent link">&para;</a></h3>
 <p>Gets a boolean confirmation from the user (y/n prompt). Accepts "y", "yes", or Enter (empty input) as
 confirmation.</p>
-<div class="highlight"><pre><span></span><code>confirm(prompt: str = &quot;Confirm? [Y/n] &gt; &quot;) -&gt; error|bool
+<div class="highlight"><pre><span></span><code>confirm(prompt: str = "Confirm? [Y/n] &gt; ") -&gt; error|bool
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>if confirm():                        // -&gt; Uses default &quot;Confirm? [Y/n] &gt; &quot; prompt
-    print(&quot;Confirmed!&quot;)
+<div class="highlight"><pre><span></span><code>if confirm():                        // -&gt; Uses default "Confirm? [Y/n] &gt; " prompt
+    print("Confirmed!")
 
-if confirm(&quot;Delete file? [Y/n] &quot;):   // -&gt; Custom prompt
-    print(&quot;File deleted&quot;)
+if confirm("Delete file? [Y/n] "):   // -&gt; Custom prompt
+    print("File deleted")
 </code></pre></div>
 <h3 id="debug">debug<a class="headerlink" href="#debug" title="Permanent link">&para;</a></h3>
 <p>Behaves like <a href="#print"><code>print</code></a> but only outputs when debug mode is enabled via <code>--debug</code> flag.</p>
-<div class="highlight"><pre><span></span><code>debug(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+<div class="highlight"><pre><span></span><code>debug(*_items: any, *, sep: str = " ", end: str = "\n") -&gt; void
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>debug(&quot;entering loop&quot;)             // -&gt; nothing unless --debug is on
-debug(&quot;x =&quot;, x, &quot;y =&quot;, y)          // -&gt; debug-only diagnostics
+<div class="highlight"><pre><span></span><code>debug("entering loop")             // -&gt; nothing unless --debug is on
+debug("x =", x, "y =", y)          // -&gt; debug-only diagnostics
 </code></pre></div>
 <h3 id="delete_path">delete_path<a class="headerlink" href="#delete_path" title="Permanent link">&para;</a></h3>
 <p>Deletes a file or directory at the specified path.</p>
 <div class="highlight"><pre><span></span><code>delete_path(_path: str) -&gt; bool
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>delete_path(&quot;temp.txt&quot;)         // -&gt; true (if file existed and was deleted)
-delete_path(&quot;missing.txt&quot;)      // -&gt; false (file didn&#39;t exist)
-delete_path(&quot;directory/&quot;)       // -&gt; true (if directory existed and was deleted)
+<div class="highlight"><pre><span></span><code>delete_path("temp.txt")         // -&gt; true (if file existed and was deleted)
+delete_path("missing.txt")      // -&gt; false (file didn't exist)
+delete_path("directory/")       // -&gt; true (if directory existed and was deleted)
 </code></pre></div>
 <p>Returns <code>true</code> if the path was successfully deleted, <code>false</code> if it didn't exist or couldn't be deleted.</p>
 <p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
@@ -5338,9 +5366,9 @@ delete_path(&quot;directory/&quot;)       // -&gt; true (if directory existed an
 <p>Returns a path with its last element removed, i.e. the containing directory.</p>
 <div class="highlight"><pre><span></span><code>dir_name(_path: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>print(dir_name(&quot;/home/alice/notes.txt&quot;))  // -&gt; &quot;/home/alice&quot;
-print(dir_name(&quot;src/core/funcs.go&quot;))      // -&gt; &quot;src/core&quot;
-print(dir_name(&quot;standalone&quot;))             // -&gt; &quot;.&quot;
+<div class="highlight"><pre><span></span><code>print(dir_name("/home/alice/notes.txt"))  // -&gt; "/home/alice"
+print(dir_name("src/core/funcs.go"))      // -&gt; "src/core"
+print(dir_name("standalone"))             // -&gt; "."
 </code></pre></div>
 <p>Pure string manipulation - the path does not need to exist.</p>
 <p>Edge cases follow Unix <code>dirname</code> conventions: <code>dir_name("/")</code> returns <code>"/"</code>,
@@ -5350,18 +5378,18 @@ path uses forward slashes on all platforms.</p>
 <p>See also <a href="#base_name"><code>base_name</code></a> and <a href="#join_paths"><code>join_paths</code></a>.</p>
 <h3 id="find_paths">find_paths<a class="headerlink" href="#find_paths" title="Permanent link">&para;</a></h3>
 <p>Returns a list of all paths under a directory.</p>
-<div class="highlight"><pre><span></span><code>find_paths(_path: str, *, depth: int = -1, relative: [&quot;target&quot;, &quot;cwd&quot;, &quot;absolute&quot;] = &quot;target&quot;) -&gt; error|str[]
+<div class="highlight"><pre><span></span><code>find_paths(_path: str, *, depth: int = -1, relative: ["target", "cwd", "absolute"] = "target") -&gt; error|str[]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Find all files in directory
-paths = find_paths(&quot;src/&quot;)
+paths = find_paths("src/")
 for path in paths:
-    print(path)  // -&gt; &quot;file1.txt&quot;, &quot;subdir/file2.txt&quot;, etc.
+    print(path)  // -&gt; "file1.txt", "subdir/file2.txt", etc.
 
 // Limit depth
-paths = find_paths(&quot;src/&quot;, depth=1)  // -&gt; Only direct children
+paths = find_paths("src/", depth=1)  // -&gt; Only direct children
 
 // Get absolute paths
-paths = find_paths(&quot;src/&quot;, relative=&quot;absolute&quot;)
+paths = find_paths("src/", relative="absolute")
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5398,19 +5426,19 @@ paths = find_paths(&quot;src/&quot;, relative=&quot;absolute&quot;)
 <p>A leading <code>~</code> in <code>_path</code> is expanded to your home directory.</p>
 <h3 id="input">input<a class="headerlink" href="#input" title="Permanent link">&para;</a></h3>
 <p>Gets a line of text input from the user with optional prompt, default, hint, and secret mode.</p>
-<div class="highlight"><pre><span></span><code>input(prompt: str = &quot;&gt; &quot;, *, hint: str = &quot;&quot;, default: str = &quot;&quot;, secret: bool = false) -&gt; error|str
+<div class="highlight"><pre><span></span><code>input(prompt: str = "&gt; ", *, hint: str = "", default: str = "", secret: bool = false) -&gt; error|str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Basic input
-name = input(&quot;What&#39;s your name? &quot;)                    // -&gt; Prompts and waits for input
+name = input("What's your name? ")                    // -&gt; Prompts and waits for input
 
 // With default value
-color = input(&quot;Favorite color? &quot;, default=&quot;blue&quot;)     // -&gt; Returns &quot;blue&quot; if user presses enter
+color = input("Favorite color? ", default="blue")     // -&gt; Returns "blue" if user presses enter
 
 // With hint text
-email = input(&quot;Email: &quot;, hint=&quot;user@example.com&quot;)     // -&gt; Shows placeholder text
+email = input("Email: ", hint="user@example.com")     // -&gt; Shows placeholder text
 
 // Hidden input for passwords
-password = input(&quot;Password: &quot;, secret=true)           // -&gt; Hides typed characters
+password = input("Password: ", secret=true)           // -&gt; Hides typed characters
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5450,9 +5478,9 @@ enabled.</p>
 <p>Joins path segments into a single path.</p>
 <div class="highlight"><pre><span></span><code>join_paths(*_parts: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>print(join_paths(&quot;home&quot;, &quot;alice&quot;, &quot;notes.txt&quot;))  // -&gt; &quot;home/alice/notes.txt&quot;
-print(join_paths(&quot;/etc&quot;, &quot;nginx/&quot;, &quot;conf.d&quot;))    // -&gt; &quot;/etc/nginx/conf.d&quot;
-print(join_paths(&quot;a&quot;, &quot;&quot;, &quot;b&quot;))                  // -&gt; &quot;a/b&quot; (empty segments are skipped)
+<div class="highlight"><pre><span></span><code>print(join_paths("home", "alice", "notes.txt"))  // -&gt; "home/alice/notes.txt"
+print(join_paths("/etc", "nginx/", "conf.d"))    // -&gt; "/etc/nginx/conf.d"
+print(join_paths("a", "", "b"))                  // -&gt; "a/b" (empty segments are skipped)
 </code></pre></div>
 <p>Pure string manipulation - the paths do not need to exist.</p>
 <p>The result is lexically cleaned: redundant separators collapse, and <code>.</code> / <code>..</code>
@@ -5462,22 +5490,22 @@ Joining nothing (or only empty strings) returns <code>""</code>.</p>
 <p>See also <a href="#base_name"><code>base_name</code></a> and <a href="#dir_name"><code>dir_name</code></a>.</p>
 <h3 id="mkdir">mkdir<a class="headerlink" href="#mkdir" title="Permanent link">&para;</a></h3>
 <p>Creates a directory, including any missing parent directories.</p>
-<div class="highlight"><pre><span></span><code>mkdir(_path: str) -&gt; error|{ &quot;path&quot;: str, &quot;created&quot;: bool }
+<div class="highlight"><pre><span></span><code>mkdir(_path: str) -&gt; error|{ "path": str, "created": bool }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>res = mkdir(&quot;output/reports&quot;)
+<div class="highlight"><pre><span></span><code>res = mkdir("output/reports")
 print(res.created)  // -&gt; true (false if it already existed)
 
 // Idempotent - safe to call when the directory already exists
-res = mkdir(&quot;output/reports&quot;)
+res = mkdir("output/reports")
 print(res.created)  // -&gt; false
 
 // path is the input after ~ expansion, with forward slashes
-res = mkdir(&quot;~/backups&quot;)
-print(res.path)     // -&gt; e.g. &quot;/home/alice/backups&quot;
+res = mkdir("~/backups")
+print(res.path)     // -&gt; e.g. "/home/alice/backups"
 
 // Errors are catchable
-res = mkdir(&quot;/root/forbidden&quot;) catch:
-    print(&quot;Could not create:&quot;, res)
+res = mkdir("/root/forbidden") catch:
+    print("Could not create:", res)
 </code></pre></div>
 <p>Behaves like <code>mkdir -p</code>: creates all missing parents, and succeeds (with
 <code>created: false</code>) if the directory already exists. Directories are created
@@ -5492,9 +5520,9 @@ all platforms - it is not resolved to an absolute path.</p>
 <p>Presents an interactive menu for selecting multiple options from a list.</p>
 <div class="highlight"><pre><span></span><code>multipick(_options: str[], *, prompt: str?, min: int = 0, max: int?) -&gt; error|str[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>fruits = [&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;, &quot;date&quot;]
+<div class="highlight"><pre><span></span><code>fruits = ["apple", "banana", "cherry", "date"]
 selected = multipick(fruits)
-// selected equals e.g. [ &quot;apple&quot;, &quot;cherry&quot; ]
+// selected equals e.g. [ "apple", "cherry" ]
 </code></pre></div>
 <p>Shows an interactive multi-select menu where users can select zero or more options.
 Unlike <code>pick</code>, which returns a single selection, <code>multipick</code> returns a list of all selected items.</p>
@@ -5533,24 +5561,24 @@ Unlike <code>pick</code>, which returns a single selection, <code>multipick</cod
 <p>The <code>prompt</code> parameter has smart defaults that adjust based on the min/max constraints.</p>
 <h3 id="pick">pick<a class="headerlink" href="#pick" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu for selecting from a list of options.</p>
-<div class="highlight"><pre><span></span><code>pick(_options: str[], _filter: (str|str[])?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; error|str
+<div class="highlight"><pre><span></span><code>pick(_options: str[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>pick([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])                        // -&gt; Interactive menu
-pick([&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;], &quot;r&quot;)                        // -&gt; Fuzzy-filtered to &quot;red&quot;, &quot;green&quot;
-pick([&quot;grape&quot;, &quot;g&quot;], &quot;g&quot;, prefer_exact=true)                 // -&gt; Immediately picks &quot;g&quot; (exact match)
-pick([&quot;one&quot;, &quot;two&quot;, &quot;three&quot;], prompt=&quot;Choose:&quot;)            // -&gt; Custom prompt
+<div class="highlight"><pre><span></span><code>pick(["apple", "banana", "cherry"])                        // -&gt; Interactive menu
+pick(["red", "green", "blue"], "r")                        // -&gt; Fuzzy-filtered to "red", "green"
+pick(["grape", "g"], "g", prefer_exact=true)                 // -&gt; Immediately picks "g" (exact match)
+pick(["one", "two", "three"], prompt="Choose:")            // -&gt; Custom prompt
 </code></pre></div>
 <p>Shows a fuzzy-searchable menu. Filter can be a string or list of strings to pre-filter options.</p>
 <p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one option exactly matches a
 filter, it's selected immediately; if multiple match exactly, only those are shown.</p>
 <h3 id="pick_from_resource">pick_from_resource<a class="headerlink" href="#pick_from_resource" title="Permanent link">&para;</a></h3>
 <p>Loads options from a resource file and presents an interactive menu.</p>
-<div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = true) -&gt; any
+<div class="highlight"><pre><span></span><code>pick_from_resource(path: str, _filter: str?, *, prompt: str = "Pick an option", prefer_exact: bool = true) -&gt; any
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>pick_from_resource(&quot;servers.json&quot;)                    // -&gt; Menu from file
-pick_from_resource(&quot;configs.json&quot;, &quot;prod&quot;)            // -&gt; Pre-filtered, exact match priority
-pick_from_resource(&quot;data.json&quot;, prompt=&quot;Select:&quot;)     // -&gt; Custom prompt
-pick_from_resource(&quot;data.json&quot;, &quot;x&quot;, prefer_exact=false) // -&gt; Pure fuzzy matching
+<div class="highlight"><pre><span></span><code>pick_from_resource("servers.json")                    // -&gt; Menu from file
+pick_from_resource("configs.json", "prod")            // -&gt; Pre-filtered, exact match priority
+pick_from_resource("data.json", prompt="Select:")     // -&gt; Custom prompt
+pick_from_resource("data.json", "x", prefer_exact=false) // -&gt; Pure fuzzy matching
 </code></pre></div>
 <p>Loads data from a JSON file and presents it as selectable options. Returns the selected item(s).</p>
 <p>With <code>prefer_exact=true</code> (the default), exact key matches (case-insensitive) are prioritized: if exactly one entry has a
@@ -5558,13 +5586,13 @@ key that exactly matches the filter, it's selected immediately; if multiple matc
 <code>prefer_exact=false</code> to disable this and use pure fuzzy matching.</p>
 <h3 id="pick_kv">pick_kv<a class="headerlink" href="#pick_kv" title="Permanent link">&para;</a></h3>
 <p>Presents an interactive menu showing keys but returns corresponding values.</p>
-<div class="highlight"><pre><span></span><code>pick_kv(keys: str[], values: any[], _filter: (str|str[])?, *, prompt: str = &quot;Pick an option&quot;, prefer_exact: bool = false) -&gt; any
+<div class="highlight"><pre><span></span><code>pick_kv(keys: str[], values: any[], _filter: (str|str[])?, *, prompt: str = "Pick an option", prefer_exact: bool = false) -&gt; any
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+<div class="highlight"><pre><span></span><code>names = ["Alice", "Bob", "Charlie"]
 ages = [25, 30, 35]
 pick_kv(names, ages)                                        // -&gt; Shows names, returns age
-pick_kv([&quot;Red&quot;, &quot;Green&quot;], [&quot;#ff0000&quot;, &quot;#00ff00&quot;])           // -&gt; Shows colors, returns hex
-pick_kv([&quot;grape&quot;, &quot;g&quot;], [1, 2], &quot;g&quot;, prefer_exact=true)       // -&gt; Returns 2 (exact match)
+pick_kv(["Red", "Green"], ["#ff0000", "#00ff00"])           // -&gt; Shows colors, returns hex
+pick_kv(["grape", "g"], [1, 2], "g", prefer_exact=true)       // -&gt; Returns 2 (exact match)
 </code></pre></div>
 <p>Displays keys in the menu but returns the value at the same index when selected.</p>
 <p>When <code>prefer_exact=true</code>, exact key matches (case-insensitive) are prioritized: if exactly one key exactly matches a
@@ -5573,54 +5601,54 @@ filter, its value is returned immediately; if multiple match exactly, only those
 <p>Pretty prints data in JSON format with indentation and colors.</p>
 <div class="highlight"><pre><span></span><code>pprint(_item: any?) -&gt; void
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>item = { &quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30 }
+<div class="highlight"><pre><span></span><code>item = { "name": "Alice", "age": 30 }
 pprint(item)
 // Output:
 // {
-//   &quot;name&quot;: &quot;Alice&quot;, 
-//   &quot;age&quot;: 30
+//   "name": "Alice", 
+//   "age": 30
 // }
 </code></pre></div>
 <h3 id="print">print<a class="headerlink" href="#print" title="Permanent link">&para;</a></h3>
 <p>Writes its arguments to stdout, separated by a space, followed by a
 newline. The default workhorse for output. For error output, use
 <code>print_err</code>; for structured pretty-printing, use <code>pprint</code>.</p>
-<div class="highlight"><pre><span></span><code>print(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+<div class="highlight"><pre><span></span><code>print(*_items: any, *, sep: str = " ", end: str = "\n") -&gt; void
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>print(&quot;hello&quot;, &quot;world&quot;)    // -&gt; hello world
-print(1, 2, 3, sep=&quot;, &quot;)   // -&gt; 1, 2, 3
-print(&quot;no newline&quot;, end=&quot;&quot;) // -&gt; no newline
+<div class="highlight"><pre><span></span><code>print("hello", "world")    // -&gt; hello world
+print(1, 2, 3, sep=", ")   // -&gt; 1, 2, 3
+print("no newline", end="") // -&gt; no newline
 </code></pre></div>
 <p>See also: <code>print_err</code>, <code>pprint</code>, <code>debug</code></p>
 <h3 id="print_err">print_err<a class="headerlink" href="#print_err" title="Permanent link">&para;</a></h3>
 <p>Behaves like <a href="#print"><code>print</code></a> but outputs to stderr instead of stdout.</p>
-<div class="highlight"><pre><span></span><code>print_err(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+<div class="highlight"><pre><span></span><code>print_err(*_items: any, *, sep: str = " ", end: str = "\n") -&gt; void
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>print_err(&quot;failed to load config&quot;)     // -&gt; writes to stderr
+<div class="highlight"><pre><span></span><code>print_err("failed to load config")     // -&gt; writes to stderr
 
 // Inside a catch: block the assigned variable is the error itself
-config = read_file(&quot;config.json&quot;) catch:
-    print_err(&quot;error:&quot;, config)        // -&gt; &quot;error: &lt;msg&gt;&quot; to stderr
+config = read_file("config.json") catch:
+    print_err("error:", config)        // -&gt; "error: &lt;msg&gt;" to stderr
 </code></pre></div>
 <h3 id="read_file">read_file<a class="headerlink" href="#read_file" title="Permanent link">&para;</a></h3>
 <p>Reads the contents of a file.</p>
-<div class="highlight"><pre><span></span><code>read_file(_path: str, *, mode: [&quot;text&quot;, &quot;bytes&quot;] = &quot;text&quot;) -&gt; error|{ &quot;size_bytes&quot;: int, &quot;content&quot;: str|int[] }
+<div class="highlight"><pre><span></span><code>read_file(_path: str, *, mode: ["text", "bytes"] = "text") -&gt; error|{ "size_bytes": int, "content": str|int[] }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Read text file
-result = read_file(&quot;config.txt&quot;)
+result = read_file("config.txt")
 content = result.content      // -&gt; string
 
 // Read binary file
-result = read_file(&quot;image.png&quot;, mode=&quot;bytes&quot;)
+result = read_file("image.png", mode="bytes")
 bytes = result.content        // -&gt; list[int]
 
 // Handle errors - inside the block, `result` is the error
-result = read_file(&quot;missing.txt&quot;) catch:
-    print_err(&quot;Read failed: {result}&quot;)
+result = read_file("missing.txt") catch:
+    print_err("Read failed: {result}")
     exit(1)
 
 // Or fall back
-result = read_file(&quot;missing.txt&quot;) ?? { &quot;size_bytes&quot;: 0, &quot;content&quot;: &quot;&quot; }
+result = read_file("missing.txt") ?? { "size_bytes": 0, "content": "" }
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5655,7 +5683,7 @@ result = read_file(&quot;missing.txt&quot;) ?? { &quot;size_bytes&quot;: 0, &quo
 <p>Reads all data from stdin.</p>
 <div class="highlight"><pre><span></span><code>read_stdin() -&gt; str?|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>read_stdin()                  // -&gt; &quot;piped content&quot; (if piped)
+<div class="highlight"><pre><span></span><code>read_stdin()                  // -&gt; "piped content" (if piped)
 read_stdin()                  // -&gt; null (if not piped)
 read_stdin()                  // -&gt; Error 20026 if read fails
 content = read_stdin()
@@ -5663,18 +5691,18 @@ lines = content.split_lines() // Process stdin line-by-line
 </code></pre></div>
 <h3 id="write_file">write_file<a class="headerlink" href="#write_file" title="Permanent link">&para;</a></h3>
 <p>Writes content to a file. Creates the file if it doesn't exist.</p>
-<div class="highlight"><pre><span></span><code>write_file(_path: str, _content: str, *, append: bool = false) -&gt; error|{ &quot;bytes_written&quot;: int, &quot;path&quot;: str }
+<div class="highlight"><pre><span></span><code>write_file(_path: str, _content: str, *, append: bool = false) -&gt; error|{ "bytes_written": int, "path": str }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Write new file
-result = write_file(&quot;output.txt&quot;, &quot;Hello world&quot;)
-print(&quot;Wrote&quot;, result.bytes_written, &quot;bytes&quot;)
+result = write_file("output.txt", "Hello world")
+print("Wrote", result.bytes_written, "bytes")
 
 // Append to existing file
-write_file(&quot;log.txt&quot;, &quot;\nNew entry&quot;, append=true)
+write_file("log.txt", "\nNew entry", append=true)
 
 // Handle errors - inside the block, `result` is the error
-result = write_file(&quot;/readonly/file.txt&quot;, &quot;data&quot;) catch:
-    print_err(&quot;Write failed: {result}&quot;)
+result = write_file("/readonly/file.txt", "data") catch:
+    print_err("Write failed: {result}")
     exit(1)
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
@@ -5717,7 +5745,7 @@ result = write_file(&quot;/readonly/file.txt&quot;, &quot;data&quot;) catch:
 <div class="highlight"><pre><span></span><code>filter(_coll: map|list, _fn: fn(any) -&gt; bool | fn(any, any) -&gt; bool) -&gt; map|list
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>filter([1, 2, 3, 4], fn(x) x % 2 == 0)      // -&gt; [2, 4]
-filter({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v &gt; 1)    // -&gt; {&quot;b&quot;: 2}
+filter({"a": 1, "b": 2}, fn(k, v) v &gt; 1)    // -&gt; {"b": 2}
 </code></pre></div>
 <p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code>.</p>
 <h3 id="flat_map">flat_map<a class="headerlink" href="#flat_map" title="Permanent link">&para;</a></h3>
@@ -5732,13 +5760,13 @@ filter({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v &gt; 1)    // -&gt; {&qu
 [[[1]], [[2]]].flat_map()                // -&gt; [[1], [2]]
 
 // Map then flatten (function must return a list)
-[&quot;a-b&quot;, &quot;c-d&quot;].flat_map(fn(e) e.split(&quot;-&quot;))  // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;]
+["a-b", "c-d"].flat_map(fn(e) e.split("-"))  // -&gt; ["a", "b", "c", "d"]
 [1, 2].flat_map(fn(x) [x, x * 10])           // -&gt; [1, 10, 2, 20]
 [1, 2].flat_map(fn(x) range(x))              // -&gt; [0, 0, 1]
 
 // Map collection - function required, must return list
-{&quot;a&quot;: [1, 2], &quot;b&quot;: [3, 4]}.flat_map(fn(k, v) v)  // -&gt; [1, 2, 3, 4]
-{&quot;a&quot;: 1, &quot;b&quot;: 2}.flat_map(fn(k, v) [k, v])       // -&gt; [&quot;a&quot;, 1, &quot;b&quot;, 2]
+{"a": [1, 2], "b": [3, 4]}.flat_map(fn(k, v) v)  // -&gt; [1, 2, 3, 4]
+{"a": 1, "b": 2}.flat_map(fn(k, v) [k, v])       // -&gt; ["a", 1, "b", 2]
 
 // Errors:
 // [1, [2], 3].flat_map()           // Error: element 0 is not a list
@@ -5749,17 +5777,17 @@ filter({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v &gt; 1)    // -&gt; {&qu
 <p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code> and is required.</p>
 <h3 id="join">join<a class="headerlink" href="#join" title="Permanent link">&para;</a></h3>
 <p>Joins a list into a string with separator, prefix, and suffix.</p>
-<div class="highlight"><pre><span></span><code>join(_list: list, sep: str = &quot;&quot;, prefix: str = &quot;&quot;, suffix: str = &quot;&quot;) -&gt; str
+<div class="highlight"><pre><span></span><code>join(_list: list, sep: str = "", prefix: str = "", suffix: str = "") -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>join([1, 2, 3], sep=&quot;, &quot;)           // -&gt; &quot;1, 2, 3&quot;
-join([&quot;a&quot;, &quot;b&quot;], prefix=&quot;[&quot;, suffix=&quot;]&quot;)  // -&gt; &quot;[ab]&quot;
-join([&quot;x&quot;, &quot;y&quot;, &quot;z&quot;], sep=&quot;-&quot;, prefix=&quot;(&quot;, suffix=&quot;)&quot;)  // -&gt; &quot;(x-y-z)&quot;
+<div class="highlight"><pre><span></span><code>join([1, 2, 3], sep=", ")           // -&gt; "1, 2, 3"
+join(["a", "b"], prefix="[", suffix="]")  // -&gt; "[ab]"
+join(["x", "y", "z"], sep="-", prefix="(", suffix=")")  // -&gt; "(x-y-z)"
 </code></pre></div>
 <h3 id="keys">keys<a class="headerlink" href="#keys" title="Permanent link">&para;</a></h3>
 <p>Returns all keys from a map as a list.</p>
 <div class="highlight"><pre><span></span><code>keys(_map: map) -&gt; any[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>keys({&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3})  // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+<div class="highlight"><pre><span></span><code>keys({"a": 1, "b": 2, "c": 3})  // -&gt; ["a", "b", "c"]
 keys({})                        // -&gt; []
 </code></pre></div>
 <h3 id="len">len<a class="headerlink" href="#len" title="Permanent link">&para;</a></h3>
@@ -5768,10 +5796,10 @@ strings this is the rune count (not byte count), so unicode characters
 contribute one each.</p>
 <div class="highlight"><pre><span></span><code>len(_val: str|list|map) -&gt; int
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>len(&quot;hello&quot;)              // -&gt; 5
+<div class="highlight"><pre><span></span><code>len("hello")              // -&gt; 5
 len([1, 2, 3])            // -&gt; 3
-len({&quot;a&quot;: 1, &quot;b&quot;: 2})     // -&gt; 2
-len(&quot;héllo&quot;)              // -&gt; 5 (rune count, not byte count)
+len({"a": 1, "b": 2})     // -&gt; 2
+len("héllo")              // -&gt; 5 (rune count, not byte count)
 </code></pre></div>
 <p>See also: <code>sort</code>, <code>keys</code>, <code>values</code></p>
 <h3 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h3>
@@ -5779,7 +5807,7 @@ len(&quot;héllo&quot;)              // -&gt; 5 (rune count, not byte count)
 <div class="highlight"><pre><span></span><code>map(_coll: map|list, _fn: fn(any) -&gt; any | fn(any, any) -&gt; any) -&gt; map|list
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>map([1, 2, 3], fn(x) x * 2)              // -&gt; [2, 4, 6]
-map({&quot;a&quot;: 1, &quot;b&quot;: 2}, fn(k, v) v * 10)   // -&gt; {&quot;a&quot;: 10, &quot;b&quot;: 20}
+map({"a": 1, "b": 2}, fn(k, v) v * 10)   // -&gt; {"a": 10, "b": 20}
 </code></pre></div>
 <p>For lists, function receives <code>fn(value)</code>. For maps, function receives <code>fn(key, value)</code>.</p>
 <h3 id="sort">sort<a class="headerlink" href="#sort" title="Permanent link">&para;</a></h3>
@@ -5791,12 +5819,12 @@ using the first as the key.</p>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>sort([3, 1, 2])             // -&gt; [1, 2, 3]
 sort([3, 1, 2], reverse=true)  // -&gt; [3, 2, 1]
-sort(&quot;dcba&quot;)                // -&gt; &quot;abcd&quot;
+sort("dcba")                // -&gt; "abcd"
 
 ages = [30, 25, 28]
-names = [&quot;alice&quot;, &quot;bob&quot;, &quot;carol&quot;]
+names = ["alice", "bob", "carol"]
 sort(ages, names)           // -&gt; [25, 28, 30]
-                            //    names is now [&quot;bob&quot;, &quot;carol&quot;, &quot;alice&quot;]
+                            //    names is now ["bob", "carol", "alice"]
 </code></pre></div>
 <p>See also: <code>len</code>, <code>reverse</code></p>
 <h3 id="unique">unique<a class="headerlink" href="#unique" title="Permanent link">&para;</a></h3>
@@ -5804,13 +5832,13 @@ sort(ages, names)           // -&gt; [25, 28, 30]
 <div class="highlight"><pre><span></span><code>unique(_list: any[]) -&gt; any[]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>unique([2, 1, 2, 3, 1, 3, 4])  // -&gt; [2, 1, 3, 4]
-unique([&quot;a&quot;, &quot;b&quot;, &quot;a&quot;, &quot;c&quot;])    // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+unique(["a", "b", "a", "c"])    // -&gt; ["a", "b", "c"]
 </code></pre></div>
 <h3 id="values">values<a class="headerlink" href="#values" title="Permanent link">&para;</a></h3>
 <p>Returns all values from a map as a list.</p>
 <div class="highlight"><pre><span></span><code>values(_map: map) -&gt; any[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>values({&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3})  // -&gt; [1, 2, 3]
+<div class="highlight"><pre><span></span><code>values({"a": 1, "b": 2, "c": 3})  // -&gt; [1, 2, 3]
 values({})                         // -&gt; []
 </code></pre></div>
 <h3 id="zip">zip<a class="headerlink" href="#zip" title="Permanent link">&para;</a></h3>
@@ -5818,14 +5846,14 @@ values({})                         // -&gt; []
 <div class="highlight"><pre><span></span><code>zip(*_lists: list, *, fill: any?, strict: bool = false) -&gt; error|list[]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Basic usage
-zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])           // -&gt; [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;c&quot;]]
-zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;])             // -&gt; [[1, &quot;a&quot;], [2, &quot;b&quot;]]
+zip([1, 2, 3], ["a", "b", "c"])           // -&gt; [[1, "a"], [2, "b"], [3, "c"]]
+zip([1, 2, 3, 4], ["a", "b"])             // -&gt; [[1, "a"], [2, "b"]]
 
 // With fill value for unequal lengths
-zip([1, 2, 3, 4], [&quot;a&quot;, &quot;b&quot;], fill=&quot;-&quot;)   // -&gt; [[1, &quot;a&quot;], [2, &quot;b&quot;], [3, &quot;-&quot;], [4, &quot;-&quot;]]
+zip([1, 2, 3, 4], ["a", "b"], fill="-")   // -&gt; [[1, "a"], [2, "b"], [3, "-"], [4, "-"]]
 
 // Strict mode (errors on length mismatch)  
-zip([1, 2, 3], [&quot;a&quot;, &quot;b&quot;], strict=true)   // -&gt; Error: Lists must have the same length
+zip([1, 2, 3], ["a", "b"], strict=true)   // -&gt; Error: Lists must have the same length
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5936,7 +5964,7 @@ max(5.5, 2.1, 8.9)       // -&gt; 8.9
 max(1, 2.0, 3)           // -&gt; 3.0 (float because 2.0 is float)
 max(5)                   // -&gt; 5
 max([])                  // -&gt; Error: cannot find maximum of empty list
-max([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
+max([1, "text"])         // -&gt; Error: requires list of numbers
 </code></pre></div>
 <p>Accepts either a single list of numbers or multiple number arguments.
 The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
@@ -5950,7 +5978,7 @@ min(5.5, 2.1, 8.9)       // -&gt; 2.1
 min(1, 2.0, 3)           // -&gt; 1.0 (float because 2.0 is float)
 min(5)                   // -&gt; 5
 min([])                  // -&gt; Error: cannot find minimum of empty list
-min([1, &quot;text&quot;])         // -&gt; Error: requires list of numbers
+min([1, "text"])         // -&gt; Error: requires list of numbers
 </code></pre></div>
 <p>Accepts either a single list of numbers or multiple number arguments.
 The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
@@ -6017,19 +6045,19 @@ round(3.14, -1)          // -&gt; Error: precision must be non-negative
 sum([1.5, 2.5, 3.0])     // -&gt; 7.0
 sum([1, 2.0, 3])         // -&gt; 6.0 (float because 2.0 is float)
 sum([])                  // -&gt; 0
-sum([1, &quot;text&quot;, 3])      // -&gt; Error: requires list of numbers
+sum([1, "text", 3])      // -&gt; Error: requires list of numbers
 </code></pre></div>
 <p>The return type preserves the input type: returns <code>int</code> if all inputs are integers, <code>float</code> if any input is a float.</p>
 <h2 id="parsing">Parsing<a class="headerlink" href="#parsing" title="Permanent link">&para;</a></h2>
 <h3 id="convert_duration">convert_duration<a class="headerlink" href="#convert_duration" title="Permanent link">&para;</a></h3>
 <p>Converts a numeric value in the specified unit. Supports <code>nanos</code>, <code>micros</code>, <code>millis</code>, <code>seconds</code>, <code>minutes</code>, <code>hours</code>, and
 <code>days</code>.</p>
-<div class="highlight"><pre><span></span><code>convert_duration(_value: int|float, _unit: [&quot;nanos&quot;, &quot;micros&quot;, &quot;millis&quot;, &quot;seconds&quot;, &quot;minutes&quot;, &quot;hours&quot;, &quot;days&quot;]) -&gt; error|{ &quot;nanos&quot;: int, &quot;micros&quot;: float, &quot;millis&quot;: float, &quot;seconds&quot;: float, &quot;minutes&quot;: float, &quot;hours&quot;: float, &quot;days&quot;: float }
+<div class="highlight"><pre><span></span><code>convert_duration(_value: int|float, _unit: ["nanos", "micros", "millis", "seconds", "minutes", "hours", "days"]) -&gt; error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>convert_duration(90, &quot;seconds&quot;).minutes   // -&gt; 1.5
-convert_duration(1, &quot;days&quot;).hours         // -&gt; 24.0
-convert_duration(1.5, &quot;hours&quot;).minutes    // -&gt; 90.0
-convert_duration(1500, &quot;millis&quot;).seconds  // -&gt; 1.5
+<div class="highlight"><pre><span></span><code>convert_duration(90, "seconds").minutes   // -&gt; 1.5
+convert_duration(1, "days").hours         // -&gt; 24.0
+convert_duration(1.5, "hours").minutes    // -&gt; 90.0
+convert_duration(1500, "millis").seconds  // -&gt; 1.5
 </code></pre></div>
 <h3 id="float">float<a class="headerlink" href="#float" title="Permanent link">&para;</a></h3>
 <p>Converts a value to a float. Does not work on strings - use <a href="#parse_float"><code>parse_float</code></a> for string parsing.</p>
@@ -6038,7 +6066,7 @@ convert_duration(1500, &quot;millis&quot;).seconds  // -&gt; 1.5
 <div class="highlight"><pre><span></span><code>float(42)      // -&gt; 42.0
 float(true)    // -&gt; 1.0
 float(false)   // -&gt; 0.0  
-float(&quot;3.14&quot;)  // -&gt; Error: cannot convert string
+float("3.14")  // -&gt; Error: cannot convert string
 </code></pre></div>
 <h3 id="int">int<a class="headerlink" href="#int" title="Permanent link">&para;</a></h3>
 <p>Converts a value to an integer. Does not work on strings - use <a href="#parse_int"><code>parse_int</code></a> for string parsing.</p>
@@ -6047,44 +6075,44 @@ float(&quot;3.14&quot;)  // -&gt; Error: cannot convert string
 <div class="highlight"><pre><span></span><code>int(3.14)     // -&gt; 3
 int(true)     // -&gt; 1
 int(false)    // -&gt; 0
-int(&quot;42&quot;)     // -&gt; Error: cannot convert string
+int("42")     // -&gt; Error: cannot convert string
 </code></pre></div>
 <h3 id="parse_duration">parse_duration<a class="headerlink" href="#parse_duration" title="Permanent link">&para;</a></h3>
 <p>Parses a human-readable duration string into a map of time units. Supports all standard suffixes (<code>ns</code>, <code>us</code>/<code>µs</code>, <code>ms</code>,
 <code>s</code>, <code>m</code>, <code>h</code>) plus <code>d</code> for days (1d = 24h) and <code>w</code> for weeks (1w = 7d). Spaces are stripped, and a leading <code>-</code> negates
 the whole duration.</p>
-<div class="highlight"><pre><span></span><code>parse_duration(_duration: str) -&gt; error|{ &quot;nanos&quot;: int, &quot;micros&quot;: float, &quot;millis&quot;: float, &quot;seconds&quot;: float, &quot;minutes&quot;: float, &quot;hours&quot;: float, &quot;days&quot;: float }
+<div class="highlight"><pre><span></span><code>parse_duration(_duration: str) -&gt; error|{ "nanos": int, "micros": float, "millis": float, "seconds": float, "minutes": float, "hours": float, "days": float }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>parse_duration(&quot;5m23s&quot;)         // -&gt; { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
-parse_duration(&quot;1d12h&quot;).hours   // -&gt; 36.0
-parse_duration(&quot;1w2d3h&quot;).hours  // -&gt; 219.0
-parse_duration(&quot;300ms&quot;).millis  // -&gt; 300.0
-parse_duration(&quot;-5m&quot;).minutes   // -&gt; -5.0
-parse_duration(&quot;5m 30s&quot;)        // -&gt; same as &quot;5m30s&quot;
+<div class="highlight"><pre><span></span><code>parse_duration("5m23s")         // -&gt; { nanos: 323000000000, micros: 323000000.0, millis: 323000.0, seconds: 323.0, minutes: 5.3833..., hours: 0.0897..., days: 0.00374... }
+parse_duration("1d12h").hours   // -&gt; 36.0
+parse_duration("1w2d3h").hours  // -&gt; 219.0
+parse_duration("300ms").millis  // -&gt; 300.0
+parse_duration("-5m").minutes   // -&gt; -5.0
+parse_duration("5m 30s")        // -&gt; same as "5m30s"
 </code></pre></div>
 <h3 id="parse_float">parse_float<a class="headerlink" href="#parse_float" title="Permanent link">&para;</a></h3>
 <p>Parses a string to a float.</p>
 <div class="highlight"><pre><span></span><code>parse_float(_str: str) -&gt; float|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>parse_float(&quot;3.14&quot;)  // -&gt; 3.14
-parse_float(&quot;42&quot;)    // -&gt; 42.0
-parse_float(&quot;abc&quot;)   // -&gt; Error: invalid syntax
+<div class="highlight"><pre><span></span><code>parse_float("3.14")  // -&gt; 3.14
+parse_float("42")    // -&gt; 42.0
+parse_float("abc")   // -&gt; Error: invalid syntax
 </code></pre></div>
 <h3 id="parse_int">parse_int<a class="headerlink" href="#parse_int" title="Permanent link">&para;</a></h3>
 <p>Parses a string to an integer.</p>
 <div class="highlight"><pre><span></span><code>parse_int(_str: str) -&gt; int|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>parse_int(&quot;42&quot;)    // -&gt; 42
-parse_int(&quot;3.14&quot;)  // -&gt; Error: invalid syntax
-parse_int(&quot;abc&quot;)   // -&gt; Error: invalid syntax
+<div class="highlight"><pre><span></span><code>parse_int("42")    // -&gt; 42
+parse_int("3.14")  // -&gt; Error: invalid syntax
+parse_int("abc")   // -&gt; Error: invalid syntax
 </code></pre></div>
 <h3 id="parse_json">parse_json<a class="headerlink" href="#parse_json" title="Permanent link">&para;</a></h3>
 <p>Parses a JSON string into Rad data structures.</p>
 <div class="highlight"><pre><span></span><code>parse_json(_str: str) -&gt; any|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>parse_json(r&#39;{&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}&#39;)  // -&gt; {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30}
-parse_json(&#39;[1, 2, 3]&#39;)                      // -&gt; [1, 2, 3]
-parse_json(&#39;invalid json&#39;)                   // -&gt; Error: invalid JSON
+<div class="highlight"><pre><span></span><code>parse_json(r'{"name": "Alice", "age": 30}')  // -&gt; {"name": "Alice", "age": 30}
+parse_json('[1, 2, 3]')                      // -&gt; [1, 2, 3]
+parse_json('invalid json')                   // -&gt; Error: invalid JSON
 </code></pre></div>
 <p>Use a raw string (<code>r'...'</code>) when the JSON contains <code>{</code> or <code>}</code> - plain
 single- and double-quoted strings interpolate <code>{expr}</code>, which makes
@@ -6095,19 +6123,19 @@ JSON pasted verbatim from a sample.</p>
 interpolation (<code>"value: {x}"</code>) is generally preferred.</p>
 <div class="highlight"><pre><span></span><code>str(_var: any) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>str(42)        // -&gt; &quot;42&quot;
-str(3.14)      // -&gt; &quot;3.14&quot;
-str([1, 2])    // -&gt; &quot;[1, 2]&quot;
-str(true)      // -&gt; &quot;true&quot;
+<div class="highlight"><pre><span></span><code>str(42)        // -&gt; "42"
+str(3.14)      // -&gt; "3.14"
+str([1, 2])    // -&gt; "[1, 2]"
+str(true)      // -&gt; "true"
 </code></pre></div>
 <h3 id="to_json">to_json<a class="headerlink" href="#to_json" title="Permanent link">&para;</a></h3>
 <p>Serializes a Rad value into a JSON string. The inverse of <code>parse_json</code>.</p>
 <div class="highlight"><pre><span></span><code>to_json(_val: any, *, indent: int = 0) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>to_json({&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30})  // -&gt; &#39;{&quot;age&quot;:30,&quot;name&quot;:&quot;Alice&quot;}&#39;
-to_json([1, 2, &quot;x&quot;])                   // -&gt; &#39;[1,2,&quot;x&quot;]&#39;
-to_json(&quot;hi&quot;)                          // -&gt; &#39;&quot;hi&quot;&#39;
-to_json({&quot;a&quot;: 1}, indent=2)            // -&gt; multi-line, 2-space indented
+<div class="highlight"><pre><span></span><code>to_json({"name": "Alice", "age": 30})  // -&gt; '{"age":30,"name":"Alice"}'
+to_json([1, 2, "x"])                   // -&gt; '[1,2,"x"]'
+to_json("hi")                          // -&gt; '"hi"'
+to_json({"a": 1}, indent=2)            // -&gt; multi-line, 2-space indented
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6169,7 +6197,7 @@ rand_int(10)        // -&gt; Same sequence every time with seed 42
 <p>Defaults to <code>$HOME/.rad</code>, or <code>$RAD_HOME</code> if it's defined.</p>
 <div class="highlight"><pre><span></span><code>get_rad_home() -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>home = get_rad_home()              // -&gt; &quot;/Users/me/.rad&quot; (or $RAD_HOME)
+<div class="highlight"><pre><span></span><code>home = get_rad_home()              // -&gt; "/Users/me/.rad" (or $RAD_HOME)
 </code></pre></div>
 <h3 id="get_stash_path">get_stash_path<a class="headerlink" href="#get_stash_path" title="Permanent link">&para;</a></h3>
 <p>Returns the full path to the script's stash directory, with the given subpath if specified.</p>
@@ -6179,24 +6207,24 @@ rand_int(10)        // -&gt; Same sequence every time with seed 42
 <li>Without subpath defined: <code>&lt;rad home&gt;/stashes/&lt;stash id&gt;</code></li>
 <li>With subpath defined: <code>&lt;rad home&gt;/stashes/&lt;stash id&gt;/&lt;subpath&gt;</code></li>
 </ul>
-<div class="highlight"><pre><span></span><code>get_stash_path(_sub_path: str = &quot;&quot;) -&gt; error|str
+<div class="highlight"><pre><span></span><code>get_stash_path(_sub_path: str = "") -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>root = get_stash_path()                // -&gt; &quot;&lt;rad-home&gt;/stashes/&lt;stash-id&gt;&quot;
-cache = get_stash_path(&quot;cache.json&quot;)   // -&gt; &quot;&lt;rad-home&gt;/stashes/&lt;stash-id&gt;/cache.json&quot;
+<div class="highlight"><pre><span></span><code>root = get_stash_path()                // -&gt; "&lt;rad-home&gt;/stashes/&lt;stash-id&gt;"
+cache = get_stash_path("cache.json")   // -&gt; "&lt;rad-home&gt;/stashes/&lt;stash-id&gt;/cache.json"
 </code></pre></div>
 <h3 id="load">load<a class="headerlink" href="#load" title="Permanent link">&para;</a></h3>
 <p>Loads a value into a map using lazy evaluation. If key exists, returns cached value; otherwise runs loader function.</p>
 <div class="highlight"><pre><span></span><code>load(_map: map, _key: any, _loader: fn() -&gt; any, *, reload: bool = false, override: any?) -&gt; error|any
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>cache = {}
-load(cache, &quot;data&quot;, fn() expensive_calculation())    // -&gt; Runs loader, caches result
-load(cache, &quot;data&quot;, fn() expensive_calculation())    // -&gt; Returns cached value
+load(cache, "data", fn() expensive_calculation())    // -&gt; Runs loader, caches result
+load(cache, "data", fn() expensive_calculation())    // -&gt; Returns cached value
 
 // Force reload
-load(cache, &quot;data&quot;, fn() new_calculation(), reload=true)
+load(cache, "data", fn() new_calculation(), reload=true)
 
 // Override with specific value  
-load(cache, &quot;data&quot;, fn() ignored(), override=&quot;forced&quot;)
+load(cache, "data", fn() ignored(), override="forced")
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6239,16 +6267,16 @@ load(cache, &quot;data&quot;, fn() ignored(), override=&quot;forced&quot;)
 exclusive).</p>
 <h3 id="load_stash_file">load_stash_file<a class="headerlink" href="#load_stash_file" title="Permanent link">&para;</a></h3>
 <p>Loads a file from the script's stash directory, creating it with default content if it doesn't exist.</p>
-<div class="highlight"><pre><span></span><code>load_stash_file(_path: str, _default: str = &quot;&quot;) -&gt; error|{ &quot;full_path&quot;: str, &quot;created&quot;: bool, &quot;content&quot;?: str }
+<div class="highlight"><pre><span></span><code>load_stash_file(_path: str, _default: str = "") -&gt; error|{ "full_path": str, "created": bool, "content"?: str }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>result = load_stash_file(&quot;config.txt&quot;, &quot;default config&quot;)
+<div class="highlight"><pre><span></span><code>result = load_stash_file("config.txt", "default config")
 if result.created:
-    print(&quot;Created new config file&quot;)
+    print("Created new config file")
 content = result.content
 
 // Handle errors - inside the block, `result` is the error
-result = load_stash_file(&quot;config.txt&quot;) catch:
-    print_err(&quot;Could not load stash file: {result}&quot;)
+result = load_stash_file("config.txt") catch:
+    print_err("Could not load stash file: {result}")
     exit(1)
 </code></pre></div>
 <p><strong>Return map contains:</strong></p>
@@ -6268,33 +6296,33 @@ result = load_stash_file(&quot;config.txt&quot;) catch:
 <div class="highlight"><pre><span></span><code>load_state() -&gt; error|map
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>state = load_state()                   // -&gt; map containing previous state
-state[&quot;count&quot;] = (state[&quot;count&quot;] or 0) + 1
+state["count"] = (state["count"] or 0) + 1
 save_state(state)
 </code></pre></div>
 <h3 id="save_state">save_state<a class="headerlink" href="#save_state" title="Permanent link">&para;</a></h3>
 <p>Saves the script's state to persistent stash storage.</p>
 <div class="highlight"><pre><span></span><code>save_state(_state: map) -&gt; error?
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>state = {&quot;counter&quot;: 42, &quot;last_run&quot;: now().date}
+<div class="highlight"><pre><span></span><code>state = {"counter": 42, "last_run": now().date}
 save_state(state)
-print(&quot;State saved&quot;)
+print("State saved")
 </code></pre></div>
 <h3 id="write_stash_file">write_stash_file<a class="headerlink" href="#write_stash_file" title="Permanent link">&para;</a></h3>
 <p>Writes content to a file in the script's stash directory.</p>
 <div class="highlight"><pre><span></span><code>write_stash_file(_path: str, _content: str) -&gt; error?
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>write_stash_file(&quot;log.txt&quot;, &quot;Script executed at &quot; + now().time)
-write_stash_file(&quot;data/results.json&quot;, json_data)
-print(&quot;Data saved to stash&quot;)
+<div class="highlight"><pre><span></span><code>write_stash_file("log.txt", "Script executed at " + now().time)
+write_stash_file("data/results.json", json_data)
+print("Data saved to stash")
 </code></pre></div>
 <h2 id="strings">Strings<a class="headerlink" href="#strings" title="Permanent link">&para;</a></h2>
 <h3 id="color_rgb">color_rgb<a class="headerlink" href="#color_rgb" title="Permanent link">&para;</a></h3>
 <p>Applies RGB coloring to input text. RGB values must be in range [0, 255]. Not all terminals support this.</p>
 <div class="highlight"><pre><span></span><code>color_rgb(_val: any, red: int, green: int, blue: int) -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>color_rgb(&quot;Hello&quot;, red=255, green=0, blue=0)     // -&gt; &quot;Hello&quot; (in bright red)
-color_rgb(42, red=0, green=255, blue=128)        // -&gt; &quot;42&quot; (in green-cyan)
-color_rgb(&quot;test&quot;, red=300, green=0, blue=0)      // -&gt; Error: RGB values must be [0, 255]
+<div class="highlight"><pre><span></span><code>color_rgb("Hello", red=255, green=0, blue=0)     // -&gt; "Hello" (in bright red)
+color_rgb(42, red=0, green=255, blue=128)        // -&gt; "42" (in green-cyan)
+color_rgb("test", red=300, green=0, blue=0)      // -&gt; Error: RGB values must be [0, 255]
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6334,12 +6362,12 @@ color_rgb(&quot;test&quot;, red=300, green=0, blue=0)      // -&gt; Error: RGB v
 same set.</p>
 <div class="highlight"><pre><span></span><code>colorize(_val: any, _enum: any[], *, skip_if_single: bool = false) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
-colorize(&quot;Alice&quot;, names)     // -&gt; &quot;Alice&quot; (in consistent color)
-colorize(&quot;Bob&quot;, names)       // -&gt; &quot;Bob&quot; (in different consistent color)
+<div class="highlight"><pre><span></span><code>names = ["Alice", "Bob", "Charlie"]
+colorize("Alice", names)     // -&gt; "Alice" (in consistent color)
+colorize("Bob", names)       // -&gt; "Bob" (in different consistent color)
 
 // In rad blocks
-names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
+names = ["Alice", "Bob", "Charlie", "David"]
 rad:
     fields names
     names:
@@ -6377,24 +6405,24 @@ rad:
 <p>Counts the number of non-overlapping instances of substring in string.</p>
 <div class="highlight"><pre><span></span><code>count(_str: str, _substr: str) -&gt; int
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>count(&quot;hello world&quot;, &quot;l&quot;)     // -&gt; 3
-count(&quot;banana&quot;, &quot;na&quot;)         // -&gt; 2
-count(&quot;test&quot;, &quot;xyz&quot;)          // -&gt; 0
+<div class="highlight"><pre><span></span><code>count("hello world", "l")     // -&gt; 3
+count("banana", "na")         // -&gt; 2
+count("test", "xyz")          // -&gt; 0
 </code></pre></div>
 <h3 id="ends_with">ends_with<a class="headerlink" href="#ends_with" title="Permanent link">&para;</a></h3>
 <p>Checks if a string ends with a given substring.</p>
 <div class="highlight"><pre><span></span><code>ends_with(_val: str, _end: str) -&gt; bool
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>ends_with(&quot;hello world&quot;, &quot;world&quot;)    // -&gt; true
-ends_with(&quot;hello world&quot;, &quot;hello&quot;)    // -&gt; false
+<div class="highlight"><pre><span></span><code>ends_with("hello world", "world")    // -&gt; true
+ends_with("hello world", "hello")    // -&gt; false
 </code></pre></div>
 <h3 id="hyperlink">hyperlink<a class="headerlink" href="#hyperlink" title="Permanent link">&para;</a></h3>
 <p>Creates a clickable hyperlink in supporting terminals.</p>
 <div class="highlight"><pre><span></span><code>hyperlink(_val: any, _link: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>hyperlink(&quot;Visit Google&quot;, &quot;https://google.com&quot;)    // -&gt; Clickable &quot;Visit Google&quot; link
-hyperlink(&quot;localhost&quot;, &quot;http://localhost:3000&quot;)    // -&gt; Clickable &quot;localhost&quot; link
-hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable &quot;42&quot; link
+<div class="highlight"><pre><span></span><code>hyperlink("Visit Google", "https://google.com")    // -&gt; Clickable "Visit Google" link
+hyperlink("localhost", "http://localhost:3000")    // -&gt; Clickable "localhost" link
+hyperlink(42, "https://example.com")               // -&gt; Clickable "42" link
 </code></pre></div>
 <p>Converts text into a terminal hyperlink that can be clicked in supported terminals.</p>
 <h3 id="index_of">index_of<a class="headerlink" href="#index_of" title="Permanent link">&para;</a></h3>
@@ -6402,16 +6430,16 @@ hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable 
 <div class="highlight"><pre><span></span><code>index_of(_subject: str|list, _target: any, *, n: int = 0, start: int = 0) -&gt; int?
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// String search
-&quot;hello world hello&quot;.index_of(&quot;hello&quot;)           // -&gt; 0
-&quot;hello world hello&quot;.index_of(&quot;hello&quot;, n=1)      // -&gt; 12
-&quot;hello world hello&quot;.index_of(&quot;hello&quot;, n=-1)     // -&gt; 12
-&quot;hello&quot;.index_of(&quot;xyz&quot;)                         // -&gt; null
-&quot;hello&quot;.index_of(&quot;xyz&quot;) ?? -1                   // -&gt; -1
-&quot;hello&quot;.index_of(&quot;&quot;)                             // -&gt; null (empty target)
+"hello world hello".index_of("hello")           // -&gt; 0
+"hello world hello".index_of("hello", n=1)      // -&gt; 12
+"hello world hello".index_of("hello", n=-1)     // -&gt; 12
+"hello".index_of("xyz")                         // -&gt; null
+"hello".index_of("xyz") ?? -1                   // -&gt; -1
+"hello".index_of("")                             // -&gt; null (empty target)
 
 // List search
-[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b&quot;, &quot;a&quot;].index_of(&quot;b&quot;)        // -&gt; 1
-[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b&quot;, &quot;a&quot;].index_of(&quot;b&quot;, n=-1)  // -&gt; 3
+["a", "b", "c", "b", "a"].index_of("b")        // -&gt; 1
+["a", "b", "c", "b", "a"].index_of("b", n=-1)  // -&gt; 3
 [1, 2, 3].index_of(99)                          // -&gt; null
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
@@ -6448,7 +6476,7 @@ hyperlink(42, &quot;https://example.com&quot;)               // -&gt; Clickable 
 </table>
 <p>Since the return type is <code>int?</code>, check the result against <code>null</code> before using
 it as an <code>int</code> - the check narrows the type, satisfying <code>rad check</code>:</p>
-<div class="highlight"><pre><span></span><code>idx = [&quot;a&quot;, &quot;b&quot;].index_of(&quot;b&quot;)
+<div class="highlight"><pre><span></span><code>idx = ["a", "b"].index_of("b")
 if idx != null:
     print(idx + 1)  // idx is int here, not int?
 </code></pre></div>
@@ -6456,17 +6484,17 @@ if idx != null:
 <p>Converts a string to lowercase. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>lower(_val: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>lower(&quot;HELLO&quot;)          // -&gt; &quot;hello&quot;
-lower(&quot;Hello World&quot;)    // -&gt; &quot;hello world&quot;
+<div class="highlight"><pre><span></span><code>lower("HELLO")          // -&gt; "hello"
+lower("Hello World")    // -&gt; "hello world"
 </code></pre></div>
 <h3 id="matches">matches<a class="headerlink" href="#matches" title="Permanent link">&para;</a></h3>
 <p>Tests whether <code>_str</code> matches the regular-expression <code>_pattern</code>. By default the pattern must match the whole string; pass <code>partial=true</code> to match any substring. Returns an <code>error</code> when the pattern is malformed.</p>
 <div class="highlight"><pre><span></span><code>matches(_str: str, _pattern: str, *, partial: bool = false) -&gt; bool|error
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>matches(&quot;hello&quot;, &quot;h.+o&quot;)               // -&gt; true
-matches(&quot;hello world&quot;, &quot;world&quot;)        // -&gt; false (default is full-string match)
-matches(&quot;hello world&quot;, &quot;world&quot;, partial=true)  // -&gt; true
-matches(&quot;abc&quot;, &quot;(&quot;)                    // -&gt; error: invalid regex
+<div class="highlight"><pre><span></span><code>matches("hello", "h.+o")               // -&gt; true
+matches("hello world", "world")        // -&gt; false (default is full-string match)
+matches("hello world", "world", partial=true)  // -&gt; true
+matches("abc", "(")                    // -&gt; error: invalid regex
 </code></pre></div>
 <p>Unlike <code>split</code> and <code>replace</code>, <code>matches</code> has no <code>regex</code> parameter and always treats <code>_pattern</code>
 as a regex. A literal <code>matches</code> would just be <code>==</code> (full match) or a substring test (partial),
@@ -6476,11 +6504,11 @@ neither of which needs a function.</p>
 <p>Replaces every occurrence of a literal substring. Pass <code>regex=true</code> to treat <code>_find</code> as a regex pattern and enable capture-group references in <code>_replace</code>. Does not preserve string color attributes.</p>
 <div class="highlight"><pre><span></span><code>replace(_original: str, _find: str, _replace: str, *, regex: bool = false) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>replace(&quot;hello world&quot;, &quot;world&quot;, &quot;Rad&quot;)           // -&gt; &quot;hello Rad&quot;
-replace(&quot;1.2.3&quot;, &quot;.&quot;, &quot;-&quot;)                       // -&gt; &quot;1-2-3&quot;
-replace(&quot;cost: $5&quot;, &quot;$5&quot;, &quot;$10&quot;)                 // -&gt; &quot;cost: $10&quot;
-replace(&quot;abc123def&quot;, &quot;\\d+&quot;, &quot;XXX&quot;, regex=true)  // -&gt; &quot;abcXXXdef&quot;
-replace(&quot;Name: Charlie Brown&quot;, &quot;Charlie (.*)&quot;, &quot;Alice $1&quot;, regex=true) // -&gt; &quot;Name: Alice Brown&quot;
+<div class="highlight"><pre><span></span><code>replace("hello world", "world", "Rad")           // -&gt; "hello Rad"
+replace("1.2.3", ".", "-")                       // -&gt; "1-2-3"
+replace("cost: $5", "$5", "$10")                 // -&gt; "cost: $10"
+replace("abc123def", "\\d+", "XXX", regex=true)  // -&gt; "abcXXXdef"
+replace("Name: Charlie Brown", "Charlie (.*)", "Alice $1", regex=true) // -&gt; "Name: Alice Brown"
 </code></pre></div>
 <p><code>_find</code> is matched literally unless <code>regex=true</code>, so metacharacters like <code>.</code> and <code>(</code> need no
 escaping in the default case. In literal mode <code>_replace</code> is inserted verbatim, <code>$</code> included -
@@ -6524,28 +6552,28 @@ empty string, so stray <code>$</code> in your replacement text survives intact.<
 group reference: <code>${1}0</code> inserts group 1 followed by <code>0</code>, while <code>$10</code> means group 10.</p>
 <p><code>${N}</code> collides with Rad's string interpolation, which would read <code>{1}</code> as an expression to
 interpolate. Write the replacement as a raw string or escape the brace:</p>
-<div class="highlight"><pre><span></span><code>replace(&quot;Name: abc&quot;, &quot;a(b)c&quot;, r&quot;${1}0&quot;, regex=true)   // -&gt; &quot;Name: b0&quot;
-replace(&quot;Name: abc&quot;, &quot;a(b)c&quot;, &quot;$\{1}0&quot;, regex=true)   // -&gt; &quot;Name: b0&quot;
+<div class="highlight"><pre><span></span><code>replace("Name: abc", "a(b)c", r"${1}0", regex=true)   // -&gt; "Name: b0"
+replace("Name: abc", "a(b)c", "$\{1}0", regex=true)   // -&gt; "Name: b0"
 </code></pre></div>
 <p>See also: <code>split</code>, <code>matches</code></p>
 <h3 id="reverse">reverse<a class="headerlink" href="#reverse" title="Permanent link">&para;</a></h3>
 <p>Reverses a string or list. Preserves color attributes for strings.</p>
 <div class="highlight"><pre><span></span><code>reverse(_val: str|list) -&gt; str|list
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>reverse(&quot;hello&quot;)           // -&gt; &quot;olleh&quot;
+<div class="highlight"><pre><span></span><code>reverse("hello")           // -&gt; "olleh"
 reverse([1, 2, 3, 4])      // -&gt; [4, 3, 2, 1]
-reverse(&quot;racecar&quot;)         // -&gt; &quot;racecar&quot;
+reverse("racecar")         // -&gt; "racecar"
 </code></pre></div>
 <h3 id="split">split<a class="headerlink" href="#split" title="Permanent link">&para;</a></h3>
 <p>Splits a string on a literal separator. Pass <code>regex=true</code> to treat <code>_sep</code> as a regex pattern instead. Does not preserve string color attributes.</p>
 <div class="highlight"><pre><span></span><code>split(_val: str, _sep: str, *, limit: int?, regex: bool = false) -&gt; str[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>split(&quot;a,b,c&quot;, &quot;,&quot;)                    // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
-split(&quot;1.2.3&quot;, &quot;.&quot;)                    // -&gt; [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
-split(&quot;word1  word2&quot;, &quot;\\s+&quot;, regex=true) // -&gt; [&quot;word1&quot;, &quot;word2&quot;]
-split(&quot;abc123def&quot;, &quot;\\d+&quot;, regex=true) // -&gt; [&quot;abc&quot;, &quot;def&quot;]
-split(&quot;key=val=ue&quot;, &quot;=&quot;, limit=1)      // -&gt; [&quot;key&quot;, &quot;val=ue&quot;]
-split(&quot;a,b,c,d&quot;, &quot;,&quot;, limit=2)         // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c,d&quot;]
+<div class="highlight"><pre><span></span><code>split("a,b,c", ",")                    // -&gt; ["a", "b", "c"]
+split("1.2.3", ".")                    // -&gt; ["1", "2", "3"]
+split("word1  word2", "\\s+", regex=true) // -&gt; ["word1", "word2"]
+split("abc123def", "\\d+", regex=true) // -&gt; ["abc", "def"]
+split("key=val=ue", "=", limit=1)      // -&gt; ["key", "val=ue"]
+split("a,b,c,d", ",", limit=2)         // -&gt; ["a", "b", "c,d"]
 </code></pre></div>
 <p><code>_sep</code> is matched literally unless <code>regex=true</code>, so metacharacters like <code>.</code> and <code>(</code> need no
 escaping in the default case.</p>
@@ -6559,8 +6587,8 @@ the unsplit remainder. <code>limit</code> must be &gt;= 1.</p>
 <p>Splits a string by line endings. Handles all common styles: <code>\n</code> (Unix), <code>\r\n</code> (Windows), and <code>\r</code> (legacy Mac).</p>
 <div class="highlight"><pre><span></span><code>split_lines(_val: str) -&gt; str[]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>&quot;a\nb\nc&quot;.split_lines()          // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
-content = read_file(&quot;data.txt&quot;).content
+<div class="highlight"><pre><span></span><code>"a\nb\nc".split_lines()          // -&gt; ["a", "b", "c"]
+content = read_file("data.txt").content
 for line in content.split_lines():
     print(line)
 </code></pre></div>
@@ -6570,63 +6598,63 @@ for line in content.split_lines():
 <p>Checks if a string starts with a given substring.</p>
 <div class="highlight"><pre><span></span><code>starts_with(_val: str, _start: str) -&gt; bool
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>starts_with(&quot;hello world&quot;, &quot;hello&quot;)  // -&gt; true
-starts_with(&quot;hello world&quot;, &quot;world&quot;)  // -&gt; false
+<div class="highlight"><pre><span></span><code>starts_with("hello world", "hello")  // -&gt; true
+starts_with("hello world", "world")  // -&gt; false
 </code></pre></div>
 <h3 id="trim">trim<a class="headerlink" href="#trim" title="Permanent link">&para;</a></h3>
 <p>Strips all matching characters from both ends of a string. Preserves color attributes.</p>
-<div class="highlight"><pre><span></span><code>trim(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
+<div class="highlight"><pre><span></span><code>trim(_subject: str, _chars: str = " \t\n") -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim(&quot;  hello  &quot;)            // -&gt; &quot;hello&quot;
-trim(&quot;***hello***&quot;, &quot;*&quot;)     // -&gt; &quot;hello&quot;
-trim(&quot;abcHELLOabc&quot;, &quot;abc&quot;)   // -&gt; &quot;HELLO&quot;
+<div class="highlight"><pre><span></span><code>trim("  hello  ")            // -&gt; "hello"
+trim("***hello***", "*")     // -&gt; "hello"
+trim("abcHELLOabc", "abc")   // -&gt; "HELLO"
 </code></pre></div>
 <h3 id="trim_left">trim_left<a class="headerlink" href="#trim_left" title="Permanent link">&para;</a></h3>
 <p>Strips all matching characters from the start of a string. Preserves color attributes.</p>
-<div class="highlight"><pre><span></span><code>trim_left(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
+<div class="highlight"><pre><span></span><code>trim_left(_subject: str, _chars: str = " \t\n") -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim_left(&quot;  hello  &quot;)          // -&gt; &quot;hello  &quot;
-trim_left(&quot;***hello***&quot;, &quot;*&quot;)   // -&gt; &quot;hello***&quot;
-trim_left(&quot;aaabbb&quot;, &quot;a&quot;)        // -&gt; &quot;bbb&quot;
+<div class="highlight"><pre><span></span><code>trim_left("  hello  ")          // -&gt; "hello  "
+trim_left("***hello***", "*")   // -&gt; "hello***"
+trim_left("aaabbb", "a")        // -&gt; "bbb"
 </code></pre></div>
 <h3 id="trim_prefix">trim_prefix<a class="headerlink" href="#trim_prefix" title="Permanent link">&para;</a></h3>
 <p>Removes a literal prefix from the start of a string (once). Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim_prefix(_subject: str, _prefix: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim_prefix(&quot;hello world&quot;, &quot;hello &quot;)  // -&gt; &quot;world&quot;
-trim_prefix(&quot;aaabbb&quot;, &quot;a&quot;)            // -&gt; &quot;aabbb&quot; (one &#39;a&#39; removed)
-trim_prefix(&quot;test&quot;, &quot;x&quot;)              // -&gt; &quot;test&quot; (no match)
+<div class="highlight"><pre><span></span><code>trim_prefix("hello world", "hello ")  // -&gt; "world"
+trim_prefix("aaabbb", "a")            // -&gt; "aabbb" (one 'a' removed)
+trim_prefix("test", "x")              // -&gt; "test" (no match)
 </code></pre></div>
 <h3 id="trim_right">trim_right<a class="headerlink" href="#trim_right" title="Permanent link">&para;</a></h3>
 <p>Strips all matching characters from the end of a string. Preserves color attributes.</p>
-<div class="highlight"><pre><span></span><code>trim_right(_subject: str, _chars: str = &quot; \t\n&quot;) -&gt; str
+<div class="highlight"><pre><span></span><code>trim_right(_subject: str, _chars: str = " \t\n") -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim_right(&quot;  hello  &quot;)         // -&gt; &quot;  hello&quot;
-trim_right(&quot;***hello***&quot;, &quot;*&quot;)  // -&gt; &quot;***hello&quot;
-trim_right(&quot;aaabbb&quot;, &quot;b&quot;)       // -&gt; &quot;aaa&quot;
+<div class="highlight"><pre><span></span><code>trim_right("  hello  ")         // -&gt; "  hello"
+trim_right("***hello***", "*")  // -&gt; "***hello"
+trim_right("aaabbb", "b")       // -&gt; "aaa"
 </code></pre></div>
 <h3 id="trim_suffix">trim_suffix<a class="headerlink" href="#trim_suffix" title="Permanent link">&para;</a></h3>
 <p>Removes a literal suffix from the end of a string (once). Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>trim_suffix(_subject: str, _suffix: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>trim_suffix(&quot;hello world&quot;, &quot; world&quot;)  // -&gt; &quot;hello&quot;
-trim_suffix(&quot;aaabbb&quot;, &quot;b&quot;)            // -&gt; &quot;aaabb&quot; (one &#39;b&#39; removed)
-trim_suffix(&quot;test&quot;, &quot;x&quot;)              // -&gt; &quot;test&quot; (no match)
+<div class="highlight"><pre><span></span><code>trim_suffix("hello world", " world")  // -&gt; "hello"
+trim_suffix("aaabbb", "b")            // -&gt; "aaabb" (one 'b' removed)
+trim_suffix("test", "x")              // -&gt; "test" (no match)
 </code></pre></div>
 <h3 id="truncate">truncate<a class="headerlink" href="#truncate" title="Permanent link">&para;</a></h3>
 <p>Truncates a string to a maximum length, adding an ellipsis if truncated. Requires length of at least 1.</p>
 <div class="highlight"><pre><span></span><code>truncate(_str: str, _len: int) -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>truncate(&quot;hello world&quot;, 8)   // -&gt; &quot;hello w…&quot;
-truncate(&quot;short&quot;, 10)        // -&gt; &quot;short&quot; (no truncation needed)
-truncate(&quot;test&quot;, 0)          // -&gt; Error: Requires at least 1
+<div class="highlight"><pre><span></span><code>truncate("hello world", 8)   // -&gt; "hello w…"
+truncate("short", 10)        // -&gt; "short" (no truncation needed)
+truncate("test", 0)          // -&gt; Error: Requires at least 1
 </code></pre></div>
 <h3 id="upper">upper<a class="headerlink" href="#upper" title="Permanent link">&para;</a></h3>
 <p>Converts a string to uppercase. Preserves color attributes.</p>
 <div class="highlight"><pre><span></span><code>upper(_val: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>upper(&quot;hello&quot;)          // -&gt; &quot;HELLO&quot;
-upper(&quot;Hello World&quot;)    // -&gt; &quot;HELLO WORLD&quot;
+<div class="highlight"><pre><span></span><code>upper("hello")          // -&gt; "HELLO"
+upper("Hello World")    // -&gt; "HELLO WORLD"
 </code></pre></div>
 <h2 id="system">System<a class="headerlink" href="#system" title="Permanent link">&para;</a></h2>
 <h3 id="error_1">error<a class="headerlink" href="#error_1" title="Permanent link">&para;</a></h3>
@@ -6635,7 +6663,7 @@ upper(&quot;Hello World&quot;)    // -&gt; &quot;HELLO WORLD&quot;
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>fn validate(x: int):
     if x &lt; 0:
-        return error(&quot;Something went wrong&quot;)
+        return error("Something went wrong")
     return x
 
 result = validate(-1)  // -&gt; Script will exit with this error message
@@ -6657,7 +6685,7 @@ exit(false)     // -&gt; Exits with code 0 (bool conversion)
 <div class="highlight"><pre><span></span><code>get_args() -&gt; str[]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// If script was called: rad myscript.rad arg1 arg2 --flag
-raw_args = get_args()  // -&gt; [&quot;./myscript.rad&quot;, &quot;arg1&quot;, &quot;arg2&quot;, &quot;--flag&quot;]
+raw_args = get_args()  // -&gt; ["./myscript.rad", "arg1", "arg2", "--flag"]
 </code></pre></div>
 <p>Returns all arguments after the script name. Unlike parsed args, this gives you raw access to all arguments.</p>
 <p>The name <code>args</code> is reserved (it's the args-block keyword), so the
@@ -6666,9 +6694,9 @@ local has to be called something else.</p>
 <p>Retrieves the value of an environment variable.</p>
 <div class="highlight"><pre><span></span><code>get_env(_var: str) -&gt; str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>home_dir = get_env(&quot;HOME&quot;)                    // -&gt; &quot;/Users/username&quot;
-api_key = get_env(&quot;API_KEY&quot;) or &quot;default&quot;     // -&gt; Uses default if not set
-missing = get_env(&quot;NONEXISTENT&quot;)              // -&gt; &quot;&quot;
+<div class="highlight"><pre><span></span><code>home_dir = get_env("HOME")                    // -&gt; "/Users/username"
+api_key = get_env("API_KEY") or "default"     // -&gt; Uses default if not set
+missing = get_env("NONEXISTENT")              // -&gt; ""
 </code></pre></div>
 <p>Returns the environment variable value, or empty string if not set.</p>
 <h3 id="get_os">get_os<a class="headerlink" href="#get_os" title="Permanent link">&para;</a></h3>
@@ -6676,12 +6704,12 @@ missing = get_env(&quot;NONEXISTENT&quot;)              // -&gt; &quot;&quot;
 <div class="highlight"><pre><span></span><code>get_os() -&gt; str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>os = get_os()
-print(os)  // e.g. -&gt; &quot;macos&quot;
+print(os)  // e.g. -&gt; "macos"
 
 config_dir = switch os:
-    case &quot;macos&quot; -&gt; &quot;~/Library/Application Support&quot;
-    case &quot;windows&quot; -&gt; get_env(&quot;APPDATA&quot;)
-    default -&gt; &quot;~/.config&quot;
+    case "macos" -&gt; "~/Library/Application Support"
+    case "windows" -&gt; get_env("APPDATA")
+    default -&gt; "~/.config"
 </code></pre></div>
 <p>Returns <code>"macos"</code>, <code>"linux"</code>, or <code>"windows"</code> on the three major platforms.
 Other platforms return Go's <a href="https://pkg.go.dev/runtime#GOOS"><code>runtime.GOOS</code></a>
@@ -6689,20 +6717,20 @@ value directly, e.g. <code>"freebsd"</code> or <code>"android"</code>.</p>
 <p>Prefer this over shelling out to <code>uname</code>, which doesn't exist on Windows.</p>
 <h3 id="get_path">get_path<a class="headerlink" href="#get_path" title="Permanent link">&para;</a></h3>
 <p>Gets information about a file or directory path.</p>
-<div class="highlight"><pre><span></span><code>get_path(_path: str) -&gt; { &quot;exists&quot;: bool, &quot;full_path&quot;: str, &quot;base_name&quot;?: str, &quot;permissions&quot;?: str, &quot;type&quot;?: str, &quot;size_bytes&quot;?: int, &quot;modified_millis&quot;?: int, &quot;accessed_millis&quot;?: int }
+<div class="highlight"><pre><span></span><code>get_path(_path: str) -&gt; { "exists": bool, "full_path": str, "base_name"?: str, "permissions"?: str, "type"?: str, "size_bytes"?: int, "modified_millis"?: int, "accessed_millis"?: int }
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>info = get_path(&quot;config.txt&quot;)
+<div class="highlight"><pre><span></span><code>info = get_path("config.txt")
 if info.exists:
-    print(&quot;File size:&quot;, info.size_bytes, &quot;bytes&quot;)
-    print(&quot;Type:&quot;, info.type)
+    print("File size:", info.size_bytes, "bytes")
+    print("Type:", info.type)
 else:
-    print(&quot;File not found&quot;)
+    print("File not found")
 
 // Working with timestamps using parse_epoch()
-info = get_path(&quot;data.json&quot;)
+info = get_path("data.json")
 if info.exists:
     mtime = info.modified_millis.parse_epoch()
-    print(&quot;Last modified:&quot;, mtime.date, mtime.time)
+    print("Last modified:", mtime.date, mtime.time)
 </code></pre></div>
 <p><strong>Always returns:</strong></p>
 <ul>
@@ -6723,7 +6751,7 @@ if info.exists:
 <div class="highlight"><pre><span></span><code>get_pid() -&gt; int
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>pid = get_pid()    // -&gt; e.g. 12345
-print(&quot;My PID: {pid}&quot;)
+print("My PID: {pid}")
 </code></pre></div>
 <h3 id="has_stdin">has_stdin<a class="headerlink" href="#has_stdin" title="Permanent link">&para;</a></h3>
 <p>Checks if stdin is piped to the script.</p>
@@ -6738,18 +6766,18 @@ if has_stdin():
 <p>Checks if a variable with the given name exists in the current scope.</p>
 <div class="highlight"><pre><span></span><code>is_defined(_var: str) -&gt; bool
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>name = &quot;Alice&quot;
-is_defined(&quot;name&quot;)     // -&gt; true
-is_defined(&quot;age&quot;)      // -&gt; false
+<div class="highlight"><pre><span></span><code>name = "Alice"
+is_defined("name")     // -&gt; true
+is_defined("age")      // -&gt; false
 </code></pre></div>
 <h3 id="signal_ignore">signal_ignore<a class="headerlink" href="#signal_ignore" title="Permanent link">&para;</a></h3>
 <p>Installs OS-level <code>SIG_IGN</code> for one or more signals, so the process is not woken
 when they fire. The disposition is inherited by subprocesses. Distinct from a
 no-op <code>signal_trap</code> handler, which still wakes the process on every delivery.</p>
-<div class="highlight"><pre><span></span><code>signal_ignore(_signal: [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;] | [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;][]) -&gt; void
+<div class="highlight"><pre><span></span><code>signal_ignore(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][]) -&gt; void
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>// Don&#39;t crash when a downstream pipe consumer (e.g. `head`) closes early
-signal_ignore(&quot;sigpipe&quot;)
+<div class="highlight"><pre><span></span><code>// Don't crash when a downstream pipe consumer (e.g. `head`) closes early
+signal_ignore("sigpipe")
 
 for i in range(0, 1000000):
     print(i)  // safe to pipe into `head` now
@@ -6762,25 +6790,25 @@ pipe. Ignoring it at the OS level keeps the script alive.</p>
 <p>Registers a function to run when one of the named signals is delivered to the
 script. The handler receives a single map argument with the signal name and the
 conventional <code>128 + sig</code> exit code. Re-registering replaces the previous handler.</p>
-<div class="highlight"><pre><span></span><code>signal_trap(_signal: [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;] | [&quot;sigint&quot;, &quot;sigterm&quot;, &quot;sighup&quot;, &quot;sigusr1&quot;, &quot;sigusr2&quot;, &quot;sigpipe&quot;, &quot;sigwinch&quot;][], _handler: fn(any) -&gt; any) -&gt; void
+<div class="highlight"><pre><span></span><code>signal_trap(_signal: ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"] | ["sigint", "sigterm", "sighup", "sigusr1", "sigusr2", "sigpipe", "sigwinch"][], _handler: fn(any) -&gt; any) -&gt; void
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Cleanup on Ctrl+C
-signal_trap(&quot;sigint&quot;, fn(ctx):
-    print_err(&quot;Cancelled, cleaning up&quot;)
+signal_trap("sigint", fn(ctx):
+    print_err("Cancelled, cleaning up")
     exit(ctx.exit_code)  // 130
 )
 
 // One handler for several signals, dispatching on the name
-signal_trap([&quot;sigterm&quot;, &quot;sighup&quot;], fn(ctx):
-    if ctx.signal == &quot;sighup&quot;:
+signal_trap(["sigterm", "sighup"], fn(ctx):
+    if ctx.signal == "sighup":
         reload_config()  // no exit() - control continues
     else:
         exit(ctx.exit_code)
 )
 
 // Status dump - script keeps running after the handler returns
-signal_trap(&quot;sigusr1&quot;, fn(ctx):
-    print(&quot;progress: {progress}/{total}&quot;)
+signal_trap("sigusr1", fn(ctx):
+    print("progress: {progress}/{total}")
 )
 </code></pre></div>
 <p>The handler is invoked with one <strong>map</strong> argument (the parameter name <code>ctx</code> is
@@ -6879,10 +6907,10 @@ signal is trapped, it stays trapped for the lifetime of the script.</p>
 <div class="highlight"><pre><span></span><code>sleep(_duration: int|float|str, *, title: str?) -&gt; void
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>sleep(2.5)              // -&gt; Sleep for 2.5 seconds
-sleep(&quot;1h30m&quot;)          // -&gt; Sleep for 1 hour 30 minutes
-sleep(&quot;500ms&quot;)          // -&gt; Sleep for 500 milliseconds
-sleep(&quot;1d12h&quot;)          // -&gt; Sleep for 1 day 12 hours
-sleep(5, title=&quot;Waiting...&quot;) // -&gt; Prints &quot;Waiting...&quot; then sleeps 5 seconds
+sleep("1h30m")          // -&gt; Sleep for 1 hour 30 minutes
+sleep("500ms")          // -&gt; Sleep for 500 milliseconds
+sleep("1d12h")          // -&gt; Sleep for 1 day 12 hours
+sleep(5, title="Waiting...") // -&gt; Prints "Waiting..." then sleeps 5 seconds
 </code></pre></div>
 <p>Integer and float values are treated as seconds. String values support duration format like "2h45m", "1.5s", "500ms".
 Spaces are allowed in duration strings (e.g. <code>"5m 30s"</code>).
@@ -6928,37 +6956,37 @@ If <code>title</code> is provided, it's printed before sleeping.</p>
 </table>
 <h3 id="type_of">type_of<a class="headerlink" href="#type_of" title="Permanent link">&para;</a></h3>
 <p>Returns the type of a value as a string.</p>
-<div class="highlight"><pre><span></span><code>type_of(_var: any) -&gt; [&quot;int&quot;, &quot;str&quot;, &quot;list&quot;, &quot;map&quot;, &quot;float&quot;, &quot;bool&quot;, &quot;null&quot;, &quot;error&quot;, &quot;function&quot;]
+<div class="highlight"><pre><span></span><code>type_of(_var: any) -&gt; ["int", "str", "list", "map", "float", "bool", "null", "error", "function"]
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>type_of(&quot;hi&quot;)            // -&gt; &quot;str&quot;
-type_of([2])             // -&gt; &quot;list&quot;
-type_of(42)              // -&gt; &quot;int&quot;
-type_of(3.14)            // -&gt; &quot;float&quot;
-type_of({&quot;a&quot;: 1})        // -&gt; &quot;map&quot;
-type_of(true)            // -&gt; &quot;bool&quot;
-type_of(null)            // -&gt; &quot;null&quot;
-type_of(fn() 1)          // -&gt; &quot;function&quot;
+<div class="highlight"><pre><span></span><code>type_of("hi")            // -&gt; "str"
+type_of([2])             // -&gt; "list"
+type_of(42)              // -&gt; "int"
+type_of(3.14)            // -&gt; "float"
+type_of({"a": 1})        // -&gt; "map"
+type_of(true)            // -&gt; "bool"
+type_of(null)            // -&gt; "null"
+type_of(fn() 1)          // -&gt; "function"
 // Builtins that may fail return an `error` value:
-// type_of(parse_int(&quot;xx&quot;)) // -&gt; &quot;error&quot;
+// type_of(parse_int("xx")) // -&gt; "error"
 </code></pre></div>
 <h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
 <h3 id="format_epoch">format_epoch<a class="headerlink" href="#format_epoch" title="Permanent link">&para;</a></h3>
 <p>Formats an epoch timestamp as a string. The inverse of <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
-<div class="highlight"><pre><span></span><code>format_epoch(_epoch: int, _format: str, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;] = &quot;auto&quot;) -&gt; error|str
+<div class="highlight"><pre><span></span><code>format_epoch(_epoch: int, _format: str, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos"] = "auto") -&gt; error|str
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>ts = format_epoch(1735689600, &quot;YYYY-MM-DD HH:mm:ss&quot;, tz=&quot;UTC&quot;)
-print(ts)  // -&gt; &quot;2025-01-01 00:00:00&quot;
+<div class="highlight"><pre><span></span><code>ts = format_epoch(1735689600, "YYYY-MM-DD HH:mm:ss", tz="UTC")
+print(ts)  // -&gt; "2025-01-01 00:00:00"
 
 // Timestamped file names from now()
-stamp = format_epoch(now().epoch.seconds, &quot;YYYYMMDD-HHmmss&quot;)
+stamp = format_epoch(now().epoch.seconds, "YYYYMMDD-HHmmss")
 
-// Works directly with get_path&#39;s modified_millis (unit auto-detected)
-info = get_path(&quot;data.json&quot;)
+// Works directly with get_path's modified_millis (unit auto-detected)
+info = get_path("data.json")
 if info.exists:
-    print(&quot;Modified:&quot;, format_epoch(info.modified_millis, &quot;YYYY-MM-DD&quot;))
+    print("Modified:", format_epoch(info.modified_millis, "YYYY-MM-DD"))
 
 // Timezone conversion
-print(format_epoch(1735689600, &quot;HH:mm&quot;, tz=&quot;America/Chicago&quot;))  // -&gt; &quot;18:00&quot;
+print(format_epoch(1735689600, "HH:mm", tz="America/Chicago"))  // -&gt; "18:00"
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -7044,20 +7072,20 @@ seconds, 13 is millis, 16 is micros, 19 is nanos. Other lengths are ambiguous
 and return an error - pass <code>unit</code> explicitly to disambiguate.</p>
 <h3 id="now">now<a class="headerlink" href="#now" title="Permanent link">&para;</a></h3>
 <p>Returns the current time with various accessible formats.</p>
-<div class="highlight"><pre><span></span><code>now(*, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
+<div class="highlight"><pre><span></span><code>now(*, tz: str = "local") -&gt; error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>time = now()
-print(&quot;Current date:&quot;, time.date)          // -&gt; &quot;2024-04-05&quot;
-print(&quot;Current time:&quot;, time.time)          // -&gt; &quot;14:30:25&quot;
-print(&quot;Year:&quot;, time.year)                  // -&gt; 2024
+print("Current date:", time.date)          // -&gt; "2024-04-05"
+print("Current time:", time.time)          // -&gt; "14:30:25"
+print("Year:", time.year)                  // -&gt; 2024
 
 // Use epoch for timestamps
 timestamp = now().epoch.seconds
-print(&quot;Timestamp:&quot;, timestamp)             // -&gt; 1712345678
+print("Timestamp:", timestamp)             // -&gt; 1712345678
 
 // Different timezone
-utc_time = now(tz=&quot;UTC&quot;)
-print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
+utc_time = now(tz="UTC")
+print("UTC time:", utc_time.time)          // -&gt; Time in UTC
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
 <table>
@@ -7166,29 +7194,29 @@ print(&quot;UTC time:&quot;, utc_time.time)          // -&gt; Time in UTC
 <code>format_epoch(now().epoch.seconds, "YYYYMMDD-HHmmss")</code>.</p>
 <h3 id="parse_date">parse_date<a class="headerlink" href="#parse_date" title="Permanent link">&para;</a></h3>
 <p>Parses a date string into the same time map format as <a href="#now"><code>now()</code></a> and <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
-<div class="highlight"><pre><span></span><code>parse_date(_date: str, *, format: str?, tz: str = &quot;local&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
+<div class="highlight"><pre><span></span><code>parse_date(_date: str, *, format: str?, tz: str = "local") -&gt; error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Auto-detect common formats
-time = parse_date(&quot;2026-03-22&quot;)
-print(time.date)              // -&gt; &quot;2026-03-22&quot;
+time = parse_date("2026-03-22")
+print(time.date)              // -&gt; "2026-03-22"
 print(time.epoch.seconds)     // -&gt; epoch at midnight local time
 
-time = parse_date(&quot;2026-03-22T14:30:00Z&quot;)
+time = parse_date("2026-03-22T14:30:00Z")
 print(time.hour)              // -&gt; 14 (or local equivalent)
 
 // Custom format for non-standard date strings
-time = parse_date(&quot;22/03/2026&quot;, format=&quot;DD/MM/YYYY&quot;)
-print(time.date)              // -&gt; &quot;2026-03-22&quot;
+time = parse_date("22/03/2026", format="DD/MM/YYYY")
+print(time.date)              // -&gt; "2026-03-22"
 
-time = parse_date(&quot;22.03.2026 14:30&quot;, format=&quot;DD.MM.YYYY HH:mm&quot;)
+time = parse_date("22.03.2026 14:30", format="DD.MM.YYYY HH:mm")
 print(time.hour, time.minute) // -&gt; 14 30
 
 // Timezone conversion
-time = parse_date(&quot;2026-03-22T14:30:00Z&quot;, tz=&quot;America/Chicago&quot;)
+time = parse_date("2026-03-22T14:30:00Z", tz="America/Chicago")
 print(time.hour)              // -&gt; 9 (CDT = UTC-5)
 
 // Error handling
-time = parse_date(&quot;bad input&quot;) catch:
+time = parse_date("bad input") catch:
     print(time)  // error message with format hints
 </code></pre></div>
 <p><strong>Parameters:</strong></p>
@@ -7278,30 +7306,30 @@ default). For strings with timezone info (e.g., <code>Z</code>, <code>+05:00</co
 and then converted to the output <code>tz</code>.</p>
 <h3 id="parse_epoch">parse_epoch<a class="headerlink" href="#parse_epoch" title="Permanent link">&para;</a></h3>
 <p>Parses a Unix epoch timestamp into various time formats.</p>
-<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float, *, tz: str = &quot;local&quot;, unit: [&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;, &quot;micros&quot;, &quot;nanos&quot;, &quot;milliseconds&quot;, &quot;microseconds&quot;, &quot;nanoseconds&quot;] = &quot;auto&quot;) -&gt; error|{ &quot;date&quot;: str, &quot;year&quot;: int, &quot;month&quot;: int, &quot;day&quot;: int, &quot;weekday&quot;: int, &quot;hour&quot;: int, &quot;minute&quot;: int, &quot;second&quot;: int, &quot;time&quot;: str, &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int, &quot;nanos&quot;: int } }
+<div class="highlight"><pre><span></span><code>parse_epoch(_epoch: int|float, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos", "milliseconds", "microseconds", "nanoseconds"] = "auto") -&gt; error|{ "date": str, "year": int, "month": int, "day": int, "weekday": int, "hour": int, "minute": int, "second": int, "time": str, "epoch": { "seconds": int, "millis": int, "nanos": int } }
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>// Parse seconds epoch (auto-detected)
 time = parse_epoch(1712345678)
-print(time.date, time.time)  // -&gt; &quot;2024-04-05 22:01:18&quot;
+print(time.date, time.time)  // -&gt; "2024-04-05 22:01:18"
 
 // Parse milliseconds with timezone
-time = parse_epoch(1712345678123, tz=&quot;America/Chicago&quot;)
+time = parse_epoch(1712345678123, tz="America/Chicago")
 print(time.hour)  // -&gt; Hour in Chicago timezone
 
 // Explicit unit specification
-time = parse_epoch(1712345678000, unit=&quot;millis&quot;)
+time = parse_epoch(1712345678000, unit="millis")
 
 // Float epoch with sub-second precision
 time = parse_epoch(1712345678.5)  // 1712345678 seconds + 500ms
 print(time.epoch.millis)  // -&gt; 1712345678500
 
 // Float with explicit unit (sub-millisecond precision)
-time = parse_epoch(1712345678123.25, unit=&quot;millis&quot;)
+time = parse_epoch(1712345678123.25, unit="millis")
 print(time.epoch.nanos)  // -&gt; 1712345678123250000
 
 // Handle errors - inside the block, `time` is the error
-time = parse_epoch(1712345678, tz=&quot;Invalid/Timezone&quot;) catch:
-    print_err(&quot;Invalid timezone: {time}&quot;)
+time = parse_epoch(1712345678, tz="Invalid/Timezone") catch:
+    print_err("Invalid timezone: {time}")
     exit(1)
 </code></pre></div>
 <p><strong>Parameters:</strong></p>

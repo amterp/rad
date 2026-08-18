@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -1805,29 +1833,29 @@ state = load_state()
 defer save_state(state)
 
 fn do_show():
-    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
+    file_path = get_stash_path("files/entries/{topic}.txt")
     if not file_path.get_path().exists:
-        print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
+        print("No entry for '{topic}'. Use 'hm edit {topic}' to create one.")
     else:
         print(file_path.read_file().content)
 
 fn do_edit():
-    editor = state.load(&quot;editor&quot;, fn() input(&quot;Editor? &gt; &quot;, default=&quot;vim&quot;))
-    result = load_stash_file(&quot;entries/{topic}.txt&quot;, &quot;&quot;)
+    editor = state.load("editor", fn() input("Editor? &gt; ", default="vim"))
+    result = load_stash_file("entries/{topic}.txt", "")
     $`{editor} {result.full_path}`
-    print(&quot;Entry for &#39;{topic}&#39; saved.&quot;)
+    print("Entry for '{topic}' saved.")
 
 fn do_list():
-    entries_dir = get_stash_path(&quot;files/entries&quot;)
+    entries_dir = get_stash_path("files/entries")
     if not entries_dir.get_path().exists:
-        print(&quot;No entries yet. Use &#39;hm edit &lt;topic&gt;&#39; to create one.&quot;)
+        print("No entries yet. Use 'hm edit &lt;topic&gt;' to create one.")
         exit()
-    files = entries_dir.find_paths(depth=1, relative=&quot;absolute&quot;)
+    files = entries_dir.find_paths(depth=1, relative="absolute")
     if files.len() == 0:
-        print(&quot;No entries yet. Use &#39;hm edit &lt;topic&gt;&#39; to create one.&quot;)
+        print("No entries yet. Use 'hm edit &lt;topic&gt;' to create one.")
         exit()
     for file in files:
-        name = file.get_path().base_name.replace(&quot;.txt&quot;, &quot;&quot;)
+        name = file.get_path().base_name.replace(".txt", "")
         print(name)
 </code></pre></div></td></tr></table></div>
 <div class="highlight"><pre><span></span><code>&gt; hm -h
@@ -1845,7 +1873,7 @@ Commands:
 <div class="highlight"><pre><span></span><code>&gt; hm edit tar
 Editor? &gt; vim
 # Opens vim with empty file, user writes their notes, saves and exits
-Entry for &#39;tar&#39; saved.
+Entry for 'tar' saved.
 
 &gt; hm show tar
 tar - extract and create archives
@@ -1856,7 +1884,7 @@ List:       tar -tvf archive.tar.gz
 
 &gt; hm edit rsync
 # No prompt this time - editor preference was saved!
-Entry for &#39;rsync&#39; saved.
+Entry for 'rsync' saved.
 
 &gt; hm list
 tar
@@ -2076,9 +2104,9 @@ state = load_state()
 defer save_state(state)
 
 <span class="hll">fn do_show():
-</span><span class="hll">    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
+</span><span class="hll">    file_path = get_stash_path("files/entries/{topic}.txt")
 </span><span class="hll">    if not file_path.get_path().exists:
-</span><span class="hll">        print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
+</span><span class="hll">        print("No entry for '{topic}'. Use 'hm edit {topic}' to create one.")
 </span><span class="hll">    else:
 </span><span class="hll">        print(file_path.read_file().content)
 </span></code></pre></div></td></tr></table></div>
@@ -2160,17 +2188,17 @@ state = load_state()
 defer save_state(state)
 
 fn do_show():
-    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
+    file_path = get_stash_path("files/entries/{topic}.txt")
     if not file_path.get_path().exists:
-        print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
+        print("No entry for '{topic}'. Use 'hm edit {topic}' to create one.")
     else:
         print(file_path.read_file().content)
 
 <span class="hll">fn do_edit():
-</span><span class="hll">    editor = state.load(&quot;editor&quot;, fn() input(&quot;Editor? &gt; &quot;, default=&quot;vim&quot;))
-</span><span class="hll">    result = load_stash_file(&quot;entries/{topic}.txt&quot;, &quot;&quot;)
+</span><span class="hll">    editor = state.load("editor", fn() input("Editor? &gt; ", default="vim"))
+</span><span class="hll">    result = load_stash_file("entries/{topic}.txt", "")
 </span><span class="hll">    $`{editor} {result.full_path}`
-</span><span class="hll">    print(&quot;Entry for &#39;{topic}&#39; saved.&quot;)
+</span><span class="hll">    print("Entry for '{topic}' saved.")
 </span></code></pre></div></td></tr></table></div>
 <p>The <code>load()</code> function is the star here. It checks if <code>"editor"</code> exists in <code>state</code>:</p>
 <ul>
@@ -2266,29 +2294,29 @@ state = load_state()
 defer save_state(state)
 
 fn do_show():
-    file_path = get_stash_path(&quot;files/entries/{topic}.txt&quot;)
+    file_path = get_stash_path("files/entries/{topic}.txt")
     if not file_path.get_path().exists:
-        print(&quot;No entry for &#39;{topic}&#39;. Use &#39;hm edit {topic}&#39; to create one.&quot;)
+        print("No entry for '{topic}'. Use 'hm edit {topic}' to create one.")
     else:
         print(file_path.read_file().content)
 
 fn do_edit():
-    editor = state.load(&quot;editor&quot;, fn() input(&quot;Editor? &gt; &quot;, default=&quot;vim&quot;))
-    result = load_stash_file(&quot;entries/{topic}.txt&quot;, &quot;&quot;)
+    editor = state.load("editor", fn() input("Editor? &gt; ", default="vim"))
+    result = load_stash_file("entries/{topic}.txt", "")
     $`{editor} {result.full_path}`
-    print(&quot;Entry for &#39;{topic}&#39; saved.&quot;)
+    print("Entry for '{topic}' saved.")
 
 <span class="hll">fn do_list():
-</span><span class="hll">    entries_dir = get_stash_path(&quot;files/entries&quot;)
+</span><span class="hll">    entries_dir = get_stash_path("files/entries")
 </span><span class="hll">    if not entries_dir.get_path().exists:
-</span><span class="hll">        print(&quot;No entries yet. Use &#39;hm edit &lt;topic&gt;&#39; to create one.&quot;)
+</span><span class="hll">        print("No entries yet. Use 'hm edit &lt;topic&gt;' to create one.")
 </span><span class="hll">        exit()
-</span><span class="hll">    files = entries_dir.find_paths(depth=1, relative=&quot;absolute&quot;)
+</span><span class="hll">    files = entries_dir.find_paths(depth=1, relative="absolute")
 </span><span class="hll">    if files.len() == 0:
-</span><span class="hll">        print(&quot;No entries yet. Use &#39;hm edit &lt;topic&gt;&#39; to create one.&quot;)
+</span><span class="hll">        print("No entries yet. Use 'hm edit &lt;topic&gt;' to create one.")
 </span><span class="hll">        exit()
 </span><span class="hll">    for file in files:
-</span><span class="hll">        name = file.get_path().base_name.replace(&quot;.txt&quot;, &quot;&quot;)
+</span><span class="hll">        name = file.get_path().base_name.replace(".txt", "")
 </span><span class="hll">        print(name)
 </span></code></pre></div></td></tr></table></div>
 <p>We use <a href="../../reference/functions/#get_stash_path"><code>get_stash_path()</code></a> to get the path to our entries folder - note the
@@ -2302,7 +2330,7 @@ correctly. For each file, we extract the topic name with <code>.get_path().base_
 <div class="highlight"><pre><span></span><code>&gt; hm edit tar
 Editor? &gt; vim
 # Editor opens, you write your notes, save and exit
-Entry for &#39;tar&#39; saved.
+Entry for 'tar' saved.
 </code></pre></div>
 <p>View it later:</p>
 <div class="highlight"><pre><span></span><code>&gt; hm show tar
@@ -2315,7 +2343,7 @@ List:       tar -tvf archive.tar.gz
 <p>Add another entry - notice no editor prompt this time:</p>
 <div class="highlight"><pre><span></span><code>&gt; hm edit rsync
 # Opens vim immediately - preference was remembered!
-Entry for &#39;rsync&#39; saved.
+Entry for 'rsync' saved.
 </code></pre></div>
 <p>List all your entries:</p>
 <div class="highlight"><pre><span></span><code>&gt; hm list

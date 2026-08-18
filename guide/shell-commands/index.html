@@ -1111,6 +1111,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -2070,9 +2098,9 @@ However, you can use any string delimiter.</p>
 exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, then assignment happens by name rather than by position.
 This means the order doesn't matter:</p>
 <div class="highlight"><pre><span></span><code>// Named assignment - order independent
-stdout, code = $`echo hi`           // code=0, stdout=&quot;hi\n&quot;
+stdout, code = $`echo hi`           // code=0, stdout="hi\n"
 stderr = $`bad-command`             // Just capture stderr
-code, stderr = $`make format`       // code=1, stderr=&quot;&quot;
+code, stderr = $`make format`       // code=1, stderr=""
 stderr, stdout, code = $`ls`        // All three, any order
 </code></pre></div>
 <p>This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
@@ -2089,7 +2117,7 @@ result, errors, status = $`ls`      // Assigned in (stdout, stderr, code) order
 <p class="admonition-title">Don't mix reserved and unreserved names</p>
 <p>One unreserved name drops the <em>whole</em> statement to positional, so a reserved name in the
 wrong slot silently gets something else:</p>
-<div class="highlight"><pre><span></span><code>code, output = $`echo hi`       // &#39;code&#39; gets stdout!
+<div class="highlight"><pre><span></span><code>code, output = $`echo hi`       // 'code' gets stdout!
 </code></pre></div>
 <p>Rad warns about this (<a href="../../reference/errors/">RAD40018</a>). Name them all, or name none.</p>
 </div>
@@ -2102,10 +2130,10 @@ and <code>_, _ = $cmd</code> swallows both streams for fully silent execution.</
 <p>Capturing into a variable is right when you want several results, or want to
 keep working with them. When you want one value, put the accessor on the command
 and use it where you stand:</p>
-<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch &quot;unknown&quot;
+<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch "unknown"
 
 if not $`which docker`.ok:
-    print_err(&quot;docker is not installed&quot;)
+    print_err("docker is not installed")
     exit(1)
 </code></pre></div>
 <p>There are four accessors, and one of them must immediately follow the command:</p>
@@ -2147,14 +2175,14 @@ capture neither.</p>
 <p><code>.stdout</code> and <code>.stderr</code> give you what the command produced, and fail if it
 failed - output a failed command never produced isn't an answer, so you get an
 error rather than an empty string:</p>
-<div class="highlight"><pre><span></span><code>files = $`git ls-files`.stdout.split(&quot;\n&quot;)
+<div class="highlight"><pre><span></span><code>files = $`git ls-files`.stdout.split("\n")
 </code></pre></div>
 <p><code>.ok</code> and <code>.code</code> describe the outcome and never fail. Asking about the outcome
 <em>is</em> handling it, which is what makes them the right way to test a command:</p>
 <div class="highlight"><pre><span></span><code>if not $`git diff --quiet`.ok:
-    print(&quot;you have uncommitted changes&quot;)
+    print("you have uncommitted changes")
 
-// grep exits 1 for &quot;no match&quot; - that&#39;s data, not a failure
+// grep exits 1 for "no match" - that's data, not a failure
 matched = $`grep -q TODO src.rad`.code == 0
 </code></pre></div>
 <div class="admonition note">
@@ -2166,32 +2194,32 @@ you've asked about the failure directly.</p>
 <h3 id="failing-softly">Failing Softly<a class="headerlink" href="#failing-softly" title="Permanent link">&para;</a></h3>
 <p>Since the output accessors propagate, everything you'd use on a fallible
 function works here too:</p>
-<div class="highlight"><pre><span></span><code>tag = $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
-tag = $`git describe --tags`.stdout.trim() ?? &quot;untagged&quot;
+<div class="highlight"><pre><span></span><code>tag = $`git describe --tags`.stdout.trim() catch "untagged"
+tag = $`git describe --tags`.stdout.trim() ?? "untagged"
 
 tag = $`git describe --tags`.stdout.trim() catch:
-    print_err(&quot;no tags yet&quot;)
-    tag = &quot;untagged&quot;
+    print_err("no tags yet")
+    tag = "untagged"
 </code></pre></div>
 <h3 id="an-accessor-is-required">An Accessor Is Required<a class="headerlink" href="#an-accessor-is-required" title="Permanent link">&para;</a></h3>
 <p>A command on its own isn't a value:</p>
 <div class="highlight"><pre><span></span><code>if $`git status --porcelain`:      // Error: RAD40025
-    print(&quot;dirty&quot;)
+    print("dirty")
 </code></pre></div>
 <p>This is deliberate. In shell, <code>if cmd</code> tests the exit code but <code>if $(cmd)</code> tests
 whether it printed anything - two different questions that look nearly the same.
 Naming the accessor means the reader never has to guess which you meant:</p>
-<div class="highlight"><pre><span></span><code>// &quot;did it print anything?&quot;
+<div class="highlight"><pre><span></span><code>// "did it print anything?"
 if $`git status --porcelain`.stdout.trim():
-    print(&quot;dirty&quot;)
+    print("dirty")
 
-// &quot;did it succeed?&quot;
+// "did it succeed?"
 if $`git diff --quiet`.ok:
-    print(&quot;clean&quot;)
+    print("clean")
 </code></pre></div>
 <p>Modifiers work inline, and the ⚡️ echo stays on so you can see which commands
 actually ran when <code>and</code> / <code>or</code> short-circuits:</p>
-<div class="highlight"><pre><span></span><code>tag = quiet $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
+<div class="highlight"><pre><span></span><code>tag = quiet $`git describe --tags`.stdout.trim() catch "untagged"
 </code></pre></div>
 <p>One last limit: the inline form gives you one value per run. When you want both
 streams from one command, capture them.</p>
@@ -2201,7 +2229,7 @@ streams from one command, capture them.</p>
 This means you can handle potential failures using <code>catch:</code> blocks:</p>
 <div class="highlight"><pre><span></span><code>// Handle errors with catch block
 $`make build` catch:
-    print_err(&quot;Build failed!&quot;.red())
+    print_err("Build failed!".red())
     exit(1)
 
 // Or ignore failures
@@ -2212,14 +2240,14 @@ $`make build` catch:
 assigned their actual values, so you can inspect them:</p>
 <div class="highlight"><pre><span></span><code>// Capture the exit code AND handle errors
 code = $`make test` catch:
-    print_err(&quot;Command failed to run. Error code {code}&quot;)
+    print_err("Command failed to run. Error code {code}")
     exit(1)
 
-print(&quot;Tests passed!&quot;)
+print("Tests passed!")
 </code></pre></div>
 <p>This works with any capture pattern:</p>
 <div class="highlight"><pre><span></span><code>code, stdout = $`git tag --list` catch:
-    print_err(&quot;Failed to get tags&quot;)
+    print_err("Failed to get tags")
     exit(1)
 
 version = stdout.trim()
@@ -2243,11 +2271,11 @@ one becomes exactly one argument, whatever it contains:</p>
     message str
 
 $`git tag v{version}` catch:
-    print_err(&quot;Failed to create tag&quot;)
+    print_err("Failed to create tag")
     exit(1)
 
 $`git commit -m {message}` catch:
-    print_err(&quot;Commit failed&quot;)
+    print_err("Commit failed")
     exit(1)
 </code></pre></div></td></tr></table></div>
 <p>Note that <code>{message}</code> has no quotes around it. Rad quotes it for you, at the point it knows what the value is.
@@ -2257,15 +2285,15 @@ characters intact rather than being expanded or run.</p>
 <p class="admonition-title">Don't add your own quotes</p>
 <p>Writing <code>$`git commit -m "{message}"`</code> puts the quote characters <em>into</em> the message. Rad flags this as
 <a href="../../reference/errors/">RAD40023</a>. If your argument is literal text plus a value, build the string first:</p>
-<div class="highlight"><pre><span></span><code>version = &quot;1.2.3&quot;
+<div class="highlight"><pre><span></span><code>version = "1.2.3"
 
-message = &quot;Bump to {version}&quot;
+message = "Bump to {version}"
 $`git commit -m {message}`
 </code></pre></div>
 </div>
 <p>Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:</p>
-<div class="highlight"><pre><span></span><code>name = &quot;My Notes.txt&quot;
-version = &quot;1.2.3&quot;
+<div class="highlight"><pre><span></span><code>name = "My Notes.txt"
+version = "1.2.3"
 
 $`cp {name} backup/{name}`      // two arguments, spaces and all
 $`docker build -t app:{version} .`
@@ -2276,25 +2304,25 @@ makes conditional flags straightforward:</p>
 <div class="highlight"><pre><span></span><code>args:
     all bool
 
-flags = all ? [&quot;--hidden&quot;, &quot;--no-ignore&quot;] : []
-needle = &quot;two words&quot;
+flags = all ? ["--hidden", "--no-ignore"] : []
+needle = "two words"
 
 $`rg {flags} -- {needle}` catch:
     pass
 </code></pre></div>
 <p>A list has to stand alone as its own argument - <code>--file={files}</code> is an error, because there is no obvious answer
 to which element gets the prefix. Join it yourself when you want a single argument:</p>
-<div class="highlight"><pre><span></span><code>files = [&quot;a.txt&quot;, &quot;b.txt&quot;]
+<div class="highlight"><pre><span></span><code>files = ["a.txt", "b.txt"]
 
 $`tar -czf out.tgz {files}`          // three arguments
-$`echo --files={files.join(&quot;,&quot;)}`    // one argument
+$`echo --files={files.join(",")}`    // one argument
 </code></pre></div>
 <h2 id="commands-as-lists">Commands As Lists<a class="headerlink" href="#commands-as-lists" title="Permanent link">&para;</a></h2>
 <p>When a command is a list rather than a string, Rad runs the program directly and skips the shell entirely. Each
 element is one argument:</p>
-<div class="highlight"><pre><span></span><code>message = &quot;it&#39;s fine&quot;
+<div class="highlight"><pre><span></span><code>message = "it's fine"
 
-$[&quot;git&quot;, &quot;commit&quot;, &quot;-m&quot;, message]
+$["git", "commit", "-m", message]
 </code></pre></div>
 <p>This is the form to reach for when you're assembling a command piece by piece. Nothing needs quoting, because
 nothing is ever parsed as shell:</p>
@@ -2302,17 +2330,17 @@ nothing is ever parsed as shell:</p>
     start str?
     end str?
 
-path = &quot;clip.mp4&quot;
+path = "clip.mp4"
 
-cmd = [&quot;ffmpeg&quot;, &quot;-i&quot;, path]
+cmd = ["ffmpeg", "-i", path]
 if start:
-    cmd += [&quot;-ss&quot;, start]
+    cmd += ["-ss", start]
 if end:
-    cmd += [&quot;-to&quot;, end]
-cmd += [&quot;-c&quot;, &quot;copy&quot;, &quot;out.mp4&quot;]
+    cmd += ["-to", end]
+cmd += ["-c", "copy", "out.mp4"]
 
 $cmd catch:
-    print_err(&quot;ffmpeg failed&quot;)
+    print_err("ffmpeg failed")
     exit(1)
 </code></pre></div>
 <p>The trade-off is that you give up everything the shell provides: no pipes, no redirects, no globs, no <code>$VAR</code>
@@ -2329,7 +2357,7 @@ a list.</p>
 <h3 id="the-quiet-modifier">The <code>quiet</code> Modifier<a class="headerlink" href="#the-quiet-modifier" title="Permanent link">&para;</a></h3>
 <p>By default, Rad announces each shell command with a ⚡️ prefix. For example, this command:</p>
 <div class="highlight"><pre><span></span><code>$`touch hello.txt` catch:
-    print_err(&quot;Failed to create file&quot;)
+    print_err("Failed to create file")
     exit(1)
 </code></pre></div>
 <p>Shows in the terminal:</p>
@@ -2340,11 +2368,11 @@ a list.</p>
 
 <p>To suppress this announcement, use the <code>quiet</code> modifier:</p>
 <div class="highlight"><pre><span></span><code>quiet $`touch hello.txt` catch:
-    print_err(&quot;Failed to create file&quot;)
+    print_err("Failed to create file")
     exit(1)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>(no output - unless there&#39;s an error)
+<div class="highlight"><pre><span></span><code>(no output - unless there's an error)
 </code></pre></div>
 </div>
 
@@ -2365,40 +2393,40 @@ args:
     push p bool  # Push changes after validation
 
 // Run validation steps
-steps = [&quot;go mod tidy&quot;, &quot;make format&quot;, &quot;make build&quot;, &quot;make test&quot;]
+steps = ["go mod tidy", "make format", "make build", "make test"]
 
 for step in steps:
     $step catch:
-        print_err(&quot;❌ {step} failed&quot;.red())
+        print_err("❌ {step} failed".red())
         exit(1)
-    print(&quot;✅ {step} passed&quot;.green())
+    print("✅ {step} passed".green())
 
 if push:
     // Check for uncommitted changes
     stdout = $`git status --porcelain` catch:
-        print_err(&quot;Failed to check git status&quot;)
+        print_err("Failed to check git status")
         exit(1)
 
-    if stdout.trim() != &quot;&quot;:
-        print_err(&quot;Working directory has uncommitted changes!&quot;)
-        print_err(&quot;Commit your changes before pushing.&quot;)
+    if stdout.trim() != "":
+        print_err("Working directory has uncommitted changes!")
+        print_err("Commit your changes before pushing.")
         exit(1)
 
     // Get current branch and push
     stdout = $`git branch --show-current` catch:
-        print_err(&quot;Failed to get current branch&quot;)
+        print_err("Failed to get current branch")
         exit(1)
 
     branch = stdout.trim()
-    print(&quot;Pushing to {branch}...&quot;.yellow())
+    print("Pushing to {branch}...".yellow())
 
     $`git push origin {branch}` catch:
-        print_err(&quot;Push failed&quot;)
+        print_err("Push failed")
         exit(1)
 
-    print(&quot;✅ Pushed to {branch}&quot;.green())
+    print("✅ Pushed to {branch}".green())
 
-print(&quot;✅ Done!&quot;.green())
+print("✅ Done!".green())
 </code></pre></div>
 <h3 id="conditional-construction">Conditional Construction<a class="headerlink" href="#conditional-construction" title="Permanent link">&para;</a></h3>
 <p>Building commands dynamically based on script arguments. Collect the arguments in a list so each one stays a
@@ -2407,31 +2435,31 @@ single argument no matter what it contains:</p>
     verbose v bool
     output o str?
 
-cmd = [&quot;docker&quot;, &quot;build&quot;, &quot;.&quot;]
+cmd = ["docker", "build", "."]
 
 if verbose:
-    cmd += [&quot;--progress=plain&quot;]
+    cmd += ["--progress=plain"]
 
 if output:
-    cmd += [&quot;-t&quot;, output]
+    cmd += ["-t", output]
 
 $cmd catch:
-    print_err(&quot;Docker build failed&quot;)
+    print_err("Docker build failed")
     exit(1)
 
-print(&quot;Docker image built successfully&quot;.green())
+print("Docker image built successfully".green())
 </code></pre></div>
 <h3 id="checking-prerequisites">Checking Prerequisites<a class="headerlink" href="#checking-prerequisites" title="Permanent link">&para;</a></h3>
 <p>Verifying that required tools are installed:</p>
-<div class="highlight"><pre><span></span><code>tools = [&quot;git&quot;, &quot;docker&quot;, &quot;make&quot;]
+<div class="highlight"><pre><span></span><code>tools = ["git", "docker", "make"]
 
 for tool in tools:
     if not quiet $`which {tool}`.ok:
-        print_err(&quot;Required tool not found: {tool}&quot;)
-        print_err(&quot;Please install {tool} before running this script&quot;)
+        print_err("Required tool not found: {tool}")
+        print_err("Please install {tool} before running this script")
         exit(1)
 
-print(&quot;All prerequisites installed ✅&quot;.green())
+print("All prerequisites installed ✅".green())
 </code></pre></div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>

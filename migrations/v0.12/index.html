@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -2569,12 +2597,12 @@ below tells you how to spot it from your own <code>--help</code> output instead.
 <h3 id="what-changed">What Changed<a class="headerlink" href="#what-changed" title="Permanent link">&para;</a></h3>
 <p>Both functions used to treat their pattern as a regex. Now they look for the exact
 text you give them:</p>
-<div class="highlight"><pre><span></span><code>print(split(&quot;1.2.3&quot;, &quot;.&quot;))          // v0.11: [&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;]   v0.12: [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
-print(replace(&quot;a.b&quot;, &quot;.&quot;, &quot;-&quot;))     // v0.11: &quot;---&quot;                  v0.12: &quot;a-b&quot;
+<div class="highlight"><pre><span></span><code>print(split("1.2.3", "."))          // v0.11: ["", "", "", "", ""]   v0.12: ["1", "2", "3"]
+print(replace("a.b", ".", "-"))     // v0.11: "---"                  v0.12: "a-b"
 </code></pre></div>
 <p>Pass <code>regex=true</code> to get the old behavior:</p>
-<div class="highlight"><pre><span></span><code>print(split(&quot;a b  c&quot;, &quot;\s+&quot;, regex=true))          // -&gt; [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
-print(replace(&quot;order 66&quot;, &quot;\d+&quot;, &quot;N&quot;, regex=true)) // -&gt; &quot;order N&quot;
+<div class="highlight"><pre><span></span><code>print(split("a b  c", "\s+", regex=true))          // -&gt; ["a", "b", "c"]
+print(replace("order 66", "\d+", "N", regex=true)) // -&gt; "order N"
 </code></pre></div>
 <p><code>matches()</code> is unchanged. It exists to test patterns, so it's still always a regex.</p>
 <h3 id="why">Why<a class="headerlink" href="#why" title="Permanent link">&para;</a></h3>
@@ -2596,8 +2624,8 @@ references still work under <code>regex=true</code>.</p>
 if that failed, silently fall back to a literal split. Whether a call was a regex
 split or a literal one was decided at runtime by the shape of the input:</p>
 <div class="highlight"><pre><span></span><code>// v0.11
-split(&quot;a.b&quot;, &quot;.&quot;)    // -&gt; [&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;]  (a valid regex, so: regex)
-split(&quot;a(b&quot;, &quot;(&quot;)    // -&gt; [&quot;a&quot;, &quot;b&quot;]        (not a valid regex, so: literal)
+split("a.b", ".")    // -&gt; ["", "", "", ""]  (a valid regex, so: regex)
+split("a(b", "(")    // -&gt; ["a", "b"]        (not a valid regex, so: literal)
 </code></pre></div>
 <p>Now the separator is literal unless you say otherwise, and under <code>regex=true</code> a
 pattern that doesn't compile is an error.</p>
@@ -2608,11 +2636,11 @@ recently:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
 <p>The warning looks like this:</p>
-<div class="highlight"><pre><span></span><code>warning[RAD40016]: &#39;\s+&#39; reads as a regex (&#39;\s&#39;), but split() matches it literally
+<div class="highlight"><pre><span></span><code>warning[RAD40016]: '\s+' reads as a regex ('\s'), but split() matches it literally
   --&gt; parse.rad:4:22
   |
 3 |
-4 | fields = split(line, &quot;\s+&quot;)
+4 | fields = split(line, "\s+")
   |                      ^^^^^
 5 |
   |
@@ -2624,9 +2652,9 @@ recently:</p>
 <p><strong>3. Drop the escaping where you didn't.</strong> Patterns that only existed to escape
 metacharacters get simpler:</p>
 <div class="highlight"><pre><span></span><code>// Before
-print(split(&quot;1.2.3&quot;, &quot;\.&quot;))
+print(split("1.2.3", "\."))
 // After
-print(split(&quot;1.2.3&quot;, &quot;.&quot;))
+print(split("1.2.3", "."))
 </code></pre></div>
 <p><strong>4. Check your <code>replace()</code> replacements.</strong> If a replacement string contains a <code>$</code>
 that you wanted taken literally, it now works without a workaround. If it contains
@@ -2634,8 +2662,8 @@ a <code>$1</code> that you wanted expanded, the call needs <code>regex=true</cod
 <h3 id="what-the-warning-cannot-catch">What the Warning Cannot Catch<a class="headerlink" href="#what-the-warning-cannot-catch" title="Permanent link">&para;</a></h3>
 <p>RAD40016 only reads patterns that are written literally in your source. A pattern
 held in a variable or built at runtime is invisible to it:</p>
-<div class="highlight"><pre><span></span><code>sep = get_env(&quot;FIELD_SEP&quot;)
-parts = split(&quot;a b c&quot;, sep)   // no warning possible
+<div class="highlight"><pre><span></span><code>sep = get_env("FIELD_SEP")
+parts = split("a b c", sep)   // no warning possible
 </code></pre></div>
 <p>It also stays quiet on patterns whose metacharacters are common in ordinary text,
 <code>.</code> and a lone <code>|</code> in particular, because warning on those would bury the real
@@ -2658,11 +2686,11 @@ tightened up. Three long-standing bugs are fixed:</p>
 <h3 id="what-changed_1">What Changed<a class="headerlink" href="#what-changed_1" title="Permanent link">&para;</a></h3>
 <p>A value interpolated into a shell command now reaches the program as exactly one
 argument, whatever characters it contains:</p>
-<div class="highlight"><pre><span></span><code>message = &quot;it&#39;s fine&quot;
+<div class="highlight"><pre><span></span><code>message = "it's fine"
 
 $`git commit -m {message}`
-// v0.11: git commit -m it&#39;s fine   -&gt;  shell syntax error
-// v0.12: git commit -m &#39;it&#39;\&#39;&#39;s fine&#39;
+// v0.11: git commit -m it's fine   -&gt;  shell syntax error
+// v0.12: git commit -m 'it'\''s fine'
 </code></pre></div>
 <p>The text you write is still shell. Pipes, redirects, <code>&amp;&amp;</code>, globs and <code>$VAR</code> in the
 literal parts of the command all work exactly as before. Only the interpolations
@@ -2719,30 +2747,30 @@ the script wrote itself:</p>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>all
 </code></pre></div>
 <p><strong>2. Delete your quotes.</strong></p>
-<div class="highlight"><pre><span></span><code>message = &quot;hello&quot;
+<div class="highlight"><pre><span></span><code>message = "hello"
 
 // Before
-$`git commit -m &quot;{message}&quot;`
+$`git commit -m "{message}"`
 // After
 $`git commit -m {message}`
 </code></pre></div>
 <p><strong>3. Hoist arguments that mix literal text with a value.</strong> The quotes were holding
 the two halves together as one argument; a single interpolation does that alone:</p>
-<div class="highlight"><pre><span></span><code>version = &quot;1.2.3&quot;
+<div class="highlight"><pre><span></span><code>version = "1.2.3"
 
 // Before
-$`git commit -m &quot;Bump to {version}&quot;`
+$`git commit -m "Bump to {version}"`
 // After
-message = &quot;Bump to {version}&quot;
+message = "Bump to {version}"
 $`git commit -m {message}`
 </code></pre></div>
 <p><strong>4. Turn joined lists into real lists.</strong> A list now expands to one argument per
 element, each quoted separately, so the <code>join(" ")</code> workaround is obsolete - and it
 was losing any element containing a space:</p>
-<div class="highlight"><pre><span></span><code>files = [&quot;My Notes.txt&quot;, &quot;b.txt&quot;]
+<div class="highlight"><pre><span></span><code>files = ["My Notes.txt", "b.txt"]
 
 // Before - one argument, or several wrong ones
-$`tar -czf out.tgz {files.join(&quot; &quot;)}`
+$`tar -czf out.tgz {files.join(" ")}`
 // After - one argument per file
 $`tar -czf out.tgz {files}`
 </code></pre></div>
@@ -2752,9 +2780,9 @@ flag-fragment trick:</p>
     all bool
 
 // Before
-extra = all ? &quot;--hidden --no-ignore&quot; : &quot;&quot;
+extra = all ? "--hidden --no-ignore" : ""
 // After
-extra = all ? [&quot;--hidden&quot;, &quot;--no-ignore&quot;] : []
+extra = all ? ["--hidden", "--no-ignore"] : []
 </code></pre></div>
 <p><strong>5. Convert commands you assemble piecewise into lists.</strong> Building a command as a
 string and running it with <code>$cmd</code> still works and is still verbatim - Rad has no
@@ -2762,27 +2790,27 @@ interpolation to protect once the string exists. A list is safe and reads better
 <div class="highlight"><pre><span></span><code>args:
     start str?
 
-path = &quot;clip.mp4&quot;
+path = "clip.mp4"
 
 // Before
-cmd = `ffmpeg -i &#39;{path}&#39;`
+cmd = `ffmpeg -i '{path}'`
 if start:
-    cmd += &quot; -ss {start}&quot;
+    cmd += " -ss {start}"
 $cmd
 
 // After
-cmd = [&quot;ffmpeg&quot;, &quot;-i&quot;, path]
+cmd = ["ffmpeg", "-i", path]
 if start:
-    cmd += [&quot;-ss&quot;, start]
+    cmd += ["-ss", start]
 $cmd
 </code></pre></div>
 <h3 id="what-the-diagnostic-cannot-catch">What the Diagnostic Cannot Catch<a class="headerlink" href="#what-the-diagnostic-cannot-catch" title="Permanent link">&para;</a></h3>
 <p>RAD40023 reads command <em>literals</em>. It cannot see a command assembled into a string
 elsewhere and run with <code>$cmd</code>, because by then the interpolation has already
 happened and there is nothing left to flag:</p>
-<div class="highlight"><pre><span></span><code>path = &quot;a b.txt&quot;
+<div class="highlight"><pre><span></span><code>path = "a b.txt"
 
-cmd = `ls &#39;{path}&#39;`   // no warning possible
+cmd = `ls '{path}'`   // no warning possible
 $cmd
 </code></pre></div>
 <p>That form is unchanged in v0.12 - it was raw before and is raw now - but it is also
@@ -2804,7 +2832,7 @@ RAD20045:</p>
 into variables that <em>aren't</em> named <code>code</code>, <code>stdout</code>, or <code>stderr</code>, Rad fills them
 by position - and that order has changed:</p>
 <div class="highlight"><pre><span></span><code>// v0.11: (code, stdout, stderr)     v0.12: (stdout, stderr, code)
-out = $`rad -v`             // v0.11: 0            v0.12: &quot;rad v0.12.0\n&quot;
+out = $`rad -v`             // v0.11: 0            v0.12: "rad v0.12.0\n"
 out, err = $`rad -v`        // v0.11: 0, output    v0.12: output, errors
 out, err, c = $`rad -v`     // v0.11: 0, out, err  v0.12: out, err, 0
 </code></pre></div>
@@ -2832,7 +2860,7 @@ you stdout.</p>
 <h3 id="migration-steps_2">Migration Steps<a class="headerlink" href="#migration-steps_2" title="Permanent link">&para;</a></h3>
 <p><strong>1. Find the affected captures.</strong> RAD40018 flags capture targets whose names
 promise a different stream than they now receive:</p>
-<div class="highlight"><pre><span></span><code>warning[RAD40018]: &#39;version&#39; is bound to stderr here
+<div class="highlight"><pre><span></span><code>warning[RAD40018]: 'version' is bound to stderr here
    --&gt; release.rad:46:4
    |
 45 | // ...
@@ -2848,13 +2876,13 @@ promise a different stream than they now receive:</p>
 <p><strong>2. For mixed naming, rename rather than reorder.</strong> The most common affected
 shape uses a reserved name alongside an ordinary one, which drops the whole
 statement to positional:</p>
-<div class="highlight"><pre><span></span><code>// Before - &#39;out&#39; isn&#39;t reserved, so &#39;code&#39; silently receives stdout
+<div class="highlight"><pre><span></span><code>// Before - 'out' isn't reserved, so 'code' silently receives stdout
 code, out = $`make test` catch:
-    print_err(&quot;failed: {out}&quot;)
+    print_err("failed: {out}")
 
 // After - now all names are reserved, so assignment goes by name
 code, stdout = $`make test` catch:
-    print_err(&quot;failed: {stdout}&quot;)
+    print_err("failed: {stdout}")
 </code></pre></div>
 <p>This is a rename, and it captures exactly the same streams as before. It's the
 best fix for <code>code, out = ...</code> and <code>code, out, err = ...</code>.</p>
@@ -2895,8 +2923,8 @@ new code. If a script captures into names like these, read it by hand.</p>
 became part of <em>building</em> it. Three spellings meant something other than what
 they read like, and <code>rad check</code> reported none of them:</p>
 <div class="highlight"><pre><span></span><code>x = $`echo hi`.upper()       // ran ECHO HI
-x = $`cmd` catch &quot;fallback&quot;  // caught the command string; the handler never ran
-x = $`cmd` ?? &quot;fallback&quot;     // the same
+x = $`cmd` catch "fallback"  // caught the command string; the handler never ran
+x = $`cmd` ?? "fallback"     // the same
 </code></pre></div>
 <p>The last two are the ones worth stopping on. They look exactly like working
 error handling. What actually happened is that <code>catch</code> and <code>??</code> applied to the
@@ -2906,7 +2934,7 @@ unhandled and ended the script:</p>
 error[RAD20000]: Command exited with code 1
   --&gt; script.rad:1:1
   |
-1 | x = $`false` catch &quot;fallback&quot;
+1 | x = $`false` catch "fallback"
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 </code></pre></div>
 <p><code>$</code> now takes only the command: a string, a list, a variable, or a parenthesized
@@ -2956,7 +2984,7 @@ $`make build` catch:
 <h3 id="what-you-get-for-it">What You Get For It<a class="headerlink" href="#what-you-get-for-it" title="Permanent link">&para;</a></h3>
 <p>The reason <code>$</code> had to stop swallowing expressions is that a command can now be
 read where it stands:</p>
-<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch &quot;unknown&quot;
+<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch "unknown"
 
 if not $`which docker`.ok:
     exit(1)
@@ -2973,8 +3001,8 @@ value until the next flag:</p>
     targets str[]
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>a.txt<span class="w"> </span>b.txt<span class="w"> </span>c.txt
-<span class="c1"># v0.11: error, &quot;Too many positional arguments. Unused: [b.txt, c.txt]&quot;</span>
-<span class="c1"># v0.12: targets = [&quot;a.txt&quot;, &quot;b.txt&quot;, &quot;c.txt&quot;]</span>
+<span class="c1"># v0.11: error, "Too many positional arguments. Unused: [b.txt, c.txt]"</span>
+<span class="c1"># v0.12: targets = ["a.txt", "b.txt", "c.txt"]</span>
 </code></pre></div>
 <p>Through its own flag nothing changed - <code>--targets a --targets b</code> is still how you
 repeat it, and <code>--targets a b</code> still passes only <code>a</code>.</p>
@@ -2989,11 +3017,11 @@ after its own flag, a variadic is greedy and a list takes one value.</p>
 the case that can move a value silently:</p>
 <div class="highlight"><pre><span></span><code>args:
     files str[]
-    mode str = &quot;fast&quot;
+    mode str = "fast"
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>a<span class="w"> </span>b
-<span class="c1"># v0.11: files = [&quot;a&quot;], mode = &quot;b&quot;</span>
-<span class="c1"># v0.12: files = [&quot;a&quot;, &quot;b&quot;], mode = &quot;fast&quot;</span>
+<span class="c1"># v0.11: files = ["a"], mode = "b"</span>
+<span class="c1"># v0.12: files = ["a", "b"], mode = "fast"</span>
 </code></pre></div>
 <p>Where the later arg is required you'll get a missing-argument error, which is
 loud. Where it has a default, as above, the value just moves. Run <code>--help</code>: if
@@ -3006,7 +3034,7 @@ pass the later arg by flag.</p>
 <p>A flag used to take whatever token followed it. Now a <code>-</code>-prefixed token is read
 as a flag:</p>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>--name<span class="w"> </span>--verbose
-<span class="c1"># v0.11: name = &quot;--verbose&quot;, and --verbose was never set</span>
+<span class="c1"># v0.11: name = "--verbose", and --verbose was never set</span>
 <span class="c1"># v0.12: error</span>
 </code></pre></div>
 <p>To pass a value that starts with <code>-</code>, use the <code>=</code> form (<code>--name=--verbose</code>) or
@@ -3030,7 +3058,7 @@ were accepted, shown nowhere, and never checked:</p>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>--scores<span class="w"> </span><span class="m">5</span><span class="w"> </span>--scores<span class="w"> </span><span class="m">500</span>
 <span class="c1"># v0.11: scores = [5, 500]</span>
-<span class="c1"># v0.12: error, &quot;&#39;scores&#39; value 500 is &gt; maximum 100&quot;</span>
+<span class="c1"># v0.12: error, "'scores' value 500 is &gt; maximum 100"</span>
 </code></pre></div>
 <p>On a list, a constraint describes each value. Every value has to pass, whether
 it arrived through a repeated flag or as a bare positional. The constraint also
@@ -3077,11 +3105,11 @@ interval notation <code>range</code> already uses:</p>
 <p>A script calling <code>input</code>, <code>confirm</code>, <code>pick</code>, <code>pick_kv</code>, <code>pick_from_resource</code>,
 <code>multipick</code>, or a <code>confirm</code>-gated shell command used to run until it reached the
 prompt and then fail. Now rad checks first, and refuses to start:</p>
-<div class="highlight"><pre><span></span><code>print(&quot;fetching&quot;)
-env = pick([&quot;dev&quot;, &quot;prod&quot;])
+<div class="highlight"><pre><span></span><code>print("fetching")
+env = pick(["dev", "prod"])
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>deploy.rad<span class="w"> </span>&lt;<span class="w"> </span>/dev/null
-<span class="c1"># v0.11: prints &quot;fetching&quot;, then error[RAD20000]: pick requires an interactive terminal</span>
+<span class="c1"># v0.11: prints "fetching", then error[RAD20000]: pick requires an interactive terminal</span>
 <span class="c1"># v0.12: error[RAD20046], listing every prompt. Nothing runs.</span>
 </code></pre></div>
 <p>Answer the prompts with <a href="../../guide/global-flags/#reply"><code>--reply</code></a>, keyed by
@@ -3113,7 +3141,7 @@ today without a terminal:</p>
 <div class="highlight"><pre><span></span><code>args:
     name str
 
-servers = [&quot;web-1&quot;, &quot;web-2&quot;]
+servers = ["web-1", "web-2"]
 server = pick(servers, name)
 </code></pre></div>
 <p>Rad cannot evaluate <code>name</code> before running, so it lists the prompt and blocks.
@@ -3129,18 +3157,18 @@ it can change a result, so it is worth knowing.</p>
 <h3 id="what-changed_7">What Changed<a class="headerlink" href="#what-changed_7" title="Permanent link">&para;</a></h3>
 <p>Both operators fired when a <em>call</em> failed, but ignored an error value sitting directly in
 front of them:</p>
-<div class="highlight"><pre><span></span><code>r = error(&quot;boom&quot;) ?? &quot;fallback&quot;
-// v0.11: r is the error. v0.12: r is &quot;fallback&quot;
+<div class="highlight"><pre><span></span><code>r = error("boom") ?? "fallback"
+// v0.11: r is the error. v0.12: r is "fallback"
 </code></pre></div>
 <p>The same applies to an error that a <code>catch:</code> block bound earlier:</p>
 <div class="highlight"><pre><span></span><code>fn fail() -&gt; str|error:
-    return error(&quot;boom&quot;)
+    return error("boom")
 
 stored = fail() catch:
     pass
 
-r = stored catch &quot;default&quot;
-// v0.11: r is the error. v0.12: r is &quot;default&quot;
+r = stored catch "default"
+// v0.11: r is the error. v0.12: r is "default"
 </code></pre></div>
 <h3 id="why_7">Why<a class="headerlink" href="#why_7" title="Permanent link">&para;</a></h3>
 <p>The guide, the syntax reference, and the type checker all already specified that these

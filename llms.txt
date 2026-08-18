@@ -20,6 +20,7 @@
 - [Stashes](https://amterp.dev/rad/guide/stashes.md): The Basics, State Storage, File Storage, Stash Structure, Managing Stashes
 - [Configuration](https://amterp.dev/rad/guide/config.md): Invocation Logging
 - [Built-in Commands](https://amterp.dev/rad/guide/built-in-commands.md): `rad new`, `rad check`, `rad fmt`, `rad docs`, `rad stash`, `rad gen-id`, `rad home`, `rad completion`
+- [REPL](https://amterp.dev/rad/guide/repl.md): Blocks take several lines, Mistakes don't end the session, Editing, Commands, Two things behave differently than in a script, Piping input, What it doesn't do yet
 - [Shell Completion](https://amterp.dev/rad/guide/shell-completion.md): Quick Setup, What Gets Completed, Script Completions, Multiple Scripts & Globs, Full Example
 
 ## Examples

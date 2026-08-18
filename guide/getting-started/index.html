@@ -1055,6 +1055,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1972,7 +2000,7 @@ This is installed automatically when you install Rad via Homebrew or <code>go in
 <h2 id="your-first-rad-script-hello-world">Your First Rad Script - Hello World<a class="headerlink" href="#your-first-rad-script-hello-world" title="Permanent link">&para;</a></h2>
 <p>Let's write the classic "Hello, World!" program. We'll then modify it to give it a bit of a Rad twist, demoing a few features that Rad provides.</p>
 <p>First, create a file, let's call it simply <code>hello</code>, and give it the following contents:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>print(&quot;Hello, World!&quot;) 
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>print("Hello, World!") 
 </code></pre></div></td></tr></table></div>
 <div class="admonition tip">
 <p class="admonition-title"><code>print()</code></p>
@@ -2001,7 +2029,7 @@ This is installed automatically when you install Rad via Homebrew or <code>go in
 <span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="hll">args:
 </span><span class="hll">  name str
 </span><span class="hll">
-</span><span class="hll">print(&quot;Hello, {name}!&quot;)
+</span><span class="hll">print("Hello, {name}!")
 </span></code></pre></div></td></tr></table></div>
 <p>A couple of things to note here:</p>
 <ol>
@@ -2049,7 +2077,7 @@ Script args:
 </span>args:
   name str
 
-print(&quot;Hello, {name}!&quot;)
+print("Hello, {name}!")
 </code></pre></div></td></tr></table></div>
 <div class="admonition tip">
 <p class="admonition-title">File Headers</p>
@@ -2074,7 +2102,7 @@ Prints a polite greeting using an input name.
 args:
 <span class="hll">  name str  # The name of someone to greet.
 </span>
-print(&quot;Hello, {name}!&quot;)
+print("Hello, {name}!")
 </code></pre></div></td></tr></table></div>
 <div class="admonition info">
 <p class="admonition-title">Note on <code>#</code> vs. <code>//</code></p>
@@ -2115,7 +2143,7 @@ Prints a polite greeting using an input name.
 args:
   name str  # The name of someone to greet.
 
-print(&quot;Hello, {name}!&quot;)
+print("Hello, {name}!")
 </code></pre></div></td></tr></table></div>
 <p>Then, make the script executable using the following command:</p>
 <div class="highlight"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>./hello
@@ -2170,18 +2198,18 @@ Prints a polite greeting using an input name.
 args:
   name str                # The name of someone to greet.
   times t int = 1         # How many times to greet them.
-  style s str = &quot;normal&quot;  # Greeting style.
+  style s str = "normal"  # Greeting style.
 
   times range (0, 10]
-  style enum [&quot;normal&quot;, &quot;excited&quot;, &quot;formal&quot;]
+  style enum ["normal", "excited", "formal"]
 
 greeting = switch style:
-  case &quot;excited&quot; -&gt; &quot;HEY&quot;
-  case &quot;formal&quot; -&gt; &quot;Good day&quot;
-  default -&gt; &quot;Hello&quot;
+  case "excited" -&gt; "HEY"
+  case "formal" -&gt; "Good day"
+  default -&gt; "Hello"
 
 for i in range(times):
-  print(&quot;{greeting}, {name}!&quot;)
+  print("{greeting}, {name}!")
 </code></pre></div></td></tr></table></div>
 <p><strong>What we added:</strong></p>
 <ul>
@@ -2229,7 +2257,7 @@ Script args:
 <div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>./hello<span class="w"> </span>Bob<span class="w"> </span>-t<span class="w"> </span><span class="m">15</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>&#39;times&#39; value 15 is &gt; maximum 10
+<div class="highlight"><pre><span></span><code>'times' value 15 is &gt; maximum 10
 </code></pre></div>
 </div>
 
@@ -2237,7 +2265,7 @@ Script args:
 <div class="highlight"><pre><span></span><code>&gt;<span class="w"> </span>./hello<span class="w"> </span>Bob<span class="w"> </span>-s<span class="w"> </span>casual
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Invalid &#39;style&#39; value: casual (valid values: normal, excited, formal)
+<div class="highlight"><pre><span></span><code>Invalid 'style' value: casual (valid values: normal, excited, formal)
 </code></pre></div>
 </div>
 

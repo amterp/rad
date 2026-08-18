@@ -1000,6 +1000,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1808,10 +1836,10 @@ and you can decide how to handle them. This makes error handling explicit, predi
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>args:
-    age_str str  # User&#39;s age as a string
+    age_str str  # User's age as a string
 
 age = parse_int(age_str)
-print(&quot;You are {age} years old&quot;)
+print("You are {age} years old")
 </code></pre></div></td></tr></table></div>
 <p>In reality, you'd instead declare the arg as an <code>int</code> and let Rad handle input validation,
 but for the purposes of this guide, we write it as a <code>str</code>.</p>
@@ -1824,13 +1852,13 @@ but for the purposes of this guide, we write it as a <code>str</code>.</p>
 </div>
 
 <p>But what happens with invalid input?</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="s2">&quot;not-a-number&quot;</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="s2">"not-a-number"</span>
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Error at L4:7
 
 age = parse_int(age_str)
-      ^^^^^^^^^^^^^^^^^^ parse_int() failed to parse &quot;not-a-number&quot; (RAD20001)
+      ^^^^^^^^^^^^^^^^^^ parse_int() failed to parse "not-a-number" (RAD20001)
 </code></pre></div>
 </div>
 
@@ -1854,9 +1882,9 @@ Since we're at the root of the script and not nested within any other function c
 
 fn process_order(item_price: str) -&gt; str|error:
     discount = calculate_discount(item_price)  // ...propagates through here...
-    return &quot;Discount: {discount:.2} USD&quot;
+    return "Discount: {discount:.2} USD"
 
-result = process_order(&quot;invalid&quot;)  // ...and exits the script here
+result = process_order("invalid")  // ...and exits the script here
 print(result)
 </code></pre></div></td></tr></table></div>
 <div class="result">
@@ -1864,7 +1892,7 @@ print(result)
 
       price = parse_float(price_str)  // Error starts here...
               ^^^^^^^^^^^^^^^^^^^^^^
-              parse_float() failed to parse &quot;invalid&quot; (RAD20002)
+              parse_float() failed to parse "invalid" (RAD20002)
 </code></pre></div>
 </div>
 
@@ -1885,16 +1913,16 @@ print(result)
     age_str str
 
 age = parse_int(age_str) catch:
-    print_err(&quot;Invalid age, falling back to 0: {age}&quot;)  // &#39;age&#39; contains the error value
+    print_err("Invalid age, falling back to 0: {age}")  // 'age' contains the error value
     age = 0  // Provide fallback
 
-print(&quot;Age: {age}&quot;)
+print("Age: {age}")
 </code></pre></div></td></tr></table></div>
 <p>Now when we run it with invalid input:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="s2">&quot;not-a-number&quot;</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>age<span class="w"> </span><span class="s2">"not-a-number"</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Invalid age, falling back to 0: parse_int() failed to parse &quot;not-a-number&quot;
+<div class="highlight"><pre><span></span><code>Invalid age, falling back to 0: parse_int() failed to parse "not-a-number"
 Age: 0
 </code></pre></div>
 </div>
@@ -1922,14 +1950,14 @@ error string, as returned by <code>parse_int</code>, which we can log or inspect
     config_file str
 
 config = read_file(config_file) catch:
-    print_err(&quot;Failed to read config: {config}&quot;)
+    print_err("Failed to read config: {config}")
     exit(1)
 
-print(&quot;Config loaded successfully&quot;)
+print("Config loaded successfully")
 // Continue processing config...
 </code></pre></div></td></tr></table></div>
 <p>Running this with a non-existent file:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>readconfig<span class="w"> </span><span class="s2">&quot;missing.txt&quot;</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>readconfig<span class="w"> </span><span class="s2">"missing.txt"</span>
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Failed to read config: open missing.txt: no such file or directory
@@ -1946,7 +1974,7 @@ more useful guidance to users in a more detailed error message.</p>
 <span class="normal">4</span>
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>// Custom fn to clean up temp file if it exists
 delete_path(temp_file) catch:
-    pass  // File already doesn&#39;t exist, that&#39;s fine
+    pass  // File already doesn't exist, that's fine
 
 // Continue with the rest of the script...
 </code></pre></div></td></tr></table></div>
@@ -1954,16 +1982,16 @@ delete_path(temp_file) catch:
 <h2 id="the-operator">The <code>??</code> Operator<a class="headerlink" href="#the-operator" title="Permanent link">&para;</a></h2>
 <p>For simple cases where you just want a default value without any logging or conditional logic, the <code>??</code> operator provides a concise shorthand:</p>
 <div class="highlight"><pre><span></span><code>age = parse_int(age_str) ?? 0
-timeout = parse_int(get_env(&quot;TIMEOUT&quot;)) ?? 30
-max_retries = parse_int(config[&quot;retries&quot;]) ?? 5
+timeout = parse_int(get_env("TIMEOUT")) ?? 30
+max_retries = parse_int(config["retries"]) ?? 5
 </code></pre></div>
 <p><code>??</code> fires when the left side is <strong>null or an error</strong>, making it a null-coalescing operator:</p>
-<div class="highlight"><pre><span></span><code>name = user[&quot;name&quot;] ?? &quot;anonymous&quot;   // handles both missing keys and null values
+<div class="highlight"><pre><span></span><code>name = user["name"] ?? "anonymous"   // handles both missing keys and null values
 config = read_file(config_path) ?? get_default_config()
 </code></pre></div>
 <p>The right side uses <strong>lazy evaluation</strong> - it's only evaluated if the left side is null or an error. This means you can safely call functions on the right without worrying about unnecessary work.</p>
 <p>This makes <code>??</code> useful for safely drilling into nested data. If any key along the way is missing or null, the whole expression falls back:</p>
-<div class="highlight"><pre><span></span><code>name = response.user.profile.display_name ?? &quot;anonymous&quot;
+<div class="highlight"><pre><span></span><code>name = response.user.profile.display_name ?? "anonymous"
 </code></pre></div>
 <h2 id="the-catch-operator">The <code>catch</code> Operator<a class="headerlink" href="#the-catch-operator" title="Permanent link">&para;</a></h2>
 <p>The <code>catch</code> operator is similar to <code>??</code>, but <strong>only catches errors</strong> - null values pass through unchanged:</p>
@@ -1971,12 +1999,12 @@ config = read_file(config_path) ?? get_default_config()
 data = parse_json(raw_input) catch {}  // parse failure -&gt; empty map
 </code></pre></div>
 <p>This is useful when you want to handle errors but need to preserve null as a meaningful value:</p>
-<div class="highlight"><pre><span></span><code>m = {&quot;key&quot;: null}
-m[&quot;key&quot;] ?? &quot;fallback&quot;     // -&gt; &quot;fallback&quot; (?? treats null as missing)
-m[&quot;key&quot;] catch &quot;fallback&quot;  // -&gt; null       (catch lets null through)
+<div class="highlight"><pre><span></span><code>m = {"key": null}
+m["key"] ?? "fallback"     // -&gt; "fallback" (?? treats null as missing)
+m["key"] catch "fallback"  // -&gt; null       (catch lets null through)
 </code></pre></div>
 <p>Like <code>??</code>, <code>catch</code> supports lazy evaluation and chaining:</p>
-<div class="highlight"><pre><span></span><code>result = risky_call() catch fallback_call() catch &quot;final default&quot;
+<div class="highlight"><pre><span></span><code>result = risky_call() catch fallback_call() catch "final default"
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Not to be confused with <code>catch:</code> blocks</p>
@@ -1992,7 +2020,7 @@ age = parse_int(age_str) catch 0
 
 // catch: block - full control (logging, conditional handling)
 age = parse_int(age_str) catch:
-    print_err(&quot;Invalid age &#39;{age_str}&#39;: {age}&quot;)
+    print_err("Invalid age '{age_str}': {age}")
     age = 0
 </code></pre></div>
 <div class="admonition tip">
@@ -2006,7 +2034,7 @@ you already hold - see <a href="#holding-an-error">Holding an Error</a>. A <code
 catches an operation that failed, so a statement that merely assigns an error you already
 had doesn't trigger it.</p>
 <p>All three work on a shell command read inline, since a non-zero exit is an ordinary error:</p>
-<div class="highlight"><pre><span></span><code>tag = $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
+<div class="highlight"><pre><span></span><code>tag = $`git describe --tags`.stdout.trim() catch "untagged"
 </code></pre></div>
 <p>That holds for <code>.stdout</code> and <code>.stderr</code>. <code>.code</code> and <code>.ok</code> never produce an error - reading
 them is how you handle a failure - so wrapping those in <code>??</code> or <code>catch</code> does nothing. See
@@ -2030,19 +2058,19 @@ If you're using type annotations, then functions that may return errors should r
 <span class="normal">14</span>
 <span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code>fn validate_port(port: int) -&gt; int|error:
     if port &lt; 1 or port &gt; 65535:
-        return error(&quot;Port must be between 1-65535, got {port}&quot;)
+        return error("Port must be between 1-65535, got {port}")
     return port
 
 fn start_server(port_str: str) -&gt; void:
     port = parse_int(port_str) ?? 8080
 
     validated_port = validate_port(port) catch:
-        print_err(&quot;Invalid port: {validated_port}&quot;)
+        print_err("Invalid port: {validated_port}")
         exit(1)
 
-    print(&quot;Starting server on port {validated_port}&quot;)
+    print("Starting server on port {validated_port}")
 
-start_server(&quot;99999&quot;)
+start_server("99999")
 </code></pre></div></td></tr></table></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Invalid port: Port must be between 1-65535, got 99999
@@ -2073,7 +2101,7 @@ Error unions are just one application of Rad's union type system.</p>
 <p>A <code>catch:</code> block that doesn't reassign leaves the error itself in the variable, where you
 can read it:</p>
 <div class="highlight"><pre><span></span><code>fn fail() -&gt; str|error:
-    return error(&quot;boom&quot;)
+    return error("boom")
 
 stored = fail() catch:
     pass
@@ -2084,7 +2112,7 @@ print(type_of(stored))  // error
 <p>It is still live, though. Returning it from another function raises it again, and the
 script exits pointing at that second call rather than the original one:</p>
 <div class="highlight"><pre><span></span><code>fn fail() -&gt; str|error:
-    return error(&quot;boom&quot;)
+    return error("boom")
 
 fn relay(x):
     return x
@@ -2096,8 +2124,8 @@ result = relay(stored)  // exits: boom
 </code></pre></div>
 <p>Rad doesn't record whether an error has been handled before. A function that returns an
 error has failed, whatever that error's history, so guard the call like any other:</p>
-<div class="highlight"><pre><span></span><code>result = relay(stored) ?? &quot;default&quot;
-result = relay(stored) catch &quot;default&quot;
+<div class="highlight"><pre><span></span><code>result = relay(stored) ?? "default"
+result = relay(stored) catch "default"
 </code></pre></div>
 <p>The alternative - marking an error handled so it never fires again - would make a real
 failure vanish the moment it passed through a function that returned it unchanged.

@@ -1607,6 +1607,30 @@ rad cleanup.rad --reply 12:yes --reply 12:no
 
 Answers are queued per line rather than globally, so adding a prompt earlier in a script never silently re-targets a later answer. Running out mid-loop stops the script rather than reusing the last answer.
 
+A prompt in a function called from several places repeats too, and then one key stands for several different questions:
+
+```rad
+fn ask(label):
+    return input("Enter {label}: ")
+
+host = ask("hostname")
+user = ask("username")
+print("{user}@{host}")
+```
+
+Answers bind in the order the calls run. Where rad can account for every execution it lists them, so that order is readable without opening the file:
+
+```
+deploy.rad:2  input may run more than once - repeat --reply per run
+    reached from:
+      4  host = ask("hostname")
+      5  user = ask("username")
+```
+
+It says nothing where it cannot account for them all - a call inside a loop, a function passed around as a value, a caller that itself runs more than once, or a recursive function. A list missing one call would read exactly like a complete one.
+
+Rad cannot count the passes for you either way; that depends on the script's own data. Where stopping partway would cost you something, read the script and count before you answer.
+
 #### Prompts You Don't Expect To Reach
 
 If a prompt sits on a branch this run won't take, say so instead of inventing a value:
@@ -1645,7 +1669,7 @@ A script setting `@enable_global_options = 0` removes `--reply` along with every
 
 The script reached a prompt that `--reply` couldn't answer. Unlike RAD20046, this one fires mid-run, because it depends on something rad could not know before starting.
 
-There are four ways to get here.
+Whichever way you got here, the script ran up to this point. Check what it already did before you re-run it: a retry starts from the top.
 
 #### The Prompt Was Marked Unreachable
 
@@ -1667,6 +1691,18 @@ rad cleanup.rad --reply 12:yes --reply 12:yes    # ran a third time
 
 Rad does not reuse the last answer. One `yes` silently approving five hundred deletions is exactly the accident worth failing over. Supply as many answers as the loop has passes, or narrow what the loop iterates over.
 
+A second shape lands here too, and rad cannot tell it from the first. A script that re-asks until it gets a value it accepts spends an answer on every attempt:
+
+```rad
+env = ""
+while env not in ["prod", "staging"]:
+    env = input("Environment? ")
+```
+
+`--reply 3:dev` is rejected, the loop comes back around, and there is nothing left to give it. Adding flags cannot fix this one - `--reply 3:dev --reply 3:dev` fails in exactly the same place. Answer with a value the script takes.
+
+The message names both readings because only you can tell which applies. Count the passes if the prompt sits in a loop; check the value if the script validates it.
+
 #### The Answer Matched No Option
 
 A `pick` or `multipick` over runtime data - a fetched list, a resource file, a computed set - got an answer that isn't in it:
@@ -1679,6 +1715,19 @@ server = pick(fetch_servers())
 ```
 
 Rad can't check that up front, because the options don't exist until the script builds them. The error lists the real options, so the next run can name one exactly. Matching is exact by design: a near-miss fails rather than quietly acting on the wrong choice.
+
+#### The Filter Already Chose
+
+A `pick` given a filter that leaves one option takes it without asking. An answer naming anything else is a disagreement, and rad won't settle it by picking a side:
+
+```rad
+services = ["api", "worker", "scheduler"]
+target = pick(services, "api", prefer_exact=true)
+```
+
+Here `--reply 2:worker` asks for one service and the script's own filter chose another. Usually the filter is the thing to change - it is normally built from an arg, so `worker` belongs there rather than in the answer.
+
+An answer that names the option the filter settled on is consumed and the run carries on. Consuming it either way is what keeps a loop's answers in step with its passes, so a pick that settles on some passes and asks on others still lines up.
 
 #### The Input Was Secret
 
@@ -1698,7 +1747,7 @@ A `multipick` answer named an option twice, or gave more or fewer selections tha
 
 #### How to Fix
 
-Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job. Note that the script did execute up to this point - if it has side effects, check what already happened before retrying.
+Rad prints the remaining prompts along with the failure, so a single re-run with the corrected `--reply` usually finishes the job.
 
 #### Related
 
@@ -1779,6 +1828,64 @@ $["definitely_not_installed"] catch:
 
 - `rad docs guide/shell-commands` - capture, modifiers, and the three command forms
 - `rad docs guide/error-handling` - `??`, the `catch` operator, and `catch:` blocks
+
+### RAD20049: Construct Not Available In The REPL
+
+You typed an `args` block, a command block, or a file header at the REPL. All
+three describe how a *script* is invoked from the command line, and a REPL
+session was never invoked from anywhere.
+
+An `args` block declares the flags and positionals rad parses out of `argv`
+before the script runs. A command block declares a subcommand. A file header is
+the docstring rad prints in that script's usage. None of them has a meaning at
+a prompt, and the REPL says so rather than accepting them and doing nothing.
+
+#### Examples
+
+```rad
+args:
+    name str
+    count int = 1
+```
+
+```rad
+command greet:
+    name str
+    calls do_greet
+
+fn do_greet():
+    print("hello {name}")
+```
+
+#### How to Fix
+
+Put the script in a file, then load it:
+
+```
+:load ./greet.rad
+```
+
+`:load` runs the file's statements against your session, so functions and
+variables it defines are yours to use afterwards. Its `args` block is skipped,
+because there are still no command-line arguments to parse.
+
+To work on the values an `args` block would have produced, assign them:
+
+```rad
+name = "world"
+count = 3
+```
+
+To try the real argument parsing, run the script:
+
+```
+rad greet.rad --name world
+```
+
+#### See Also
+
+- `rad docs guide/repl` - what a session can and cannot do
+- `rad docs guide/args` - declaring a script's command-line interface
 
 ## Type Errors (RAD3xxxx)
 

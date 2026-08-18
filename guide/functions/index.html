@@ -1050,6 +1050,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1892,27 +1920,27 @@ In this section, we'll take a look at the syntax and a few examples.
 For a complete list of built-in functions, see the <a href="../../reference/functions/">reference</a>.</p>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <p>The syntax for invoking functions is pretty standard. Here's a script with some examples:</p>
-<div class="highlight"><pre><span></span><code>names = [&quot;Bob&quot;, &quot;Charlie&quot;, &quot;Alice&quot;]
+<div class="highlight"><pre><span></span><code>names = ["Bob", "Charlie", "Alice"]
 num_people = len(names)
-print(&quot;There are {num_people} people.&quot;)
+print("There are {num_people} people.")
 
 sorted_names = sort(names)
 print(sorted_names)
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>There are 3 people.
-[ &quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot; ]
+[ "Alice", "Bob", "Charlie" ]
 </code></pre></div>
 </div>
 
 <p>This example uses three different built-in functions <a href="../../reference/functions/#len"><code>len</code></a>, <a href="../../reference/functions/#print"><code>print</code></a>, and <a href="../../reference/functions/#sort"><code>sort</code></a>.</p>
 <h3 id="ufcs">UFCS<a class="headerlink" href="#ufcs" title="Permanent link">&para;</a></h3>
 <p>Rad supports a syntax called Uniform Function Call Syntax (UFCS) that lets you call functions using dot notation. This means you can write:</p>
-<div class="highlight"><pre><span></span><code>upper(&quot;hello&quot;)
+<div class="highlight"><pre><span></span><code>upper("hello")
 
 // ... is the same as ...
 
-&quot;hello&quot;.upper()
+"hello".upper()
 </code></pre></div>
 <p>Both styles work identically, it's just syntactic sugar, but the dot notation really shines when you're chaining multiple function calls together.</p>
 <p>Compare these two approaches:</p>
@@ -1937,23 +1965,23 @@ num = abs(-5)
 print(num)  // 5
 
 // Multiple arguments
-text = &quot;hello world&quot;.replace(&quot;world&quot;, &quot;Rad&quot;)
+text = "hello world".replace("world", "Rad")
 print(text)  // hello Rad
 </code></pre></div>
 <p>Many functions also have <strong>optional parameters with defaults</strong>. For example, <a href="../../reference/functions/#join"><code>join</code></a> combines list items into a string:</p>
 <div class="highlight"><pre><span></span><code>numbers = [1, 2, 3]
 
-// Just the list - uses default separator &quot;&quot;
+// Just the list - uses default separator ""
 print(numbers.join())
 
 // Custom separator
-print(numbers.join(&quot;... &quot;))
+print(numbers.join("... "))
 
 // Separator and prefix
-print(numbers.join(&quot;... &quot;, &quot;Counting: &quot;))
+print(numbers.join("... ", "Counting: "))
 
 // Separator, prefix, and suffix
-print(numbers.join(&quot;... &quot;, &quot;Counting: &quot;, &quot;!&quot;))
+print(numbers.join("... ", "Counting: ", "!"))
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>123
@@ -1967,9 +1995,9 @@ Counting: 1... 2... 3!
 <div class="admonition tip">
 <p class="admonition-title">Example using join for url query params</p>
 <p>The <code>prefix</code> parameter is handy for generating URL query params:</p>
-<div class="highlight"><pre><span></span><code>url = &quot;https://api.github.com/repos/amterp/rad/commits&quot;
-query_params = [&quot;path=README.md&quot;, &quot;per_page=5&quot;]
-url += query_params.join(&quot;&amp;&quot;, &quot;?&quot;)
+<div class="highlight"><pre><span></span><code>url = "https://api.github.com/repos/amterp/rad/commits"
+query_params = ["path=README.md", "per_page=5"]
+url += query_params.join("&amp;", "?")
 print(url)
 </code></pre></div>
 <p>This produces: <a href="https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5"><code>https://api.github.com/repos/amterp/rad/commits?path=README.md&amp;per_page=5</code></a></p>
@@ -1982,7 +2010,7 @@ response = url.http_post()
 
 // With custom headers
 my_headers = {
-    &quot;Authorization&quot;: &quot;Bearer {token}&quot;,
+    "Authorization": "Bearer {token}",
 }
 response = url.http_post(headers=my_headers)
 
@@ -1992,9 +2020,9 @@ response = url.http_post(headers=my_headers, body=data)
 <p>Named arguments make it clear what each value represents, especially when a function has many optional parameters.</p>
 <h3 id="variadic-arguments">Variadic Arguments<a class="headerlink" href="#variadic-arguments" title="Permanent link">&para;</a></h3>
 <p>Some functions accept <strong>unlimited arguments</strong>. For example, <a href="../../reference/functions/#zip"><code>zip</code></a> can combine any number of lists:</p>
-<div class="highlight"><pre><span></span><code>names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+<div class="highlight"><pre><span></span><code>names = ["alice", "bob", "charlie"]
 ages = [30, 40, 25]
-cities = [&quot;NYC&quot;, &quot;LA&quot;, &quot;Chicago&quot;]
+cities = ["NYC", "LA", "Chicago"]
 scores = [100, 90, 85]
 
 // Combine 2 lists
@@ -2010,17 +2038,17 @@ quads = zip(names, ages, cities, scores)
 print(quads)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>[ [ &quot;alice&quot;, 30 ], [ &quot;bob&quot;, 40 ], [ &quot;charlie&quot;, 25 ] ]
-[ [ &quot;alice&quot;, 30, &quot;NYC&quot; ], [ &quot;bob&quot;, 40, &quot;LA&quot; ], [ &quot;charlie&quot;, 25, &quot;Chicago&quot; ] ]
-[ [ &quot;alice&quot;, 30, &quot;NYC&quot;, 100 ], [ &quot;bob&quot;, 40, &quot;LA&quot;, 90 ], [ &quot;charlie&quot;, 25, &quot;Chicago&quot;, 85 ] ]
+<div class="highlight"><pre><span></span><code>[ [ "alice", 30 ], [ "bob", 40 ], [ "charlie", 25 ] ]
+[ [ "alice", 30, "NYC" ], [ "bob", 40, "LA" ], [ "charlie", 25, "Chicago" ] ]
+[ [ "alice", 30, "NYC", 100 ], [ "bob", 40, "LA", 90 ], [ "charlie", 25, "Chicago", 85 ] ]
 </code></pre></div>
 </div>
 
 <p>Variadic functions can also have named arguments. For example, <code>zip</code> accepts <code>strict=true</code> for ensuring that all lists have the same length.</p>
 <h3 id="mixed-patterns">Mixed Patterns<a class="headerlink" href="#mixed-patterns" title="Permanent link">&para;</a></h3>
 <p>Some functions combine multiple argument patterns. For example, <a href="../../reference/functions/#pick"><code>pick</code></a> takes positional arguments and a named argument:</p>
-<div class="highlight"><pre><span></span><code>options = [&quot;vim&quot;, &quot;emacs&quot;, &quot;nano&quot;]
-editor = pick(options, prompt=&quot;Choose your editor&quot;)
+<div class="highlight"><pre><span></span><code>options = ["vim", "emacs", "nano"]
+editor = pick(options, prompt="Choose your editor")
 </code></pre></div>
 <p>When in doubt about how to call a function, check the <a href="../../reference/functions/">Functions Reference</a> for complete signature details.</p>
 <h2 id="custom-functions">Custom Functions<a class="headerlink" href="#custom-functions" title="Permanent link">&para;</a></h2>
@@ -2048,10 +2076,10 @@ print(result)  // 8
 <div class="highlight"><pre><span></span><code>fn get_coords():
     x = 10
     y = 20
-    return x, y  // equivalent to &#39;return [x, y]&#39;
+    return x, y  // equivalent to 'return [x, y]'
 
 x_pos, y_pos = get_coords()
-print(&quot;Position: ({x_pos}, {y_pos})&quot;)
+print("Position: ({x_pos}, {y_pos})")
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Position: (10, 20)
@@ -2086,10 +2114,10 @@ fn multiply(a, b):
 <p>This works because Rad processes all root-level function definitions before executing the script.</p>
 <p><strong>Inside blocks, functions are NOT hoisted</strong> - you must define them before calling:</p>
 <div class="highlight"><pre><span></span><code>if true:
-    print(helper())  // Error - can&#39;t call before definition
+    print(helper())  // Error - can't call before definition
 
     fn helper():
-        return &quot;I&#39;m a helper!&quot;
+        return "I'm a helper!"
 
     print(helper())  // This is okay!
 </code></pre></div>
@@ -2120,9 +2148,9 @@ evens = numbers.filter(fn(x) x % 2 == 0)
 print(evens)  // [2, 4]
 
 // flat_map is useful for transformations that produce lists
-words = [&quot;hello world&quot;, &quot;foo bar&quot;]
-all_words = words.flat_map(fn(s) s.split(&quot; &quot;))
-print(all_words)  // [&quot;hello&quot;, &quot;world&quot;, &quot;foo&quot;, &quot;bar&quot;]
+words = ["hello world", "foo bar"]
+all_words = words.flat_map(fn(s) s.split(" "))
+print(all_words)  // ["hello", "world", "foo", "bar"]
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Named Functions vs Lambdas</p>

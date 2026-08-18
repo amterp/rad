@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -1822,7 +1850,7 @@ for name, age in zip(names, ages) with loop:
 </code></pre></div>
 <h3 id="example-3-unpacking-no-change-needed">Example 3: Unpacking (No Change Needed)<a class="headerlink" href="#example-3-unpacking-no-change-needed" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// This still works - unpacking nested lists
-pairs = [[&quot;a&quot;, 1], [&quot;b&quot;, 2]]
+pairs = [["a", 1], ["b", 2]]
 for letter, number in pairs:
     print(letter, number)
 
@@ -1849,7 +1877,7 @@ for key, value in myMap with loop:
 </code></pre></div>
 <h2 id="error-messages">Error Messages<a class="headerlink" href="#error-messages" title="Permanent link">&para;</a></h2>
 <p>If Rad detects you might be using the old syntax, it will show a helpful error:</p>
-<div class="highlight"><pre><span></span><code>Error: Cannot unpack &#39;int&#39; into 2 values
+<div class="highlight"><pre><span></span><code>Error: Cannot unpack 'int' into 2 values
 
 Note: The for-loop syntax changed. It looks like you may be using the old syntax.
 Old: for idx, item in items:
@@ -1867,7 +1895,7 @@ New: for item in items with loop:
 <h2 id="bonus-rad-block-lambda-context">Bonus: Rad Block Lambda Context<a class="headerlink" href="#bonus-rad-block-lambda-context" title="Permanent link">&para;</a></h2>
 <p>As part of this release, rad block <code>map</code> and <code>filter</code> lambdas can now accept an optional context parameter:</p>
 <div class="highlight"><pre><span></span><code>Population:
-    map fn(p, ctx) &quot;{p / sum(ctx.src) * 100:.1}%&quot;
+    map fn(p, ctx) "{p / sum(ctx.src) * 100:.1}%"
 </code></pre></div>
 <p>The context provides:</p>
 <ul>

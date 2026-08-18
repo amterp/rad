@@ -1149,6 +1149,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -2145,8 +2173,8 @@ Given some words, joins them together, and optionally capitalizes them.
 ---
 args:
     words str[]                            # Words to join together.
-    joiner j str = &quot;-&quot;                     # Joiner for the words.
-    should_capitalize &quot;capitalize&quot; c bool  # If true, capitalize the words.
+    joiner j str = "-"                     # Joiner for the words.
+    should_capitalize "capitalize" c bool  # If true, capitalize the words.
 
 if should_capitalize:
     words = [upper(w) for w in words]
@@ -2244,7 +2272,7 @@ users who want clarity can use flags; and anyone can mix and match as needed.</p
     third str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="c1"># --second fills the second slot via flag, so the two bare values</span>
-<span class="c1"># fill &quot;first&quot; and &quot;third&quot; (the remaining unfilled slots, in order).</span>
+<span class="c1"># fill "first" and "third" (the remaining unfilled slots, in order).</span>
 ./script<span class="w"> </span>alpha<span class="w"> </span>--second<span class="w"> </span>beta<span class="w"> </span>gamma
 </code></pre></div>
 <p>Here, <code>first</code> = <code>"alpha"</code>, <code>second</code> = <code>"beta"</code>, <code>third</code> = <code>"gamma"</code>.</p>
@@ -2285,7 +2313,7 @@ args:
     age int
     height float
 
-print(&quot;{name} is {age} years old and {height}m tall&quot;)
+print("{name} is {age} years old and {height}m tall")
 </code></pre></div>
 <p>Both invocations work identically:</p>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>Alice<span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="m">1</span>.65
@@ -2299,7 +2327,7 @@ print(&quot;{name} is {age} years old and {height}m tall&quot;)
     verbose v bool
     debug d bool
 
-print(&quot;verbose: {verbose}, debug: {debug}&quot;)
+print("verbose: {verbose}, debug: {debug}")
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>--verbose<span class="w">           </span><span class="c1"># verbose=true, debug=false</span>
 ./script<span class="w"> </span>-v<span class="w">                  </span><span class="c1"># Same as above (short flag)</span>
@@ -2322,13 +2350,13 @@ the flag to pass several:</p>
     files f str[]
     counts int[]
 
-print(&quot;files: {files}&quot;)
-print(&quot;counts: {counts}&quot;)
+print("files: {files}")
+print("counts: {counts}")
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>-f<span class="w"> </span>hello.txt<span class="w"> </span>-f<span class="w"> </span>world.txt<span class="w"> </span>--counts<span class="w"> </span><span class="m">1</span><span class="w"> </span>--counts<span class="w"> </span><span class="m">2</span><span class="w"> </span>--counts<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>files: [ &quot;hello.txt&quot;, &quot;world.txt&quot; ]
+<div class="highlight"><pre><span></span><code>files: [ "hello.txt", "world.txt" ]
 counts: [ 1, 2, 3 ]
 </code></pre></div>
 </div>
@@ -2341,20 +2369,20 @@ counts: [ 1, 2, 3 ]
     *files str
     verbose v bool
 
-print(&quot;command: {command}&quot;)
-print(&quot;files: {files}&quot;)
+print("command: {command}")
+print("files: {files}")
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>build<span class="w"> </span>file1.txt<span class="w"> </span>file2.txt<span class="w"> </span>file3.txt<span class="w"> </span>--verbose
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>command: build
-files: [ &quot;file1.txt&quot;, &quot;file2.txt&quot;, &quot;file3.txt&quot; ]
+files: [ "file1.txt", "file2.txt", "file3.txt" ]
 </code></pre></div>
 </div>
 
 <p>Variadic args can have defaults and work with any type (<code>*numbers int</code>, <code>*values float</code>, etc.):</p>
 <div class="highlight"><pre><span></span><code>args:
-    *items str = [&quot;default.txt&quot;]
+    *items str = ["default.txt"]
 </code></pre></div>
 <p>You can have multiple variadic sections separated by flags - the flags act as delimiters:</p>
 <div class="highlight"><pre><span></span><code>args:
@@ -2362,13 +2390,13 @@ files: [ &quot;file1.txt&quot;, &quot;file2.txt&quot;, &quot;file3.txt&quot; ]
     *section2 int
     flag f bool
 
-print(&quot;section1: {section1}&quot;)
-print(&quot;section2: {section2}&quot;)
+print("section1: {section1}")
+print("section2: {section2}")
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>a<span class="w"> </span>b<span class="w"> </span>c<span class="w"> </span>--flag<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>section1: [ &quot;a&quot;, &quot;b&quot;, &quot;c&quot; ]
+<div class="highlight"><pre><span></span><code>section1: [ "a", "b", "c" ]
 section2: [ 1, 2, 3 ]
 </code></pre></div>
 </div>
@@ -2386,9 +2414,9 @@ section2: [ 1, 2, 3 ]
     year int?
 
 if role == null:
-    print(&quot;{name} has no role assigned&quot;)
+    print("{name} has no role assigned")
 else:
-    print(&quot;{name} is a {role}&quot;)
+    print("{name} is a {role}")
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>./script<span class="w"> </span>Alice
 </code></pre></div>
@@ -2451,8 +2479,8 @@ else:
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 args:
     color str
-    color enum [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
-print(&quot;You like {color}!&quot;)
+    color enum ["red", "green", "blue"]
+print("You like {color}!")
 </code></pre></div></td></tr></table></div>
 <p>If we print the usage string, you can see it tells users what values are valid:</p>
 <div class="highlight"><pre><span></span><code>./colors<span class="w"> </span>-h
@@ -2470,7 +2498,7 @@ Script args:
 <div class="highlight"><pre><span></span><code>./colors<span class="w"> </span>yellow
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>Invalid &#39;color&#39; value: yellow (valid values: red, green, blue)
+<div class="highlight"><pre><span></span><code>Invalid 'color' value: yellow (valid values: red, green, blue)
 Usage:
   colors &lt;color&gt;
 
@@ -2513,7 +2541,7 @@ args:
 <p>Let's look at a complete example with various range types:</p>
 <div class="highlight"><span class="filename">File: validator</span><pre><span></span><code>#!/usr/bin/env rad
 args:
-    age int              # Person&#39;s age
+    age int              # Person's age
     score float          # Test score
     count int            # Item count
 
@@ -2529,7 +2557,7 @@ args:
   validator &lt;age&gt; &lt;score&gt; &lt;count&gt; [OPTIONS]
 
 Script args:
-      --age int      Person&#39;s age. Range: [0, 120]
+      --age int      Person's age. Range: [0, 120]
       --score float  Test score. Range: (0, 100]
       --count int    Item count. Range: [1, )
 </code></pre></div>
@@ -2539,13 +2567,13 @@ Script args:
 <div class="highlight"><pre><span></span><code>./validator<span class="w"> </span><span class="m">150</span><span class="w"> </span><span class="m">50</span>.0<span class="w"> </span><span class="m">5</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>&#39;age&#39; value 150 is &gt; maximum 120
+<div class="highlight"><pre><span></span><code>'age' value 150 is &gt; maximum 120
 
 Usage:
   validator &lt;age&gt; &lt;score&gt; &lt;count&gt; [OPTIONS]
 
 Script args:
-      --age int      Person&#39;s age. Range: [0, 120]
+      --age int      Person's age. Range: [0, 120]
       --score float  Test score. Range: (0, 100]
       --count int    Item count. Range: [1, )
 </code></pre></div>
@@ -2555,7 +2583,7 @@ Script args:
 <div class="highlight"><pre><span></span><code>./validator<span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">5</span><span class="w">   </span><span class="c1"># score of 0 is invalid (exclusive minimum)</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>&#39;score&#39; value 0 is &lt;= minimum (exclusive) 0
+<div class="highlight"><pre><span></span><code>'score' value 0 is &lt;= minimum (exclusive) 0
 </code></pre></div>
 </div>
 
@@ -2563,8 +2591,8 @@ Script args:
 <p>If you'd like input strings to match a certain pattern, you can do that via a <strong>regex constraint</strong>.</p>
 <div class="highlight"><pre><span></span><code>args:
     name str
-    name regex &quot;[A-Z][a-z]*&quot;
-print(&quot;Hi, {name}&quot;)
+    name regex "[A-Z][a-z]*"
+print("Hi, {name}")
 </code></pre></div>
 <p>In this example, a valid <code>name</code> value must start with a capital letter, and can then be followed by any number of lowercase letters.
 No other characters will be accepted, so <code>Alice</code> will be a valid value, but <code>bob</code> or <code>John123</code> are not.</p>
@@ -2577,14 +2605,14 @@ args:
     envs str[]
 
     scores range [0, 100]
-    envs enum [&quot;dev&quot;, &quot;stg&quot;, &quot;prd&quot;]
-print(&quot;{scores} on {envs}&quot;)
+    envs enum ["dev", "stg", "prd"]
+print("{scores} on {envs}")
 </code></pre></div>
 <p>Every value has to pass, however it was supplied - repeated flags, or bare positional values:</p>
 <div class="highlight"><pre><span></span><code>./deploy<span class="w"> </span>--scores<span class="w"> </span><span class="m">5</span><span class="w"> </span>--scores<span class="w"> </span><span class="m">500</span><span class="w"> </span>--envs<span class="w"> </span>dev
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>&#39;scores&#39; value 500 is &gt; maximum 100
+<div class="highlight"><pre><span></span><code>'scores' value 500 is &gt; maximum 100
 </code></pre></div>
 </div>
 
@@ -2607,7 +2635,7 @@ print(pair, sample, ports)
 <div class="highlight"><pre><span></span><code>./pairs<span class="w"> </span>a
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>&#39;pair&#39; takes at least 2 values, got 1
+<div class="highlight"><pre><span></span><code>'pair' takes at least 2 values, got 1
 </code></pre></div>
 </div>
 
@@ -2628,9 +2656,9 @@ args:
   file mutually excludes url
 
 if file:
-    print(&quot;Reading from file:&quot;, file)
+    print("Reading from file:", file)
 else:
-    print(&quot;Fetching from URL:&quot;, url)
+    print("Fetching from URL:", url)
 </code></pre></div>
 <p>You can then provide either argument:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./fetcher --file data.json
@@ -2641,7 +2669,7 @@ Fetching from URL: https://example.com/data.json
 </code></pre></div>
 <p>If both are provided, Rad gives a clear error:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./fetcher --file data.json --url https://example.com/data.json
-Invalid arguments: &#39;file&#39; excludes &#39;url&#39;, but &#39;url&#39; was given
+Invalid arguments: 'file' excludes 'url', but 'url' was given
 </code></pre></div>
 <p>Note in this example, that if e.g. <code>file</code> is provided, then <code>url</code> will be <code>null</code> (and vice versa).</p>
 <h4 id="requirement">Requirement<a class="headerlink" href="#requirement" title="Permanent link">&para;</a></h4>
@@ -2657,9 +2685,9 @@ Invalid arguments: &#39;file&#39; excludes &#39;url&#39;, but &#39;url&#39; was 
   token mutually excludes username, password
 
 if token:
-    print(&quot;Authenticating with token {token}&quot;)
+    print("Authenticating with token {token}")
 else:
-    print(&quot;Authenticating user {username} with password length {len(password)}&quot;)
+    print("Authenticating user {username} with password length {len(password)}")
 </code></pre></div>
 <p>Valid usage examples:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./auth --token abc123
@@ -2670,10 +2698,10 @@ Authenticating user alice with password length 6
 </code></pre></div>
 <p>Invalid usage examples:</p>
 <div class="highlight"><pre><span></span><code>&gt; ./auth --username alice
-Invalid arguments: &#39;username&#39; requires &#39;password&#39;, but &#39;password&#39; was not provided
+Invalid arguments: 'username' requires 'password', but 'password' was not provided
 
 &gt; ./auth --token abc123 --password secret
-Invalid arguments: &#39;token&#39; excludes &#39;password&#39;, but &#39;password&#39; was given
+Invalid arguments: 'token' excludes 'password', but 'password' was given
 </code></pre></div>
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>

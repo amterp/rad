@@ -894,6 +894,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1583,9 +1611,9 @@
 <div class="highlight"><span class="filename">defer.rad</span><pre><span></span><code>$`mv notes.txt notes-tmp.txt`
 defer:
     $`mv notes-tmp.txt notes.txt`
-    print(&quot;Moved back!&quot;)
+    print("Moved back!")
 
-$`echo &quot;hi!&quot; &gt;&gt; notes.txt`
+$`echo "hi!" &gt;&gt; notes.txt`
 $`cat notes.txt`
 </code></pre></div>
 <p>Let's say we already have a file <code>notes.txt</code> containing some text. In this script, we take the following steps, largely by invoking <a href="../shell-commands/">shell commands</a>:</p>
@@ -1600,7 +1628,7 @@ $`cat notes.txt`
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>⚡️ Running: mv notes.txt notes-tmp.txt
-⚡️ Running: echo &quot;hi!&quot; &gt;&gt; notes.txt
+⚡️ Running: echo "hi!" &gt;&gt; notes.txt
 ⚡️ Running: cat notes.txt
 hi!
 ⚡️ Running: mv notes-tmp.txt notes.txt
@@ -1623,7 +1651,7 @@ Moved back!
 error on the <em>cleanup</em> path, where it can hide until long after the
 code was written:</p>
 <div class="highlight"><pre><span></span><code>fn run_remote(script):
-    tmp = &quot;/tmp/xyz&quot;
+    tmp = "/tmp/xyz"
     defer:
         $`rm -f {tmp}`  // RAD20028: Undefined variable: tmp
 </code></pre></div>
@@ -1640,30 +1668,30 @@ make the script <em>atomic</em> i.e. it either succeeds entirely or does nothing
 <div class="highlight"><span class="filename">bump.rad</span><pre><span></span><code>args:
     version str
 
-path = &quot;VERSION&quot;
-expr = &quot;s/Version = .*/Version = {version}/&quot;
+path = "VERSION"
+expr = "s/Version = .*/Version = {version}/"
 
-$`sed -i &#39;&#39; {expr} {path}`
+$`sed -i '' {expr} {path}`
 errdefer:
-    print(&quot;Undoing bump...&quot;)
+    print("Undoing bump...")
     $`git checkout -- {path}`
 
 if false:  // failure simulation point 1
-    print(&quot;Oh no! ERROR!&quot;)
+    print("Oh no! ERROR!")
     exit(1)
 
 $`git add {path}`
 errdefer:
-    print(&quot;Resetting {path}...&quot;)
+    print("Resetting {path}...")
     _, _ = $`git reset {path}`
 
 if false:  // failure simulation point 2
-    print(&quot;Bah! ERROR!&quot;)
+    print("Bah! ERROR!")
     exit(1)
 
-message = &quot;Bump version to {version}&quot;
+message = "Bump version to {version}"
 $`git commit -m {message}`
-print(&quot;Done!&quot;)
+print("Done!")
 </code></pre></div>
 <p>We include a couple of "failure points". We can set their condition to <code>true</code> to have them simulate an error, as the exit code of '1' indicates failure.</p>
 <p>Before we do that though, we can see an example of this script working correctly. Let's say we define our <code>VERSION</code> file in the same directory as the script as follows:</p>
@@ -1673,9 +1701,9 @@ print(&quot;Done!&quot;)
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">2</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 2/&quot; VERSION
+<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i '' "s/Version = .*/Version = 2/" VERSION
 ⚡️ Running: git add VERSION
-⚡️ Running: git commit -m &quot;Bump version to 2&quot;
+⚡️ Running: git commit -m "Bump version to 2"
 [main 6ce2ebb] Bump version to 2
  1 file changed, 1 insertion(+), 1 deletion(-)
 Done!
@@ -1687,7 +1715,7 @@ Done!
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 3/&quot; VERSION
+<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
 Oh no! ERROR!
 Undoing bump...
 ⚡️ Running: git checkout -- VERSION
@@ -1699,7 +1727,7 @@ Undoing bump...
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i &#39;&#39; &quot;s/Version = .*/Version = 3/&quot; VERSION
+<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
 ⚡️ Running: git add VERSION
 Bah! ERROR!
 Resetting VERSION...

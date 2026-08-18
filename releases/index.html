@@ -792,6 +792,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../guide/shell-completion/" class="md-nav__link">
         
   
@@ -2753,21 +2781,21 @@ $`command_that_might_fail` catch:
 // OLD: Recover block
 $`curl {url}`
 recover:
-    print_err(&quot;Failed but continuing&quot;)
+    print_err("Failed but continuing")
 
 // NEW: Use catch block
 $`curl {url}` catch:
-    print_err(&quot;Failed but continuing&quot;)
+    print_err("Failed but continuing")
 
 // OLD: Fail block
 $`curl {url}`
 fail:
-    print_err(&quot;Failed, exiting&quot;)
+    print_err("Failed, exiting")
     exit(1)
 
 // NEW: Use catch block with exit
 $`curl {url}` catch:
-    print_err(&quot;Failed, exiting&quot;)
+    print_err("Failed, exiting")
     exit(1)
 </code></pre></div>
 <ul>

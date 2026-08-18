@@ -1184,6 +1184,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -2182,7 +2210,7 @@ print(area)  // 50
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>fn greet(name: str) -&gt; str:
-    return &quot;Hello, {name}!&quot;
+    return "Hello, {name}!"
 
 message = greet(42)  // Error!
 print(message)
@@ -2191,7 +2219,7 @@ print(message)
 <div class="highlight"><pre><span></span><code>Error at L4:17
 
 message = greet(42)  // Error!
-                ^^ Value &#39;42&#39; (int) is not compatible with expected type &#39;str&#39;
+                ^^ Value '42' (int) is not compatible with expected type 'str'
 </code></pre></div>
 </div>
 
@@ -2204,10 +2232,10 @@ message = greet(42)  // Error!
     salary: float,
     is_active: bool
 ) -&gt; str:
-    status = is_active ? &quot;active&quot; : &quot;inactive&quot;
-    return &quot;{name} ({age}) earns ${salary:.2} - {status}&quot;
+    status = is_active ? "active" : "inactive"
+    return "{name} ({age}) earns ${salary:.2} - {status}"
 
-result = process_data(&quot;Alice&quot;, 30, 75000.50, true)
+result = process_data("Alice", 30, 75000.50, true)
 print(result)
 </code></pre></div>
 <div class="result">
@@ -2222,11 +2250,11 @@ print(result)
     print(msg)                 // OK
 
 fn log_message(msg: str) -&gt; void:
-    return msg                 // Error: can&#39;t return values
+    return msg                 // Error: can't return values
 </code></pre></div>
 <p><strong><code>null</code></strong>: The single value representing "no value" or "absence." Important: <code>null</code> is only a valid value for optional types marked with <code>?</code>:</p>
 <div class="highlight"><pre><span></span><code>fn get_name() -&gt; str:
-    return null          // Error: can&#39;t return null from str function
+    return null          // Error: can't return null from str function
 
 fn get_name() -&gt; str?:
     return null          // OK: str? can return null
@@ -2249,12 +2277,12 @@ print(result)  // 15
 containing non-integers, you'll get a runtime error.</p>
 <p>More examples with different types:</p>
 <div class="highlight"><pre><span></span><code>fn join_words(words: str[]) -&gt; str:
-    return words.join(&quot; &quot;)
+    return words.join(" ")
 
 fn average(numbers: float[]) -&gt; float:
     return sum(numbers) / len(numbers)
 
-sentence = join_words([&quot;Hello&quot;, &quot;from&quot;, &quot;Rad&quot;])
+sentence = join_words(["Hello", "from", "Rad"])
 print(sentence)
 </code></pre></div>
 <div class="result">
@@ -2265,7 +2293,7 @@ print(sentence)
 <h3 id="typed-maps">Typed Maps<a class="headerlink" href="#typed-maps" title="Permanent link">&para;</a></h3>
 <p>Maps can also be typed, specifying both key and value types using <code>{ &lt;key type&gt;: &lt;value type&gt; }</code> syntax:</p>
 <div class="highlight"><pre><span></span><code>fn count_words(text: str) -&gt; { str: int }:
-    words = text.split(&quot; &quot;)
+    words = text.split(" ")
     counts = {}
     for word in words:
         if word in counts:
@@ -2274,11 +2302,11 @@ print(sentence)
             counts[word] = 1
     return counts
 
-result = count_words(&quot;hello world hello&quot;)
+result = count_words("hello world hello")
 print(result)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>{ &quot;hello&quot;: 2, &quot;world&quot;: 1 }
+<div class="highlight"><pre><span></span><code>{ "hello": 2, "world": 1 }
 </code></pre></div>
 </div>
 
@@ -2306,12 +2334,12 @@ fn lookup(data: map, key: str) -&gt; any:
         categories[category] += [item]
     return categories
 
-items = [&quot;apple&quot;, &quot;banana&quot;, &quot;apricot&quot;, &quot;blueberry&quot;]
+items = ["apple", "banana", "apricot", "blueberry"]
 result = organize_by_category(items)
 print(result)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>{ &quot;A&quot;: [ &quot;apple&quot;, &quot;apricot&quot; ], &quot;B&quot;: [ &quot;banana&quot;, &quot;blueberry&quot; ] }
+<div class="highlight"><pre><span></span><code>{ "A": [ "apple", "apricot" ], "B": [ "banana", "blueberry" ] }
 </code></pre></div>
 </div>
 
@@ -2320,13 +2348,13 @@ print(result)
 <p>Sometimes a parameter might not always be needed. Rad's optional type syntax with <code>?</code> makes parameters completely optional - you can pass a value, pass <code>null</code>, or omit the parameter entirely:</p>
 <div class="highlight"><pre><span></span><code>fn greet(name: str, title: str?) -&gt; str:
     if title == null:
-        return &quot;Hello, {name}!&quot;
+        return "Hello, {name}!"
     else:
-        return &quot;Hello, {title} {name}!&quot;
+        return "Hello, {title} {name}!"
 
-print(greet(&quot;Alice&quot;, &quot;Dr.&quot;))     // Pass a value
-print(greet(&quot;Bob&quot;, null))        // Explicitly pass null
-print(greet(&quot;Charlie&quot;))          // Omit the parameter entirely
+print(greet("Alice", "Dr."))     // Pass a value
+print(greet("Bob", null))        // Explicitly pass null
+print(greet("Charlie"))          // Omit the parameter entirely
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hello, Dr. Alice!
@@ -2339,13 +2367,13 @@ Hello, Charlie!
 <p>Optional types work with any type:</p>
 <div class="highlight"><pre><span></span><code>fn find_user(id: int, users: map[]) -&gt; map?:
     for user in users:
-        if user[&quot;id&quot;] == id:
+        if user["id"] == id:
             return user
     return null
 
-users = [{&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;}, {&quot;id&quot;: 2, &quot;name&quot;: &quot;Bob&quot;}]
+users = [{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]
 user = find_user(1, users)
-print(user)  // {&quot;id&quot;: 1, &quot;name&quot;: &quot;Alice&quot;}
+print(user)  // {"id": 1, "name": "Alice"}
 
 missing = find_user(999, users)
 print(missing)  // null
@@ -2356,13 +2384,13 @@ print(missing)  // null
 checker treats the value as non-null, so operations that need the underlying
 type stop being flagged. This matters for functions like
 <a href="../../reference/functions/#index_of"><code>index_of</code></a>, which return <code>int?</code>:</p>
-<div class="highlight"><pre><span></span><code>my_args = [&quot;build&quot;, &quot;-o&quot;, &quot;out&quot;]
-idx = my_args.index_of(&quot;-o&quot;)
+<div class="highlight"><pre><span></span><code>my_args = ["build", "-o", "out"]
+idx = my_args.index_of("-o")
 
 if idx != null:
     // idx is narrowed from int? to int here
     if idx + 1 &lt; my_args.len():
-        print(&quot;output:&quot;, my_args[idx + 1])
+        print("output:", my_args[idx + 1])
 </code></pre></div>
 <p>Without the <code>idx != null</code> check, <code>idx + 1</code> reports a hint (<code>cannot do
 'int? + int'</code>) - the value really could be null. The null-check is both the
@@ -2370,22 +2398,22 @@ fix for the hint and the correctness fix.</p>
 <p>A guard doesn't need its own block. <code>and</code> reaches its right operand only when
 the left was true, and <code>or</code> only when it was false, so the narrowing carries
 across:</p>
-<div class="highlight"><pre><span></span><code>my_args = [&quot;build&quot;, &quot;-o&quot;, &quot;out&quot;]
-idx = my_args.index_of(&quot;-o&quot;)
+<div class="highlight"><pre><span></span><code>my_args = ["build", "-o", "out"]
+idx = my_args.index_of("-o")
 
 if idx != null and idx + 1 &lt; my_args.len():
-    print(&quot;output:&quot;, my_args[idx + 1])
+    print("output:", my_args[idx + 1])
 </code></pre></div>
 <p>Order decides it, though. Written the other way round, as
 <code>idx + 1 &lt; my_args.len() and idx != null</code>, the comparison runs before anything
 is known and still reports.</p>
 <p>An <code>in</code> guard narrows <code>index_of</code> on the spot, with no variable to hold the
 result:</p>
-<div class="highlight"><pre><span></span><code>my_args = [&quot;build&quot;, &quot;-o&quot;, &quot;out&quot;]
-flag = &quot;-o&quot;
+<div class="highlight"><pre><span></span><code>my_args = ["build", "-o", "out"]
+flag = "-o"
 
 if flag in my_args:
-    // the lookup can&#39;t miss here, so it&#39;s int rather than int?
+    // the lookup can't miss here, so it's int rather than int?
     print(my_args.index_of(flag) + 1)
 </code></pre></div>
 <p>That last one is a pattern match rather than general reasoning. It wants the
@@ -2393,11 +2421,11 @@ same container and the same target on both sides, and it drops if you pass <code
 or <code>start</code>, which ask for an occurrence membership doesn't promise.</p>
 <h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
 <p>Parameters can have default values, making them optional to provide when calling the function. This works whether or not the parameter is marked with <code>?</code>:</p>
-<div class="highlight"><pre><span></span><code>fn greet(name: str, greeting: str = &quot;Hello&quot;) -&gt; str:
-    return &quot;{greeting}, {name}!&quot;
+<div class="highlight"><pre><span></span><code>fn greet(name: str, greeting: str = "Hello") -&gt; str:
+    return "{greeting}, {name}!"
 
-print(greet(&quot;Alice&quot;))                // Uses default &quot;Hello&quot;
-print(greet(&quot;Bob&quot;, &quot;Hi&quot;))            // Uses provided &quot;Hi&quot;
+print(greet("Alice"))                // Uses default "Hello"
+print(greet("Bob", "Hi"))            // Uses provided "Hi"
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hello, Alice!
@@ -2408,13 +2436,13 @@ Hi, Bob!
 <p>The <code>greeting</code> parameter has a default value of <code>"Hello"</code>. When you omit it, the default is used. Note that <code>greeting</code> is not marked with <code>?</code> - it always has a string value, never <code>null</code>.</p>
 <h3 id="defaults-optionals">Defaults &amp; Optionals<a class="headerlink" href="#defaults-optionals" title="Permanent link">&para;</a></h3>
 <p>When you combine defaults with optional types (<code>?</code>), you can choose whether the default should be <code>null</code> or something else:</p>
-<div class="highlight"><pre><span></span><code>fn format_price(amount: float, currency: str? = &quot;USD&quot;) -&gt; str:
+<div class="highlight"><pre><span></span><code>fn format_price(amount: float, currency: str? = "USD") -&gt; str:
     if currency == null:
-        return &quot;${amount:.2}&quot;
-    return &quot;{amount:.2} {currency}&quot;
+        return "${amount:.2}"
+    return "{amount:.2} {currency}"
 
-print(format_price(19.99))           // Uses default &quot;USD&quot;
-print(format_price(19.99, &quot;EUR&quot;))    // Uses provided &quot;EUR&quot;
+print(format_price(19.99))           // Uses default "USD"
+print(format_price(19.99, "EUR"))    // Uses provided "EUR"
 print(format_price(19.99, null))     // Explicitly passes null
 </code></pre></div>
 <div class="result">
@@ -2432,7 +2460,7 @@ $19.99
 
 print(to_string(42))
 print(to_string(3.14))
-print(to_string(&quot;hello&quot;))
+print(to_string("hello"))
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>42
@@ -2446,7 +2474,7 @@ hello
 <p>A common union pattern in Rad is combining <code>error</code> with another type to represent operations that might fail:</p>
 <div class="highlight"><pre><span></span><code>fn divide(a: float, b: float) -&gt; float|error:
     if b == 0:
-        return error(&quot;Cannot divide by zero&quot;)
+        return error("Cannot divide by zero")
     return a / b
 
 result = divide(10, 2)
@@ -2461,11 +2489,11 @@ print(result)  // 5
 <p>Rad's type system includes several advanced features for expressing complex data structures and constraints.</p>
 <h3 id="enum-types">Enum Types<a class="headerlink" href="#enum-types" title="Permanent link">&para;</a></h3>
 <p>When a value should be restricted to specific strings, use enum types:</p>
-<div class="highlight"><pre><span></span><code>fn set_log_level(level: [&quot;debug&quot;, &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;]) -&gt; str:
-    return &quot;Log level set to: {level}&quot;
+<div class="highlight"><pre><span></span><code>fn set_log_level(level: ["debug", "info", "warn", "error"]) -&gt; str:
+    return "Log level set to: {level}"
 
-print(set_log_level(&quot;info&quot;))
-// set_log_level(&quot;trace&quot;)  // Error: &quot;trace&quot; not in enum
+print(set_log_level("info"))
+// set_log_level("trace")  // Error: "trace" not in enum
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Log level set to: info
@@ -2476,11 +2504,11 @@ print(set_log_level(&quot;info&quot;))
 <p>This is particularly useful for configuration options, status values, and other cases where only certain strings are valid:</p>
 <div class="highlight"><pre><span></span><code>fn create_connection(
     host: str,
-    protocol: [&quot;http&quot;, &quot;https&quot;, &quot;ws&quot;, &quot;wss&quot;] = &quot;https&quot;
+    protocol: ["http", "https", "ws", "wss"] = "https"
 ) -&gt; str:
-    return &quot;{protocol}://{host}&quot;
+    return "{protocol}://{host}"
 
-url = create_connection(&quot;api.example.com&quot;)
+url = create_connection("api.example.com")
 print(url)
 </code></pre></div>
 <div class="result">
@@ -2491,19 +2519,19 @@ print(url)
 <h3 id="structured-maps">Structured Maps<a class="headerlink" href="#structured-maps" title="Permanent link">&para;</a></h3>
 <p>For maps with specific named fields, use the struct syntax with quoted keys:</p>
 <div class="highlight"><pre><span></span><code>fn create_user(name: str, age: int, email: str) -&gt;
-        { &quot;name&quot;: str, &quot;age&quot;: int, &quot;email&quot;: str, &quot;id&quot;: int }:
+        { "name": str, "age": int, "email": str, "id": int }:
     return {
-        &quot;name&quot;: name,
-        &quot;age&quot;: age,
-        &quot;email&quot;: email,
-        &quot;id&quot;: rand_int(1000, 9999)
+        "name": name,
+        "age": age,
+        "email": email,
+        "id": rand_int(1000, 9999)
     }
 
-user = create_user(&quot;Alice&quot;, 30, &quot;alice@example.com&quot;)
+user = create_user("Alice", 30, "alice@example.com")
 print(user)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>{ &quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30, &quot;email&quot;: &quot;alice@example.com&quot;, &quot;id&quot;: 7234 }
+<div class="highlight"><pre><span></span><code>{ "name": "Alice", "age": 30, "email": "alice@example.com", "id": 7234 }
 </code></pre></div>
 </div>
 
@@ -2511,12 +2539,12 @@ print(user)
 <h4 id="optional-fields-in-structs">Optional Fields in Structs<a class="headerlink" href="#optional-fields-in-structs" title="Permanent link">&para;</a></h4>
 <p>Fields can be marked as optional with <code>?</code>:</p>
 <div class="highlight"><pre><span></span><code>fn get_user_profile(id: int) -&gt;
-        { &quot;name&quot;: str, &quot;age&quot;: int, &quot;bio&quot;?: str, &quot;avatar&quot;?: str }:
-    // Fetch user... in this example, we&#39;ll return mock data
+        { "name": str, "age": int, "bio"?: str, "avatar"?: str }:
+    // Fetch user... in this example, we'll return mock data
     return {
-        &quot;name&quot;: &quot;Bob&quot;,
-        &quot;age&quot;: 25,
-        &quot;bio&quot;: &quot;Software engineer&quot;
+        "name": "Bob",
+        "age": 25,
+        "bio": "Software engineer"
         // avatar field is omitted
     }
 
@@ -2524,7 +2552,7 @@ profile = get_user_profile(123)
 print(profile)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>{ &quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 25, &quot;bio&quot;: &quot;Software engineer&quot; }
+<div class="highlight"><pre><span></span><code>{ "name": "Bob", "age": 25, "bio": "Software engineer" }
 </code></pre></div>
 </div>
 
@@ -2532,19 +2560,19 @@ print(profile)
 <h4 id="nested-structures">Nested Structures<a class="headerlink" href="#nested-structures" title="Permanent link">&para;</a></h4>
 <p>Struct types can be nested for complex data:</p>
 <div class="highlight"><pre><span></span><code>fn fetch_article() -&gt; {
-    &quot;title&quot;: str,
-    &quot;author&quot;: { &quot;name&quot;: str, &quot;id&quot;: int },
-    &quot;metadata&quot;: { &quot;views&quot;: int, &quot;likes&quot;: int },
+    "title": str,
+    "author": { "name": str, "id": int },
+    "metadata": { "views": int, "likes": int },
 }:
     return {
-        &quot;title&quot;: &quot;Getting Started with Rad&quot;,
-        &quot;author&quot;: {&quot;name&quot;: &quot;Alice&quot;, &quot;id&quot;: 1},
-        &quot;metadata&quot;: {&quot;views&quot;: 1234, &quot;likes&quot;: 56}
+        "title": "Getting Started with Rad",
+        "author": {"name": "Alice", "id": 1},
+        "metadata": {"views": 1234, "likes": 56}
     }
 
 article = fetch_article()
-print(&quot;Article: {article.title} by {article.author.name}&quot;)
-print(&quot;Stats: {article.metadata.views} views, {article.metadata.likes} likes&quot;)
+print("Article: {article.title} by {article.author.name}")
+print("Stats: {article.metadata.views} views, {article.metadata.likes} likes")
 </code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Article: Getting Started with Rad by Alice
@@ -2560,12 +2588,12 @@ Stats: 1234 views, 56 likes
         result += [transform(item)]
     return result
 
-words = [&quot;hello&quot;, &quot;world&quot;]
+words = ["hello", "world"]
 upper_words = apply_to_list(words, upper)
 print(upper_words)
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>[ &quot;HELLO&quot;, &quot;WORLD&quot; ]
+<div class="highlight"><pre><span></span><code>[ "HELLO", "WORLD" ]
 </code></pre></div>
 </div>
 
@@ -2600,13 +2628,13 @@ print(result)
     text: str,
     *,
     uppercase: bool = false,
-    prefix: str = &quot;&quot;,
-    suffix: str = &quot;&quot;
+    prefix: str = "",
+    suffix: str = ""
 ) -&gt; str:
     result = prefix + text + suffix
     return uppercase ? upper(result) : result
 
-output = format_text(&quot;hello&quot;, uppercase=true, prefix=&quot;&gt;&gt;&gt; &quot;)
+output = format_text("hello", uppercase=true, prefix="&gt;&gt;&gt; ")
 print(output)
 </code></pre></div>
 <div class="result">
@@ -2620,24 +2648,24 @@ print(output)
     title: str,
     *data_points: int|float,
     *,
-    format: [&quot;text&quot;, &quot;html&quot;, &quot;json&quot;] = &quot;text&quot;,
+    format: ["text", "html", "json"] = "text",
     include_summary: bool = true
 ) -&gt; str:
     total = sum(data_points)
     avg = total / len(data_points)
 
-    report = &quot;=== {title} ===\n&quot;
-    report += &quot;Data: {data_points.join(&#39;, &#39;)}\n&quot;
+    report = "=== {title} ===\n"
+    report += "Data: {data_points.join(', ')}\n"
 
     if include_summary:
-        report += &quot;Total: {total}, Average: {avg:.2}&quot;
+        report += "Total: {total}, Average: {avg:.2}"
 
     return report
 
 output = create_report(
-    &quot;Q4 Sales&quot;,
+    "Q4 Sales",
     100, 150, 200, 175,
-    format=&quot;text&quot;,
+    format="text",
     include_summary=true
 )
 print(output)

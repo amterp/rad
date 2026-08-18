@@ -794,6 +794,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../guide/repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../guide/shell-completion/" class="md-nav__link">
         
   
@@ -4058,7 +4086,7 @@ args:
     verbose v bool        # Boolean flag (can use short form)
 
 // Script body
-print(&quot;Hello {name}!&quot;)
+print("Hello {name}!")
 </code></pre></div>
 <h3 id="file-header-for-automatic-help-generation">File Header for Automatic Help Generation<a class="headerlink" href="#file-header-for-automatic-help-generation" title="Permanent link">&para;</a></h3>
 <p>The file header automatically generates the help text shown when users run your script with <code>-h</code> or <code>--help</code>. This is a core Rad feature that eliminates the need to manually write help documentation.</p>
@@ -4096,14 +4124,14 @@ args:
 <h2 id="data-types">Data Types<a class="headerlink" href="#data-types" title="Permanent link">&para;</a></h2>
 <h3 id="primitives">Primitives<a class="headerlink" href="#primitives" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Strings
-name = &quot;alice&quot;
-path = &#39;path/to/file&#39;
+name = "alice"
+path = 'path/to/file'
 
 // Multi-line strings (triple quotes)
-text = &quot;&quot;&quot;
+text = """
 Hello world
 How are you?
-&quot;&quot;&quot;
+"""
 
 // Numbers
 age = 25                   // int
@@ -4122,51 +4150,51 @@ value = null
 <h3 id="collections">Collections<a class="headerlink" href="#collections" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Lists
 numbers = [1, 2, 3, 4, 5]
-mixed = [1, &quot;hello&quot;, true, [1, 2]]
+mixed = [1, "hello", true, [1, 2]]
 empty_list = []
 
 // Maps/Objects
-person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
-nested = {&quot;user&quot;: {&quot;name&quot;: &quot;bob&quot;, &quot;roles&quot;: [&quot;admin&quot;, &quot;user&quot;]}}
+person = {"name": "alice", "age": 25}
+nested = {"user": {"name": "bob", "roles": ["admin", "user"]}}
 empty_map = {}
 </code></pre></div>
 <h3 id="multi-line-strings-triple-quotes">Multi-line Strings (Triple Quotes)<a class="headerlink" href="#multi-line-strings-triple-quotes" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Basic multi-line string
-text = &quot;&quot;&quot;
+text = """
 Hello world
 How are you?
-&quot;&quot;&quot;
-// Contents: &quot;Hello world\nHow are you?&quot; - the newlines adjacent to the
-// opening and closing &quot;&quot;&quot; are excluded, so the string does NOT end with
-// a newline. Add a blank last line (or concatenate &quot;\n&quot;) if you need one,
+"""
+// Contents: "Hello world\nHow are you?" - the newlines adjacent to the
+// opening and closing """ are excluded, so the string does NOT end with
+// a newline. Add a blank last line (or concatenate "\n") if you need one,
 // e.g. when assembling scripts or files from fragments.
 
-// Indentation control - closing &quot;&quot;&quot; position determines whitespace stripping
-indented = &quot;&quot;&quot;
+// Indentation control - closing """ position determines whitespace stripping
+indented = """
   Line 1
    Line 2
      Line 4
- &quot;&quot;&quot;
-// Result: &quot; Line 1\n  Line 2\n    Line 4&quot; (1 space stripped from each line)
+ """
+// Result: " Line 1\n  Line 2\n    Line 4" (1 space stripped from each line)
 
 // String interpolation works in multi-line strings
-name = &quot;alice&quot;
-message = &quot;&quot;&quot;
+name = "alice"
+message = """
 Hello {name}!
 How are you today?
-&quot;&quot;&quot;
+"""
 
 // Raw multi-line strings (no interpolation or escape processing)
-raw_text = r&quot;&quot;&quot;
+raw_text = r"""
 Literal \n and {name}
 No processing here
-&quot;&quot;&quot;
+"""
 
 // Comments allowed after opening triple quotes
-documented = &quot;&quot;&quot; // This is allowed
+documented = """ // This is allowed
 Content starts on next line
 Always on next line
-&quot;&quot;&quot;
+"""
 </code></pre></div>
 <p><strong>Multi-line String Rules:</strong>
 - Content must start on a new line after opening <code>"""</code>
@@ -4177,9 +4205,9 @@ Always on next line
 - Cannot have content on the same line as the opening <code>"""</code></p>
 <h3 id="raw-strings">Raw Strings<a class="headerlink" href="#raw-strings" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Raw strings: no interpolation, no escape processing
-regex = r&quot;\d{2}:\d{2}&quot;            // stays literally \d{2}:\d{2}
-win_path = r&quot;C:\Users\notes.txt&quot;
-single = r&#39;single quotes work&#39;
+regex = r"\d{2}:\d{2}"            // stays literally \d{2}:\d{2}
+win_path = r"C:\Users\notes.txt"
+single = r'single quotes work'
 ticks = r`backticks too`
 </code></pre></div>
 <p><strong>Raw String Rules:</strong>
@@ -4188,7 +4216,7 @@ ticks = r`backticks too`
 - Handy for regexes, Windows paths, and text full of braces</p>
 <h2 id="variables-and-assignment">Variables and Assignment<a class="headerlink" href="#variables-and-assignment" title="Permanent link">&para;</a></h2>
 <h3 id="basic-assignment">Basic Assignment<a class="headerlink" href="#basic-assignment" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+<div class="highlight"><pre><span></span><code>name = "alice"
 age = 25
 </code></pre></div>
 <h3 id="multiple-assignment">Multiple Assignment<a class="headerlink" href="#multiple-assignment" title="Permanent link">&para;</a></h3>
@@ -4208,24 +4236,24 @@ i++                     // i = 1
 i--                     // i = 0
 </code></pre></div>
 <h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>name = &quot;alice&quot;
+<div class="highlight"><pre><span></span><code>name = "alice"
 age = 25
-message = &quot;Hello {name}, you are {age} years old!&quot;
+message = "Hello {name}, you are {age} years old!"
 
 // Works with expressions
-total = &quot;Result: {x + y}&quot;
+total = "Result: {x + y}"
 
 // Format specifiers
 price = 123.456
-formatted = &quot;Price: {price:.2}&quot;          // &quot;Price: 123.46&quot; (2 decimal places)
-padded = &quot;Name: {name:&lt;10}&quot;              // &quot;Name: alice     &quot; (left-aligned, padded to 10)
-right_aligned = &quot;Name: {name:&gt;10}&quot;       // &quot;Name:      alice&quot; (right-aligned)
+formatted = "Price: {price:.2}"          // "Price: 123.46" (2 decimal places)
+padded = "Name: {name:&lt;10}"              // "Name: alice     " (left-aligned, padded to 10)
+right_aligned = "Name: {name:&gt;10}"       // "Name:      alice" (right-aligned)
 
 // Thousands separators (numbers only)
 big_num = 1234567
-formatted = &quot;{big_num:,}&quot;                // &quot;1,234,567&quot;
-with_decimals = &quot;{big_num:,.2}&quot;          // &quot;1,234,567.00&quot;
-padded_thousands = &quot;{big_num:&gt;15,}&quot;      // &quot;      1,234,567&quot;
+formatted = "{big_num:,}"                // "1,234,567"
+with_decimals = "{big_num:,.2}"          // "1,234,567.00"
+padded_thousands = "{big_num:&gt;15,}"      // "      1,234,567"
 </code></pre></div>
 <h3 id="braces-in-strings">Braces in Strings<a class="headerlink" href="#braces-in-strings" title="Permanent link">&para;</a></h3>
 <p>A <code>{</code> opens an interpolation. Rad never silently re-reads a broken
@@ -4243,17 +4271,17 @@ falls under one of the narrow exemptions below or has to be escaped.</p>
 <li>Anything else that opens like an interpolation and isn't one is an
    error.</li>
 </ol>
-<div class="highlight"><pre><span></span><code>print(&quot;{&quot;)             // {        -- string ends after the brace
-print(&quot;{}&quot;)            // {}       -- pair holds nothing
-print(&quot;{ }&quot;)           // { }      -- pair holds only whitespace
-print(&quot;}&quot;)             // }        -- no interpolation open
-print(&quot;\{a\}&quot;)         // {a}      -- both escapes
-print(r&quot;\d{4}&quot;)        // \d{4}    -- raw string, nothing interpolates
+<div class="highlight"><pre><span></span><code>print("{")             // {        -- string ends after the brace
+print("{}")            // {}       -- pair holds nothing
+print("{ }")           // { }      -- pair holds only whitespace
+print("}")             // }        -- no interpolation open
+print("\{a\}")         // {a}      -- both escapes
+print(r"\d{4}")        // \d{4}    -- raw string, nothing interpolates
 </code></pre></div>
 <p>The rule that catches people is the regex quantifier. <code>"\d{4}"</code> is a valid
 interpolation of the number 4, so it produces <code>\d4</code>:</p>
-<div class="highlight"><pre><span></span><code>pattern = &quot;\d\{4}&quot;     // \d{4}   -- escape the brace
-pattern = r&quot;\d{4}&quot;     // \d{4}   -- or use a raw string
+<div class="highlight"><pre><span></span><code>pattern = "\d\{4}"     // \d{4}   -- escape the brace
+pattern = r"\d{4}"     // \d{4}   -- or use a raw string
 </code></pre></div>
 <p>Rad warns (<code>RAD40017</code>) when an interpolation holds a literal, since that is
 almost always this mistake.</p>
@@ -4262,21 +4290,21 @@ printing itself, because a forgotten closing brace should be loud.</p>
 <p>An interpolation must not open with a same-delimiter string, since <code>"{"</code> is
 then indistinguishable from a literal brace at the end of a string. Reach
 for a different quote type:</p>
-<div class="highlight"><pre><span></span><code>print(&quot;{&#39;ERROR&#39;.red()}&quot;)     // use a different delimiter
-print(&quot;{ &quot;ERROR&quot;.red() }&quot;)   // or separate the braces from the quotes
-print(&quot;{&quot;ERROR&quot;.red()}&quot;)     // error - reads as the literal brace &quot;{&quot;
+<div class="highlight"><pre><span></span><code>print("{'ERROR'.red()}")     // use a different delimiter
+print("{ "ERROR".red() }")   // or separate the braces from the quotes
+print("{"ERROR".red()}")     // error - reads as the literal brace "{"
 </code></pre></div>
 <h2 id="ternary-operator">Ternary Operator<a class="headerlink" href="#ternary-operator" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>// Basic ternary syntax
 result = condition ? value_if_true : value_if_false
 
 // Examples
-status = age &gt;= 18 ? &quot;adult&quot; : &quot;minor&quot;
-message = count == 1 ? &quot;1 item&quot; : &quot;{count} items&quot;
+status = age &gt;= 18 ? "adult" : "minor"
+message = count == 1 ? "1 item" : "{count} items"
 max_value = a &gt; b ? a : b
 
 // Can be chained
-category = age &lt; 13 ? &quot;child&quot; : age &lt; 18 ? &quot;teen&quot; : &quot;adult&quot;
+category = age &lt; 13 ? "child" : age &lt; 18 ? "teen" : "adult"
 </code></pre></div>
 <h2 id="collection-access-and-slicing">Collection Access and Slicing<a class="headerlink" href="#collection-access-and-slicing" title="Permanent link">&para;</a></h2>
 <h3 id="indexing">Indexing<a class="headerlink" href="#indexing" title="Permanent link">&para;</a></h3>
@@ -4284,13 +4312,13 @@ category = age &lt; 13 ? &quot;child&quot; : age &lt; 18 ? &quot;teen&quot; : &q
 first = items[0]        // 10
 last = items[-1]        // 50
 
-person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
-name = person[&quot;name&quot;]   // &quot;alice&quot;
+person = {"name": "alice", "age": 25}
+name = person["name"]   // "alice"
 
 // Fallback for out-of-bounds or missing keys with ??
-value = items[100] ?? &quot;not found&quot;       // &quot;not found&quot; (index out of bounds)
-role = person[&quot;role&quot;] ?? &quot;guest&quot;        // &quot;guest&quot; (key not found)
-char = &quot;hello&quot;[99] ?? &quot;?&quot;               // &quot;?&quot; (string index out of bounds)
+value = items[100] ?? "not found"       // "not found" (index out of bounds)
+role = person["role"] ?? "guest"        // "guest" (key not found)
+char = "hello"[99] ?? "?"               // "?" (string index out of bounds)
 </code></pre></div>
 <h3 id="slicing">Slicing<a class="headerlink" href="#slicing" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>items = [10, 20, 30, 40, 50]
@@ -4303,17 +4331,17 @@ all_items = items[:]    // [10, 20, 30, 40, 50]
 end_items = items[-2:]  // [40, 50]
 </code></pre></div>
 <h3 id="string-slicing">String Slicing<a class="headerlink" href="#string-slicing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>text = &quot;hello&quot;
-substring = text[1:4]   // &quot;ell&quot;
+<div class="highlight"><pre><span></span><code>text = "hello"
+substring = text[1:4]   // "ell"
 </code></pre></div>
 <h2 id="control-flow">Control Flow<a class="headerlink" href="#control-flow" title="Permanent link">&para;</a></h2>
 <h3 id="if-statements">If Statements<a class="headerlink" href="#if-statements" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>if age &gt;= 18:
-    print(&quot;Adult&quot;)
+    print("Adult")
 else if age &gt;= 13:
-    print(&quot;Teen&quot;)
+    print("Teen")
 else:
-    print(&quot;Child&quot;)
+    print("Child")
 
 // Single condition
 if is_valid:
@@ -4322,16 +4350,16 @@ if is_valid:
 <h3 id="switch-statements">Switch Statements<a class="headerlink" href="#switch-statements" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Expression switches (single values)
 result = switch value:
-    case &quot;a&quot; -&gt; &quot;Apple&quot;
-    case &quot;b&quot; -&gt; &quot;Banana&quot;
-    default -&gt; &quot;Unknown&quot;
+    case "a" -&gt; "Apple"
+    case "b" -&gt; "Banana"
+    default -&gt; "Unknown"
 
 // Multiple cases
 status = switch code:
-    case 200, 201, 204 -&gt; &quot;Success&quot;
-    case 400, 401, 403 -&gt; &quot;Client Error&quot;
-    case 500, 502, 503 -&gt; &quot;Server Error&quot;
-    default -&gt; &quot;Unknown&quot;
+    case 200, 201, 204 -&gt; "Success"
+    case 400, 401, 403 -&gt; "Client Error"
+    case 500, 502, 503 -&gt; "Server Error"
+    default -&gt; "Unknown"
 
 // Multi-assignment from switch
 a, b = switch condition:
@@ -4340,14 +4368,14 @@ a, b = switch condition:
 
 // Block switches (multiple statements)
 switch value:
-    case &quot;a&quot;:
-        print(&quot;Found A!&quot;)
+    case "a":
+        print("Found A!")
         do_something()
-    case &quot;b&quot;, &quot;c&quot;:
-        print(&quot;Found B or C!&quot;)
+    case "b", "c":
+        print("Found B or C!")
         do_something_else()
     default:
-        print(&quot;Unknown value&quot;)
+        print("Unknown value")
 
 // Mixed syntax in same switch with yield
 result = switch value:
@@ -4359,24 +4387,24 @@ result = switch value:
 
 // Yield multiple values
 a, b = switch condition:
-    case &quot;pair&quot;:
+    case "pair":
         calculate_values()
         yield first_result, second_result
-    case &quot;single&quot; -&gt; default_value, 0
+    case "single" -&gt; default_value, 0
 </code></pre></div>
 <h3 id="loops">Loops<a class="headerlink" href="#loops" title="Permanent link">&para;</a></h3>
 <h4 id="for-loops">For Loops<a class="headerlink" href="#for-loops" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code>// Iterate over list
-items = [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]
+items = ["a", "b", "c"]
 for item in items:
     print(item)
 
 // Access loop index and total via context
 for item in items with loop:
-    print(&quot;{loop.idx + 1}/{loop.src.len()}: {item}&quot;)
+    print("{loop.idx + 1}/{loop.src.len()}: {item}")
 
 // Iterate with unpacking (for lists of lists)
-data = [[&quot;alice&quot;, 25], [&quot;bob&quot;, 30], [&quot;charlie&quot;, 35]]
+data = [["alice", 25], ["bob", 30], ["charlie", 35]]
 for name, age in data:
     print(name, age)
 
@@ -4385,9 +4413,9 @@ for name, age in data with loop:
     print(loop.idx, name, age)
 
 // Multiple variable unpacking with zip
-names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+names = ["alice", "bob", "charlie"]
 ages = [25, 30, 35]
-cities = [&quot;NYC&quot;, &quot;LA&quot;, &quot;Chicago&quot;]
+cities = ["NYC", "LA", "Chicago"]
 for name, age, city in zip(names, ages, cities):
     print(name, age, city)
 
@@ -4396,7 +4424,7 @@ for name, age, city in zip(names, ages, cities) with loop:
     print(loop.idx, name, age, city)
 
 // Iterate over map keys
-person = {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25}
+person = {"name": "alice", "age": 25}
 for key in person:
     print(key, person[key])
 
@@ -4424,7 +4452,7 @@ for i in range(5):      // 0, 1, 2, 3, 4
 </ul>
 <div class="highlight"><pre><span></span><code>items = [10, 20, 30]
 for item in items with loop:
-    print(&quot;Index: {loop.idx}, Item: {item}, Total: {loop.src.len()}&quot;)
+    print("Index: {loop.idx}, Item: {item}, Total: {loop.src.len()}")
 </code></pre></div>
 <h4 id="while-loops">While Loops<a class="headerlink" href="#while-loops" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code>// Basic while loop
@@ -4448,19 +4476,19 @@ while condition:
 <h2 id="additional-control-flow">Additional Control Flow<a class="headerlink" href="#additional-control-flow" title="Permanent link">&para;</a></h2>
 <h3 id="delete-statement">Delete Statement<a class="headerlink" href="#delete-statement" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Delete variables or data structures
-my_var = &quot;test&quot;
+my_var = "test"
 del my_var              // Remove variable from scope
 
 my_list = [1, 2, 3, 4]
 del my_list[0]         // Remove first element
 
-my_map = {&quot;a&quot;: 1, &quot;b&quot;: 2}
-del my_map[&quot;a&quot;]        // Remove key &quot;a&quot;
+my_map = {"a": 1, "b": 2}
+del my_map["a"]        // Remove key "a"
 </code></pre></div>
 <h3 id="return-statement">Return Statement<a class="headerlink" href="#return-statement" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>fn calculate(x, y):
     if x &lt; 0:
-        return error(&quot;negative values not allowed&quot;)
+        return error("negative values not allowed")
     result = x * y
     return result      // Return single value
 
@@ -4492,7 +4520,7 @@ fn add(a, b):
     return a + b
 
 fn greet():
-    print(&quot;Hello!&quot;)
+    print("Hello!")
 
 // Block functions
 fn calculate(x, y):
@@ -4501,33 +4529,33 @@ fn calculate(x, y):
 
 // Function with multiple return values
 fn coords(point):
-    x = point[&quot;x&quot;]
-    y = point[&quot;y&quot;]
+    x = point["x"]
+    y = point["y"]
     return x, y
 
 // Anonymous functions can be assigned to variables
 double_var = fn(x) x * 2
 add_var = fn(a, b) a + b
-greet_var = fn() print(&quot;Hello!&quot;)
+greet_var = fn() print("Hello!")
 </code></pre></div>
 <h3 id="function-calls">Function Calls<a class="headerlink" href="#function-calls" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>result = double(5)      // 10
 sum_val = add(3, 4)     // 7
 
 // UFCS (Uniform Function Call Syntax)
-&quot;hello&quot;.upper()         // &quot;HELLO&quot;
+"hello".upper()         // "HELLO"
 [1, 2, 3].len()        // 3
 
-// You&#39;re encouraged to use UFCS, especially to un-nest function calls.
+// You're encouraged to use UFCS, especially to un-nest function calls.
 upper(trim(text))    // BAD
 text.trim().upper()  // GOOD
 
 // Built-in function assignment to variables
 my_upper = upper
-&quot;test&quot;.my_upper()      // &quot;TEST&quot;
+"test".my_upper()      // "TEST"
 </code></pre></div>
 <h3 id="named-arguments">Named Arguments<a class="headerlink" href="#named-arguments" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>print(&quot;hello&quot;, &quot;world&quot;, sep=&quot;|&quot;)    // hello|world
+<div class="highlight"><pre><span></span><code>print("hello", "world", sep="|")    // hello|world
 </code></pre></div>
 <h2 id="list-comprehensions">List Comprehensions<a class="headerlink" href="#list-comprehensions" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>// Basic comprehension
@@ -4535,7 +4563,7 @@ numbers = [1, 2, 3, 4, 5]
 squares = [x * x for x in numbers]
 
 // With function calls
-words = [&quot;hello&quot;, &quot;world&quot;]
+words = ["hello", "world"]
 uppers = [upper(word) for word in words]
 
 // Side effects (returns empty list)
@@ -4573,10 +4601,10 @@ uppers = [upper(word) for word in words]
     username str?
     password str?
 
-    status enum [&quot;active&quot;, &quot;inactive&quot;, &quot;pending&quot;]
+    status enum ["active", "inactive", "pending"]
     age range [0, 120]        // Inclusive range
     age range (0, 120]        // Exclusive start, inclusive end
-    email regex &quot;.*@.*\\..*&quot;
+    email regex ".*@.*\\..*"
     username requires password   // If username provided, password required
 </code></pre></div>
 <p>Relational constraints:
@@ -4594,7 +4622,7 @@ A deployment tool.
 // Shared args available to all commands
 args:
     verbose v bool
-    config str = &quot;config.yaml&quot;
+    config str = "config.yaml"
 
 command deploy:
     ---
@@ -4615,11 +4643,11 @@ validate_config(config)
 
 fn do_deploy():
     if verbose:
-        print(&quot;Config: {config}&quot;)
-    print(&quot;Deploying to {env}...&quot;)
+        print("Config: {config}")
+    print("Deploying to {env}...")
 
 fn do_status():
-    print(&quot;Status of {env}...&quot;)
+    print("Status of {env}...")
 </code></pre></div>
 <p>Usage: <code>./tool.rad deploy staging --verbose</code></p>
 <h3 id="command-name-hyphenation">Command Name Hyphenation<a class="headerlink" href="#command-name-hyphenation" title="Permanent link">&para;</a></h3>
@@ -4634,7 +4662,7 @@ fn do_status():
 command greet:
     name str
     calls fn():
-        print(&quot;Hello, {name}!&quot;)
+        print("Hello, {name}!")
 </code></pre></div>
 <h3 id="nested-commands">Nested Commands<a class="headerlink" href="#nested-commands" title="Permanent link">&para;</a></h3>
 <p>Group related commands under a namespace, like <code>git remote add</code>. A command that
@@ -4657,10 +4685,10 @@ descendant, and accepted anywhere on the path.</p>
         calls do_remove
 
 fn do_add():
-    print(&quot;Adding {name} -&gt; {url} (timeout {timeout})&quot;)
+    print("Adding {name} -&gt; {url} (timeout {timeout})")
 
 fn do_remove():
-    print(&quot;Removing {name}&quot;)
+    print("Removing {name}")
 </code></pre></div>
 <p><code>./tool.rad remote add origin https://... --timeout 5</code> runs <code>do_add</code>, and
 <code>--timeout</code> is equally valid before the sub-command. Namespaces nest as deep as
@@ -4683,17 +4711,17 @@ command list:
     calls do_list
 
 fn do_add():
-    print(&quot;Adding {tokens}&quot;)
+    print("Adding {tokens}")
 
 fn do_list():
-    print(&quot;Listing&quot;)
+    print("Listing")
 </code></pre></div>
 <p><code>./tool.rad 15m standup</code> and <code>./tool.rad add 15m standup</code> both run <code>do_add</code>.</p>
 <p>A named command always wins, so a value that happens to match one goes to that
 command instead. Two ways to say you meant the value: name the default
 explicitly, or use <code>--</code>.</p>
 <div class="highlight"><pre><span></span><code>./tool.rad list            # runs do_list
-./tool.rad add list        # adds a reminder saying &quot;list&quot;
+./tool.rad add list        # adds a reminder saying "list"
 ./tool.rad -- list         # same
 </code></pre></div>
 <p>The rule applies at every level, so a namespace's default is what <code>./tool.rad
@@ -4727,10 +4755,10 @@ holding a command string, or a parenthesized expression. Anything written <em>af
 it reads the command's result (see <a href="#reading-one-result-inline">Reading one result inline</a>),
 so a computed command goes in parentheses:</p>
 <div class="highlight"><pre><span></span><code>cmds = [`ls -la`, `ls -l`]
-parts = [&quot;git&quot;, &quot;status&quot;]
+parts = ["git", "status"]
 
 $(cmds[1])
-$(parts.join(&quot; &quot;))
+$(parts.join(" "))
 </code></pre></div>
 <h3 id="capture-assignment">Capture &amp; assignment<a class="headerlink" href="#capture-assignment" title="Permanent link">&para;</a></h3>
 <p><strong>Capture behavior</strong> depends on how many variables you assign. A stream you don't
@@ -4766,15 +4794,15 @@ code = $`cmd`             // only way to get the code without capturing a stream
 <code>stdout, stderr = $cmd</code> mean the same thing read either way. They disagree when
 you <em>mix</em> reserved and unreserved names, because one unreserved name makes the
 whole statement positional:</p>
-<div class="highlight"><pre><span></span><code>code, output = $`cmd`     // &#39;code&#39; gets stdout! Warns: RAD40018
+<div class="highlight"><pre><span></span><code>code, output = $`cmd`     // 'code' gets stdout! Warns: RAD40018
 </code></pre></div>
 <h3 id="reading-one-result-inline">Reading one result inline<a class="headerlink" href="#reading-one-result-inline" title="Permanent link">&para;</a></h3>
 <p>A shell command can be used as an expression when it's immediately followed by
 one of four accessors: <code>.stdout</code>, <code>.stderr</code>, <code>.code</code>, or <code>.ok</code>.</p>
-<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch &quot;unknown&quot;
+<div class="highlight"><pre><span></span><code>branch = $`git branch --show-current`.stdout.trim() catch "unknown"
 
 if $`git status --porcelain`.stdout.trim():
-    print_err(&quot;Uncommitted changes!&quot;)
+    print_err("Uncommitted changes!")
 
 if not $`which docker`.ok:
     exit(1)
@@ -4825,21 +4853,21 @@ anything) are different questions that look alike.</p>
 run; use assignment when you need more than one.</p>
 <p><code>quiet</code> and <code>confirm</code> work here too, and the ⚡️ echo stays on - under <code>and</code> /
 <code>or</code> short-circuit it shows which commands actually ran.</p>
-<div class="highlight"><pre><span></span><code>tag = quiet $`git describe --tags`.stdout.trim() catch &quot;untagged&quot;
+<div class="highlight"><pre><span></span><code>tag = quiet $`git describe --tags`.stdout.trim() catch "untagged"
 </code></pre></div>
 <h3 id="handling-failures-with-a-catch-block">Handling failures with a <code>catch</code> block<a class="headerlink" href="#handling-failures-with-a-catch-block" title="Permanent link">&para;</a></h3>
 <p>Use a suffix <code>catch:</code> block to handle non‑zero exit codes. Variables are already assigned to the actual results inside the block; you may log or reassign fallbacks, then execution continues.</p>
 <div class="highlight"><pre><span></span><code>code, stdout = $`grep hello file` catch:
     // Runs because code != 0
-    print_err(&quot;grep failed with code {code}: {stdout}&quot;)
-    stdout = &quot;&quot;  // example fallback
+    print_err("grep failed with code {code}: {stdout}")
+    stdout = ""  // example fallback
 </code></pre></div>
 <p>You can also attach <code>catch:</code> without capturing any variables:</p>
 <div class="highlight"><pre><span></span><code>$`make build` catch:
     pass  // continue on failure (do nothing)
 
 $`make build` catch:
-    print_err(&quot;Build failed&quot;)
+    print_err("Build failed")
     exit(1)
 </code></pre></div>
 <h3 id="shell-command-modifiers">Shell Command Modifiers<a class="headerlink" href="#shell-command-modifiers" title="Permanent link">&para;</a></h3>
@@ -4847,7 +4875,7 @@ $`make build` catch:
 <div class="highlight"><pre><span></span><code>// quiet - suppresses the ⚡️ command echo
 quiet $`make build`
 code, stdout = quiet $`grep pattern file` catch:
-    stdout = &quot;&quot;
+    stdout = ""
 
 // confirm - prompts user approval before running (useful for destructive ops)
 confirm $`rm -rf node_modules`
@@ -4867,7 +4895,7 @@ Indexed = json.items[0].name         // Specific index
 </code></pre></div>
 <h3 id="rad-blocks">Rad Blocks<a class="headerlink" href="#rad-blocks" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Rad blocks do HTTP request + JSON extraction + print table (all-in-one)
-url = &quot;https://api.example.com/users&quot;
+url = "https://api.example.com/users"
 Name = json.results[].name
 Email = json.results[].email
 
@@ -4878,7 +4906,7 @@ rad url:
 </code></pre></div>
 <h3 id="rad-blocks-without-url-source">Rad Blocks Without URL Source<a class="headerlink" href="#rad-blocks-without-url-source" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Rad block with no source: assumes lists are already populated, prints as table
-names = [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
+names = ["alice", "bob", "charlie"]
 ages = [25, 30, 35]
 
 rad:
@@ -4887,8 +4915,8 @@ rad:
 
 // Rad block with list/map source: runs JSON extraction + prints table
 data = [
-    {&quot;name&quot;: &quot;alice&quot;, &quot;age&quot;: 25},
-    {&quot;name&quot;: &quot;bob&quot;, &quot;age&quot;: 30}
+    {"name": "alice", "age": 25},
+    {"name": "bob", "age": 30}
 ]
 
 Name = json[].name
@@ -4900,13 +4928,13 @@ rad data:
 <h3 id="field-modifiers">Field Modifiers<a class="headerlink" href="#field-modifiers" title="Permanent link">&para;</a></h3>
 <p>Field modifiers transform or filter data before display. Apply them to specific fields:</p>
 <div class="highlight"><pre><span></span><code>ages = [15, 25, 30, 12]
-names = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;]
+names = ["Alice", "Bob", "Charlie", "David"]
 
 rad:
     fields ages, names
     ages:
         filter fn(a) a &gt;= 18       // Keep only adults
-        map fn(a) &quot;{a} years&quot;      // Transform display
+        map fn(a) "{a} years"      // Transform display
 
 // Output:
 // ages       names
@@ -4916,7 +4944,7 @@ rad:
 <p><strong>Filter</strong> removes rows where the predicate returns false. <strong>Map</strong> transforms values for display. Filter runs before map.</p>
 <div class="highlight"><pre><span></span><code>// Apply same modifier to multiple fields
 ages, scores:
-    map fn(v) &quot;{v}!&quot;
+    map fn(v) "{v}!"
 
 // Use a named function
 is_adult = fn(age) age &gt;= 18
@@ -4929,8 +4957,8 @@ ages:
 rad:
     fields nums
     nums:
-        map fn(x, ctx) &quot;{ctx.idx + 1}. {x}&quot;
-        // Output: &quot;1. 10&quot;, &quot;2. 20&quot;, &quot;3. 30&quot;
+        map fn(x, ctx) "{ctx.idx + 1}. {x}"
+        // Output: "1. 10", "2. 20", "3. 30"
 </code></pre></div>
 <p><strong>Context fields:</strong></p>
 <table>
@@ -4965,30 +4993,30 @@ nums:
 
 // Show position in total
 nums:
-    map fn(x, ctx) &quot;{x} ({ctx.idx + 1}/{ctx.src.len()})&quot;
+    map fn(x, ctx) "{x} ({ctx.idx + 1}/{ctx.src.len()})"
 </code></pre></div>
 <p>Single-parameter lambdas continue to work unchanged for simple transformations.</p>
 <h2 id="advanced-features">Advanced Features<a class="headerlink" href="#advanced-features" title="Permanent link">&para;</a></h2>
 <h3 id="string-escape-sequences">String Escape Sequences<a class="headerlink" href="#string-escape-sequences" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Supported escape sequences in strings
-text = &quot;Quote: \&quot;Hello\&quot;&quot;          // Escaped double quote
-single = &#39;It\&#39;s working&#39;           // Escaped single quote  
+text = "Quote: \"Hello\""          // Escaped double quote
+single = 'It\'s working'           // Escaped single quote  
 backtick = `Backtick: \`command\`` // Escaped backtick
-newline = &quot;Line 1\nLine 2&quot;         // Newline
-tab = &quot;Column1\tColumn2&quot;           // Tab
-backslash = &quot;Path\\to\\file&quot;       // Literal backslash
-brace = &quot;Not interpolated: \{var}&quot; // Escaped brace (literal {)
-close = &quot;Escaped: \}&quot;              // Escaped brace (literal })
+newline = "Line 1\nLine 2"         // Newline
+tab = "Column1\tColumn2"           // Tab
+backslash = "Path\\to\\file"       // Literal backslash
+brace = "Not interpolated: \{var}" // Escaped brace (literal {)
+close = "Escaped: \}"              // Escaped brace (literal })
 </code></pre></div>
 <h3 id="defer-and-error-defer-blocks">Defer and Error Defer Blocks<a class="headerlink" href="#defer-and-error-defer-blocks" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Defer block - runs before script ends regardless of success/failure
 defer:
-    print(&quot;This always runs before script exits&quot;)
+    print("This always runs before script exits")
     cleanup_resources()
 
 // Error defer block - only runs before script ends if an error occurs
 errdefer:
-    print(&quot;This only runs if script exits with error&quot;)
+    print("This only runs if script exits with error")
     emergency_cleanup()
 
 process_data()
@@ -5006,23 +5034,23 @@ below for custom handlers beyond auto-defer.</p>
 signals at the OS level using <code>signal_ignore</code>. See the function reference
 for full details.</p>
 <div class="highlight"><pre><span></span><code>fn cleanup():
-    print_err(&quot;removing temp files&quot;)
+    print_err("removing temp files")
 
 // Clean up on Ctrl+C
-signal_trap(&quot;sigint&quot;, fn(ctx):
-    print_err(&quot;Cancelled&quot;)
+signal_trap("sigint", fn(ctx):
+    print_err("Cancelled")
     cleanup()
     exit(ctx.exit_code)
 )
 
-// Don&#39;t crash when a downstream pipe consumer closes
-signal_ignore(&quot;sigpipe&quot;)
+// Don't crash when a downstream pipe consumer closes
+signal_ignore("sigpipe")
 
 // Long-running loop that responds to SIGUSR1 for status dumps
 n = 0
 total = 100
-signal_trap(&quot;sigusr1&quot;, fn(ctx):
-    print(&quot;progress: {n}/{total}&quot;)  // no exit() - script continues
+signal_trap("sigusr1", fn(ctx):
+    print("progress: {n}/{total}")  // no exit() - script continues
 )
 </code></pre></div>
 <p><strong>Semantics worth knowing:</strong></p>
@@ -5047,8 +5075,8 @@ signal_trap(&quot;sigusr1&quot;, fn(ctx):
 <li>On <strong>Windows</strong>, only <code>sigint</code> and <code>sigterm</code> are supported.</li>
 </ul>
 <h3 id="rad-block-options">Rad Block Options<a class="headerlink" href="#rad-block-options" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>// noprint: run JSON extraction but don&#39;t print table
-url = &quot;https://api.example.com/users&quot;
+<div class="highlight"><pre><span></span><code>// noprint: run JSON extraction but don't print table
+url = "https://api.example.com/users"
 Name = json.results[].name
 Email = json.results[].email
 
@@ -5058,16 +5086,16 @@ rad url:
     sort Name
 
 // After this block, Name and Email contain the extracted data
-print(Name)  // [&quot;alice&quot;, &quot;bob&quot;, &quot;charlie&quot;]
-print(Email) // [&quot;alice@example.com&quot;, &quot;bob@example.com&quot;, &quot;charlie@example.com&quot;]
+print(Name)  // ["alice", "bob", "charlie"]
+print(Email) // ["alice@example.com", "bob@example.com", "charlie@example.com"]
 
-// quiet: suppress &quot;Querying url: ...&quot; stderr log
+// quiet: suppress "Querying url: ..." stderr log
 rad url:
     quiet
     fields Name, Email
 
 // transpose: swap rows and columns - fields become rows, records become columns
-Name = [&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;]
+Name = ["Alice", "Bob", "Charlie"]
 Age = [30, 40, 25]
 rad:
     fields Name, Age
@@ -5091,11 +5119,11 @@ fn sum_all(*numbers: int):
 result = sum_all(1, 2, 3, 4, 5)
 
 // Named-only parameters (after *)
-fn format_text(text: str, *, uppercase: bool = false, prefix: str = &quot;&quot;):
+fn format_text(text: str, *, uppercase: bool = false, prefix: str = ""):
     result = prefix + text
     return uppercase ? upper(result) : result
 
-formatted = format_text(&quot;hello&quot;, uppercase=true, prefix=&quot;&gt;&gt;&gt; &quot;)
+formatted = format_text("hello", uppercase=true, prefix="&gt;&gt;&gt; ")
 
 // Function-typed parameters and union returns
 fn process_data(
@@ -5111,11 +5139,11 @@ fn process_data(
 fn is_long(s: str) -&gt; bool:
     return s.len() &gt; 5
 
-count = process_data([&quot;a&quot;, &quot;bb&quot;, &quot;ccccc&quot;, &quot;dddddd&quot;], is_long)
+count = process_data(["a", "bb", "ccccc", "dddddd"], is_long)
 </code></pre></div>
 <h3 id="map-dot-syntax">Map Dot Syntax<a class="headerlink" href="#map-dot-syntax" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>person = {&quot;name&quot;: &quot;alice&quot;, &quot;details&quot;: {&quot;age&quot;: 25}}
-name = person.name              // Same as person[&quot;name&quot;]
+<div class="highlight"><pre><span></span><code>person = {"name": "alice", "details": {"age": 25}}
+name = person.name              // Same as person["name"]
 age = person.details.age        // Nested access
 </code></pre></div>
 <h3 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
@@ -5130,13 +5158,13 @@ a, b = fallible_pair() ?? [0, 0]
 <h4 id="complex-handling-suffix-catch">Complex handling: suffix <code>catch:</code><a class="headerlink" href="#complex-handling-suffix-catch" title="Permanent link">&para;</a></h4>
 <p>Attach a <code>catch:</code> block to inspect the error (the assigned variable <em>is</em> the error string inside the block), log, and/or reassign a fallback. Execution continues after the block, unless it invokes <code>exit()</code>.</p>
 <div class="highlight"><pre><span></span><code>value = text.parse_int() catch:
-    print_err(&quot;Parse failed: {value}&quot;)
+    print_err("Parse failed: {value}")
     value = 0
 </code></pre></div>
 <p>For multi-return functions with <code>catch:</code>:</p>
 <div class="highlight"><pre><span></span><code>a, b = fallible_pair() catch:
     // a = error string, b = null
-    print_err(&quot;Failed: {a}&quot;)
+    print_err("Failed: {a}")
     a, b = 0, 0
 </code></pre></div>
 <h4 id="held-errors-stay-live">Held errors stay live<a class="headerlink" href="#held-errors-stay-live" title="Permanent link">&para;</a></h4>
@@ -5144,7 +5172,7 @@ a, b = fallible_pair() ?? [0, 0]
 track that it was handled, so returning it from another function raises it again, at
 that call:</p>
 <div class="highlight"><pre><span></span><code>fn fail() -&gt; str|error:
-    return error(&quot;boom&quot;)
+    return error("boom")
 
 fn relay(x):
     return x
@@ -5153,7 +5181,7 @@ stored = fail() catch:
     pass
 
 relay(stored)               // exits
-relay(stored) ?? &quot;default&quot;  // &quot;default&quot;
+relay(stored) ?? "default"  // "default"
 </code></pre></div>
 <p>Assigning the value elsewhere and reading it are safe; only a call that returns it raises
 it. <code>??</code> and <code>catch</code> inspect the value the left side produced, so they fire on a held
@@ -5181,46 +5209,46 @@ not a       // Logical NOT
 </code></pre></div>
 <h3 id="membership">Membership<a class="headerlink" href="#membership" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>item in collection      // Check if item exists in collection
-item not in collection  // Check if item doesn&#39;t exist
+item not in collection  // Check if item doesn't exist
 </code></pre></div>
 <p>For maps, <code>in</code>/<code>not in</code> test <strong>key</strong> membership, not values:</p>
-<div class="highlight"><pre><span></span><code>scores = {&quot;alice&quot;: 1}
-has_alice = &quot;alice&quot; in scores   // true - &quot;alice&quot; is a key
-has_one = 1 in scores           // false - values aren&#39;t checked
+<div class="highlight"><pre><span></span><code>scores = {"alice": 1}
+has_alice = "alice" in scores   // true - "alice" is a key
+has_one = 1 in scores           // false - values aren't checked
 </code></pre></div>
 <h3 id="coalescing-operator">Coalescing Operator (<code>??</code>)<a class="headerlink" href="#coalescing-operator" title="Permanent link">&para;</a></h3>
 <p>The <code>??</code> operator yields the left value if it is <strong>not null or an error</strong>; otherwise it evaluates and yields the right-hand side. Useful for concise fallbacks when calling fallible functions or handling nullable values.</p>
-<div class="highlight"><pre><span></span><code>count = get_env(&quot;COUNT&quot;).parse_int() ?? 0
-data = read_file(&quot;config.txt&quot;) ?? {&quot;content&quot;: &quot;&quot;}
+<div class="highlight"><pre><span></span><code>count = get_env("COUNT").parse_int() ?? 0
+data = read_file("config.txt") ?? {"content": ""}
 a, b = some_fallible_fn() ?? [0, 0]  // multi-return requires list fallback
 </code></pre></div>
 <h3 id="error-catching-operator-catch">Error Catching Operator (<code>catch</code>)<a class="headerlink" href="#error-catching-operator-catch" title="Permanent link">&para;</a></h3>
 <p>The <code>catch</code> operator catches errors from the left side and returns the right side instead. Unlike <code>??</code>, it only catches errors - <code>null</code> values pass through.</p>
 <div class="highlight"><pre><span></span><code>count = parse_int(input_str) catch 0
 data = parse_json(raw) catch {}
-result = risky_call() catch fallback_call() catch &quot;final&quot;
+result = risky_call() catch fallback_call() catch "final"
 </code></pre></div>
 <p><code>catch</code> is distinct from the <code>catch:</code> block syntax. The operator form is an inline expression, while <code>catch:</code> is a block attached to statements.</p>
 <h2 id="scoping-and-variables">Scoping and Variables<a class="headerlink" href="#scoping-and-variables" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>// Global scope
-global_var = &quot;global&quot;
+global_var = "global"
 
 if true:
     // Can access global variables
     print(global_var)
 
     // Variables defined in blocks persist after the block
-    block_var = &quot;accessible&quot;
+    block_var = "accessible"
 
 // block_var IS accessible here
 print(block_var)  // Works fine
 
 // Variables defined in for loops also persist
 for i in range(3):
-    loop_var = &quot;also accessible&quot;
+    loop_var = "also accessible"
 
 print(i)          // Last value: 2
-print(loop_var)   // &quot;also accessible&quot;
+print(loop_var)   // "also accessible"
 
 // Function closures with anonymous functions assigned to variables
 outer_var = 10
@@ -5230,11 +5258,11 @@ fn_with_closure = fn(x):
 <h2 id="built-in-types-and-methods">Built-in Types and Methods<a class="headerlink" href="#built-in-types-and-methods" title="Permanent link">&para;</a></h2>
 <p>For a complete reference of all built-in functions, see: https://amterp.dev/rad/reference/functions/</p>
 <h3 id="string-methods">String Methods<a class="headerlink" href="#string-methods" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>text = &quot;hello world&quot;
-text.upper()            // &quot;HELLO WORLD&quot;
-text.lower()            // &quot;hello world&quot; 
-text.split(&quot; &quot;)         // [&quot;hello&quot;, &quot;world&quot;]
-text.replace(&quot;hello&quot;, &quot;hi&quot;)  // &quot;hi world&quot;
+<div class="highlight"><pre><span></span><code>text = "hello world"
+text.upper()            // "HELLO WORLD"
+text.lower()            // "hello world" 
+text.split(" ")         // ["hello", "world"]
+text.replace("hello", "hi")  // "hi world"
 </code></pre></div>
 <h3 id="list-methods">List Methods<a class="headerlink" href="#list-methods" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>items = [3, 1, 4, 1, 5]
@@ -5281,14 +5309,14 @@ error|str     // Either error or string (common for fallible operations)
 <p>Parentheses group a union so list / optional modifiers stack on
 top of the whole group rather than just the rightmost arm:</p>
 <div class="highlight"><pre><span></span><code>(int|str)[]      // List whose elements are int or str
-(int|str)?       // Optional value that&#39;s int or str
+(int|str)?       // Optional value that's int or str
 ((int|str)|bool)[]?  // Combinations compose freely
 </code></pre></div>
 <p>Without the parens, <code>int|str[]</code> parses as <code>int | (str[])</code> - an int
 or a list of strings, not a list of (int|str).</p>
 <h3 id="enum-types">Enum Types<a class="headerlink" href="#enum-types" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>[&quot;option1&quot;, &quot;option2&quot;]        // Enum with specific string values
-[&quot;auto&quot;, &quot;seconds&quot;, &quot;millis&quot;] // Enum for time units
+<div class="highlight"><pre><span></span><code>["option1", "option2"]        // Enum with specific string values
+["auto", "seconds", "millis"] // Enum for time units
 </code></pre></div>
 <h3 id="function-types">Function Types<a class="headerlink" href="#function-types" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>fn(any) -&gt; any                     // Function taking any, returning any
@@ -5297,13 +5325,13 @@ fn() -&gt; any                        // Function with no params, returning any
 </code></pre></div>
 <h3 id="complex-return-types">Complex Return Types<a class="headerlink" href="#complex-return-types" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Map with specific structure
-{ &quot;exists&quot;: bool, &quot;size&quot;?: int }
+{ "exists": bool, "size"?: int }
 
 // Map with optional fields (? suffix)
-{ &quot;content&quot;: str, &quot;created&quot;?: bool }
+{ "content": str, "created"?: bool }
 
 // Nested structures
-{ &quot;epoch&quot;: { &quot;seconds&quot;: int, &quot;millis&quot;: int } }
+{ "epoch": { "seconds": int, "millis": int } }
 </code></pre></div>
 <h3 id="variadic-parameters">Variadic Parameters<a class="headerlink" href="#variadic-parameters" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>*_items: any          // Variable number of any type
@@ -5314,7 +5342,7 @@ fn() -&gt; any                        // Function with no params, returning any
 func(*, required_param: str)
 
 // Optional named parameter with default
-func(*, optional_param: str = &quot;default&quot;)
+func(*, optional_param: str = "default")
 
 // Mixed positional and named
 func(_pos: str, *, named: int = 5)
@@ -5324,16 +5352,16 @@ func(_pos: str, *, named: int = 5)
 _path: str
 
 // Named parameter (after *)
-sep: str = &quot; &quot;
+sep: str = " "
 
 // Optional with default value
-end: str = &quot;\n&quot;
+end: str = "\n"
 </code></pre></div>
 <h3 id="real-examples-from-built-ins">Real Examples from Built-ins<a class="headerlink" href="#real-examples-from-built-ins" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>print(*_items: any, *, sep: str = &quot; &quot;, end: str = &quot;\n&quot;) -&gt; void
+<div class="highlight"><pre><span></span><code>print(*_items: any, *, sep: str = " ", end: str = "\n") -&gt; void
 range(_arg1: float|int, _arg2: float?|int?, _step: float|int = 1) -&gt; list[float|int] 
 zip(*_lists: list, *, fill: any?, strict: bool = false) -&gt; error|list[]
-read_file(_path: str, *, mode: [&quot;text&quot;, &quot;bytes&quot;] = &quot;text&quot;) -&gt; error|{ &quot;size_bytes&quot;: int, &quot;content&quot;: str|[int] }
+read_file(_path: str, *, mode: ["text", "bytes"] = "text") -&gt; error|{ "size_bytes": int, "content": str|[int] }
 </code></pre></div>
 <h2 id="rad-code-style">Rad Code Style<a class="headerlink" href="#rad-code-style" title="Permanent link">&para;</a></h2>
 <h3 id="argument-block-formatting">Argument Block Formatting<a class="headerlink" href="#argument-block-formatting" title="Permanent link">&para;</a></h3>
@@ -5344,7 +5372,7 @@ args:
     verbose v bool     # Boolean flag with short form
     email str?         # Optional argument
 
-    name regex &quot;^[a-zA-Z]+$&quot;
+    name regex "^[a-zA-Z]+$"
     count range [1, 100]
     email requires verbose
 </code></pre></div>
@@ -5352,35 +5380,35 @@ args:
 <p>As a convention, align comments 2 spaces from the longest argument in the aligned group.</p>
 <p>Good - align comments within reason (2 spaces from longest):</p>
 <div class="highlight"><pre><span></span><code>args:
-    name str        # User&#39;s full name
+    name str        # User's full name
     age int         # Age in years
     email str?      # Contact email
-    very_long_param str  # Don&#39;t align with this one if it&#39;s much longer
+    very_long_param str  # Don't align with this one if it's much longer
     city str        # Align with the shorter ones instead
 </code></pre></div>
 <p>Bad - inconsistent alignment:</p>
 <div class="highlight"><pre><span></span><code>args:
-    name str      # User&#39;s full name
+    name str      # User's full name
     age int            # Age in years
     email str?  # Contact email
 </code></pre></div>
 <h3 id="shell-command-delimiters">Shell Command Delimiters<a class="headerlink" href="#shell-command-delimiters" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Prefer backticks to avoid delimiter conflicts
-result = $`echo &quot;Hello world&quot;`
-output = $`grep &#39;pattern&#39; file.txt`
-status = $`curl -H &quot;Content-Type: application/json&quot; api.example.com`
+result = $`echo "Hello world"`
+output = $`grep 'pattern' file.txt`
+status = $`curl -H "Content-Type: application/json" api.example.com`
 
 // Avoid: Quotes can conflict with shell command content
-// result = $&quot;echo &quot;Hello world&quot;&quot;  // This breaks
+// result = $"echo "Hello world""  // This breaks
 </code></pre></div>
 <h3 id="variable-naming">Variable Naming<a class="headerlink" href="#variable-naming" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Use snake_case for variables
-user_name = &quot;alice&quot;
+user_name = "alice"
 max_retry_count = 3
 is_valid = true
 
 // Good: Common abbreviations are fine for CLI scripting
-msg = &quot;Hello world&quot;
+msg = "Hello world"
 req = http_get(url)
 cfg = load_config()
 args = get_args()
@@ -5392,7 +5420,7 @@ processed_items = filter(items, is_active)
 // Avoid: Unclear single letters and confusing abbreviations
 x = load_user_info()  // Too generic
 a, b = 1, 2          // Meaningless names
-usr_nm = &quot;alice&quot;     // Unclear abbreviation
+usr_nm = "alice"     // Unclear abbreviation
 </code></pre></div>
 <h3 id="function-definition-style">Function Definition Style<a class="headerlink" href="#function-definition-style" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Clear, descriptive function names
@@ -5400,7 +5428,7 @@ fn calculate_tax(amount, rate):
     return amount * rate
 
 fn validate_email(email):
-    return &quot;@&quot; in email and &quot;.&quot; in email
+    return "@" in email and "." in email
 
 // Good: Anonymous functions for simple operations (note lack of colon)
 double = fn(x) x * 2
@@ -5409,37 +5437,37 @@ is_even = fn(n) n % 2 == 0
 <h3 id="control-flow-formatting">Control Flow Formatting<a class="headerlink" href="#control-flow-formatting" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Consistent indentation and spacing
 if user.is_admin:
-    print(&quot;Admin access granted&quot;)
+    print("Admin access granted")
     log_admin_action(user.name)
 else if user.is_moderator:
-    print(&quot;Moderator access granted&quot;)
+    print("Moderator access granted")
 else:
-    print(&quot;Regular user access&quot;)
+    print("Regular user access")
 
 // Good: Switch formatting
 result = switch status:
-    case &quot;active&quot; -&gt; &quot;Running&quot;
-    case &quot;paused&quot; -&gt; &quot;Waiting&quot; 
-    case &quot;stopped&quot; -&gt; &quot;Inactive&quot;
-    default -&gt; &quot;Unknown&quot;
+    case "active" -&gt; "Running"
+    case "paused" -&gt; "Waiting" 
+    case "stopped" -&gt; "Inactive"
+    default -&gt; "Unknown"
 </code></pre></div>
 <h3 id="collection-and-data-structure-style">Collection and Data Structure Style<a class="headerlink" href="#collection-and-data-structure-style" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Readable list formatting with trailing commas
 users = [
-    {&quot;name&quot;: &quot;alice&quot;, &quot;role&quot;: &quot;admin&quot;},
-    {&quot;name&quot;: &quot;bob&quot;, &quot;role&quot;: &quot;user&quot;},
-    {&quot;name&quot;: &quot;charlie&quot;, &quot;role&quot;: &quot;moderator&quot;},
+    {"name": "alice", "role": "admin"},
+    {"name": "bob", "role": "user"},
+    {"name": "charlie", "role": "moderator"},
 ]
 
 // Good: Multiline maps with trailing commas
 config = {
-    &quot;host&quot;: &quot;localhost&quot;,
-    &quot;port&quot;: 8080,
-    &quot;debug&quot;: true,
+    "host": "localhost",
+    "port": 8080,
+    "debug": true,
 }
 
 // Good: Simple lists on one line when short
-colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
+colors = ["red", "green", "blue"]
 numbers = [1, 2, 3, 4, 5]
 
 // Good: Clear JSON path definitions
@@ -5449,29 +5477,29 @@ UserRole = json.users[].role
 </code></pre></div>
 <h3 id="string-interpolation-style">String Interpolation Style<a class="headerlink" href="#string-interpolation-style" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Clear variable interpolation
-message = &quot;Hello {user_name}, you have {message_count} messages&quot;
-file_path = &quot;{base_dir}/{filename}.txt&quot;
+message = "Hello {user_name}, you have {message_count} messages"
+file_path = "{base_dir}/{filename}.txt"
 
 // Good: Format specifiers for numbers
-price = &quot;Total: ${amount:.2}&quot;
-percentage = &quot;Progress: {progress:.1}%&quot;
+price = "Total: ${amount:.2}"
+percentage = "Progress: {progress:.1}%"
 </code></pre></div>
 <h3 id="error-handling-style">Error Handling Style<a class="headerlink" href="#error-handling-style" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>// Good: Clear handling with suffix catch:
 user_data = load_user(user_id) catch:
-    print_err(&quot;Failed to load user data: {user_id}&quot;)
+    print_err("Failed to load user data: {user_id}")
     exit(1)
 
 // Good: Simple fallback with ?? (right side evaluated lazily)
-backup_data = load_backup() ?? {&quot;version&quot;: &quot;none&quot;}
+backup_data = load_backup() ?? {"version": "none"}
 
 // Good: Multi-return fallback with ?? list
 a, b = risky_pair() ?? [0, 0]
 
 // Good: Shell command handling with catch
 code, stdout = $`potentially_failing_command` catch:
-    print_err(&quot;Command failed with code {code}&quot;)
-    stdout = &quot;&quot;
+    print_err("Command failed with code {code}")
+    stdout = ""
 </code></pre></div>
 
 

@@ -14,7 +14,7 @@
         <link rel="prev" href="../config/">
       
       
-        <link rel="next" href="../shell-completion/">
+        <link rel="next" href="../repl/">
       
       
         
@@ -949,6 +949,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../shell-completion/" class="md-nav__link">
         
   
@@ -1715,7 +1743,7 @@ explanation, and exits non-zero if there are errors. Add <code>--strict</code> t
 advisory checks, such as unhandled fallible calls.</p>
 <p>It has a flag <code>--from-logs</code>, which bulk-checks scripts you've actually used - handy
 after upgrading Rad:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>30d<span class="w">   </span><span class="c1"># scripts used in the last 30 days (&#39;all&#39; for everything)</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>check<span class="w"> </span>--from-logs<span class="w"> </span>30d<span class="w">   </span><span class="c1"># scripts used in the last 30 days ('all' for everything)</span>
 </code></pre></div>
 <p>This is powered by invocation logging - see <a href="../config/#invocation-logging">Configuration</a> for details.</p>
 <h2 id="rad-fmt"><code>rad fmt</code><a class="headerlink" href="#rad-fmt" title="Permanent link">&para;</a></h2>
@@ -1753,7 +1781,7 @@ corresponding page on the documentation website instead.</p>
 <h2 id="rad-stash"><code>rad stash</code><a class="headerlink" href="#rad-stash" title="Permanent link">&para;</a></h2>
 <p>Scripts can persist their own data in <a href="../stashes/">stashes</a>. <code>rad stash</code> lets you
 inspect and manage those stashes for scripts on your PATH:</p>
-<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--state<span class="w">   </span><span class="c1"># view the script&#39;s persisted state</span>
+<div class="highlight"><pre><span></span><code>rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--state<span class="w">   </span><span class="c1"># view the script's persisted state</span>
 rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--id<span class="w">      </span><span class="c1"># print the stash ID</span>
 rad<span class="w"> </span>stash<span class="w"> </span>myscript<span class="w"> </span>--delete<span class="w">  </span><span class="c1"># delete the stash</span>
 </code></pre></div>
@@ -1843,13 +1871,13 @@ rad commands, script flags, and even enum values.</p>
         
         
           
-          <a href="../shell-completion/" class="md-footer__link md-footer__link--next" aria-label="Next: Shell Completion">
+          <a href="../repl/" class="md-footer__link md-footer__link--next" aria-label="Next: REPL">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Shell Completion
+                REPL
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://amterp.dev/rad/guide/shell-completion/">
       
       
-        <link rel="prev" href="../built-in-commands/">
+        <link rel="prev" href="../repl/">
       
       
         <link rel="next" href="../../examples/">
@@ -776,6 +776,34 @@
     
   
     Built-in Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REPL
   
 
     
@@ -1637,11 +1665,11 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Bash (~/.bashrc)</label><label for="__tabbed_1_2">Zsh (~/.zshrc)</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="k">)</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="k">)</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="k">)</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="k">)</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 </div>
@@ -1661,11 +1689,11 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Bash</label><label for="__tabbed_2_2">Zsh</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/bin/deploy<span class="k">)</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/bin/deploy<span class="k">)</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/bin/deploy<span class="k">)</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/bin/deploy<span class="k">)</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 </div>
@@ -1678,11 +1706,11 @@ Deploy services to a target environment.
 ---
 args:
     service str       # Service to deploy.
-    env e str = &quot;dev&quot; # Target environment.
+    env e str = "dev" # Target environment.
 
-    env enum [&quot;dev&quot;, &quot;staging&quot;, &quot;prod&quot;]
+    env enum ["dev", "staging", "prod"]
 
-print(&quot;Deploying {service} to {env}...&quot;)
+print("Deploying {service} to {env}...")
 </code></pre></div>
 <p>Tab completion will suggest:</p>
 <ul>
@@ -1699,11 +1727,11 @@ print(&quot;Deploying {service} to {env}...&quot;)
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Bash</label><label for="__tabbed_3_2">Zsh</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/.rad/bin/*<span class="w"> </span>~/scripts/*<span class="k">)</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/.rad/bin/*<span class="w"> </span>~/scripts/*<span class="k">)</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/.rad/bin/*<span class="w"> </span>~/scripts/*<span class="k">)</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/.rad/bin/*<span class="w"> </span>~/scripts/*<span class="k">)</span><span class="s2">"</span>
 </code></pre></div>
 </div>
 </div>
@@ -1719,16 +1747,16 @@ print(&quot;Deploying {service} to {env}...&quot;)
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># Rad tab completion</span>
-<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="k">)</span><span class="s2">&quot;</span><span class="w">                    </span><span class="c1"># rad CLI commands &amp; flags</span>
-<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/.rad/bin/*<span class="k">)</span><span class="s2">&quot;</span><span class="w">        </span><span class="c1"># all scripts in ~/.rad/bin/</span>
-<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/bin/deploy<span class="w"> </span>~/bin/status<span class="k">)</span><span class="s2">&quot;</span><span class="w">  </span><span class="c1"># specific scripts</span>
+<span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="k">)</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># rad CLI commands &amp; flags</span>
+<span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/.rad/bin/*<span class="k">)</span><span class="s2">"</span><span class="w">        </span><span class="c1"># all scripts in ~/.rad/bin/</span>
+<span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span>~/bin/deploy<span class="w"> </span>~/bin/status<span class="k">)</span><span class="s2">"</span><span class="w">  </span><span class="c1"># specific scripts</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># Rad tab completion</span>
-<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="k">)</span><span class="s2">&quot;</span><span class="w">                    </span><span class="c1"># rad CLI commands &amp; flags</span>
-<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/.rad/bin/*<span class="k">)</span><span class="s2">&quot;</span><span class="w">        </span><span class="c1"># all scripts in ~/.rad/bin/</span>
-<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/bin/deploy<span class="w"> </span>~/bin/status<span class="k">)</span><span class="s2">&quot;</span><span class="w">  </span><span class="c1"># specific scripts</span>
+<span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="k">)</span><span class="s2">"</span><span class="w">                    </span><span class="c1"># rad CLI commands &amp; flags</span>
+<span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/.rad/bin/*<span class="k">)</span><span class="s2">"</span><span class="w">        </span><span class="c1"># all scripts in ~/.rad/bin/</span>
+<span class="nb">eval</span><span class="w"> </span><span class="s2">"</span><span class="k">$(</span>rad<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>~/bin/deploy<span class="w"> </span>~/bin/status<span class="k">)</span><span class="s2">"</span><span class="w">  </span><span class="c1"># specific scripts</span>
 </code></pre></div>
 </div>
 </div>
@@ -1778,7 +1806,7 @@ print(&quot;Deploying {service} to {env}...&quot;)
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../built-in-commands/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Built-in Commands">
+          <a href="../repl/" class="md-footer__link md-footer__link--prev" aria-label="Previous: REPL">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1788,7 +1816,7 @@ print(&quot;Deploying {service} to {env}...&quot;)
                 Previous
               </span>
               <div class="md-ellipsis">
-                Built-in Commands
+                REPL
               </div>
             </div>
           </a>
