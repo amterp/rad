@@ -47,4 +47,6 @@ Converts an epoch timestamp to the same format as `now()`. Auto-detects units fr
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).
 
-For the inverse - epoch int to formatted string - see `format_epoch`.
+To render an epoch as a formatted string rather than a map, see
+`format_epoch`. To go the other way, from a date string to an
+epoch, see `parse_date`.

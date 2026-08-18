@@ -1,6 +1,7 @@
 # format_epoch
 
-Formats an epoch timestamp as a string. The inverse of [`parse_epoch()`](#parse_epoch).
+Formats an epoch timestamp as a string. The inverse of [`parse_date()`](#parse_date),
+which reads such a string back into an epoch.
 
 ## Signature
 
