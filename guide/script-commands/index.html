@@ -2029,7 +2029,6 @@ Commands:
 </code></pre></div>
 </div>
 
-<p>Notice how Rad automatically generates a usage string listing all available commands.</p>
 <div class="admonition tip">
 <p class="admonition-title">Multi-line descriptions</p>
 <p>Just like script headers, command descriptions can span multiple lines:</p>
@@ -2455,7 +2454,6 @@ fn on_rollback():
 <li>Run shared logic (lines 12-14)</li>
 <li>Run the callback (<code>on_deploy</code>)</li>
 </ol>
-<p>This pattern is useful for loading configuration files, setting up connections, or validating preconditions that apply to all commands.</p>
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
 <p>Rad automatically generates help documentation for your commands. There are two levels of help:</p>
 <p><strong>Script-level help</strong> shows all available commands:</p>
@@ -2574,9 +2572,7 @@ single <code>dev.rad</code> script. This demonstrates shared arguments, boolean 
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
+<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code>#!/usr/bin/env rad
 ---
 Facilitates working with this repo's project.
 ---
@@ -2618,23 +2614,21 @@ if not get_path("package.json")["exists"]:
 fn on_start():
     print("🚀 Starting server on http://localhost:{port}...")
 
-    cmd = "npm start -- --port {port}"
-
     if detach:
-        $`{cmd} &amp;`
+        $`npm start -- --port {port} &amp;`
         print("Server started in background".green())
     else:
-        $`{cmd}`
+        $`npm start -- --port {port}`
 
 fn on_test():
-    opts = ""
+    opts = []
     if watch:
-        opts = "{opts} --watch"
-    if grep: 
-        opts = "{opts} -t '{grep}'"
+        opts += ["--watch"]
+    if grep:
+        opts += ["-t", grep]
 
     if verbose:
-        print("Running: pytest {opts}".yellow())
+        print("Running: pytest {opts.join(" ")}".yellow())
 
     print("🧪 Running tests...")
     $`pytest {opts}` catch:

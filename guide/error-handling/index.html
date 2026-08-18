@@ -1932,7 +1932,7 @@ error string, as returned by <code>parse_int</code>, which we can log or inspect
 <p>To summarize:</p>
 <ul>
 <li><strong>Suffix</strong> form: write <code>... catch:</code> directly after the error-able expression.</li>
-<li><strong>Binding</strong>: the target variable is first bound to the error value; inside the block, interpolating it (e.g. <code>{age}</code>) prints the error’s message.</li>
+<li><strong>Binding</strong>: the target variable is first bound to the error value; inside the block, interpolating it (e.g. <code>{age}</code>) prints the error's message.</li>
 <li><strong>Control</strong>: you can log, reassign a fallback, or exit(code).</li>
 <li><strong>Flow</strong>: execution continues after the block unless you exit.</li>
 </ul>
@@ -2091,7 +2091,6 @@ By returning <code>int|error</code>, the type signature tells you three things:<
 <li><code>read_file(path) -&gt; error|{ "size_bytes": int, "content": str }</code></li>
 <li><code>round(num, decimals) -&gt; error|int|float</code></li>
 </ul>
-<p>The error union makes your code self-documenting - anyone reading your function signature knows immediately that it can fail.</p>
 <div class="admonition info">
 <p class="admonition-title">More on Union Types</p>
 <p>We covered union types in detail in an earlier section: <a href="../type-annotations/#union-types">Type Annotations</a>.

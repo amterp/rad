@@ -11586,7 +11586,7 @@ are left alone - the analyzer can't prove they collide.</p>
 <h3 id="rad40013-case-key-not-in-discriminant-type">RAD40013: Case Key Not In Discriminant Type<a class="headerlink" href="#rad40013-case-key-not-in-discriminant-type" title="Permanent link">&para;</a></h3>
 <p>A <code>switch</code> case key has a value that the discriminant can never
 hold. The arm is unreachable not because of an earlier <code>case</code>
-(that's <a href="40012.md">RAD40012</a>), but because the discriminant's
+(that's <code>RAD40012</code>), but because the discriminant's
 <em>type</em> statically forbids the value.</p>
 <p>This typically surfaces after a refactor: an enum variant gets
 renamed and the old spelling lingers in a switch.</p>
@@ -11635,7 +11635,7 @@ identifiers, calls, or other expressions are left alone - the
 analyzer can't prove they fall outside the domain.</p>
 <h3 id="rad40014-unknown-map-key">RAD40014: Unknown Map Key<a class="headerlink" href="#rad40014-unknown-map-key" title="Permanent link">&para;</a></h3>
 <p>A map access reads a key that the map's <em>type</em> doesn't declare. The
-access is guaranteed to fail at runtime (<a href="20041.md">RAD20041</a>,
+access is guaranteed to fail at runtime (<code>RAD20041</code>,
 key not found), so the analyzer flags it statically.</p>
 <p>This fires only when the receiver has a closed map shape the
 analyzer can enumerate - typically a builtin's typed-map return
@@ -11655,7 +11655,7 @@ print(gp.full_path)
 <p>If the key you want is optional (marked <code>?</code> in the type, e.g.
 <code>get_path</code>'s <code>size_bytes?</code>), it's a valid key and won't fire this -
 but it may be absent at runtime. Guard the access so a missing key
-doesn't error (<a href="20041.md">RAD20041</a>).</p>
+doesn't error (<code>RAD20041</code>).</p>
 <h4 id="when-the-check-fires_1">When the check fires<a class="headerlink" href="#when-the-check-fires_1" title="Permanent link">&para;</a></h4>
 <p>Only reads are checked. Writing a key that isn't declared
 (<code>gp.extra = 1</code>) is allowed - it adds the key at runtime - so it

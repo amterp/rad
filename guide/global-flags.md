@@ -65,7 +65,7 @@ This makes `-i` double as an invocation builder for unfamiliar scripts: answer t
 
 ## `debug`
 
-[`debug`](../reference/functions.md#debug) is an built-in function which behaves exactly like `print`, except that it only prints if the global flag `--debug` is enabled. You can use them in your script for debugging as desired.
+[`debug`](../reference/functions.md#debug) is a built-in function which behaves exactly like `print`, except that it only prints if the global flag `--debug` is enabled. You can use them in your script for debugging as desired.
 
 For example, given this example:
 

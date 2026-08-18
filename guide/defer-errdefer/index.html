@@ -1627,11 +1627,11 @@ $`cat notes.txt`
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>defer.rl
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: mv notes.txt notes-tmp.txt
-⚡️ Running: echo "hi!" &gt;&gt; notes.txt
-⚡️ Running: cat notes.txt
+<div class="highlight"><pre><span></span><code>⚡️ mv notes.txt notes-tmp.txt
+⚡️ echo "hi!" &gt;&gt; notes.txt
+⚡️ cat notes.txt
 hi!
-⚡️ Running: mv notes-tmp.txt notes.txt
+⚡️ mv notes-tmp.txt notes.txt
 Moved back!
 </code></pre></div>
 </div>
@@ -1701,9 +1701,9 @@ print("Done!")
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">2</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i '' "s/Version = .*/Version = 2/" VERSION
-⚡️ Running: git add VERSION
-⚡️ Running: git commit -m "Bump version to 2"
+<div class="highlight"><pre><span></span><code>⚡️ sed -i '' "s/Version = .*/Version = 2/" VERSION
+⚡️ git add VERSION
+⚡️ git commit -m "Bump version to 2"
 [main 6ce2ebb] Bump version to 2
  1 file changed, 1 insertion(+), 1 deletion(-)
 Done!
@@ -1715,10 +1715,10 @@ Done!
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
+<div class="highlight"><pre><span></span><code>⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
 Oh no! ERROR!
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 </code></pre></div>
 </div>
 
@@ -1727,13 +1727,13 @@ Undoing bump...
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>bump.rl<span class="w"> </span><span class="m">3</span>
 </code></pre></div>
 <div class="result">
-<div class="highlight"><pre><span></span><code>⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
-⚡️ Running: git add VERSION
+<div class="highlight"><pre><span></span><code>⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ git add VERSION
 Bah! ERROR!
 Resetting VERSION...
-⚡️ Running: git reset VERSION
+⚡️ git reset VERSION
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 </code></pre></div>
 </div>
 

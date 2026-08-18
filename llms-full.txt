@@ -39,7 +39,7 @@
 ## Migrations
 
 - [How to Migrate](https://amterp.dev/rad/migrations/index.md): Upgrade Workflow
-- [Migration Guide - v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Positional Shell Captures Are Reordered, Breaking Change: `$` Takes The Command, Not The Whole Expression, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Flag-Like Tokens Are Rejected As Values, Breaking Change: Constraints On A List Are Enforced, Breaking Change: Scripts That Prompt Stop Before Running Without A Terminal, Also Changed: `??` and `catch` See Errors You Already Hold
+- [Migration Guide - v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Shell Captures Bind stdout First, Exit Code Last, Breaking Change: `$` Takes The Command, Not The Whole Expression, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Constraints On A List Arg Are Enforced, Breaking Change: Flag-Like Tokens Are Rejected As Values, Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Scripts That Prompt Stop Before Running Without A Terminal, Behavior Change: `??` and `catch` See Errors You Already Hold, New: Reading A Command Inline, New: `len` Bounds On List Args, Error Messages
 - [Migration Guide - v0.9](https://amterp.dev/rad/migrations/v0.9.md): Breaking Change: `request` and `display` Keywords Removed, Breaking Change: `get_stash_dir` Renamed, Migration Steps, Breaking Change: `??` Now Fires on Null, New: `catch` Operator, Breaking Change: Strict `+` Concatenation, Breaking Change: `parse_epoch` Unit Names Shortened, Error Messages, Behavior Change: Invocation Logging Enabled by Default, Breaking Change: `trim_prefix` / `trim_suffix` Behavior Changed
 - [Migration Guide - v0.8](https://amterp.dev/rad/migrations/v0.8.md): Breaking Change: `get_default` Removed, Migration Steps, Why This Change?, Error Messages
 - [Migration Guide - v0.7](https://amterp.dev/rad/migrations/v0.7.md): Breaking Change: For-Loop Index Syntax, Migration Steps, Error Messages, Why This Change?, Bonus: Rad Block Lambda Context
@@ -1665,7 +1665,7 @@ This script defines two mandatory arguments: `word` that is expected to be a str
 
 Some important things to note:
 
-- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. See How Argument Parsing Works below for the full details.
+- **Every argument you declare works both as a positional parameter and as a named flag - automatically.** You don't have to choose between them, and your users can mix and match. Bools are the one exception: they are flags only. See How Argument Parsing Works below for the full details.
 - The positional ordering of args follows the order of declaration in the args block.
 - Flags (like `--word` and `--repeats`) are generated for you based on each argument's name.
 
@@ -1744,7 +1744,7 @@ This section explains that model and a few related parsing behaviors that are us
 
 ### The Dual-Nature Model
 
-When you declare an argument, Rad generates both a positional slot and a named flag for it.
+When you declare an argument, Rad generates both a positional slot and a named flag for it - except for bools, which are flags only.
 Your users can then invoke your script whichever way is most convenient - or mix both styles in the same call.
 
 Consider this script:
@@ -1768,9 +1768,6 @@ All of these invocations are equivalent:
 # Mixed - positional for src, flag for dest
 ./script myfile.txt --dest /backup/
 ```
-
-This means script authors get a great CLI experience for free. Users who know the positional order can be terse;
-users who want clarity can use flags; and anyone can mix and match as needed.
 
 ### Parsing Order
 
@@ -2779,8 +2776,6 @@ In this section, we'll explore:
 - **Escape sequences** - include special characters like newlines and tabs
 - **String attributes** - add color, bold, and other terminal styling
 
-These features make it easy to generate well-formatted output, build complex strings, and create polished CLI experiences.
-
 ## String Interpolation
 
 Rad allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.
@@ -2815,6 +2810,11 @@ print("{tokens.join(" ")}")
 print("Count: {tokens.len() > 1 ? "several" : "just one"}")
 ```
 
+```
+Hello World
+Count: several
+```
+
 The one exception is a nested string *immediately* after the `{`, because
 `"{"` is also how you write a literal opening brace, and the two cannot be
 told apart. Switch delimiters there, or add a space:
@@ -2822,11 +2822,6 @@ told apart. Switch delimiters there, or add a space:
 ```rad
 print("{'ERROR'.red()}")     // fine
 print("{ "ERROR".red() }")   // also fine
-```
-
-```
-Hello World
-Count: several
 ```
 
 ## Formatting
@@ -4517,8 +4512,6 @@ especially as they grow in complexity or get reused across projects.
     - **Nested structures**: Complex combinations of the above
 - **Special parameters**: Work with variadic (`*param: <type>`) and named-only parameters
 
-Type annotations make your code clearer to both humans and tools, catching errors early and making your intentions explicit.
-
 ## Next
 
 We've briefly seen `error|T` union types in this section - functions that return either a value or an error.
@@ -4652,7 +4645,7 @@ error string, as returned by `parse_int`, which we can log or inspect. We then r
 To summarize:
 
 - **Suffix** form: write `... catch:` directly after the error-able expression.
-- **Binding**: the target variable is first bound to the error value; inside the block, interpolating it (e.g. `{age}`) prints the error’s message.
+- **Binding**: the target variable is first bound to the error value; inside the block, interpolating it (e.g. `{age}`) prints the error's message.
 - **Control**: you can log, reassign a fallback, or exit(code).
 - **Flow**: execution continues after the block unless you exit.
 
@@ -4829,8 +4822,6 @@ This pattern is used throughout Rad's built-in functions:
 - `parse_float(str) -> float|error`
 - `read_file(path) -> error|{ "size_bytes": int, "content": str }`
 - `round(num, decimals) -> error|int|float`
-
-The error union makes your code self-documenting - anyone reading your function signature knows immediately that it can fail.
 
 **Info: More on Union Types**
 
@@ -5019,8 +5010,7 @@ code, stderr = $`make format`       // code=1, stderr=""
 stderr, stdout, code = $`ls`        // All three, any order
 ```
 
-This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
-It's also the only way to capture the exit code without also capturing the streams:
+It's the only way to capture the exit code without also capturing the streams:
 `code = $cmd` leaves stdout and stderr going to the terminal.
 
 **The rule:** If ALL variables use exactly `code`, `stdout`, or `stderr`, assignment is by name. Otherwise, it's positional:
@@ -5228,7 +5218,7 @@ characters intact rather than being expanded or run.
     $`git commit -m {message}`
     ```
 
-Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:
+Because the shell joins adjacent quoted fragments, values glue onto neighboring text without any help:
 
 ```rad
 name = "My Notes.txt"
@@ -5625,8 +5615,6 @@ Commands:
   status    Check the health of an environment
 ```
 
-Notice how Rad automatically generates a usage string listing all available commands.
-
 **Tip: Multi-line descriptions**
 
     Just like script headers, command descriptions can span multiple lines:
@@ -5963,8 +5951,6 @@ When you run `./script.rad deploy staging`, the flow is:
 2. Run shared logic (lines 12-14)
 3. Run the callback (`on_deploy`)
 
-This pattern is useful for loading configuration files, setting up connections, or validating preconditions that apply to all commands.
-
 ## Getting Help
 
 Rad automatically generates help documentation for your commands. There are two levels of help:
@@ -6065,23 +6051,21 @@ if not get_path("package.json")["exists"]:
 fn on_start():
     print("🚀 Starting server on http://localhost:{port}...")
 
-    cmd = "npm start -- --port {port}"
-
     if detach:
-        $`{cmd} &`
+        $`npm start -- --port {port} &`
         print("Server started in background".green())
     else:
-        $`{cmd}`
+        $`npm start -- --port {port}`
 
 fn on_test():
-    opts = ""
+    opts = []
     if watch:
-        opts = "{opts} --watch"
-    if grep: 
-        opts = "{opts} -t '{grep}'"
+        opts += ["--watch"]
+    if grep:
+        opts += ["-t", grep]
 
     if verbose:
-        print("Running: pytest {opts}".yellow())
+        print("Running: pytest {opts.join(" ")}".yellow())
 
     print("🧪 Running tests...")
     $`pytest {opts}` catch:
@@ -6341,7 +6325,7 @@ This makes `-i` double as an invocation builder for unfamiliar scripts: answer t
 
 ## `debug`
 
-`debug` (rad docs debug) is an built-in function which behaves exactly like `print`, except that it only prints if the global flag `--debug` is enabled. You can use them in your script for debugging as desired.
+`debug` (rad docs debug) is a built-in function which behaves exactly like `print`, except that it only prints if the global flag `--debug` is enabled. You can use them in your script for debugging as desired.
 
 For example, given this example:
 
@@ -6677,11 +6661,11 @@ rad defer.rl
 ```
 
 ```
-⚡️ Running: mv notes.txt notes-tmp.txt
-⚡️ Running: echo "hi!" >> notes.txt
-⚡️ Running: cat notes.txt
+⚡️ mv notes.txt notes-tmp.txt
+⚡️ echo "hi!" >> notes.txt
+⚡️ cat notes.txt
 hi!
-⚡️ Running: mv notes-tmp.txt notes.txt
+⚡️ mv notes-tmp.txt notes.txt
 Moved back!
 ```
 
@@ -6766,9 +6750,9 @@ rad bump.rl 2
 ```
 
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 2/" VERSION
-⚡️ Running: git add VERSION
-⚡️ Running: git commit -m "Bump version to 2"
+⚡️ sed -i '' "s/Version = .*/Version = 2/" VERSION
+⚡️ git add VERSION
+⚡️ git commit -m "Bump version to 2"
 [main 6ce2ebb] Bump version to 2
  1 file changed, 1 insertion(+), 1 deletion(-)
 Done!
@@ -6783,10 +6767,10 @@ rad bump.rl 3
 ```
 
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
 Oh no! ERROR!
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 ```
 
 If you run this locally, you should see with `git status` that there are no changes to the `VERSION` file, thanks to our `errdefer` block rolling back the `sed` replacement.
@@ -6798,13 +6782,13 @@ rad bump.rl 3
 ```
 
 ```
-⚡️ Running: sed -i '' "s/Version = .*/Version = 3/" VERSION
-⚡️ Running: git add VERSION
+⚡️ sed -i '' "s/Version = .*/Version = 3/" VERSION
+⚡️ git add VERSION
 Bah! ERROR!
 Resetting VERSION...
-⚡️ Running: git reset VERSION
+⚡️ git reset VERSION
 Undoing bump...
-⚡️ Running: git checkout -- VERSION
+⚡️ git checkout -- VERSION
 ```
 
 Here we see a very important detail about defer blocks that applies both to `defer` and `errdefer` - if you have multiple, they run in LIFO (last in, first out) order. In other words, the defer blocks defined *later* run *first*.
@@ -7347,7 +7331,7 @@ whatever you define stays defined until you leave.
 
 ```
 $ rad repl
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 > name = "world"
@@ -7472,7 +7456,7 @@ reads lines and prints results without drawing a prompt:
 
 ```
 $ printf 'x = 20\nx * 2\n' | rad repl
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 40
@@ -15866,7 +15850,7 @@ are left alone - the analyzer can't prove they collide.
 
 A `switch` case key has a value that the discriminant can never
 hold. The arm is unreachable not because of an earlier `case`
-(that's RAD40012), but because the discriminant's
+(that's `RAD40012`), but because the discriminant's
 *type* statically forbids the value.
 
 This typically surfaces after a refactor: an enum variant gets
@@ -15931,7 +15915,7 @@ analyzer can't prove they fall outside the domain.
 ### RAD40014: Unknown Map Key
 
 A map access reads a key that the map's *type* doesn't declare. The
-access is guaranteed to fail at runtime (RAD20041,
+access is guaranteed to fail at runtime (`RAD20041`,
 key not found), so the analyzer flags it statically.
 
 This fires only when the receiver has a closed map shape the
@@ -15960,7 +15944,7 @@ print(gp.full_path)
 If the key you want is optional (marked `?` in the type, e.g.
 `get_path`'s `size_bytes?`), it's a valid key and won't fire this -
 but it may be absent at runtime. Guard the access so a missing key
-doesn't error (RAD20041).
+doesn't error (`RAD20041`).
 
 #### When the check fires
 

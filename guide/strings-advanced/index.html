@@ -1801,7 +1801,6 @@
 <li><strong>Escape sequences</strong> - include special characters like newlines and tabs</li>
 <li><strong>String attributes</strong> - add color, bold, and other terminal styling</li>
 </ul>
-<p>These features make it easy to generate well-formatted output, build complex strings, and create polished CLI experiences.</p>
 <h2 id="string-interpolation">String Interpolation<a class="headerlink" href="#string-interpolation" title="Permanent link">&para;</a></h2>
 <p>Rad allows embedding expressions inside your strings that will get evaluated and replaced to produce the 'final' string.</p>
 <p>Some examples:</p>
@@ -1828,18 +1827,18 @@ everything inside <code>{ }</code> is parsed as code, not text, so nested string
 print("{tokens.join(" ")}")
 print("Count: {tokens.len() &gt; 1 ? "several" : "just one"}")
 </code></pre></div>
-<p>The one exception is a nested string <em>immediately</em> after the <code>{</code>, because
-<code>"{"</code> is also how you write a literal opening brace, and the two cannot be
-told apart. Switch delimiters there, or add a space:</p>
-<div class="highlight"><pre><span></span><code>print("{'ERROR'.red()}")     // fine
-print("{ "ERROR".red() }")   // also fine
-</code></pre></div>
 <div class="result">
 <div class="highlight"><pre><span></span><code>Hello World
 Count: several
 </code></pre></div>
 </div>
 
+<p>The one exception is a nested string <em>immediately</em> after the <code>{</code>, because
+<code>"{"</code> is also how you write a literal opening brace, and the two cannot be
+told apart. Switch delimiters there, or add a space:</p>
+<div class="highlight"><pre><span></span><code>print("{'ERROR'.red()}")     // fine
+print("{ "ERROR".red() }")   // also fine
+</code></pre></div>
 <h2 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">&para;</a></h2>
 <p>You can format expression results while doing string interpolation.
 To do so, follow your expression with a colon <code>:</code> and then the relevant syntax for the formatting you want to do.

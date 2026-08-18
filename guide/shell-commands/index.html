@@ -2103,8 +2103,7 @@ stderr = $`bad-command`             // Just capture stderr
 code, stderr = $`make format`       // code=1, stderr=""
 stderr, stdout, code = $`ls`        // All three, any order
 </code></pre></div>
-<p>This improves readability - you can capture exactly what you need with clear, self-documenting variable names.
-It's also the only way to capture the exit code without also capturing the streams:
+<p>It's the only way to capture the exit code without also capturing the streams:
 <code>code = $cmd</code> leaves stdout and stderr going to the terminal.</p>
 <p><strong>The rule:</strong> If ALL variables use exactly <code>code</code>, <code>stdout</code>, or <code>stderr</code>, assignment is by name. Otherwise, it's positional:</p>
 <div class="highlight"><pre><span></span><code>// Positional - neither name is reserved, so slots decide
@@ -2291,7 +2290,7 @@ message = "Bump to {version}"
 $`git commit -m {message}`
 </code></pre></div>
 </div>
-<p>Because the shell joins adjacent quoted fragments, values glue onto neighbouring text without any help:</p>
+<p>Because the shell joins adjacent quoted fragments, values glue onto neighboring text without any help:</p>
 <div class="highlight"><pre><span></span><code>name = "My Notes.txt"
 version = "1.2.3"
 
