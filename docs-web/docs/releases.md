@@ -47,7 +47,6 @@ And plenty of bug fixes, see the list of commits below.
 
 Don't hesitate to ask questions or raise issues!
 
-- Mark 4 cards done after cherry-picking sprint work ([3229dd24](https://github.com/amterp/rad/commit/3229dd24))
 - feat!: answer a script's prompts when there's no terminal ([00cf40bb](https://github.com/amterp/rad/commit/00cf40bb))
 - feat!: list args take several positional values ([b3297b57](https://github.com/amterp/rad/commit/b3297b57))
 - feat!: shell captures bind stdout first, exit code last ([070dda5c](https://github.com/amterp/rad/commit/070dda5c))
