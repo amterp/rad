@@ -5326,7 +5326,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.12
+    v0.12
   
 
     
@@ -5354,7 +5354,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.9
+    v0.9
   
 
     
@@ -5382,7 +5382,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.8
+    v0.8
   
 
     
@@ -5410,7 +5410,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.7
+    v0.7
   
 
     
@@ -9986,7 +9986,7 @@ a = parse_epoch(1712345678000, unit="millis")
 <li><code>"nanos"</code></li>
 </ul>
 <p>The longer aliases (<code>milliseconds</code>, <code>microseconds</code>, <code>nanoseconds</code>) were
-removed in v0.9. See the <a href="/migrations/v0.9/">v0.9 migration guide</a>.</p>
+removed in v0.9. See <code>rad docs migrations/v0.9</code>.</p>
 <h3 id="rad20009-invalid-timezone">RAD20009: Invalid Timezone<a class="headerlink" href="#rad20009-invalid-timezone" title="Permanent link">&para;</a></h3>
 <p>The timezone string isn't recognized.</p>
 <h4 id="example_15">Example<a class="headerlink" href="#example_15" title="Permanent link">&para;</a></h4>
@@ -11031,7 +11031,7 @@ x = "count: " + str(count)
 <code>"Value: {x}"</code>. Alternatively, convert types explicitly with <code>int()</code>, <code>float()</code>, or <code>str()</code>.</p>
 <blockquote>
 <p><strong>v0.9 Migration Note:</strong> The <code>+</code> operator no longer coerces types. If you're seeing this
-error after upgrading, see the <a href="https://amterp.dev/rad/migrations/v0.9/">v0.9 migration guide</a>.</p>
+error after upgrading, see <code>rad docs migrations/v0.9</code>.</p>
 </blockquote>
 <h3 id="rad30003-cannot-format">RAD30003: Cannot Format<a class="headerlink" href="#rad30003-cannot-format" title="Permanent link">&para;</a></h3>
 <p>A value couldn't be formatted with the given format specifier.</p>
@@ -11454,8 +11454,7 @@ add <code>noprint</code> when migrating from <code>request</code> if you don't w
 <li><strong>List/map source</strong>: <code>rad myData:</code> (replaces <code>display</code>)</li>
 <li><strong>No source</strong>: <code>rad:</code> (replaces <code>display</code> with no argument)</li>
 </ul>
-<p>See the <a href="https://amterp.dev/rad/migrations/v0.9/">migration guide</a>
-for full details.</p>
+<p>See <code>rad docs migrations/v0.9</code> for full details.</p>
 <h3 id="rad40009-duplicate-parameter">RAD40009: Duplicate Parameter<a class="headerlink" href="#rad40009-duplicate-parameter" title="Permanent link">&para;</a></h3>
 <p>A function or lambda has two parameters with the same name. Parameter
 names must be unique within a single parameter list so the body can
@@ -11723,9 +11722,8 @@ print(replace(version, ".", "-"))   // -&gt; "1-2-3", no escaping needed
 sides, or a leading <code>^</code> / trailing <code>$</code>. Real text does sometimes contain those -
 <code>"C++"</code> and <code>"a|b"</code> are perfectly good literal separators. The warning is advice,
 not a verdict.</p>
-<p>See the <a href="https://amterp.dev/rad/migrations/v0.12/">v0.12 migration guide</a> for the
-full picture, and <code>rad check --from-logs all</code> to sweep every script you've run
-recently.</p>
+<p>See <code>rad docs migrations/v0.12</code> for the full picture, and
+<code>rad check --from-logs all</code> to sweep every script you've run recently.</p>
 <h3 id="rad40017-interpolating-a-constant-literal">RAD40017: Interpolating a Constant Literal<a class="headerlink" href="#rad40017-interpolating-a-constant-literal" title="Permanent link">&para;</a></h3>
 <p>An interpolation contains a literal value, so it produces exactly the text
 you already wrote. <code>"{4}"</code> and <code>"4"</code> are the same string.</p>
@@ -11827,8 +11825,7 @@ to it:</p>
 <div class="highlight"><pre><span></span><code>a, b = $`cmd`   // no warning possible
 </code></pre></div>
 <p>Sweep every script you've run recently with <code>rad check --from-logs all</code>, and see
-the <a href="https://amterp.dev/rad/migrations/v0.12/">v0.12 migration guide</a> for the
-full picture.</p>
+<code>rad docs migrations/v0.12</code> for the full picture.</p>
 <h3 id="rad40019-two-default-commands-at-one-level">RAD40019: Two Default Commands At One Level<a class="headerlink" href="#rad40019-two-default-commands-at-one-level" title="Permanent link">&para;</a></h3>
 <p>Only one command per level runs when the user names none, so two <code>default</code>
 markers among siblings leave nothing to decide between them.</p>
@@ -12188,7 +12185,7 @@ gives you.</p>
 has no meaning at all. There's no version of them worth keeping working.</p>
 <h4 id="see-also_10">See Also<a class="headerlink" href="#see-also_10" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="https://amterp.dev/rad/migrations/v0.12/">Migrating to v0.12</a> - the full change and its rationale</li>
+<li><code>rad docs migrations/v0.12</code> - the full change and its rationale</li>
 <li><code>rad docs RAD40025</code> - using a command as a value with no accessor</li>
 <li><code>rad docs guide/shell-commands</code> - the three command forms</li>
 </ul>

@@ -1398,7 +1398,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.12
+    v0.12
   
 
     
@@ -1426,7 +1426,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.9
+    v0.9
   
 
     
@@ -1454,7 +1454,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.8
+    v0.8
   
 
     
@@ -1482,7 +1482,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.7
+    v0.7
   
 
     
@@ -1768,8 +1768,14 @@ so it always reflects the version you have installed - no browser or network req
 rad docs guide/basics        # read the Basics guide page
 rad docs len                 # look up a single built-in function
 rad docs reference/functions # read the functions reference
+rad docs migrations          # list the migration guides
+rad docs migrations/v0.12    # read one of them
 rad docs all                 # dump the full doc corpus
 </code></pre></div>
+<p><code>rad docs all</code> covers the guide, reference, and examples - the same set as
+<a href="https://amterp.dev/rad/llms-full.txt">llms-full.txt</a>. Migration guides are
+addressable but stay out of it, since they demonstrate syntax that no longer
+works.</p>
 <p>Error codes are also accessible this way:</p>
 <div class="highlight"><pre><span></span><code>rad docs RAD20003           # explain a specific error code
 rad docs 20003              # shorthand (no RAD prefix needed)

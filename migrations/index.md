@@ -4,9 +4,18 @@ title: How to Migrate
 
 # How to Migrate
 
-Rad is pre-1.0, so breaking changes can occur between minor versions. When they do, the version gets its own migration guide (listed below this page in the sidebar) detailing exactly what changed and how to update your scripts.
+Rad is pre-1.0, so breaking changes can occur between minor versions. When they do, the version gets its own migration guide detailing exactly what changed and how to update your scripts.
 
 This page covers the general process for upgrading smoothly.
+
+## Guides
+
+| Version | What changed |
+| --- | --- |
+| [v0.12](v0.12.md) | Shell commands quote interpolated values, shell captures rebind, list args collect every positional, `split()` and `replace()` match literally |
+| [v0.9](v0.9.md) | `request` and `display` blocks unified into `rad`, `??` fires on null, strict `+` concatenation, `parse_epoch` unit names shortened |
+| [v0.8](v0.8.md) | `get_default` removed in favor of the `??` operator |
+| [v0.7](v0.7.md) | For-loop index syntax replaced by `with loop` |
 
 ## Upgrade Workflow
 
@@ -18,7 +27,7 @@ rad --version
 
 ### 2. Read the migration guide
 
-Before upgrading, skim the migration guide for your target version. You'll find them in the sidebar under **Migrations**. Each guide lists every breaking change with before/after examples and migration steps.
+Before upgrading, skim the guide for your target version from the table above. Each one lists every breaking change with before/after examples and migration steps.
 
 If you're jumping multiple versions, read each guide in order - changes can build on each other.
 

@@ -1270,6 +1270,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#upgrade-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1375,7 +1386,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.12
+    v0.12
   
 
     
@@ -1403,7 +1414,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.9
+    v0.9
   
 
     
@@ -1431,7 +1442,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.8
+    v0.8
   
 
     
@@ -1459,7 +1470,7 @@
   <span class="md-ellipsis">
     
   
-    Migration Guide - v0.7
+    v0.7
   
 
     
@@ -1559,6 +1570,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guides
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#upgrade-workflow" class="md-nav__link">
@@ -1664,14 +1686,41 @@
 
 
 <h1 id="how-to-migrate">How to Migrate<a class="headerlink" href="#how-to-migrate" title="Permanent link">&para;</a></h1>
-<p>Rad is pre-1.0, so breaking changes can occur between minor versions. When they do, the version gets its own migration guide (listed below this page in the sidebar) detailing exactly what changed and how to update your scripts.</p>
+<p>Rad is pre-1.0, so breaking changes can occur between minor versions. When they do, the version gets its own migration guide detailing exactly what changed and how to update your scripts.</p>
 <p>This page covers the general process for upgrading smoothly.</p>
+<h2 id="guides">Guides<a class="headerlink" href="#guides" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>What changed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="v0.12/">v0.12</a></td>
+<td>Shell commands quote interpolated values, shell captures rebind, list args collect every positional, <code>split()</code> and <code>replace()</code> match literally</td>
+</tr>
+<tr>
+<td><a href="v0.9/">v0.9</a></td>
+<td><code>request</code> and <code>display</code> blocks unified into <code>rad</code>, <code>??</code> fires on null, strict <code>+</code> concatenation, <code>parse_epoch</code> unit names shortened</td>
+</tr>
+<tr>
+<td><a href="v0.8/">v0.8</a></td>
+<td><code>get_default</code> removed in favor of the <code>??</code> operator</td>
+</tr>
+<tr>
+<td><a href="v0.7/">v0.7</a></td>
+<td>For-loop index syntax replaced by <code>with loop</code></td>
+</tr>
+</tbody>
+</table>
 <h2 id="upgrade-workflow">Upgrade Workflow<a class="headerlink" href="#upgrade-workflow" title="Permanent link">&para;</a></h2>
 <h3 id="1-check-your-current-version">1. Check your current version<a class="headerlink" href="#1-check-your-current-version" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>rad<span class="w"> </span>--version
 </code></pre></div>
 <h3 id="2-read-the-migration-guide">2. Read the migration guide<a class="headerlink" href="#2-read-the-migration-guide" title="Permanent link">&para;</a></h3>
-<p>Before upgrading, skim the migration guide for your target version. You'll find them in the sidebar under <strong>Migrations</strong>. Each guide lists every breaking change with before/after examples and migration steps.</p>
+<p>Before upgrading, skim the guide for your target version from the table above. Each one lists every breaking change with before/after examples and migration steps.</p>
 <p>If you're jumping multiple versions, read each guide in order - changes can build on each other.</p>
 <h3 id="3-upgrade-rad">3. Upgrade Rad<a class="headerlink" href="#3-upgrade-rad" title="Permanent link">&para;</a></h3>
 <p>Upgrade using whichever method you originally installed with - your package manager, <code>go install</code>, or by downloading the latest binary from the <a href="https://github.com/amterp/rad/releases">releases page</a>. See <a href="../guide/getting-started/#installation">Installation</a> for details.</p>
@@ -1787,13 +1836,13 @@ Replace request and display with rad:
         
         
           
-          <a href="v0.12/" class="md-footer__link md-footer__link--next" aria-label="Next: Migration Guide - v0.12">
+          <a href="v0.12/" class="md-footer__link md-footer__link--next" aria-label="Next: v0.12">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Migration Guide - v0.12
+                v0.12
               </div>
             </div>
             <div class="md-footer__button md-icon">

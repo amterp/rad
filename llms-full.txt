@@ -38,11 +38,11 @@
 
 ## Migrations
 
-- [How to Migrate](https://amterp.dev/rad/migrations/index.md): Upgrade Workflow
-- [Migration Guide - v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Shell Captures Bind stdout First, Exit Code Last, Breaking Change: `$` Takes The Command, Not The Whole Expression, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Constraints On A List Arg Are Enforced, Breaking Change: Flag-Like Tokens Are Rejected As Values, Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Scripts That Prompt Stop Before Running Without A Terminal, Behavior Change: `??` and `catch` See Errors You Already Hold, New: Reading A Command Inline, New: `len` Bounds On List Args, Error Messages
-- [Migration Guide - v0.9](https://amterp.dev/rad/migrations/v0.9.md): Breaking Change: `request` and `display` Keywords Removed, Breaking Change: `get_stash_dir` Renamed, Migration Steps, Breaking Change: `??` Now Fires on Null, New: `catch` Operator, Breaking Change: Strict `+` Concatenation, Breaking Change: `parse_epoch` Unit Names Shortened, Error Messages, Behavior Change: Invocation Logging Enabled by Default, Breaking Change: `trim_prefix` / `trim_suffix` Behavior Changed
-- [Migration Guide - v0.8](https://amterp.dev/rad/migrations/v0.8.md): Breaking Change: `get_default` Removed, Migration Steps, Why This Change?, Error Messages
-- [Migration Guide - v0.7](https://amterp.dev/rad/migrations/v0.7.md): Breaking Change: For-Loop Index Syntax, Migration Steps, Error Messages, Why This Change?, Bonus: Rad Block Lambda Context
+- [How to Migrate](https://amterp.dev/rad/migrations/index.md): Guides, Upgrade Workflow
+- [v0.12](https://amterp.dev/rad/migrations/v0.12.md): Breaking Change: Shell Commands Quote Interpolated Values, Breaking Change: Shell Captures Bind stdout First, Exit Code Last, Breaking Change: `$` Takes The Command, Not The Whole Expression, Breaking Change: List Args Collect Every Positional Value, Breaking Change: Constraints On A List Arg Are Enforced, Breaking Change: Flag-Like Tokens Are Rejected As Values, Breaking Change: A Bare List Flag Is Rejected, Breaking Change: `split()` and `replace()` Match Literally, Breaking Change: Scripts That Prompt Stop Before Running Without A Terminal, Behavior Change: `??` and `catch` See Errors You Already Hold, New: Reading A Command Inline, New: `len` Bounds On List Args, Error Messages
+- [v0.9](https://amterp.dev/rad/migrations/v0.9.md): Breaking Change: `request` and `display` Keywords Removed, Breaking Change: `get_stash_dir` Renamed, Migration Steps, Breaking Change: `??` Now Fires on Null, New: `catch` Operator, Breaking Change: Strict `+` Concatenation, Breaking Change: `parse_epoch` Unit Names Shortened, Error Messages, Behavior Change: Invocation Logging Enabled by Default, Breaking Change: `trim_prefix` / `trim_suffix` Behavior Changed
+- [v0.8](https://amterp.dev/rad/migrations/v0.8.md): Breaking Change: `get_default` Removed, Migration Steps, Why This Change?, Error Messages
+- [v0.7](https://amterp.dev/rad/migrations/v0.7.md): Breaking Change: For-Loop Index Syntax, Migration Steps, Error Messages, Why This Change?, Bonus: Rad Block Lambda Context
 
 ## Other
 
@@ -3176,7 +3176,7 @@ that doesn't compile is an error rather than a silent fallback.
 **Info: Changed in v0.12**
 
     `split` and `replace` used to treat their pattern as a regex by default. See the
-    v0.12 migration guide if you're upgrading.
+    v0.12 migration guide (rad docs migrations/v0.12) if you're upgrading.
 
 ## Summary
 
@@ -7246,8 +7246,15 @@ rad docs                     # list all topics grouped by section
 rad docs guide/basics        # read the Basics guide page
 rad docs len                 # look up a single built-in function
 rad docs reference/functions # read the functions reference
+rad docs migrations          # list the migration guides
+rad docs migrations/v0.12    # read one of them
 rad docs all                 # dump the full doc corpus
 ```
+
+`rad docs all` covers the guide, reference, and examples - the same set as
+llms-full.txt (https://amterp.dev/rad/llms-full.txt). Migration guides are
+addressable but stay out of it, since they demonstrate syntax that no longer
+works.
 
 Error codes are also accessible this way:
 
@@ -13828,7 +13835,7 @@ a = parse_epoch(1712345678000, unit="millis")
 - `"nanos"`
 
 The longer aliases (`milliseconds`, `microseconds`, `nanoseconds`) were
-removed in v0.9. See the v0.9 migration guide.
+removed in v0.9. See `rad docs migrations/v0.9`.
 
 ### RAD20009: Invalid Timezone
 
@@ -15177,7 +15184,7 @@ Use interpolation to mix types in strings - it handles any type automatically:
 `"Value: {x}"`. Alternatively, convert types explicitly with `int()`, `float()`, or `str()`.
 
 > **v0.9 Migration Note:** The `+` operator no longer coerces types. If you're seeing this
-> error after upgrading, see the v0.9 migration guide (https://amterp.dev/rad/migrations/v0.9/).
+> error after upgrading, see `rad docs migrations/v0.9`.
 
 ### RAD30003: Cannot Format
 
@@ -15667,8 +15674,7 @@ The `rad` keyword now handles all source types:
 - **List/map source**: `rad myData:` (replaces `display`)
 - **No source**: `rad:` (replaces `display` with no argument)
 
-See the migration guide (https://amterp.dev/rad/migrations/v0.9/)
-for full details.
+See `rad docs migrations/v0.9` for full details.
 
 ### RAD40009: Duplicate Parameter
 
@@ -16050,9 +16056,8 @@ sides, or a leading `^` / trailing `$`. Real text does sometimes contain those -
 `"C++"` and `"a|b"` are perfectly good literal separators. The warning is advice,
 not a verdict.
 
-See the v0.12 migration guide (https://amterp.dev/rad/migrations/v0.12/) for the
-full picture, and `rad check --from-logs all` to sweep every script you've run
-recently.
+See `rad docs migrations/v0.12` for the full picture, and
+`rad check --from-logs all` to sweep every script you've run recently.
 
 ### RAD40017: Interpolating a Constant Literal
 
@@ -16201,8 +16206,7 @@ a, b = $`cmd`   // no warning possible
 ```
 
 Sweep every script you've run recently with `rad check --from-logs all`, and see
-the v0.12 migration guide (https://amterp.dev/rad/migrations/v0.12/) for the
-full picture.
+`rad docs migrations/v0.12` for the full picture.
 
 ### RAD40019: Two Default Commands At One Level
 
@@ -16641,6 +16645,6 @@ has no meaning at all. There's no version of them worth keeping working.
 
 #### See Also
 
-- Migrating to v0.12 (https://amterp.dev/rad/migrations/v0.12/) - the full change and its rationale
+- `rad docs migrations/v0.12` - the full change and its rationale
 - `rad docs RAD40025` - using a command as a value with no accessor
 - `rad docs guide/shell-commands` - the three command forms
