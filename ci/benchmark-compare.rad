@@ -172,7 +172,11 @@ cmd_str = join(cmds, " ")
 results_file = "/tmp/benchmark-results.json"
 
 print("🏃 Running interleaved benchmarks (warmup=2, runs=5)...")
-$`hyperfine {cmd_str} --warmup 2 --runs 5 --export-json {results_file}`
+// Assembled as one string and run verbatim. Interpolating cmd_str into a
+// command literal would hand hyperfine a single argument from v0.12 onwards,
+// and a list can't be used instead while this still has to run under v0.11.
+hyperfine_cmd = "hyperfine {cmd_str} --warmup 2 --runs 5 --export-json {results_file}"
+$hyperfine_cmd
 
 // ============================================================================
 // PHASE 4: Parse results and compare
