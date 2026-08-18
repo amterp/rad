@@ -14,7 +14,7 @@ enter
 enter
 ctrl-d
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 42
@@ -70,7 +70,7 @@ backspace
 enter
 ctrl-d
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 42
@@ -140,7 +140,7 @@ enter
 enter
 ctrl-d
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 in
@@ -224,7 +224,7 @@ up
 enter
 ctrl-d
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 42
@@ -270,7 +270,7 @@ ctrl-c
 enter
 ctrl-d
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 2
@@ -369,7 +369,7 @@ enter
 enter
 ctrl-d
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
   count            int      3

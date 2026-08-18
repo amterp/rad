@@ -13,7 +13,7 @@ x
 print("still here")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 5
@@ -42,7 +42,7 @@ this is not rad!!!
 x
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 1
@@ -95,7 +95,7 @@ for i in range(3):
 total
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 0
@@ -123,7 +123,7 @@ result = int("abc") catch:
 result
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 -1

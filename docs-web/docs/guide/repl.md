@@ -7,7 +7,7 @@ whatever you define stays defined until you leave.
 
 ```
 $ rad repl
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 > name = "world"
@@ -132,7 +132,7 @@ reads lines and prints results without drawing a prompt:
 
 ```
 $ printf 'x = 20\nx * 2\n' | rad repl
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 40

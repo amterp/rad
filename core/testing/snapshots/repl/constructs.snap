@@ -17,7 +17,7 @@ else:
 
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 0
@@ -44,7 +44,7 @@ fn greet(name):
 greet("world")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 42
@@ -68,7 +68,7 @@ work()
 print("after")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 working
@@ -91,7 +91,7 @@ args:
 print("session continues")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 session continues
@@ -120,7 +120,7 @@ return 5
 print("session continues")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 session continues

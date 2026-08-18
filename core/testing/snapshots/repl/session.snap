@@ -14,7 +14,7 @@ x = x * 2
 x
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 42
@@ -35,7 +35,7 @@ repl
 print("unquoted")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 "hello"
@@ -57,7 +57,7 @@ exit(3)
 print("never runs")
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 before
@@ -77,7 +77,7 @@ x = 1
 x
 ### NO_TERMINAL ###
 ### STDOUT ###
-🤙 Rad REPL v0.11.0
+🤙 Rad REPL v0.12.0
 Type ':help' for help, ':exit' or Ctrl+D to quit.
 
 1
