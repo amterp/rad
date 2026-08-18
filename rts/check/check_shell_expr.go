@@ -44,11 +44,8 @@ func (c *RadCheckerImpl) addShellExprAccessorErrors(d *[]Diagnostic) {
 // No quick fix: there are four right answers and no way to tell which was
 // meant. Naming all four in the message beats offering four competing edits.
 func (c *RadCheckerImpl) bareShellExprDiagnostic(n *rl.ShellExpr) Diagnostic {
-	msg := "A shell command has no value on its own. Say which result you want: " +
-		accessorList()
-	suggestion := "`.stdout` and `.stderr` give you the output and fail if the command did. " +
-		"`.ok` (bool) and `.code` (int) describe the outcome and never fail, " +
-		"so use those to test a command rather than read it."
+	msg := "A shell command has no value on its own - say which result you want"
+	suggestion := "Add one of: " + accessorList() + "."
 	return NewDiagnosticErrorFromSpanWithSuggestion(
 		n.Span(), c.src, msg, rl.ErrShellExprNoAccessor, suggestion)
 }
@@ -73,8 +70,7 @@ func (c *RadCheckerImpl) badAccessorDiagnostic(n *rl.ShellExpr) Diagnostic {
 	case seg.IsUFCS:
 		// `$`echo hi`.upper()` - this ran ECHO HI, because the call built the
 		// command rather than transforming its output.
-		msg := "A method here would have been applied to the command text, not its output - " +
-			"read a result first, then transform it."
+		msg := "A method here applies to the command text, not its output"
 		suggestion := "Insert an accessor: `$`cmd`.stdout.upper()` rather than `$`cmd`.upper()`."
 		return NewDiagnosticErrorFromSpanWithSuggestion(
 			seg.Span(), c.src, msg, rl.ErrShellPostfixNotAccessor, suggestion)
@@ -82,8 +78,7 @@ func (c *RadCheckerImpl) badAccessorDiagnostic(n *rl.ShellExpr) Diagnostic {
 	default:
 		// `$cmds[1]`, `$cmds[1:2]` - the migration case. `$` used to swallow the
 		// whole expression, so this indexed `cmds` and ran whatever came back.
-		msg := "`$` now takes only the command, so an index here reads the command's result " +
-			"rather than building it. This used to index the value first and run the result."
+		msg := "`$` takes only the command, so this index reads its result, not the command"
 		diag := NewDiagnosticErrorFromSpan(n.Span(), c.src, msg, rl.ErrShellPostfixNotAccessor)
 		suggestion := fmt.Sprintf(
 			"Wrap the command in parentheses: `%s`. See https://amterp.dev/rad/migrations/v0.12/",

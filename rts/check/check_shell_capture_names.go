@@ -162,8 +162,7 @@ func (c *RadCheckerImpl) shellCaptureDiagnostic(
 ) Diagnostic {
 	msg := "'" + name + "' is bound to " + shellStreamName(got) + " here"
 
-	suggestion := "Positional captures fill (stdout, stderr, code) in that order - reorder " +
-		"the targets, or name them all so assignment goes by name."
+	suggestion := "Positional captures fill (stdout, stderr, code) - reorder, or name all targets."
 	if isMigrant {
 		// The migration half stays inline rather than moving to the docs: it is
 		// the reason a script that ran correctly last release now doesn't, and

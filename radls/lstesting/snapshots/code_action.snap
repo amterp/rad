@@ -369,7 +369,7 @@ $cmds[1]
   "params": {
     "diagnostics": [
       {
-        "message": "`$` now takes only the command, so an index here reads the command's result rather than building it. This used to index the value first and run the result.",
+        "message": "`$` takes only the command, so this index reads its result, not the command",
         "range": {
           "end": {
             "character": 8,

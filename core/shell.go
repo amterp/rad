@@ -299,10 +299,9 @@ func (i *Interpreter) shellListInterpolation(n *rl.LitString, idx int, list *Rad
 	}
 
 	if !segmentStandsAlone(n, idx) {
-		i.emitError(rl.ErrShellCmdValue, seg.Expr,
-			"A list in a shell command must stand alone as its own argument, "+
-				"because it expands to one argument per element. "+
-				"Surround it with spaces, or join it into a single string first")
+		i.emitErrorWithHint(rl.ErrShellCmdValue, seg.Expr,
+			"A list must stand alone as its own shell argument",
+			"Surround it with spaces, or join it into one string first.")
 		panic(UNREACHABLE)
 	}
 
@@ -348,9 +347,9 @@ func (i *Interpreter) shellScalarString(node rl.Node, val RadValue) string {
 	case rl.RadIntT, rl.RadFloatT, rl.RadBoolT:
 		return ToPrintable(val)
 	default:
-		i.emitErrorf(rl.ErrShellCmdValue, node,
-			"Cannot interpolate a %s into a shell command. %s",
-			TypeAsString(val), shellArgFixHint(val.Type()))
+		i.emitErrorWithHint(rl.ErrShellCmdValue, node,
+			fmt.Sprintf("Cannot interpolate a %s into a shell command", TypeAsString(val)),
+			shellArgFixHint(val.Type()))
 		panic(UNREACHABLE)
 	}
 }
@@ -382,9 +381,10 @@ func (i *Interpreter) shellArgString(cmdNode rl.Node, val RadValue, idx int) str
 	case rl.RadIntT, rl.RadFloatT, rl.RadBoolT:
 		return ToPrintable(val)
 	default:
-		i.emitErrorf(rl.ErrShellCmdValue, cmdNode,
-			"Shell command argument %d is a %s, which has no single-argument form. %s",
-			idx, TypeAsString(val), shellArgFixHint(val.Type()))
+		i.emitErrorWithHint(rl.ErrShellCmdValue, cmdNode,
+			fmt.Sprintf("Shell command argument %d is a %s, which has no single-argument form",
+				idx, TypeAsString(val)),
+			shellArgFixHint(val.Type()))
 		panic(UNREACHABLE)
 	}
 }

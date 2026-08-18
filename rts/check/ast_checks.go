@@ -217,8 +217,7 @@ func (c *RadCheckerImpl) addShellInterpolationQuoteErrors(d *[]Diagnostic) {
 
 		for _, seg := range quotedInterpolations(lit) {
 			msg := "Quotes around this interpolation end up in the argument itself"
-			suggestion := "Remove them - Rad quotes shell interpolations for you. For literal " +
-				"text plus a value, build the string first and interpolate that."
+			suggestion := "Remove them - Rad quotes shell interpolations for you."
 			diag := NewDiagnosticErrorFromSpan(seg.Span(), c.src, msg, rl.ErrShellInterpolationQuoted)
 			diag.Suggestion = &suggestion
 			*d = append(*d, diag)
@@ -531,9 +530,9 @@ func (c *RadCheckerImpl) checkArgConstraints(
 		if constraintSuitsType(constraint, base) {
 			return
 		}
-		found = append(found, NewDiagnosticErrorFromSpan(span, c.src,
-			"'"+name+"' is "+base+", so "+article+" "+constraint+" constraint cannot apply to it. "+wants,
-			rl.ErrConstraintTypeMismatch))
+		found = append(found, NewDiagnosticErrorFromSpanWithSuggestion(span, c.src,
+			"'"+name+"' is "+base+", so "+article+" "+constraint+" constraint cannot apply",
+			rl.ErrConstraintTypeMismatch, wants))
 	}
 
 	for name, con := range enums {
@@ -553,10 +552,10 @@ func (c *RadCheckerImpl) checkArgConstraints(
 		if !declared || decl.IsVariadic || strings.HasSuffix(decl.TypeName, "[]") {
 			continue
 		}
-		found = append(found, NewDiagnosticErrorFromSpan(con.Span_, c.src,
-			"'"+name+"' holds one value, so a len constraint cannot apply to it. "+
-				"Len constraints need a list ("+decl.TypeName+"[]) or a variadic (*"+name+").",
-			rl.ErrConstraintTypeMismatch))
+		found = append(found, NewDiagnosticErrorFromSpanWithSuggestion(con.Span_, c.src,
+			"'"+name+"' holds one value, so a len constraint cannot apply",
+			rl.ErrConstraintTypeMismatch,
+			"len needs a list ("+decl.TypeName+"[]) or a variadic (*"+name+")."))
 	}
 
 	sort.Slice(found, func(i, j int) bool {

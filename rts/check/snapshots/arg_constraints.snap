@@ -48,6 +48,9 @@ args:
   scores (arg): int[]
 
 # Diagnostics
-  [error] RAD40024 @ 5:5 - 'scores' is int, so an enum constraint cannot apply to it. Enum constraints need a str arg.
-  [error] RAD40024 @ 6:5 - 'names' is str, so a range constraint cannot apply to it. Range constraints need an int or float arg.
-  [error] RAD40024 @ 7:5 - 'age' is int, so a regex constraint cannot apply to it. Regex constraints need a str arg.
+  [error] RAD40024 @ 5:5 - 'scores' is int, so an enum constraint cannot apply
+    help: Enum constraints need a str arg.
+  [error] RAD40024 @ 6:5 - 'names' is str, so a range constraint cannot apply
+    help: Range constraints need an int or float arg.
+  [error] RAD40024 @ 7:5 - 'age' is int, so a regex constraint cannot apply
+    help: Regex constraints need a str arg.

@@ -43,8 +43,8 @@ if $`cmd`:
   (none)
 
 # Diagnostics
-  [error] RAD40025 @ 1:4 - A shell command has no value on its own. Say which result you want: `.stdout`, `.stderr`, `.code`, or `.ok`
-    help: `.stdout` and `.stderr` give you the output and fail if the command did. `.ok` (bool) and `.code` (int) describe the outcome and never fail, so use those to test a command rather than read it.
+  [error] RAD40025 @ 1:4 - A shell command has no value on its own - say which result you want
+    help: Add one of: `.stdout`, `.stderr`, `.code`, or `.ok`.
 
 ### TITLE ###
 ComputedCommandGetsTheMigrationFix
@@ -64,7 +64,7 @@ $cmds[1]
   cmds (local): str[]
 
 # Diagnostics
-  [error] RAD40026 @ 2:1 - `$` now takes only the command, so an index here reads the command's result rather than building it. This used to index the value first and run the result.
+  [error] RAD40026 @ 2:1 - `$` takes only the command, so this index reads its result, not the command
     help: Wrap the command in parentheses: `$(cmds[1])`. See https://amterp.dev/rad/migrations/v0.12/
 
 ### TITLE ###
@@ -82,7 +82,7 @@ x = $`echo hi`.upper()
   x (local): dynamic
 
 # Diagnostics
-  [error] RAD40026 @ 1:16 - A method here would have been applied to the command text, not its output - read a result first, then transform it.
+  [error] RAD40026 @ 1:16 - A method here applies to the command text, not its output
     help: Insert an accessor: `$`cmd`.stdout.upper()` rather than `$`cmd`.upper()`.
 
 ### TITLE ###
@@ -123,4 +123,4 @@ x = $`git commit -m "{msg}"`.stdout
 
 # Diagnostics
   [error] RAD40023 @ 2:22 - Quotes around this interpolation end up in the argument itself
-    help: Remove them - Rad quotes shell interpolations for you. For literal text plus a value, build the string first and interpolate that.
+    help: Remove them - Rad quotes shell interpolations for you.

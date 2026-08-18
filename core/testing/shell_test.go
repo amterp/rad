@@ -521,7 +521,7 @@ func Test_ShellCmd_Interp_ListInsideAWordIsRejected(t *testing.T) {
 	setupAndRunCode(t, script, "--color=never")
 
 	assertShellNotInvoked(t)
-	assertErrorContains(t, 1, "RAD20045", "must stand alone as its own argument")
+	assertErrorContains(t, 1, "RAD20045", "must stand alone as its own shell argument")
 }
 
 func Test_ShellCmd_Interp_ListWithFormatSpecIsRejected(t *testing.T) {
