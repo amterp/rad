@@ -61,7 +61,10 @@ if release:
 
     // resolve version /////////////
     tags = $`git tag -l`
-    tags = split(tags[:-1], "\n")
+    tags = split(tags.trim(), "\n")
+    // Scratch and backup tags live alongside the release tags, and parse_int on
+    // one of them takes the whole release down before anything is committed.
+    tags = [t for t in tags if matches(t, "v?\\d+\\.\\d+\\.\\d+")]
     tags = [replace(t, "v", "") for t in tags]
     tags = [split(t, ".") for t in tags]
     major = sort([parse_int(t[0]) for t in tags])[-1]
@@ -78,8 +81,13 @@ if release:
 
     $`go test ./core/testing -count 10`
 
-    $`git status --porcelain` catch:
+    // --porcelain exits 0 whether or not the tree is dirty, so the output is the
+    // only signal. Untracked files are excluded: they were never going into the
+    // tag anyway, and this repo always has a few lying around.
+    stdout = $`git status --porcelain --untracked-files=no`
+    if stdout.trim():
         print("Working directory is dirty! Aborting.".red())
+        print(stdout)
         exit(1)
 
     sed_expr = "s/Version = \".*\"/Version = \"{version}\"/"
@@ -97,6 +105,7 @@ if release:
         $`git tag {version}`
 
         pushup()
+        $`git push origin {version}`
 
         print("✅ Tag {version} created and pushed. GitHub Actions will create the release with binaries.")
 
@@ -105,6 +114,6 @@ if push:
 
 fn pushup():
     branch = get_branch()
-    $`git push origin {branch} --tags`
+    $`git push origin {branch}`
 
 print(green("✅ Done!"))
