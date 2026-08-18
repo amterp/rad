@@ -8,6 +8,15 @@ All Rad releases. Newest first.
 
 ---
 
+## [v0.12.1](https://github.com/amterp/rad/releases/tag/v0.12.1) - 2026-08-18
+
+- ci: reject commit subjects that break the release notes ([8f3f32a0](https://github.com/amterp/rad/commit/8f3f32a0))
+- feat: rad docs serves the migration guides ([4062efa8](https://github.com/amterp/rad/commit/4062efa8))
+- fix!: a bare list flag is rejected instead of parsing as empty ([765c1f94](https://github.com/amterp/rad/commit/765c1f94))
+- fix(ci): the homebrew bump gets a tag on a tag push ([b2063a10](https://github.com/amterp/rad/commit/b2063a10))
+
+---
+
 ## [v0.12.0](https://github.com/amterp/rad/releases/tag/v0.12.0) - 2026-08-18
 
 v0.12 is the biggest release yet for shell commands, and the largest breaking one so far: eight breaking changes, half of which can change what a script does without raising an error. **Read the [migration guide](https://amterp.dev/rad/migrations/v0.12/) before upgrading**, and run `rad check --from-logs all` to find the scripts that need attention.
