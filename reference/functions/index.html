@@ -6971,7 +6971,8 @@ type_of(fn() 1)          // -&gt; "function"
 </code></pre></div>
 <h2 id="time">Time<a class="headerlink" href="#time" title="Permanent link">&para;</a></h2>
 <h3 id="format_epoch">format_epoch<a class="headerlink" href="#format_epoch" title="Permanent link">&para;</a></h3>
-<p>Formats an epoch timestamp as a string. The inverse of <a href="#parse_epoch"><code>parse_epoch()</code></a>.</p>
+<p>Formats an epoch timestamp as a string. The inverse of <a href="#parse_date"><code>parse_date()</code></a>,
+which reads such a string back into an epoch.</p>
 <div class="highlight"><pre><span></span><code>format_epoch(_epoch: int, _format: str, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos"] = "auto") -&gt; error|str
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>ts = format_epoch(1735689600, "YYYY-MM-DD HH:mm:ss", tz="UTC")
@@ -7362,7 +7363,9 @@ time = parse_epoch(1712345678, tz="Invalid/Timezone") catch:
 <p>Converts an epoch timestamp to the same format as <a href="#now"><code>now()</code></a>. Auto-detects units from digit count, or specify
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., <code>1712345678.5</code> seconds includes
 500 milliseconds).</p>
-<p>For the inverse - epoch int to formatted string - see <a href="#format_epoch"><code>format_epoch</code></a>.</p>
+<p>To render an epoch as a formatted string rather than a map, see
+<a href="#format_epoch"><code>format_epoch</code></a>. To go the other way, from a date string to an
+epoch, see <a href="#parse_date"><code>parse_date</code></a>.</p>
 
 
 

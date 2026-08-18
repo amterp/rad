@@ -2663,7 +2663,8 @@ type_of(fn() 1)          // -> "function"
 
 ### format_epoch
 
-Formats an epoch timestamp as a string. The inverse of [`parse_epoch()`](#parse_epoch).
+Formats an epoch timestamp as a string. The inverse of [`parse_date()`](#parse_date),
+which reads such a string back into an epoch.
 
 ```rad
 format_epoch(_epoch: int, _format: str, *, tz: str = "local", unit: ["auto", "seconds", "millis", "micros", "nanos"] = "auto") -> error|str
@@ -2883,4 +2884,6 @@ Converts an epoch timestamp to the same format as [`now()`](#now). Auto-detects 
 explicitly. When using a float, the fractional part provides sub-unit precision (e.g., `1712345678.5` seconds includes
 500 milliseconds).
 
-For the inverse - epoch int to formatted string - see [`format_epoch`](#format_epoch).
+To render an epoch as a formatted string rather than a map, see
+[`format_epoch`](#format_epoch). To go the other way, from a date string to an
+epoch, see [`parse_date`](#parse_date).
