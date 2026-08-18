@@ -24,4 +24,6 @@ jobs:
           token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
           formula: rad
           tap: amterp/rad
-          tag: ${{ inputs.tag }}
+          # inputs.tag is empty on a tag push, and the action fails outright
+          # without a tag. github.ref_name is the tag name on that event.
+          tag: ${{ inputs.tag || github.ref_name }}
