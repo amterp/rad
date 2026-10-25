@@ -1,0 +1,24 @@
+{
+  "_v": 3,
+  "alias": "repl-load-refuses",
+  "alias_explicit": false,
+  "column": "p1",
+  "created_at_millis": 1787068050190,
+  "creator": "Alexander Terp",
+  "description": "`RAD20049` tells you to put a script in a file and `:load` it. `:load` then\nrejects that same file with `RAD20049`, so the advice is a loop.\n\n`greet.rad`:\n\n```rad\nargs:\n    name str = \"world\"\n\nfn do_greet():\n    print(\"hello {name}\")\n```\n\n```\n$ printf ':load greet.rad\\ndo_greet()\\n' | rad repl\nerror[RAD20049]: An args block describes a script's interface, which the REPL\nhas no use for.\n  --\u003e \u003crepl\u003e:1:1\n```\n\nNothing in the file runs, so `do_greet` is undefined afterwards too.\n\n`core/error_docs/20049.md` states the behavior it expects: \":load runs the\nfile's statements against your session ... Its `args` block is skipped, because\nthere are still no command-line arguments to parse.\" It isn't skipped -\n`replRejectScriptOnlyBlocks` (`core/repl_eval.go`) runs on every turn, loaded\nfiles included. The doc's own worked example is a file with a command block,\nwhich is exactly what `:load` refuses.\n\nTwo ways out, pointing in opposite directions:\n\n- Teach `:load` to skip a loaded file's `args`, command and header blocks and\n  run the rest. This is what the doc already promises, and it makes `:load`\n  useful for the case it exists to serve - pulling your functions into a\n  session to poke at them.\n- Drop the promise from the doc and from the `= help:`, and say what to do\n  instead. Cheaper, but leaves `:load` unable to open most real scripts.\n\nFound during the v0.12.0 docs review, on v0.12.0.",
+  "effort": "s",
+  "id": "a_2AHgluUMf",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "UUUUUUUUUUUUUU",
+  "source": [
+    "agent-redteam"
+  ],
+  "title": "REPL :load refuses the files RAD20049 tells you to load",
+  "type": "bug",
+  "updated_at_millis": 1787068050190,
+  "history": [
+    {"field":"column","value":"p1","at":1787068050190}
+  ]
+}
