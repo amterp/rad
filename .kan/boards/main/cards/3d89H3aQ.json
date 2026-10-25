@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "more consistent",
   "id": "3d89H3aQ",
-  "position": "5H",
+  "position": "z",
   "title": "RAD-375: should boolean flags be positional also?",
   "type": "feature",
-  "updated_at_millis": 1767762151276,
+  "updated_at_millis": 1792958898094,
   "history": [
     {"field":"column","value":"uncommitted","at":1767762151276}
   ]

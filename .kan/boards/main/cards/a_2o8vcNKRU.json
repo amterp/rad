@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "get-stash-path-name",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957705766,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 14, item 5.\n\n`write_stash_file`, `load_stash_file` and friends keep files under `\u003cstash\u003e/files/`, but `get_stash_path(name)` joins `name` onto the stash root. So the path it returns for a file a script just wrote doesn't exist:\n\n```rad\nwrite_stash_file(\"x.txt\", \"hello\")\nprint(get_stash_path(\"x.txt\"))                  // \u003crad home\u003e/stashes/\u003cid\u003e/x.txt\nprint(load_stash_file(\"x.txt\", \"\").full_path)   // \u003crad home\u003e/stashes/\u003cid\u003e/files/x.txt\n```\n\nReproduces on main. No doc mentions `files/`, so a script that hands `get_stash_path` of the same name to a shell redirect silently writes or reads somewhere else. The working form is `load_stash_file(name, \"\").full_path`.\n\nDecide: make `get_stash_path` resolve into `files/` (breaks anyone relying on the root, e.g. for state files), or add a way to get the files root and document in each function's docs which root it uses.\n\nWhere: `core/home_stash.go:49` `GetStashSub`, `core/funcs.go:1445` (`get_stash_path`), `docs/funcs/get_stash_path.md`.",
+  "effort": "xs",
+  "id": "a_2o8vcNKRU",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "zzzzzzzzzzzzzt",
+  "related": [
+    "a_EaGfmrkG"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "get_stash_path(name) and the stash file functions resolve name against different roots",
+  "type": "bug",
+  "updated_at_millis": 1792958885113,
+  "history": [
+    {"field":"column","value":"p2","at":1792957705766}
+  ]
+}

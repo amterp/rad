@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "a-n-list-overwrites",
+  "alias_explicit": false,
+  "column": "high",
+  "created_at_millis": 1792957704250,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 13, item 1.\n\n```rad\na = [\"a\", \"b\", \"c\", \"d\", \"e\"]\nb = a[:2] + [\"X\", \"Y\"]\nprint(a)   // [ \"a\", \"b\", \"X\", \"Y\", \"e\" ]\n```\n\nReproduces on main. In the real script, `lines = lines[:start] + block + lines[end:]` dropped a line, because `lines[:start] + block` overwrote `lines` before `lines[end:]` was read. Nothing errors and the expression reads as pure.\n\nA list slice shares the original's backing array, and `+` appends into the spare capacity. Copy on slice (or clip the slice's capacity) and add a regression test that `a[:n] + x` leaves `a` intact.\n\nWhere: `core/interpreter.go:1383` `sliced.Values = coerced.Values[start:end]`.",
+  "effort": "xs",
+  "id": "a_2o8vZwN97",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzz",
+  "source": [
+    "friction-153"
+  ],
+  "title": "a[:n] + list overwrites the original list a",
+  "type": "bug",
+  "updated_at_millis": 1792958879267,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1792957704250}
+  ]
+}

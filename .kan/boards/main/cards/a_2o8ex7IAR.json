@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Alex's chat note, 2026-07-05: \"provide gui support? like for reminder script\". A reminder script wants to pop a native notification or a small dialog (confirm, pick, input) rather than print to a terminal nobody is watching. Nothing in Rad does this today; scripts shell out to osascript or similar.",
   "id": "a_2o8ex7IAR",
-  "position": "zV",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzt",
   "title": "GUI primitives: native dialogs and notifications from scripts",
   "type": "feature",
-  "updated_at_millis": 1792957065145,
+  "updated_at_millis": 1792958897405,
   "history": [
     {"field":"column","value":"low","at":1792957065145}
   ]

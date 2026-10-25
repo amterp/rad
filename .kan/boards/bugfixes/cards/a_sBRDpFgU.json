@@ -3,7 +3,7 @@
   "alias": "caught-errors-re",
   "alias_explicit": false,
   "blocked_by": [
-    "b_25NZSqFz2:a_25TdzYuMr"
+    "3d0a0ABE:a_25TdzYuMr"
   ],
   "column": "todo-hi",
   "comments": [
@@ -33,6 +33,10 @@
   "title": "Caught errors re-propagate when returned from user-defined functions",
   "updated_at_millis": 1792891641276,
   "history": [
-    {"field":"column","value":"todo-hi","at":1775232083974}
+    {
+      "field": "column",
+      "value": "todo-hi",
+      "at": 1775232083974
+    }
   ]
 }

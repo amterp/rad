@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Alex's chat note, 2026-07-20: \"mouse polling terminal functionality? buttons and things?\" Read mouse events in the terminal so a script can offer clickable buttons or regions. Low priority.",
   "id": "a_2o8exiAQs",
-  "position": "zz",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzl",
   "title": "Terminal mouse input: clickable buttons and regions",
   "type": "feature",
-  "updated_at_millis": 1792957065512,
+  "updated_at_millis": 1792958897756,
   "history": [
     {"field":"column","value":"low","at":1792957065512}
   ]

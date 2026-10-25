@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "rad-blocks-round",
+  "alias_explicit": false,
+  "column": "high",
+  "created_at_millis": 1792957703733,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 12, item 1.\n\nA rad block decodes its JSON through float64, so 64-bit IDs and nanosecond timestamps come out rounded with no error. `http_get(...).body` and `parse_json` keep the same values exact, so the answer depends on which fetch path the script used.\n\n```rad\nId = json[].id\nrad \"http://example.invalid/items\":\n    fields Id\nr = http_get(\"http://example.invalid/items\")\nprint(\"http_get:\", r.body[0].id)\n```\n\nWith `--mock-response '.*:big.json'` and `big.json` = `[{\"id\": 230428225367445504}]`, on main:\n\n```\nId\n230428225367445500\nhttp_get: 230428225367445504\n```\n\nIn the real case the printed ID did not exist when looked up again.\n\nWhere: `core/requester.go` `RequestJson` (called from `core/rad_block.go:576`) uses plain `json.Unmarshal`; `core/utils.go:104` already has a `UseNumber` decoder that http_* uses.",
+  "effort": "s",
+  "id": "a_2o8vZ6aqo",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzl",
+  "related": [
+    "b_sBGk8Gtk:a_sBSvE2vJ"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "rad blocks round JSON integers above 2^53",
+  "type": "bug",
+  "updated_at_millis": 1792958879060,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1792957703733}
+  ]
+}

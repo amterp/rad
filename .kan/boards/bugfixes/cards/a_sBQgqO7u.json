@@ -3,7 +3,7 @@
   "alias": "error-inline-not",
   "alias_explicit": false,
   "blocked_by": [
-    "b_25NZSqFz2:a_25TdzYuMr"
+    "3d0a0ABE:a_25TdzYuMr"
   ],
   "column": "todo-hi",
   "comments": [
@@ -33,6 +33,10 @@
   "title": "error() inline not caught by ?? or catch operators",
   "updated_at_millis": 1792891641170,
   "history": [
-    {"field":"column","value":"todo-hi","at":1775232063525}
+    {
+      "field": "column",
+      "value": "todo-hi",
+      "at": 1775232063525
+    }
   ]
 }

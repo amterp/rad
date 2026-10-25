@@ -10,10 +10,10 @@
     "ai-hi",
     "breaking"
   ],
-  "position": "xR",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzt",
   "title": "2026-07: delete dispaly/request blocks",
   "type": "enhancement",
-  "updated_at_millis": 1773005871569,
+  "updated_at_millis": 1792958896515,
   "history": [
     {"field":"column","value":"low","at":1773005853805}
   ]

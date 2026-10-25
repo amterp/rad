@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "same-named-args-in",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957705135,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 13, item 10.\n\n```rad\ncommand api:\n    query q str[]\n    calls do_api\ncommand user:\n    query str\n    calls do_user\n\nfn do_api():\n    print(query)\nfn do_user():\n    takes_str(query)   // error[RAD30001]: 'str[]' is not assignable to 'str'\nfn takes_str(s: str):\n    print(s)\n```\n\nOn main `rad repro.rad user hello` fails with that error, so a correct script cannot run. Declaring both is accepted; the clash shows only where a callback uses the arg in a typed position, and `rad docs` does not say command args share a namespace.\n\nScope each command's args to its own callback; failing that, reject the duplicate at its declaration and document the shared namespace.\n\nWhere: `rts/check/binder.go:245-257` declares one symbol per name across all commands and keeps the first command's type.",
+  "effort": "m",
+  "id": "a_2o8vbMCTl",
+  "position": "zzzzzzl",
+  "related": [
+    "a_25Rcu72Hl"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "Same-named args in two commands share one checker type, and the clash blocks the script",
+  "type": "bug",
+  "updated_at_millis": 1792958882266,
+  "history": [
+    {"field":"column","value":"p1","at":1792957705135}
+  ]
+}

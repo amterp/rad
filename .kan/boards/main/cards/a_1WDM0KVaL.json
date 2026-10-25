@@ -3,17 +3,17 @@
   "alias": "epoch-to-string-date",
   "alias_explicit": false,
   "blocked_by": [
-    "b_25NZSqFz2:a_25Nhxf1jZ"
+    "a_25Nhxf1jZ"
   ],
   "column": "high",
   "created_at_millis": 1781147184373,
   "creator": "Alexander Terp",
   "description": "parse_date() accepts format tokens but there is no inverse - no way to format an epoch/time map into a string like \"ddd YYYY-MM-DD HH:mm\". Scripts hand-roll zero-padding and string assembly. Either a format_epoch(epoch, fmt) builtin or a format param/fn on time maps. From #139 (time/date trio).",
   "id": "a_1WDM0KVaL",
-  "position": "t!UUUU",
+  "position": "zzzzzzV",
   "title": "Epoch-to-string date formatting (inverse of parse_date)",
   "type": "feature",
-  "updated_at_millis": 1792891642005,
+  "updated_at_millis": 1792958880522,
   "history": [
     {"field":"column","value":"high","at":1781147184373}
   ]

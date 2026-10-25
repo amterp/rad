@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "make-colorize-a",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1786343579981,
+  "creator": "Alexander Terp",
+  "description": "27 boilerplate lambdas across 10 scripts exist only to colorize a column, and two idiom generations coexist - 10 in the newer ctx form, 17 in the old global-column form. Ranked fourth by the team-scripts report at high confidence, then dropped from the synthesis; its own critic flagged the omission.\n\nThis is the cheapest slice of the table-ergonomics work whose larger design fork sits in stretch. It doesn't depend on that fork landing.\n\n---\n\n### Orientation\n\n- Column modifiers are a grammar-level construct, not a function. Three exist today - `color`, `map`, `filter` - and adding a fourth touches every layer from the grammar down.\n- The chain, end to end:\n  - Grammar node kinds: `rts/rl/consts.go:88-90` (`rad_field_mod_color`, `rad_field_mod_map`, `rad_field_mod_filter`).\n  - CST to AST: `rts/converter.go:1570-1582`.\n  - AST node: `rl.RadFieldMod` (`rts/rl/ast_types.go:623-640`) - a container level holding target field names, and individual levels holding `ModType` plus args.\n  - Runtime: `radInvocation.applyModifier` (`core/rad_block.go:192-233`), a switch on `mod.ModType`.\n  - Render: mods reach go-tbl through `tbl.SetColumnColoring(r.colToMods)` (`core/rad_block.go:362`).\n- The existing `color` modifier is *not* what this card wants. `color` takes a literal color plus a regex (`core/rad_block.go:198-215`), stored as `radColorMod{color, regex}` (`core/rad_block.go:245-248`). `colorize` derives a distinct color per distinct value from an enum - that is `FuncColorize` in `core/func_colorize.go`, which sorts the enum and calls `GetEnumColor`. Today the only way to combine them is `map fn(x, ctx) colorize(x, [...])`, which is the boilerplate the card is counting.\n\n### Watch out for\n\nThis card cannot fully land without a `tree-sitter-rad` release, and tagging first-party libs stays with the maintainer. Say so up front rather than discovering it at commit time.\n\nColors derived from a column's distinct values are only stable while the data is. If one run's data lacks a value, every color after it in the sorted enum shifts - `core/func_colorize.go` sorts the enum before assigning. That is already true of the lambda idiom, but making it a first-class modifier makes it look more authoritative than it is. Consider whether the explicit-enum form should be the documented default for anything a human compares across runs.\n",
+  "effort": "m",
+  "id": "a_25NhzawTB",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "zzzzzzzz",
+  "source": [
+    "takehome"
+  ],
+  "title": "Make colorize a first-class column modifier",
+  "type": "enhancement",
+  "updated_at_millis": 1792958882865,
+  "history": [
+    {"field":"column","value":"p2","at":1786343579981}
+  ]
+}

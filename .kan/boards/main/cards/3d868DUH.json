@@ -10,10 +10,10 @@
   "labels": [
     "breaking"
   ],
-  "position": "0",
+  "position": "zzzzzV",
   "title": "RAD-88: Consider disallowing concatenating non-strings to strings",
   "type": "bug",
-  "updated_at_millis": 1783559507550,
+  "updated_at_millis": 1792958880141,
   "history": [
     {"field":"column","value":"next","at":1767762149330},
     {"field":"column","value":"high","at":1783559507550}

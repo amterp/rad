@@ -10,10 +10,10 @@
     "ai-lo",
     "breaking"
   ],
-  "position": "fD",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
   "title": "RAD-304: destructuring a caught error should fail. Should destructuring a single value thus always fail?",
   "type": "feature",
-  "updated_at_millis": 1770522510194,
+  "updated_at_millis": 1792958892929,
   "history": [
     {"field":"column","value":"low","at":1767762150415}
   ]

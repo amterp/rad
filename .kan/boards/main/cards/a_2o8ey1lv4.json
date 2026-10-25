@@ -7,13 +7,13 @@
   "creator": "Alexander Terp",
   "description": "Alex's chat note, 2026-09-29: \"versioned website? for links in binary not dying\". The binary prints amterp.dev/rad URLs (core/runner_usage.go:98, core/docs.go:150), and docs-web/mkdocs.yml has no versioning, so a page that moves or changes breaks links printed by older installs. a_Heej1CTH is about deploy timing, not versions.",
   "id": "a_2o8ey1lv4",
-  "position": "zzl",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx",
   "related": [
     "a_Heej1CTH"
   ],
   "title": "Versioned docs website so links in older binaries keep working",
   "type": "feature",
-  "updated_at_millis": 1792957066263,
+  "updated_at_millis": 1792958897922,
   "history": [
     {"field":"column","value":"low","at":1792957065701}
   ]

@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "rad-check-misses-two",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957703823,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 12, item 2.\n\nTwo pre-v0.12 idioms change meaning silently under v0.12 and `rad check` says nothing about either.\n\n**A lone `_` capture now discards stdout.** Older scripts used `_` to drop the exit code and let output reach the terminal:\n\n```rad\n_ = $`echo visible-diff` catch:\n    pass\nprint(\"done\")\n```\n\nOn main, `visible-diff` never prints and the script exits 0. RAD40018 only looks at names that promise a stream, and `_` promises none. The migration guide mentions `_` only for the multi-slot silencing forms. A single `_` target always means \"discard stdout\" now, so it is worth a hint of its own.\n\n**An escaped `'\\\\n'` split pattern.** `split(stdout, '\\\\n')`, written when patterns were regexes, now splits on the two literal characters, so every row collapses into one (len 1 for two lines). RAD40016 does not treat an escaped-backslash-n pattern as regex-looking.\n\nWhere: the RAD40018 and RAD40016 checks in `rts/check/`.",
+  "effort": "s",
+  "id": "a_2o8vZFGjn",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzzzzzzzzzx",
+  "related": [
+    "a_25Nhz9BlB"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "rad check misses two v0.12 migration traps: a lone `_` capture and a `'\\\\n'` split pattern",
+  "type": "enhancement",
+  "updated_at_millis": 1792958884423,
+  "history": [
+    {"field":"column","value":"p2","at":1792957703823}
+  ]
+}

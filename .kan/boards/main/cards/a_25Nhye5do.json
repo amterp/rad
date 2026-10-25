@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "add-cwd-and-env-to",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1786343579408,
+  "creator": "Alexander Terp",
+  "description": "No `cmd.Dir` or `cmd.Env` in core, so scripts chain `cd X \u0026\u0026 cmd`. Nine sites: `alfred/dev:74,83,119`, `binary-size-compare.rad:20,48,64`, `benchmark-compare.rad:85`, `benchmark.rad:15`, `rts/dev:22`, plus `work:159` and `notes:25`. Several are this repo's own tooling.\n\nEnvironment gets spliced inline, including a secret: `grafana-dashboards/dev:68` puts `GRAFANA_TOKEN` into the command string, where it also lands in the announcement line.\n\n`run_local.rad:34` runs ``$!`source .venv/bin/activate` `` as its own command, a no-op that shows the mental model people arrive with.\n\n---\n\n### Orientation\n- Shell commands are **syntax, not a function**, so this is not the docs-first builtin flow. The `$`cmd`` form is a grammar rule, which means the change starts in a sibling repo.\n- The chain is: grammar (`~/src/tree-sitter-rad/grammar.js`) → CST-to-AST conversion (`rts/converter.go`) → AST node (`rts/rl/ast_types.go`) → interpreter (`core/shell.go`) → the `RShell` seam (`core/global.go:47`) → the real executor.\n- Confirmed: nothing in `core` sets `cmd.Dir` or `cmd.Env` today. `buildCmd` (`core/shell.go:315-319`) sets only `Stdin`.\n\n### Watch out for\n- The card's effort estimate assumes the grammar change lands. `shell_cmd` currently accepts only the bare `quiet`/`confirm` modifiers before the `$`, so named arguments are a genuinely new shape in that rule - settle where they attach before writing any Go.\n- `realShellExecutor` is explicitly not covered by tests (comment at `core/shell.go:169-170`). The testable seam is `ShellInvocation`, so put merge/replace logic where the fake executor observes it rather than burying it in `buildCmd`.\n- Cross-platform: environment handling and working directories differ between the `-c` shells and `cmd.exe` (`shellExecFlag`, `core/shell.go:312-329`). Platform-specific behavior belongs in `core/common/platform.go`, not scattered `runtime.GOOS` checks. Paths handed back to user code go through `NormalizePath`.\n- The secret-leak motivation from the card only gets fixed if `env=` values stay out of the echoed command. `realShellExecutor` prints the command at `core/shell.go:187-188` when not quiet, and the confirmation prompt at `core/shell.go:134-135` echoes it too.\n",
+  "effort": "m",
+  "id": "a_25Nhye5do",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzl",
+  "source": [
+    "takehome"
+  ],
+  "title": "Add cwd= and env= to shell commands",
+  "type": "feature",
+  "updated_at_millis": 1792958881110,
+  "history": [
+    {"field":"column","value":"p1","at":1786343579408}
+  ]
+}

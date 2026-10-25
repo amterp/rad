@@ -1,0 +1,46 @@
+{
+  "_v": 4,
+  "alias": "clear-the-four",
+  "alias_explicit": false,
+  "column": "high",
+  "comments": [
+    {
+      "id": "c_25USkIPI0",
+      "body": "Progress 2026-08-10 (branch rad-sprint1).\n\n**Done:**\n- a_25TdYyCC3 - re-propagated errors name where they re-fired. 68bb2791.\n- a_sBQtDAsa - deleting during list iteration no longer duplicates an element. ccc16900. Landed as live+bounds-checked (Python semantics) rather than the snapshot the card leaned toward - snapshotting would have silently killed mid-loop element visibility, a change beyond the bug. See the card.\n- a_sBPzQCcM - `?? -1` parses. 9d180293 here, plus 4e554f2 and 649637a upstream. **Not yet landable**: needs the grammar released, now tracked as a_25USSBSSk.\n\n**Left:**\n- a_sBQ8LS6p - chained calls. Deliberately not started: the `?? -1` grammar work is still unreleased and `stash@{0}` upstream holds the nested-command WIP, so stacking a third set of `parser.c` regenerations into that tree would entangle all three. Start it from a clean tree after a_25USSBSSk.\n\nTwo of the four fixes needed no `rts/` changes at all - the AST, converter, checker and formatter were already general enough. That keeps holding: the chained-call card looks the same way (see its notes).",
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359676869
+    },
+    {
+      "id": "c_25YxVzE6V",
+      "body": "Three of the four have landed on `rad-sprint`: the `?? -1` parse (a_sBPzQCcM), the re-raise attribution (a_25TdYyCC3), and list mutation during iteration (a_sBQtDAsa). Chained calls (a_sBQ8LS6p) are untouched - `make_adder(5)(3)` still errors RAD10009 - so this card stays open on that one alone.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1786370392759
+    }
+  ],
+  "created_at_millis": 1786343755432,
+  "creator": "Alexander Terp",
+  "description": "The `bugfixes` board is a separate board from `main`. This card is the pointer so its work does not get lost behind a board you are not looking at this week.\n\n**Restructured 2026-08-10.** This started as \"clear the six\". Tracing all six to their mechanism showed they were not one unit of work: one was already decided against, and two were the same design question in disguise. What is left here is four code fixes, in dependency order.\n\n| Bug | What it is | Tag |\n|---|---|---|\n| a_sBPzQCcM | `?? -1` / `catch -1` is a parse error | quick-win, grammar |\n| a_25TdYyCC3 | Re-propagated errors are blamed on the original call site | |\n| a_sBQtDAsa | Mutating a list while iterating skips elements | design |\n| a_sBQ8LS6p | No chained-call syntax - `make_adder(5)(3)` is a parse error | grammar |\n\n**Lifted off this card:**\n- a_sBR0JLWj (nested loops clobber the outer var) - **closed as a duplicate of a_sBRVjVvW.** Same code path, and a_sBRVjVvW was already closed works-as-intended: loops do not open scopes (docs/type_system.md:129-133), and scoping.snap:30-59 asserts loop vars persist. Fixing it is option (B) from that card, explicitly rejected. See the comment there.\n- a_sBQgqO7u and a_sBRDpFgU (design halves) - **blocked on a_25TdzYuMr**, \"does an error value stay armed once bound to a variable\". One question, one RED, not two bugfixes.\n\n---\n\n### Order, and why\n\n**First: a_sBPzQCcM.** Not because it is the smallest change - it is not, any grammar edit is a multi-repo release - but because it forces us through that entire loop on a trivially-correct change before a_sBQ8LS6p depends on it working.\n\n**Then: a_25TdYyCC3.** Contained, in `core/`, and independent of the error-identity decision.\n\n**Then: a_sBQtDAsa.** One sub-choice, with an obvious lean - see the card.\n\n**Last: a_sBQ8LS6p.** Cheaper than it looks. The AST and interpreter already support chained calls; only the grammar refuses. See the card.\n\n### Orientation\n\n- Two of the four are grammar gaps in the separate `amterp/tree-sitter-rad` repo, reached here through `rts/`.\n- `rts/` owns CST-to-AST conversion (`rts/converter.go`), the AST (`rts/rl/`), the checker (`rts/check/`) and the formatter (`rts/radfmt/`). A grammar change means editing the grammar upstream, bumping `github.com/amterp/tree-sitter-rad` in `go.mod` (currently v0.6.0), and handling the new node shape in `rts/converter.go`. `rts` must not import `core`.\n- `radls/` inherits grammar and checker changes for free through `rts/`, but `rts/radfmt/` needs a print rule for any new syntax.\n- Checkouts for the first-party deps live at `~/src/tree-sitter-rad` and `~/src/ra`. Iterate with a local `replace` directive in `go.mod` and remove it before committing - `./dev --release` refuses to release with one present.\n\n### Watch out for\n\n- **Re-verify every repro against the current build first.** The cards were last verified on v0.10.1 on 2026-06-14; we are on v0.11.0, which carries the `+=` fix (117b7329). The map half of a_sBQtDAsa already silently stopped reproducing once - that is the failure mode to guard against.\n- The bugfixes cards carry repros, re-verification dates, and root-cause notes. They do not carry file:line fix pointers; each card now has one where I found it.\n\n### Related\n\nGitHub #140 proposes a property-based test harness for exactly this class of bug, with metamorphic oracles (inlining a call must not change output; an unused local must change nothing). Now tracked as a_25TeTnRDT in p2. Not a gate on this work, but it is the only cheap way to prove the a_25TdzYuMr decision holds at depth.",
+  "effort": "m",
+  "id": "a_25NmYZ9Vp",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "z",
+  "related": [
+    "b_sBGk8Gtk:a_sBPzQCcM",
+    "b_sBGk8Gtk:a_25TdYyCC3",
+    "b_sBGk8Gtk:a_sBQtDAsa",
+    "b_sBGk8Gtk:a_sBQ8LS6p"
+  ],
+  "source": [
+    "main-board"
+  ],
+  "title": "Clear the four shippable todo-hi bugs on the bugfixes board",
+  "type": "bug",
+  "updated_at_millis": 1792958878535,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786343755432},
+    {"field":"column","value":"approved","at":1786356810714},
+    {"field":"column","value":"p0-tier1","at":1786386944279}
+  ]
+}

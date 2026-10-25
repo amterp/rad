@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "requires-counts-a",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957705528,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 14, item 3.\n\nA `requires` constraint treats an arg with a default as passed. On the left side that fails runs where the user passed nothing; on the right side it lets a default satisfy a requirement the user never met. `excludes` does not do this: it looks at what was actually passed.\n\n```rad\nargs:\n    target str?\n    count int = 3\n    count requires target\n```\n\n```\n$ rad requires.rad\nInvalid args: 'count' requires 'target', but 'target' was not set\n```\n\nAnd with `password str = \"hunter2\"` plus `user requires password`, `--user alice` runs. Both reproduce on main. Two scripts broke on the left-side case (`delay d int = 0` with `delay requires capture`; `status int[] = []` with `status requires target`): their plain run exits 1, so both dropped the constraint and check at runtime.\n\nThis is deliberate in ra: `flagConfiguredForRelationalConstraints` counts a defaulted flag as set, \"so a defaulted flag both triggers its own requires constraints and satisfies others'\", pinned by `Test_RequiresWithDefaults_Scenario`. guide/args says the opposite (\"when one argument is defined, so must another\"), and its sample error text (\"was not provided\") is not what rad prints.\n\nDecide: evaluate `requires` on the args the user actually passed, as `excludes` does (needs an ra release), or keep the rule and document that a default counts as passing the arg. Fix the guide's sample error text either way.\n\nWhere: ra v0.11.0 `ra_cmd_parse.go:2223` (and doc comment at :2532), `ra_test.go:736`; docs at `docs-web/docs/guide/args.md`.",
+  "effort": "s",
+  "id": "a_2o8vbzIEY",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "zzzzzzzzzzzzzV",
+  "related": [
+    "3d87U3zz"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "requires counts a defaulted arg as passed, on both sides of the constraint",
+  "type": "bug",
+  "updated_at_millis": 1792958884953,
+  "history": [
+    {"field":"column","value":"p2","at":1792957705528}
+  ]
+}

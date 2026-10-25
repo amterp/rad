@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "flag-a-shell-command",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957702596,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 7, item 1.\n\nSince v0.12 quotes interpolations in shell commands, a command held in a string and run as `$`{cmd}`` becomes one quoted word. This was the correct spelling on v0.11 and now fails only when the branch runs:\n\n```rad\ncmd = \"echo hi there\"\n$`{cmd}`\n```\n\n```\n⚡️ 'echo hi there'\nzsh:1: command not found: echo hi there\nerror[RAD20048]: Command exited with code 127\n```\n\n`rad check` reports no diagnostics, and the v0.12 migration guide does not mention this shape (it covers building a command as a string and running `$cmd`, the neighboring case). The fix in the script is `$cmd`.\n\nA checker diagnostic for a command literal whose entire content is a single interpolation would be exact: no reading of that shape wants the quoting. The hint should point at `$cmd` and the migration guide should gain a line.\n\nConfirmed on main (3459ddf1).\n\nWhere: rts/check/ast_checks.go (new AST check on shell command literals).",
+  "effort": "s",
+  "id": "a_2o8vXGaRf",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzzzzzzzzV",
+  "related": [
+    "a_25NhyEyZc"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "Flag a shell command whose whole body is one interpolation",
+  "type": "enhancement",
+  "updated_at_millis": 1792958883729,
+  "history": [
+    {"field":"column","value":"p2","at":1792957702596}
+  ]
+}

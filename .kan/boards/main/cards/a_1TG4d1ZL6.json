@@ -15,10 +15,10 @@
   "creator": "Alexander Terp",
   "description": "Aborting the confirmation prompt for a shell command (`confirm $`...`` or\n`--confirm-shell`) with Ctrl-C/Esc currently raises a *catchable* RAD20010\nuser-input error, chosen for consistency with confirm()/pick()/input().\n\nSharp edge: a `catch:` block on the command swallows the Ctrl-C and lets the\nscript continue - arguably surprising for what is fundamentally a safety gate.\nCtrl-C usually means \"get me out\", not \"handle this and keep going\".\n\nOpen questions to decide as a language concept:\n- Should Ctrl-C/Esc at a confirm gate be a hard, non-catchable stop instead?\n- Should declining (\"n\") stay catchable (exit 1 -\u003e \"Command exited with code 1\"),\n  or get a cleaner non-error \"skipped\" outcome instead of surfacing as an error?\n- What should interactive-prompt aborts do *consistently* across the language\n  (confirm/pick/input/multipick and shell confirm)? Is a dedicated \"user aborted\"\n  error code, or a SIGINT-style exit code (130), warranted?\n- Rad installs no SIGINT handler today; huh intercepts Ctrl-C and returns an\n  error. Worth deciding the holistic story.\n\nContext: prompted by a RAD20042 \"internal bug\" crash when aborting, now fixed -\nabort routes through a catchable RAD20010 rather than panicking. Relevant code:\nconfirmation handling in core/shell.go (executeShellCmd).",
   "id": "a_1TG4d1ZL6",
-  "position": "xRUUU",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzV",
   "title": "Rethink shell-confirmation abort (Ctrl-C/Esc) behavior",
   "type": "enhancement",
-  "updated_at_millis": 1780712056932,
+  "updated_at_millis": 1792958896764,
   "history": [
     {"field":"column","value":"low","at":1780710376199}
   ]

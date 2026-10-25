@@ -1,0 +1,21 @@
+{
+  "_v": 4,
+  "alias": "write-the-three-reds",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1786343580035,
+  "creator": "Alexander Terp",
+  "description": "`docs/red/README.md` links twelve REDs. Three have no file behind them: RED-8 (Interactivity as a first-class capability, listed Implemented), RED-C (Own our interactivity layer, Draft), RED-D (One artifact for bundling and standalone executables, Draft). `git ls-files docs/red/` confirms they were never committed, so this isn't local drift.\n\n`docs/red/STYLE.md` tells readers to study RED-C as the model for a live draft, so the style guide points at one of the missing files.\n\nWorth folding two corrections back into `docs/VISION.md` while here: §5.4 and Appendix A both cite \"RED-D stub\" as an existing artifact, and §7 cites AI_POLICY.md as saying \"verification over generation\", a phrase that doesn't appear in it. The actual text (`AI_POLICY.md:15,22`) requires PRs be \"fully verified with human-in-the-loop\" - same spirit, but don't quote the invented version in public copy.\n\n---\n\n### Orientation\n\n- REDs are decision records under `docs/red/`. `docs/red/README.md` holds the hand-maintained index table; the three broken links are `0008-interactivity.md`, `C-radish.md`, and `D-bundle-and-compile.md`. `git ls-files docs/red/` confirms nine committed documents plus `README.md`, `STYLE.md`, `template.md`, and `backfill-plan.md` - the three were never committed, so this is not local drift.\n- The process is itself a RED: `docs/red/0001-red-process.md`. Read it first.\n- `docs/red/template.md` is the skeleton to copy - YAML frontmatter (`red`, `title`, `status`, `kind`, `created`, `decided`, `released`, `supersedes`, `superseded-by`, `related`) then Summary, Context/Motivation, Decision, Rationale, Alternatives Considered, Compatibility \u0026 Migration, Other Consequences \u0026 Trade-offs, optional Future Directions / Open Questions / References, and a History list.\n- `docs/red/STYLE.md` owns voice and prose. Note the circularity: STYLE.md:7 and STYLE.md:43 both direct readers to study RED-C as the model live draft, and RED-C is one of the missing files. Either write RED-C first or fix STYLE.md's pointer.\n\n### Watch out for\n\n`docs/` is not a snippet root - `core/testing/docs_snippets_test.go:42-45` covers only `docs-web/docs` and `core/error_docs`. Rad code in a RED is **not** executed by the test suite, so nothing catches a wrong example. Run anything you write through `./bin/radd` by hand.\n\nRED-8 is marked Implemented in the index. Write it as the record of a decision already made, in past tense, with the Open Questions section empty - `template.md` says Open Questions should be heavy while Draft and empty by Implemented. Do not turn a backfill into a fresh proposal.\n",
+  "effort": "s",
+  "id": "a_25NhzfKZe",
+  "position": "zzzzzzzzV",
+  "source": [
+    "vision"
+  ],
+  "title": "Write the three REDs that the index promises",
+  "type": "docs",
+  "updated_at_millis": 1792958882939,
+  "history": [
+    {"field":"column","value":"p2","at":1786343580035}
+  ]
+}

@@ -3,17 +3,17 @@
   "alias": "rad-283-allow-specifying-rad",
   "alias_explicit": false,
   "blocked_by": [
-    "b_25NZSqFz2:a_25Nhz4xOA"
+    "a_25Nhz4xOA"
   ],
   "column": "low",
   "created_at_millis": 1767762150254,
   "creator": "Alexander Terp",
   "description": "Especially useful while rad is under development still, and we risk breaking scripts, and it's unclear which rad version a script is meant to run with.\n\nWhat about LSP?\n\nWhat about `rad` commands e.g. `format` or `validate`?",
   "id": "3d87d1lm",
-  "position": "bD",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzV",
   "title": "RAD-283: Allow specifying rad version in script, and have rad download that version and run with it",
   "type": "feature",
-  "updated_at_millis": 1792891643295,
+  "updated_at_millis": 1792958892063,
   "history": [
     {"field":"column","value":"low","at":1767762150254}
   ]

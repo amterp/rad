@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "I thiiiink I wrote some thoughts on this somewhere – maybe an err object instead? err.code and err.msg",
   "id": "3d86WCsI",
-  "position": "JR",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzx",
   "title": "RAD-121: Allow functions like `pick` to return two args - 'err' object?",
   "type": "feature",
-  "updated_at_millis": 1767762149562,
+  "updated_at_millis": 1792958889221,
   "history": [
     {"field":"column","value":"low","at":1767762149562}
   ]

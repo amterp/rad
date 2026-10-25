@@ -10,10 +10,10 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "F!",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzx",
   "title": "RAD-97: Lexer: Handle opening brace without a close",
   "type": "bug",
-  "updated_at_millis": 1770438149834,
+  "updated_at_millis": 1792958888482,
   "history": [
     {"field":"column","value":"low","at":1767762149396}
   ]

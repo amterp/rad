@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "* reaching a point where you don't want to run a certain block anymore\n* overriding what a defer block should do\n* _predicating_ an defer block on another i.e. if the earlier one fails, _don't_ run this one",
   "id": "3d85zwZf",
-  "position": "BR",
+  "position": "zzzzzzzzzzzzzzzzzzzzzV",
   "title": "RAD-72: named defer blocks",
   "type": "feature",
-  "updated_at_millis": 1767762149233,
+  "updated_at_millis": 1792958887895,
   "history": [
     {"field":"column","value":"low","at":1767762149233}
   ]

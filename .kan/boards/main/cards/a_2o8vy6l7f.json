@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "mock-response-keeps",
+  "alias_explicit": false,
+  "column": "high",
+  "created_at_millis": 1792957719234,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 14, item 1.\n\nPassing `--mock-response` twice mocks only the last pattern; requests matching the earlier one go to the real service with no warning. A test run of a CLI that makes two POSTs sent the first to the live API with a dummy key and got a 401. Nothing says the flag is single-valued: `-h` describes it in the singular, and guide/global-flags says rad \"checks for defined mock responses\".\n\n```\n$ rad mock.rad --mock-response '.*/a:a.json' --mock-response '.*/b:b.json'\nQuerying url: http://127.0.0.1:9/a          # went live\nMocking response for url (matched \".*/b\"): http://127.0.0.1:9/b\n```\n\nThe value is also split with `strings.Split(v, \":\")` keeping parts 0 and 1, so a pattern containing a colon breaks silently: `--mock-response 'http://127.0.0.1:9/a:a.json'` becomes pattern `http`, which matches every URL, and file `//127.0.0.1`. A value with no colon panics (index out of range), which is main-board RAD-114 (`3d86PibU`); the same fix closes it.\n\nAll three reproduce on main. Both regressions date from 043d1047 (\"Replace pflag with Ra\"): before it the flag was a `MockResponseSlice` that collected every occurrence and split on the last colon. That type is still in `core/args_mock.go`, unused. Make the flag repeatable again, split on the last colon, reject a value with no colon, and match patterns in flag order so it is defined which mock wins when two match (the requester's map leaves that undefined).\n\nWhere: `core/flags_global.go:238` (single string arg), `core/runner.go:350-356` (split), `core/requester.go:146` (pattern map).",
+  "effort": "s",
+  "id": "a_2o8vy6l7f",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzl",
+  "related": [
+    "3d86PibU"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "--mock-response keeps only its last occurrence and splits on the first colon",
+  "type": "bug",
+  "updated_at_millis": 1792958879412,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1792957719234}
+  ]
+}

@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Maybe we can add some macro into the file header which hints at what Rad version the script was written for. Then, if the script fails to run (or you run with --debug), we check if you're running with a different version, and we can offer the guidance that maybe the script is not compatible.",
   "id": "3d89BfD3",
-  "position": "um",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzl",
   "title": "RAD-401: Version hint in scripts",
   "type": "feature",
-  "updated_at_millis": 1767762151219,
+  "updated_at_millis": 1792958895966,
   "history": [
     {"field":"column","value":"low","at":1767762151219}
   ]

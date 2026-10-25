@@ -3,17 +3,17 @@
   "alias": "rad-35-rad-block-rename",
   "alias_explicit": false,
   "blocked_by": [
-    "b_25NZSqFz2:a_25Ni00cAk"
+    "a_25Ni00cAk"
   ],
   "column": "low",
   "created_at_millis": 1767762149054,
   "creator": "Alexander Terp",
   "description": "```\nrad url:\n  fields problems\n  problems:\n    rename \"# Problems\"\n    map p -\u003e len(p)\n```",
   "id": "3d85hlUq",
-  "position": "4m",
+  "position": "zzzzzzzzzzzzzzzzzzt",
   "title": "RAD-35: rad block rename columns",
   "type": "feature",
-  "updated_at_millis": 1792891642982,
+  "updated_at_millis": 1792958886943,
   "history": [
     {"field":"column","value":"low","at":1767762149054}
   ]

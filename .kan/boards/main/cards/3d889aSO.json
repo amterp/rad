@@ -9,10 +9,10 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "jD",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzt",
   "title": "RAD-319: Shell print can print function vars if exiting in a function",
   "type": "bug",
-  "updated_at_millis": 1770438136539,
+  "updated_at_millis": 1792958894038,
   "history": [
     {"field":"column","value":"low","at":1767762150579}
   ]

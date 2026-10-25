@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Right now, if `rad url` fails, we just error and give a fairly ugly error. We dont even show the actual response, which can be useful.",
   "id": "3d89pFwG",
-  "position": "D!",
+  "position": "zzzzzx",
   "title": "RAD-400: rad blocks: allow graceful query recovery \u0026 handling",
   "type": "feature",
-  "updated_at_millis": 1767762151618,
+  "updated_at_millis": 1792958880368,
   "history": [
     {"field":"column","value":"high","at":1767762151618}
   ]

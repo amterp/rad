@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Something to really get a very last line in. Otherwise, the \"Done!\" print comes before deferred commands, which can look a little clunky.",
   "id": "3d89S3Sd",
-  "position": "O8",
+  "position": "zzV",
   "title": "RAD-132: on_exit or exit_hook block, to run after deferrals",
   "type": "feature",
-  "updated_at_millis": 1767762151387,
+  "updated_at_millis": 1792958898564,
   "history": [
     {"field":"column","value":"uncommitted","at":1767762151387}
   ]

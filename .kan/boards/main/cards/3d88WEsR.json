@@ -3,17 +3,17 @@
   "alias": "rad-336-concurrent-map-filter",
   "alias_explicit": false,
   "blocked_by": [
-    "b_25NZSqFz2:a_25Ni0XnKP"
+    "a_25Ni0XnKP"
   ],
   "column": "low",
   "created_at_millis": 1767762150806,
   "creator": "Alexander Terp",
   "description": "Inspired by OK? language - concurrent map function",
   "id": "3d88WEsR",
-  "position": "mK",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
   "title": "RAD-336: concurrent map/filter ops",
   "type": "feature",
-  "updated_at_millis": 1792891642365,
+  "updated_at_millis": 1792958894625,
   "history": [
     {"field":"column","value":"low","at":1767762150806}
   ]

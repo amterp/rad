@@ -6,10 +6,10 @@
   "created_at_millis": 1775441177643,
   "creator": "Alexander Terp",
   "id": "a_tbAhfNy1",
-  "position": "xRU",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx",
   "title": "Update go-tbl to support style attrs (bold, dim, italic, underline) in Color enum, enabling style attributes in rad block color modifiers",
   "type": "enhancement",
-  "updated_at_millis": 1775441182757,
+  "updated_at_millis": 1792958896602,
   "history": [
     {"field":"column","value":"low","at":1775441177643}
   ]

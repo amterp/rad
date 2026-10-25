@@ -1,0 +1,36 @@
+{
+  "_v": 4,
+  "alias": "sweep-the-docs-for",
+  "alias_explicit": false,
+  "blocked_by": [
+    "a_25Nhxb3F4"
+  ],
+  "column": "low",
+  "comments": [
+    {
+      "id": "c_2o8vdAgLb",
+      "body": "#153 batch 10 item 2 hit the undocumented reference semantics from the other side, and it produced a wrong answer: `out += [x]` on a list parameter rebinds the local name (the caller's list is unchanged), while `m[k] = v` on a map parameter mutates the caller's map. A recursive flattener accumulating into a list parameter silently returned nothing. Whatever the docs say about by-reference assignment should cover `+=` on list parameters.\n\n#153 batch 13 adds two doc gaps: (1) read_file text mode is documented as decoding UTF-8 but passes bytes through (`string(data)`, core/funcs.go:1142), and http_post sends a body as-is, so binary uploads and hand-built multipart bodies already work; a script shelled out to curl believing they didn't. Worth a note under read_file and http_post. (2) has_stdin() is documented as 'stdin is piped' but means 'stdin is not a character device' (core/io.go HasContent): false for /dev/null, true for any pipe, socket or file including an empty one, and read_stdin() on an open pipe nobody writes blocks until EOF. In Claude Code's Bash tool stdin is a socket, so has_stdin() is true for every command.\n\n#153 batch 14 hit the `rad docs sort` in-place example again on v0.12.1 (still on main): a reminders script written to the example printed its list in insertion order. The parameter-truncation bug found on the same page is filed separately.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1792957706247
+    }
+  ],
+  "created_at_millis": 1786343579820,
+  "creator": "Alexander Terp",
+  "description": "Confidently wrong examples cost more than missing ones. Several date from a pre-errors-as-values generation.\n\n**Examples that don't match the API.** `rad docs sort` shows an in-place mutation that doesn't happen - following it leaves the secondary list silently unsorted while the primary result looks right. The working multi-capture form (`lens, pairs = sort(lens, pairs, reverse=true)`) appears in neither the signature nor the examples; #153 found it by experiment. `rad docs read_file` branches on `result.success` and `result.error`, but the return is `error|{size_bytes, content}`. Both warrant a sweep of function docs rather than two spot fixes.\n\n**Rules documented nowhere.** `??` binds tighter than `==`, the opposite of C# and JS, and no precedence table exists anywhere in the docs. `whitelist-deployments.rad:98` depends on it and is correct by coincidence. Map and list assignment is by reference (`*RadMap`); three scripts' caching depends on this and nothing states it. Capturing a shell command does not suppress propagation, which the guide never says outright.\n\n**Missing coverage.** Per-command variadics in `guide/script-commands`; the shared-args flag-only exclusion; a rationale or a `--`-style escape for variadic collection stopping at the first flag; `rad check --from-logs`; rad-block examples over local lists of maps, aimed at the shapes people actually hold. That last one matters more than it looks - the feature's near-total absence from ~195 scripts is the evidence.\n\n**Fix while nearby.** `reference/syntax`'s format-spec examples omit fill and zero-padding, which `guide/strings-advanced` documents properly.\n\n---\n\n### Orientation\n\n- Three doc trees, three rules:\n  - `docs/funcs/*.md` - **source of truth** for built-in function docs. `rad docs \u003cfn\u003e` and LSP hover both render these. Contract in `docs/funcs/README.md`.\n  - `docs-web/docs/**` - the MkDocs site. Hand-written **except** `reference/functions.md` and `reference/errors.md`, which are generated.\n  - `SYNTAX.md` at the repo root - the language reference.\n- **`docs-web/docs/reference/syntax.md` is a symlink to `../../../SYNTAX.md`.** The card's \"reference/syntax\" item means editing `SYNTAX.md` at the repo root. Editing the path under `docs-web` edits the same file, but say `SYNTAX.md` so nobody looks for a separate copy.\n- Generated files that must never be hand-edited: `docs-web/docs/reference/functions.md` (from `docs/funcs/*.md`), `docs-web/docs/reference/errors.md` (from `core/error_docs/*.md`), `rts/embedded_funcs/`, `core/embedded_docs/`. Edit the source, run `make generate`.\n\n### Watch out for\n\nThe snippet test's coverage is narrower than it looks, and the gap runs the wrong way for this card. `core/testing/docs_snippets_test.go:42-45` declares exactly two roots: `docs-web/docs` (all markdown) and `core/error_docs` (files starting with a digit). `docs-web/docs/reference/functions.md` is explicitly excluded at line 56. So:\n\n- Snippets in **`docs/funcs/*.md` are never executed.** `core/testing/funcdocs_test.go` checks that the signature parses, matches the registered builtin, and that the embedded mirror is in sync - it does not run the examples. A confidently wrong example there passes CI. Both of the card's headline bugs live in this blind spot; verify those by hand.\n- Snippets in `SYNTAX.md` **are** executed, through the `docs-web/docs/reference/syntax.md` symlink. A broken example there fails the suite.\n- Per-snippet escape hatches live in `core/testing/docs_snippet_tolerances.go`. Reach for a tolerance only when the snippet is deliberately showing broken code; fixing the example is almost always the right move.\n",
+  "effort": "m",
+  "id": "a_25NhzJlm5",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzzzzzl",
+  "source": [
+    "friction-153",
+    "takehome"
+  ],
+  "title": "Sweep the docs for wrong and missing rules",
+  "type": "docs",
+  "updated_at_millis": 1792958882640,
+  "history": [
+    {"field":"column","value":"p2","at":1786343579820}
+  ]
+}

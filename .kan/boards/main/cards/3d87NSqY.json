@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Perhaps clearing, too.\n\nCan use:\n\n* https://github.com/golang-design/clipboard \n* https://github.com/atotto/clipboard",
   "id": "3d87NSqY",
-  "position": "XD",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzs",
   "title": "RAD-242: New functions: clipboard management (copying pasting)",
   "type": "feature",
-  "updated_at_millis": 1767762150092,
+  "updated_at_millis": 1792958891429,
   "history": [
     {"field":"column","value":"low","at":1767762150092}
   ]

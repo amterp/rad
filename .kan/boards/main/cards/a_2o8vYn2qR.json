@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "a-json-path-that",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957703544,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 11, item 2.\n\nA missing key gives a clean RAD20041, but a `null` in the middle of a JSON path crashes with a Go stack trace:\n\n```rad\njson = [{\"n\": \"a\", \"d\": null}, {\"n\": \"b\", \"d\": {\"t\": 1}}]\nN = json[].n\nT = json[].d.t\nrad json:\n    fields N, T\n```\n\n```\nBug! Unhandled type for TypeAsString: \u003cnil\u003e\n...\ngithub.com/amterp/rad/core.TypeAsString({0x0, 0x0})\n```\n\nAPI responses do this often (optional detail objects that are null on most rows). Expected: treat it like a missing value (null for that row, or RAD20041), never a panic. The reporter worked around it with per-column comprehensions and `??`.\n\nConfirmed on main (3459ddf1).\n\nWhere: core/json_algo.go:67 builds a \"Expected map at ..., got %s\" error with TypeAsString(data), and TypeAsString (core/utils.go:72) has no nil case. The type-mismatch error would also be wrong for null; null should probably yield null.",
+  "effort": "s",
+  "id": "a_2o8vYn2qR",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzzzzzzzzzl",
+  "related": [
+    "3d85RHxy"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "A JSON path that meets null partway through panics",
+  "type": "bug",
+  "updated_at_millis": 1792958884256,
+  "history": [
+    {"field":"column","value":"p2","at":1792957703544}
+  ]
+}

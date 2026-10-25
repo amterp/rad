@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "probably both for rad blocks and as a map operation",
   "id": "3d87LSdR",
-  "position": "Wm",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzr",
   "title": "RAD-236: group by functionality",
   "type": "feature",
-  "updated_at_millis": 1767762150075,
+  "updated_at_millis": 1792958891354,
   "history": [
     {"field":"column","value":"low","at":1767762150075}
   ]

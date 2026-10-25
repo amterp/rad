@@ -21,7 +21,7 @@ default_column = "uncommitted"
   name = "high"
   color = "#f59e0b"
   description = "High priority planned work"
-  limit = 10
+  limit = 30
   category = "open"
 
 [[columns]]
@@ -65,6 +65,14 @@ default_column = "uncommitted"
     [[custom_fields.labels.options]]
       value = "breaking"
       description = "Would be a breaking change if implemented"
+
+    [[custom_fields.labels.options]]
+      value = "needs-decision"
+      description = "Blocked on a design call; agents should not pick it up until Alex decides"
+
+    [[custom_fields.labels.options]]
+      value = "security"
+      description = "Executes or leaks something it shouldn't"
   [custom_fields.type]
     type = "enum"
     wanted = true
@@ -100,9 +108,85 @@ default_column = "uncommitted"
       color = "#16a34a"
       description = "New functionality to be added"
 
+    [[custom_fields.type.options]]
+      value = "docs"
+      color = "#0891b2"
+      description = "Documentation that is wrong, missing, or unfindable"
+
+    [[custom_fields.type.options]]
+      value = "decision"
+      color = "#9333ea"
+      description = "A design call to make, not code to write. Blocks the work that depends on it."
+
+    [[custom_fields.type.options]]
+      value = "probe"
+      color = "#8b5cf6"
+      description = "A check that resolves whether other cards are real"
+
+  [custom_fields.effort]
+    type = "enum"
+    description = "Rough size. Tints the card so cheap work is visible at a glance."
+
+    [[custom_fields.effort.options]]
+      value = "xs"
+      color = "#86efac"
+      description = "Under 30 minutes"
+
+    [[custom_fields.effort.options]]
+      value = "s"
+      color = "#bef264"
+      description = "1-2 hours"
+
+    [[custom_fields.effort.options]]
+      value = "m"
+      color = "#fde047"
+      description = "Half a day"
+
+    [[custom_fields.effort.options]]
+      value = "l"
+      color = "#fdba74"
+      description = "1-2 days"
+
+    [[custom_fields.effort.options]]
+      value = "xl"
+      color = "#fca5a5"
+      description = "More than two days; too big to start alongside anything else"
+  [custom_fields.source]
+    type = "enum-set"
+    description = "Where the evidence for this card came from. Cards citing more than one source are the strongest signals."
+
+    [[custom_fields.source.options]]
+      value = "friction-153"
+      description = "GitHub #153, the standing dogfooding friction log"
+
+    [[custom_fields.source.options]]
+      value = "takehome"
+      description = "The 2026-07-24 multi-agent review of ~195 real scripts and 41k invocations"
+
+    [[custom_fields.source.options]]
+      value = "vision"
+      description = "docs/VISION.md roadmap"
+
+    [[custom_fields.source.options]]
+      value = "main-board"
+      description = "Also tracked by an older card on this board, which the card links"
+
+    [[custom_fields.source.options]]
+      value = "clig-audit"
+      description = "The clig.dev conformance audit card filed 2026-07-14"
+
+    [[custom_fields.source.options]]
+      value = "agent-redteam"
+      description = "An agent session that adversarially probed a shipped feature and reproduced each failure it reports"
+
+    [[custom_fields.source.options]]
+      value = "nook"
+      description = "Surfaced by embedding Rad in nook, a macOS clipboard editor that runs Rad scripts as plugins. Measured against a real embedding harness rather than reasoned about."
+
 [card_display]
   type_indicator = "type"
-  badges = ["labels"]
+  tint = "effort"
+  badges = ["source", "labels"]
 
 [[link_rules]]
   name = "github"
@@ -114,3 +198,6 @@ default_column = "uncommitted"
   pattern_title = "![a-zA-Z]+"
   command = ".kan/hooks/type-shortcut.rad"
   timeout = 0
+
+[ready]
+  exclude = ["labels=needs-decision"]

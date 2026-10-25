@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "refresh-the-issue",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1786343755848,
+  "creator": "Alexander Terp",
+  "description": "Three separate problems, all cheap.\n\n**#22 \"Major Items\" is stale and closeable.** It's the most visible \"what is Rad working on\" artifact in the tracker and it's wrong on four of seven rows: `rad check` is listed In Progress but ships as `rts/check/` plus `core/embedded/check`; Script commands is Backlog but shipped and is documented; the REPL is Backlog but closed completed 2025-10-13 and was promoted from a flag to a command in #154; `rad format` is Backlog but ships as `rts/radfmt/`. Last touched 2025-09-09.\n\n**Two promised issues were never filed.** #123's thread has the owner saying \"I'll raise an issue to improve Windows behavior here\" - no open issue mentions Windows, and VISION.md wants Windows shell integration as a 1.0 criterion. The same thread promised better Windows build-from-source docs. Also unfiled: fish completion, requested in both #90 and discussion #115, never shipped, tracked nowhere.\n\n**#9 and #10 are genuinely open and eight months untouched.** `input()` is str-only; `parse_int`/`parse_float` exist but the requested retry loop with `min`/`max`/`retries` does not. Ship or close them explicitly.\n\n---\n\n### Orientation\n\n- Executed with the `gh` CLI against `amterp/rad`. No code changes. `gh` 2.87.3 is on PATH.\n- Three independent pieces - a stale meta-issue, two unfiled promises, and two stale open issues. Each can be done alone.\n- **Confirm with the maintainer before writing.** Creating, commenting on, and closing public issues is outward-facing and hard to unwind. Draft the text, show it, then run the commands.\n\n### Watch out for\n\nDo not write \"shipped\" into a public issue on the strength of a filename. `rad check` existing as a directory is not the same as it being complete - read the code or run `./bin/radd check` before making a claim someone will rely on. This card is fixing a wrong status; replacing it with a differently wrong one costs more than leaving it stale.\n",
+  "effort": "s",
+  "id": "a_25NmZEXL0",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "zzzzzzzzzV",
+  "source": [
+    "vision"
+  ],
+  "title": "Refresh the issue tracker",
+  "type": "chore",
+  "updated_at_millis": 1792958883340,
+  "history": [
+    {"field":"column","value":"p2","at":1786343755848}
+  ]
+}

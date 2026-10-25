@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "From #123 thread: user couldn't 'go build' or 'go install' on Windows because tree-sitter requires CGO and gcc. They fixed it by installing MinGW (WinLibs) and putting gcc on PATH. Add a 'Building from Source on Windows' section to the docs noting: CGO_ENABLED=1 needed, gcc must be on PATH, recommend WinLibs/MinGW or MSYS2. Note that pre-built binaries (rad_windows_amd64.zip in releases) avoid this entirely - most users should use those.",
   "id": "a_1Bie7LvAa",
-  "position": "!!0",
+  "position": "zzzzzzzzzzzzzzx",
   "title": "Windows: docs for building from source (CGO/MinGW)",
   "type": "chore",
-  "updated_at_millis": 1781147662071,
+  "updated_at_millis": 1792958885552,
   "history": [
     {"field":"column","value":"high","at":1778118731762},
     {"field":"column","value":"low","at":1781147662071}

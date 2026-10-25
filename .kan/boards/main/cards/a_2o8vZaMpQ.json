@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "a-string-like-id-2",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957704033,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 12, item 4.\n\n```rad\nx = '{\"id\": 2}'\n```\n\nOn main this panics at startup:\n\n```\npanic: converter: failed to parse int \" 2\": strconv.ParseInt: parsing \" 2\": invalid syntax\n```\n\nand `rad check` reports no diagnostics. The braces parse as an interpolation of `\"id\"` with format spec ` 2`. Rejecting that is fine, but it should be a diagnostic that `rad check` also reports; the double-quoted form `\"x {\\\"a\\\": 1}\"` already gets a clean RAD10009.\n\nWhere: `rts/converter.go` `convertInt` (line 1382), reached from `convertInterpolationFormat`.",
+  "effort": "s",
+  "id": "a_2o8vZaMpQ",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzzzzzzzzzz",
+  "related": [
+    "a_25S3ICERd"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "A string like '{\"id\": 2}' panics the converter instead of reporting a diagnostic",
+  "type": "bug",
+  "updated_at_millis": 1792958884503,
+  "history": [
+    {"field":"column","value":"p2","at":1792957704033}
+  ]
+}

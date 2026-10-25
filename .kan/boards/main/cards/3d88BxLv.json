@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "e.g. `truncate(_str: str, _len: int[0,]) -\u003e str`\n\n^^ don't like that actually, can be confusing with lists. Could be better for a syntax to say an int list with 0 or more elements in that example (tho redundant).\n\nMaybe e.g. `_len: [0,]` ? Similar issue tho… HMM",
   "id": "3d88BxLv",
-  "position": "jf",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx",
   "title": "RAD-321: int/float arg typing: range",
   "type": "feature",
-  "updated_at_millis": 1767762150597,
+  "updated_at_millis": 1792958894126,
   "history": [
     {"field":"column","value":"low","at":1767762150597}
   ]

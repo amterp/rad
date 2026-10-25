@@ -7,10 +7,10 @@
   "creator": "Alexander Terp",
   "description": "Particularly for `rad`, because if you print it manually first, the 'Querying…' appears in between the header and the table.",
   "id": "3d88DNYX",
-  "position": "k6",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
   "title": "RAD-324: Allow title/header option in tables",
   "type": "feature",
-  "updated_at_millis": 1767762150615,
+  "updated_at_millis": 1792958894225,
   "history": [
     {"field":"column","value":"low","at":1767762150615}
   ]

@@ -1,0 +1,21 @@
+{
+  "_v": 4,
+  "alias": "add-r-x-and-u-string",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957704939,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 13, item 8.\n\n```rad\nprint(len(\"a\\rb\"))   // 4: a, \\, r, b\nprint(\"\\x41\\q\")      // \\x41\\q\n```\n\nOn main `\\r`, `\\xNN` and `\\u` are not escapes, and an unknown escape passes through silently with no `rad check` warning. A multipart body needs CRLF, so `\"\\r\\n\"` silently produces a malformed body; the working form is `decode_base16(\"0d0a\")`.\n\nAdd `\\r`, `\\xNN` and `\\u{...}`, and make an unknown escape an error or a `rad check` warning. Making it an error is breaking for scripts that rely on the passthrough (Windows paths like `\"C:\\Users\"`).\n\nWhere: `rts/converter.go` `resolveStringPart` (the escape kinds come from the tree-sitter grammar, so this needs a tree-sitter-rad change too).",
+  "effort": "m",
+  "id": "a_2o8vb33LM",
+  "position": "zzzzzzzzzzzzx",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Add \\r, \\x and \\u string escapes, and flag unknown escapes",
+  "type": "feature",
+  "updated_at_millis": 1792958884802,
+  "history": [
+    {"field":"column","value":"p2","at":1792957704939}
+  ]
+}

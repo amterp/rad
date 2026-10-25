@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "stop-rad-check",
+  "alias_explicit": false,
+  "column": "high",
+  "created_at_millis": 1786343579150,
+  "creator": "Alexander Terp",
+  "description": "`rad check` is what you run to find out whether a script is sound before shipping it, and it currently certifies scripts that die on the first line that matters. Two shapes, one hole.\n\n**Over-arity destructuring.** Index-first loop unpacking was removed in v0.7. Scripts written against the old semantics destructure wrongly under the new ones, produce wrong values, and pass `rad check` clean. Sites across three corpora: `epoch:23-24`, `argus:91,200,225,258` (two-element lists into three variables, a zip-of-five into six), `deplcr:30`, `platform-release:71`, `jerboa:32`, `pilot:12,24`, `feedmbean2:73`, `ssu:34,51,68`, `ssu2:33,55,69`, `argusp:24`, `replay:59`. Inferred statically - none was executed - but the arity mismatch is visible in the source. On `pilot`, check flags only the *downstream* type error; the semantic drift itself is invisible.\n\n**Dead pre-v0.7 `for i, item in items`.** #153 batch 5 hit this directly: `rad check` says \"No diagnostics to report\", running says `RAD20033` with the migration hint. The checker already has the message - it just doesn't print it at check time.\n\nThe contrast that makes the case: `whale-cluster`'s use of the removed `get_default` sat in an equally dormant code path and *was* caught, because a removed function has a diagnostic and a wrong-arity destructure does not.\n\nTwo reasons this outranks its size. #153 batch 4 pitches running an older machine's `rad check` as the pre-ship version-skew check, and batch 5 undercuts that pitch three weeks later. And #153 notes where the habit comes from: old scripts on disk - the author's own pre-v0.7 version of the script being rewritten was sitting in the same directory.\n\n---\n\n### Orientation\n\n- `rts/check/` owns both halves. The runtime already has the diagnostics; the checker simply never runs the equivalent test. `rts` must not import `core`.\n- `rts/check/binder.go` resolves names and records `Resolved.ForLoopVars`; `rts/check/type_check.go` types expressions and distributes unpacks; `rts/check/check.go:78` `Check()` is the orchestration point listing every check that runs.\n- Diagnostics reach the user as a `BindIssue` through `rts/check/check.go:154` `addBindIssues` or as a `TypeInfo.Issues` entry through `rts/check/check.go:122` `addTypeIssues`.\n\n### Watch out for\n\n- `rts` must not import `core`, so the v0.7 migration hint text has to be written in `rts` rather than imported from the interpreter. Keep the two strings in sync or the check-time and run-time messages will drift.\n- The runtime's condition is value-shaped (\"this element is not a list\"); the checker's is type-shaped. Where the element type is `dynamic` or a union that includes a list, stay silent. A false positive is worse than a miss here, because the sibling card in this column is entirely about the hint tier having lost credibility.\n- `core/error_docs/` has its own style guide at `core/error_docs/AGENTS.md`. `docs-web/docs/reference/errors.md` and `core/embedded_docs/` are generated from it.\n- Turning previously-clean scripts into failing `rad check` runs is a behavior change users will feel even though no language semantics moved. Consider whether the new diagnostics ship as errors or warnings, and whether they belong in `rts/check/check.go:146` `strictOnlyCodes` for a release before being promoted.\n",
+  "effort": "m",
+  "id": "a_25NhyEyZc",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "x",
+  "source": [
+    "takehome"
+  ],
+  "title": "Stop rad check certifying scripts that cannot run",
+  "type": "bug",
+  "updated_at_millis": 1792958878459,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1786343579150}
+  ]
+}

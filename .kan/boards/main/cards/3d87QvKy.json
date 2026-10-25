@@ -9,10 +9,10 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "Y6",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzu",
   "title": "RAD-253: Cutting down UFCS function chains on separate lines should work",
   "type": "feature",
-  "updated_at_millis": 1770438184424,
+  "updated_at_millis": 1792958891580,
   "history": [
     {"field":"column","value":"low","at":1767762150128}
   ]

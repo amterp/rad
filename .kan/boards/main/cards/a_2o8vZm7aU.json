@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "defer-inside-a",
+  "alias_explicit": false,
+  "column": "high",
+  "created_at_millis": 1792957704155,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 12, item 5 (a +1 on an earlier report).\n\n```rad\nfn f():\n    x = 1\n    defer:\n        print(\"deferred\", x)\n    print(\"in f\")\n\nf()\nprint(\"after f\")\n```\n\nOn main this prints `in f`, `after f`, then `error[RAD20028]: Undefined variable: x`. `rad check` is clean. In the real script a helper made a temp dir and registered its cleanup with `defer:`; the cleanup ran at script exit, failed, and left the dir behind. The syntax reference shows only script-level `defer`.\n\nEither run a function's defers when the function returns, in its scope, or reject `defer` inside a function with a diagnostic.\n\nWhere: `core/interpreter.go:421` appends every defer to the script-wide `i.deferBlocks` with only its body, no env.",
+  "effort": "m",
+  "id": "a_2o8vZm7aU",
+  "labels": [
+    "needs-decision"
+  ],
+  "position": "zzx",
+  "related": [
+    "3d86RZda"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "defer inside a function runs at script exit and cannot see the function's locals",
+  "type": "bug",
+  "updated_at_millis": 1792958879198,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1792957704155}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "_v": 4,
+  "alias": "rad-docs-drops-the",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957705858,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 14, echo 2.\n\nThe `## Parameters` parser keeps only the first line of each bullet, so any parameter description wrapped in `docs/funcs/*.md` ends mid-sentence in `rad docs`:\n\n```\n- `_others` (`variadic `list|str`): additional sequences that get\n- `reverse` (`bool`, keyword-only, default `false`): when true,\n```\n\nReproduces on main for 8 parameters across `print`, `range` and `sort`. The same parse leaves a stray backtick in the type: the source writes `` (variadic `list|str`) `` and the parser's `strings.Trim(typeStr, \"`\")` strips only the trailing one. `funcdocs_test.go` checks signatures, not rendered parameters, so nothing caught it. LSP hover reads the same parsed docs and probably shows the same text (not checked).\n\nWhere: `rts/funcdocs.go:175` `parseParamsSection`.",
+  "effort": "xs",
+  "id": "a_2o8vcW6pl",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "zzzzzzzzzzzzzx",
+  "related": [
+    "a_26BiOsBFH",
+    "a_25NhzJlm5"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "rad docs drops the continuation lines of every wrapped parameter description",
+  "type": "bug",
+  "updated_at_millis": 1792958885187,
+  "history": [
+    {"field":"column","value":"p2","at":1792957705858}
+  ]
+}
