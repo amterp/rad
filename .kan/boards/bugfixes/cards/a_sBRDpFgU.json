@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "caught-errors-re",
   "alias_explicit": false,
   "column": "todo-hi",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25TeDLAYf",
       "body": "Split 2026-08-10. This card bundled two separable things:\n\n1. **Span attribution** (confirmed sub-bug) - moved to its own card, a_25TdYyCC3. Ships independently; not blocked on any decision.\n2. **Should `catch: pass` defuse the error value?** (design) - rolled into a_25TdzYuMr on the sprint board, together with a_sBQgqO7u. Same question: does an error value stay armed once bound to a variable?\n\nThis card is now the record of the design half and is blocked on a_25TdzYuMr.",
-      "created_at_millis": 1786357734430,
-      "id": "c_25TeDLAYf"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786357734430
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_25YxkfCQI",
       "body": "Half of this landed on `rad-sprint`: a re-raised error now names the re-raise site as its primary span, with the origin kept as a secondary label. The other half - whether a caught error stays armed once bound to a variable, which is what makes it re-propagate at all - is a language design question tracked at a_25TdzYuMr. Staying open on that.",
-      "created_at_millis": 1786370401855,
-      "id": "c_25YxkfCQI"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786370401855
     }
   ],
   "created_at_millis": 1775232083974,

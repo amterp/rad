@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "escaping-interpolation",
   "alias_explicit": false,
   "column": "",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25UNI89Wy",
       "body": "Closing as a duplicate. Fixed on the sprint board by a_25S2bdrTD (the RAD40017 warning on interpolating a constant literal, which catches `\"\\\\d{4}\"` directly) and a_25S3ICERd (literal braces where an interpolation is impossible).\n\nOn the `{{` suggestion in this card: not taken. `\\{` already does the job and is documented, and `r\"...\"` is better for brace-dense text - adding `{{` would give two escapes for one job. `\\}` was added for symmetry instead.",
-      "created_at_millis": 1786359467204,
-      "id": "c_25UNI89Wy"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359467204
     }
   ],
   "created_at_millis": 1774320410205,

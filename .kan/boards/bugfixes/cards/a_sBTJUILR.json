@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "closing-brace-escape",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25UNHyZzz",
       "body": "Fixed alongside the two brace cards on the sprint board (a_25S3ICERd, a_25S2bdrTD) - it is the same grammar release, so shipping it separately would have cost a second version bump.\n\n`esc_close_bracket` added to the escape set in grammar.js, `K_ESC_CLOSE_BRACKET` in rts/rl/consts.go, and a case in `resolveStringPart`. `print(\"\\{ and \\}\")` now prints `{ and }`.\n\nBlocked on the same tree-sitter-rad release.",
-      "created_at_millis": 1786359467105,
-      "id": "c_25UNHyZzz"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359467105
     }
   ],
   "created_at_millis": 1775232164365,

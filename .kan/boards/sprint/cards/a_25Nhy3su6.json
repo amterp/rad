@@ -1,19 +1,19 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "literal-string-defaults",
   "alias_explicit": true,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25SqDyd7G",
       "body": "thinking of instead adding a bool regex param to these functions",
-      "created_at_millis": 1786355812827,
-      "id": "c_25SqDyd7G"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786355812827
     }
   ],
   "created_at_millis": 1786343579039,
   "creator": "Alexander Terp",
-  "description": "`split()` and `replace()` now match literally, with `regex=true` to opt into pattern matching. `matches()` is unchanged and stays regex-always.\n\nThis card started as \"add `escape_regex()`\". Its own diagnosis was that each string function's needle semantics is a separate thing to memorize - `count` and `index_of` literal, `replace` regex, `split` regex-if-it-compiles - and `escape_regex()` adds a fourth thing to memorize plus a ritual to remember at every call site. We fixed the default instead.\n\nA survey of every `split`/`replace` call with a string-literal pattern across the ~500 `.rad` scripts on this machine:\n\n|         | literal | regex |\n|---------|---------|-------|\n| replace | 158     | 25    |\n| split   | 10      | 1     |\n\n87% wanted literal. The failure is also asymmetric: literal-when-you-wanted-regex gives an obviously wrong answer, regex-when-you-wanted-literal corrupts silently. `docs-web/docs/examples/hm.md:61` already shipped `base_name.replace(\".txt\", \"\")` in our own docs, working only by luck.\n\nThree things fell out that `escape_regex()` could not have delivered:\n\n- `split()`'s runtime-decided semantics is gone. Under `regex=true` an uncompilable pattern errors instead of silently falling back to `strings.Split`.\n- `replace()`'s replacement string is literal by default, so `$1` or `$$` in relayed prose stops corrupting the result. That was the original card's headline failure mode.\n- The 87% path no longer compiles a regex at all and can no longer throw RAD20024.\n\n---\n\n### What shipped\n\n- `split(_val, _sep, *, limit, regex: bool = false)` and `replace(_original, _find, _replace, *, regex: bool = false)`.\n- `replace()`'s group expansion rewritten as a single left-to-right scan, fixing four latent bugs in the old per-group `strings.ReplaceAll` loop: `$10` corrupted by the `$1` pass, a submatch containing `$2` re-substituted by a later pass, no way to write a literal `$`, and groups read by re-running the pattern against the matched text in isolation, which came back empty whenever an assertion only held in context (`\\Bb(c)` inside `abc`). Rules are now `$$`, `${N}`, `$N` taking the longest digit run, and an out-of-range group left as written. Go's own `Regexp.Expand` was not used, because it reads `$name` as a run of word characters and would break the documented `\"$1o$1\"` -> `\"bob\"` case.\n- RAD40016, a checker warning flagging literal patterns that read as regexes with no `regex=`. Warning severity, on by default, handles UFCS call sites, and reads the literal segments of interpolated patterns. Deliberately quiet on a bare `.` and a lone `|`. Lives in its own file, `rts/check/check_regex_migration.go`, so it can be deleted whole in a release or two.\n- `docs-web/docs/migrations/v0.12.md`, `core/error_docs/40016.md`, and a new \"Patterns: Literal by Default\" section in the strings guide.\n\n### Verified\n\n`make all` green. On the real corpus the warning found 32 affected call sites with zero false positives and zero misses. Sharp edges exercised directly: `$10` with ten groups, a submatch whose text contains `$2`, `$$`, `${N}` (which needs a raw string or `$\\{1}` to survive Rad's own interpolation), an out-of-range `$99`, and both uncompilable-pattern error paths.\n\n### Follow-ups opened\n\n- `escape_regex()` demoted to p2. Still useful for *building* patterns (`\"^\" + escape_regex(prefix)`), but no longer the fix for this friction. `fr`'s hand-rolled helper disappears entirely.\n- `replace()` declares `-> str` while its `regex=true` path can error, unlike `matches()` (`bool|error`). Left alone here because widening it pushes an error union into every existing call site.",
+  "description": "`split()` and `replace()` now match literally, with `regex=true` to opt into pattern matching. `matches()` is unchanged and stays regex-always.\n\nThis card started as \"add `escape_regex()`\". Its own diagnosis was that each string function's needle semantics is a separate thing to memorize - `count` and `index_of` literal, `replace` regex, `split` regex-if-it-compiles - and `escape_regex()` adds a fourth thing to memorize plus a ritual to remember at every call site. We fixed the default instead.\n\nA survey of every `split`/`replace` call with a string-literal pattern across the ~500 `.rad` scripts on this machine:\n\n|         | literal | regex |\n|---------|---------|-------|\n| replace | 158     | 25    |\n| split   | 10      | 1     |\n\n87% wanted literal. The failure is also asymmetric: literal-when-you-wanted-regex gives an obviously wrong answer, regex-when-you-wanted-literal corrupts silently. `docs-web/docs/examples/hm.md:61` already shipped `base_name.replace(\".txt\", \"\")` in our own docs, working only by luck.\n\nThree things fell out that `escape_regex()` could not have delivered:\n\n- `split()`'s runtime-decided semantics is gone. Under `regex=true` an uncompilable pattern errors instead of silently falling back to `strings.Split`.\n- `replace()`'s replacement string is literal by default, so `$1` or `$$` in relayed prose stops corrupting the result. That was the original card's headline failure mode.\n- The 87% path no longer compiles a regex at all and can no longer throw RAD20024.\n\n---\n\n### What shipped\n\n- `split(_val, _sep, *, limit, regex: bool = false)` and `replace(_original, _find, _replace, *, regex: bool = false)`.\n- `replace()`'s group expansion rewritten as a single left-to-right scan, fixing four latent bugs in the old per-group `strings.ReplaceAll` loop: `$10` corrupted by the `$1` pass, a submatch containing `$2` re-substituted by a later pass, no way to write a literal `$`, and groups read by re-running the pattern against the matched text in isolation, which came back empty whenever an assertion only held in context (`\\Bb(c)` inside `abc`). Rules are now `$$`, `${N}`, `$N` taking the longest digit run, and an out-of-range group left as written. Go's own `Regexp.Expand` was not used, because it reads `$name` as a run of word characters and would break the documented `\"$1o$1\"` -\u003e `\"bob\"` case.\n- RAD40016, a checker warning flagging literal patterns that read as regexes with no `regex=`. Warning severity, on by default, handles UFCS call sites, and reads the literal segments of interpolated patterns. Deliberately quiet on a bare `.` and a lone `|`. Lives in its own file, `rts/check/check_regex_migration.go`, so it can be deleted whole in a release or two.\n- `docs-web/docs/migrations/v0.12.md`, `core/error_docs/40016.md`, and a new \"Patterns: Literal by Default\" section in the strings guide.\n\n### Verified\n\n`make all` green. On the real corpus the warning found 32 affected call sites with zero false positives and zero misses. Sharp edges exercised directly: `$10` with ten groups, a submatch whose text contains `$2`, `$$`, `${N}` (which needs a raw string or `$\\{1}` to survive Rad's own interpolation), an out-of-range `$99`, and both uncompilable-pattern error paths.\n\n### Follow-ups opened\n\n- `escape_regex()` demoted to p2. Still useful for *building* patterns (`\"^\" + escape_regex(prefix)`), but no longer the fix for this friction. `fr`'s hand-rolled helper disappears entirely.\n- `replace()` declares `-\u003e str` while its `regex=true` path can error, unlike `matches()` (`bool|error`). Left alone here because widening it pushes an error union into every existing call site.",
   "effort": "m",
   "id": "a_25Nhy3su6",
   "labels": [
@@ -30,20 +30,8 @@
   "type": "feature",
   "updated_at_millis": 1786357713884,
   "history": [
-    {
-      "field": "column",
-      "value": "p0-tier1",
-      "at": 1786343579039
-    },
-    {
-      "field": "column",
-      "value": "approved",
-      "at": 1786355800131
-    },
-    {
-      "field": "column",
-      "value": "done",
-      "at": 1786357509283
-    }
+    {"field":"column","value":"p0-tier1","at":1786343579039},
+    {"field":"column","value":"approved","at":1786355800131},
+    {"field":"column","value":"done","at":1786357509283}
   ]
 }

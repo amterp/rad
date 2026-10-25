@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "error-inline-not",
   "alias_explicit": false,
   "column": "todo-hi",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25TeDEn4J",
       "body": "Blocked on a_25TdzYuMr (sprint board, p0-tier1) - \"Decide whether an error value stays armed once bound to a variable\".\n\nThis card and a_sBRDpFgU are the same question. `error()` is exempted from the panic-on-error-return rule at core/funcs.go:251, and `Fallback` never checks `IsError()` (core/interpreter.go:509) - so the asymmetry is structural, not accidental. Fixing it in isolation would settle the language's error model by accident. Decision card first, with a RED.",
-      "created_at_millis": 1786357734368,
-      "id": "c_25TeDEn4J"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786357734368
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_25TgdP3fx",
       "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): still reproduces. `error(\"test\") ?? \"fallback\"` prints `test`.",
-      "created_at_millis": 1786357827473,
-      "id": "c_25TgdP3fx"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786357827473
     }
   ],
   "created_at_millis": 1775232063525,

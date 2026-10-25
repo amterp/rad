@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "rethink-shell",
   "alias_explicit": false,
   "column": "low",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_1TGmLtYQn",
       "body": "Review surfaced two more facets to settle here:\n\n1. Abort with assignment targets is inconsistent with decline. For\n   `code, out = confirm $`...`` :\n   - Decline (\"n\") -\u003e code=1, out=\"\" (exit-code semantics).\n   - Abort (Ctrl-C) -\u003e code=\u003cerror object\u003e, out=null (expression-failure\n     semantics, since the abort RadPanic carries no ShellResult).\n   So `code` is an int on decline but an error object on abort. Decide whether\n   abort should present exit-code-style results (code as int) or keep the error\n   object so a catch block can introspect why it bailed.\n\n2. pick()/multipick() raise their abort errors via NewErrorStrf without a code,\n   so they surface as RAD20000 (generic runtime), not RAD20010 like\n   confirm()/input()/shell-confirm. Align interactive-prompt abort codes as part\n   of the holistic decision.",
-      "created_at_millis": 1780712056932,
-      "id": "c_1TGmLtYQn"
+      "author": "Alexander Terp",
+      "created_at_millis": 1780712056932
     }
   ],
   "created_at_millis": 1780710376199,

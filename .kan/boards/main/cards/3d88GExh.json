@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "rad-329-spawn-a-separate",
   "alias_explicit": false,
   "column": "low",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_1WDfUtx1y",
       "body": "From #139: concrete real-world ask for this - a bg modifier for detached spawns (bg $...cmd... returning a pid) to replace the \"nohup ... \u003e\u003elog 2\u003e\u00261 \u003c/dev/null \u0026\" incantation. The remind script needed exactly this for its launchd checker. Pairs with the new get_pid card in next.",
-      "created_at_millis": 1781147933670,
-      "id": "c_1WDfUtx1y"
+      "author": "Alexander Terp",
+      "created_at_millis": 1781147933670
     }
   ],
   "created_at_millis": 1767762150652,

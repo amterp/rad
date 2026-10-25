@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "decide-whether-an",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_260VCYV9Y",
       "body": "**Decided and landed** on `rad-sprint2`. No RED was written - deliberate call this session; the reasoning lives in the commit messages instead, per AGENTS.md treating `git blame` as documentation.\n\n**The card framed one question. It was two, and only one was a decision.**\n\n**Half A - `error(\"x\") ?? y` yields the error.** Not a design fork. Three layers already specified the opposite, and the interpreter was the only one disagreeing:\n\n- the guide: \"`??` fires when the left side is **null or an error**\"\n- `SYNTAX.md`: \"yields the left value if it is **not null or an error**\"\n- the checker, `rts/check/type_check.go` `synthCatchExpr`: *\"Catch fires when left evaluates to an error\"*\n\nOnly `core/interpreter.go` checked `panicked || IsNull()` with no `IsError()`. Fixed in `94da0bfc` - roughly six lines across `Fallback` and `CatchExpr`, plus extending `synthFallback` to strip the error arm so static and runtime agree. **Blast radius was zero**: no test case and no doc snippet in the repo paired `error(` with `??` or `catch`. Nothing broke; three documents became true.\n\n**The card's option 2 (make `error()` panic) is rejected**, and it is worth recording why so it does not come back. It breaks all 10 cases in `types/error.snap` - a file that exists solely to pin error-as-value semantics, including errors as map keys - moves ~10 golden diagnostic spans, leaves the `error` type uninhabitable by any expression (the only remaining construction site would be a `catch:` binding), deletes two checker carve-outs, and contradicts the shipped v0.9 migration guide, which explicitly shows `err = error(\"oops\")`.\n\n**Half B - does a bound error stay armed? Yes. Decided, documented in `7a8aeac7`.**\n\nAn error stays armed for as long as it exists. Binding it does not disarm it, so returning it from another function raises it there.\n\nRejected the alternative (mark an error handled once caught, so it can never fire again) on two grounds: a value carrying hidden state fights the self-explanatory bar in `docs/thinking/principles.md`, and a real failure would vanish the moment it passed through a function that returned it unchanged. Silently losing a failure is worse than an exit that names where it happened.\n\nThe cost - a transparent relay re-raises - is mitigated rather than removed: the diagnostic already names the re-raise site (that half shipped as a_25TdYyCC3), and with half A fixed, guarding the second call reads exactly like guarding the first: `relay(stored) ?? \"default\"`.\n\n**One deliberate asymmetry, now documented rather than accidental.** `??` and `catch` inspect the value the left side produced, so they fire on a held error. A `catch:` *block* catches an operation that failed, so a statement that merely assigns an error you already had does not trigger it. The plan called for changing all five guard sites; the block forms were left alone on purpose. Wiring them would also have meant threading a result back through every branch of `assignRightsToLefts`, which returns `VoidNormal` throughout.\n\nNew guide section \"Holding an Error\", a `SYNTAX.md` subsection, snapshot cases in `fallback.snap` / `catch_expr.snap` / `catch.snap` (including one pinning that the remedy works), and a note in the v0.12 migration guide.\n\n**Unblocks a_sBQgqO7u (fixed) and a_sBRDpFgU (works-as-intended).** Also sets the frame for a_25NhzvsZM (how http_* failures enter the error model) and a_25TZTZgpu (`replace()` declaring `-\u003e str`) - with no RED, those two will need to read `94da0bfc` and `7a8aeac7` for the rationale.",
-      "created_at_millis": 1786436036222,
-      "id": "c_260VCYV9Y"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786436036222
     },
     {
-      "author": "Alexander Terp",
-      "body": "Decided: an error stays armed until handled again. Documented in 59e9a96f; 47702b90 makes ?? and catch fire on an error already held.",
-      "created_at_millis": 1786436996016,
       "id": "c_260uAbeaL",
+      "body": "Decided: an error stays armed until handled again. Documented in 59e9a96f; 47702b90 makes ?? and catch fire on an error already held.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1786436996016,
       "updated_at_millis": 1786439144662
     }
   ],

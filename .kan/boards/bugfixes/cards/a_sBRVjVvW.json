@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "loop-context",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_1YHQopYdX",
       "body": "Closed as works-as-intended (decided 2026-06-14). This is documented, deliberate behavior, not an implementation bug:\n\n- docs/type_system.md:129-133 — 'For-loops, while-loops, and list comprehensions do NOT open scopes ... loop vars (and the optional with context) bind in the current scope.'\n- core/testing/snapshots/misc/scoping.snap — the 'Scoping ... in for block is remembered' cases explicitly assert that iteration vars, unpacked k/v vars, AND the with-loop context var all persist after the loop (authored 2026-02-02).\n- Both the interpreter (SetVar into enclosing env) and the static binder mirror this.\n\nThe context var 'leak' is the same mechanism/code path as the iteration var persisting; scoping only the context var would make the language inconsistent. Considered (A) scope context var only, (B) scope all loop vars, (C) warn on shadowing — all rejected in favor of keeping the coherent documented model. If the shadowing footgun resurfaces, a check-time shadow warning is the least-invasive future option.",
-      "created_at_millis": 1781452429272,
-      "id": "c_1YHQopYdX"
+      "author": "Alexander Terp",
+      "created_at_millis": 1781452429272
     }
   ],
   "created_at_millis": 1775232095072,

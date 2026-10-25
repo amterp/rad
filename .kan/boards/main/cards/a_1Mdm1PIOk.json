@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "promote-type-check",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_1MmzEnXQK",
       "body": "Inaccuracy in card body + a refinement to add:\n\n**Card body inaccuracy:** the intro paragraph says `checkAssignAgainstDeclared, and checkIndexedAssignTarget are now Error` - but `type_check.go:2104` still defaults to `IssueHint` and only escalates to `IssueError` when the value is null. Confirmed via `./bin/radd check` on `bb = \"hi\"` after `bb: int = 5` - fires as HINT, not ERROR. The body's bullet that mentions checkAssignAgainstDeclared/checkIndexedAssignTarget under the structural-literal fix section is the correct picture.\n\n**Scalar-only refinement (low-hanging fruit within this card):** the hold-back rationale for checkAssignAgainstDeclared and checkArgType cites structural-literal fidelity (str literal vs StrEnum, map literal vs struct, list literal vs tuple). But the bulk of mismatches in real code are plain primitive-vs-primitive (`bb: int = 5; bb = \"hi\"` or `foo(\"hi\")` for `foo(bar: int)`). These have zero structural-literal nuance and could be promoted today via a guard like:\n```\nif isNonStructuralPrimitive(valType) \u0026\u0026 isNonStructuralPrimitive(declared) {\n    severity = IssueError\n}\n```\nwhere isNonStructuralPrimitive returns true for str, int, float, bool, null (and their optional forms). This closes the most common mismatch class without risking the structural false positives the hold-back protects against.\n\nSurfaced during round-2 verification (2026-05-25). Headline reproducer: `bb: int = 5; bb = \"hi\"` shows up as a HINT in VS Code, not an Error - same script gates correctly under the proposed scalar-only refinement.",
-      "created_at_millis": 1779754473690,
-      "id": "c_1MmzEnXQK"
+      "author": "Alexander Terp",
+      "created_at_millis": 1779754473690
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_1TWsxjdgg",
       "body": "Done - shipped 2026-05-31 → 2026-06-01 across commits e33fd269, e83aa78d, 95890d84, 9d986d86. The implementation diverged from this card's sketch:\n\n- Severity promotion landed as a provable-only (\"gateable\") model rather than a binary flip. A mismatch gates as Error exactly when every possible runtime value is incompatible, and stays a Hint when a union/optional/gradual-container arm might still fit. This dissolves the false-positive-vs-hold-back tension the card was stuck on. All 6 named sites use it (checkArgType/checkAssignAgainstDeclared -\u003e mismatchSeverity; recordReturn/checkIndexedAssignTarget -\u003e typeIsGateable; addOpIssue/addUnaryOpIssue -\u003e opMismatchSeverity; emitNonExhaustiveSwitch was already Error).\n\n- Gap 1 (structural-literal fidelity): solved by rts/check/check_lit.go's recursive check() -\u003e checkListLit()/checkMapLit(), matching list-vs-tuple, map-vs-struct, str-vs-StrEnum. The proposed litMatchesTuple/Struct/StrEnum helpers were NOT built - a single recursive dispatcher replaced that approach.\n\n- Gap 2 (union-narrowing on fallible): solved by maybeStripFallible() stripping the error arm at the call site, so a = parse_int(\"2\"); a + 1 checks clean. A separate opt-in advisory (RAD30011, --strict only) nudges handling the error.\n\n- The comment's scalar-only isNonStructuralPrimitive refinement was NOT implemented and is moot: primitive-vs-primitive mismatches are inherently provable, so the gateable model already gates them as Error.\n\nSnapshots assert [error] across core/testing/snapshots/types/{typing,typing_nested}.snap and rts/check/snapshots/{fallible,lit_check/structural,narrow/str_enum,narrow/typed_local,fn_value/structural_match}.snap (RAD30001: 29 error vs 5 hint, hints reserved for uncertain unions). Also fixed one stale snapshot description in narrow/typed_local.snap that still said \"fires a Hint\".",
-      "created_at_millis": 1780750443511,
-      "id": "c_1TWsxjdgg"
+      "author": "Alexander Terp",
+      "created_at_millis": 1780750443511
     }
   ],
   "created_at_millis": 1779732516160,

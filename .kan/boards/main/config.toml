@@ -1,102 +1,102 @@
-default_column = "uncommitted"
+kan_schema = "board/14"
 id = "3d0a0ABE"
-kan_schema = "board/13"
 name = "main"
-
-[card_display]
-  badges = ["labels"]
-  type_indicator = "type"
+default_column = "uncommitted"
 
 [[columns]]
+  name = "uncommitted"
   color = "#6b7280"
   description = "Ideas and thoughts not yet committed to"
   limit = 0
-  name = "uncommitted"
 
 [[columns]]
+  name = "low"
   color = "#94a3b8"
   description = "Low priority planned work"
   limit = 0
-  name = "low"
 
 [[columns]]
+  name = "high"
   color = "#f59e0b"
   description = "High priority planned work"
   limit = 10
-  name = "high"
 
 [[columns]]
+  name = "next"
   color = "#3b82f6"
   description = "Ready to be picked up next"
   limit = 10
-  name = "next"
 
 [[columns]]
+  name = "in-progress"
   color = "#ec4899"
   description = "Currently being worked on"
   limit = 5
-  name = "in-progress"
 
 [[columns]]
+  name = "done"
   color = "#9333ea"
   description = "Completed work"
   limit = 0
-  name = "done"
 
 [custom_fields]
   [custom_fields.labels]
-    description = "AI suitability and release impact labels"
     type = "enum-set"
+    description = "AI suitability and release impact labels"
 
     [[custom_fields.labels.options]]
-      description = "Well-suited for autonomous AI work - low complexity, AI can handle independently"
       value = "ai-hi"
+      description = "Well-suited for autonomous AI work - low complexity, AI can handle independently"
 
     [[custom_fields.labels.options]]
-      description = "Likely suitable for AI but may need some human oversight"
       value = "ai-lo"
+      description = "Likely suitable for AI but may need some human oversight"
 
     [[custom_fields.labels.options]]
-      description = "Long-running AI task - exploratory, research, or experimental work to kick off and review later"
       value = "ai-think"
+      description = "Long-running AI task - exploratory, research, or experimental work to kick off and review later"
 
     [[custom_fields.labels.options]]
-      description = "Would be a breaking change if implemented"
       value = "breaking"
+      description = "Would be a breaking change if implemented"
   [custom_fields.type]
-    description = "The category of work this card represents"
     type = "enum"
     wanted = true
+    description = "The category of work this card represents"
 
     [[custom_fields.type.options]]
+      value = "bug"
       color = "#dc2626"
       description = "A defect in existing functionality"
-      value = "bug"
 
     [[custom_fields.type.options]]
+      value = "chore"
       color = "#4b5563"
       description = "Maintenance, refactoring, or housekeeping"
-      value = "chore"
 
     [[custom_fields.type.options]]
+      value = "enhancement"
       color = "#2563eb"
       description = "An improvement to existing functionality"
-      value = "enhancement"
 
     [[custom_fields.type.options]]
+      value = "epic"
       color = "#9333ea"
       description = "A large body of work spanning multiple cards"
-      value = "epic"
 
     [[custom_fields.type.options]]
+      value = "excellence"
       color = "#06b6d4"
       description = "Software craftsmanship and quality improvements"
-      value = "excellence"
 
     [[custom_fields.type.options]]
+      value = "feature"
       color = "#16a34a"
       description = "New functionality to be added"
-      value = "feature"
+
+[card_display]
+  type_indicator = "type"
+  badges = ["labels"]
 
 [[link_rules]]
   name = "github"
@@ -104,7 +104,7 @@ name = "main"
   url = "https://github.com/amterp/rad/issues/{1}"
 
 [[pattern_hooks]]
-  command = ".kan/hooks/type-shortcut.rad"
   name = "type-shortcut"
   pattern_title = "![a-zA-Z]+"
+  command = ".kan/hooks/type-shortcut.rad"
   timeout = 0

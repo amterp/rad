@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "multi-line-string",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_1YHptRzmS",
       "body": "Fixed (2026-06-14). The under-indented multi-line string case made tree-sitter emit an ERROR node parented directly by the 'string' node (between string_start and string_end); GenerateErrorMessage had no heuristic for it, so it fell through to the generic RAD10009 'Unexpected ...'.\n\nFix: added checkMultilineStringIndent to the rts/check/error_messages.go heuristic chain (after checkUnterminatedQuoteToken). It detects ERROR-under-string, computes the closing-delimiter indentation from the string_end text, and fires only when a content line is less-indented than the closing triple-quote. Reuses RAD10009 with a targeted message + suggestion (no new code), following the checkBareNullTypeAnnotation precedent.\n\nScope: only the common single-content-line shape is detected. The multi-content-line under-indent variant produces a messier CST (ERROR not parented by 'string') and still falls through to the generic message - documented in the heuristic comment.\n\nTest: snapshot 'StrLexing Multiline ContentLessIndentedThanClosing' in core/testing/snapshots/types/str_lexing.snap. Verified existing multi-line cases (valid + other error shapes like unterminated) are unaffected.",
-      "created_at_millis": 1781453393132,
-      "id": "c_1YHptRzmS"
+      "author": "Alexander Terp",
+      "created_at_millis": 1781453393132
     }
   ],
   "created_at_millis": 1775232111520,

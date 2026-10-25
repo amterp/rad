@@ -1,74 +1,74 @@
-default_column = "todo-lo"
+kan_schema = "board/14"
 id = "b_sBGk8Gtk"
-kan_schema = "board/13"
 name = "bugfixes"
-
-[card_display]
-  badges = ["tags", "grammar"]
-  type_indicator = "severity"
+default_column = "todo-lo"
 
 [[columns]]
+  name = "todo-lo"
   color = "#6b7280"
   description = "Low priority bugs to fix eventually"
   limit = 0
-  name = "todo-lo"
 
 [[columns]]
+  name = "todo-hi"
   color = "#ef4444"
   description = "High priority bugs to fix soon"
   limit = 0
-  name = "todo-hi"
 
 [[columns]]
+  name = "in-progress"
   color = "#f59e0b"
   description = "Bugs currently being worked on"
   limit = 0
-  name = "in-progress"
 
 [[columns]]
+  name = "done"
   color = "#10b981"
   description = "Fixed and verified"
   limit = 0
-  name = "done"
 
 [custom_fields]
   [custom_fields.grammar]
-    description = "Whether this bug requires grammar/parser changes to fix"
     type = "boolean"
+    description = "Whether this bug requires grammar/parser changes to fix"
   [custom_fields.severity]
-    description = "How severe the bug is"
     type = "enum"
     wanted = true
+    description = "How severe the bug is"
 
     [[custom_fields.severity.options]]
+      value = "critical"
       color = "#dc2626"
       description = "Blocks core functionality or causes data loss"
-      value = "critical"
 
     [[custom_fields.severity.options]]
+      value = "high"
       color = "#f97316"
       description = "Significant impact but has workarounds"
-      value = "high"
 
     [[custom_fields.severity.options]]
+      value = "medium"
       color = "#eab308"
       description = "Noticeable issue with limited impact"
-      value = "medium"
 
     [[custom_fields.severity.options]]
+      value = "low"
       color = "#6b7280"
       description = "Minor issue, cosmetic or edge case"
-      value = "low"
   [custom_fields.tags]
-    description = "Card tags"
     type = "enum-set"
+    description = "Card tags"
 
     [[custom_fields.tags.options]]
+      value = "design"
       color = "#8b5cf6"
       description = "Requires language design thinking"
-      value = "design"
 
     [[custom_fields.tags.options]]
+      value = "quick-win"
       color = "#22c55e"
       description = "Clear, low-risk, contained fix with an obvious-correct answer"
-      value = "quick-win"
+
+[card_display]
+  type_indicator = "severity"
+  badges = ["tags", "grammar"]

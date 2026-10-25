@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "make-interaction",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
-      "body": "Shipped as b2be2e4a on rad-sprint (cherry-picked from the rad-sprint1 worktree). The flag introduced here is --reply-na; it was briefly named --na-reply and renamed by amending this commit.",
-      "created_at_millis": 1786436995937,
       "id": "c_260uATZnz",
+      "body": "Shipped as b2be2e4a on rad-sprint (cherry-picked from the rad-sprint1 worktree). The flag introduced here is --reply-na; it was briefly named --na-reply and renamed by amending this commit.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1786436995937,
       "updated_at_millis": 1786439144583
     }
   ],

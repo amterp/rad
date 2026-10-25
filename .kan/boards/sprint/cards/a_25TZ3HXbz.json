@@ -1,5 +1,5 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "add-escape-regex-for",
   "alias_explicit": false,
   "column": "p2",
@@ -19,10 +19,6 @@
   "type": "feature",
   "updated_at_millis": 1786357536000,
   "history": [
-    {
-      "field": "column",
-      "value": "p2",
-      "at": 1786357536000
-    }
+    {"field":"column","value":"p2","at":1786357536000}
   ]
 }

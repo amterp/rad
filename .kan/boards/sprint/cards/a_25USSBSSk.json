@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "release-tree-sitter",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25YxkkXA3",
       "body": "Now blocking, not just tidying. Two features on `rad-sprint` need grammar commits that are not in v0.6.0: the signed operand after `??`/`catch` (649637a) and the literal brace (1e41475). Until v0.6.1 ships and go.mod moves onto it, those cases only pass with a local `replace` directive pointing at ~/src/tree-sitter-rad, so CI on this branch will be red.",
-      "created_at_millis": 1786370401908,
-      "id": "c_25YxkkXA3"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786370401908
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_25ZWtkrkY",
       "body": "Released as **v0.7.0**, not v0.6.1. Both unreleased grammar commits are `feat:` - the signed operand after `??`/`catch` (649637a) and the literal brace (1e41475) - so a minor bump is the right semver read.\n\n`rad-sprint` is on it (`chore: move onto tree-sitter-rad v0.7.0`), the local `replace` directives are gone from all six worktrees, and the full suite is green without them.",
-      "created_at_millis": 1786371752882,
-      "id": "c_25ZWtkrkY"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786371752882
     }
   ],
   "created_at_millis": 1786359665644,

@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "allow-shell",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_27TGEV4cJ",
       "body": "Implemented on branch `rad-sprint1` (7 commits) + `tree-sitter-rad` main (2 commits).\n\nGrammar: `shell_stmt` is dissolved. `$` takes only a primary and `shell_cmd` is an ordinary `primary_expr`, so `$cmd` is an expr_stmt and `x = $cmd` an assign - capture targets, `catch:` blocks and precedence come from rules that already define them. Accessors are plain `.name` postfix validated by the checker, not new grammar (making `.stdout` a literal would keyword-extract `stdout`, which is the canonical capture target name). Generated with zero new conflicts.\n\nFound while checking whether it could parse: a third silent footgun the card didn't know about. ``$`cmd` catch \"x\"`` and ``$`cmd` ?? \"x\"`` bound the handler to the *command string*, so it never ran and the failure killed the script - and `rad check` said nothing. That is now the lead of the migration guide.\n\nCard's Edges, all closed:\n\n- Spawn failure on `$list` was worse than described: an uncatchable RAD20042 internal bug with a Go stack trace, not just a missing code. Now 127/126, catchable, with `TestParams.RealShell()` added so the real executor is testable at all (it had no coverage).\n- tree-sitter-rad, `rad fmt`, checker diagnostics, docs: done. Highlighting needed nothing - the tmLanguage grammar matches a bare `$` by regex.\n- `rad fmt` turned up a pre-existing bug: statements with a trailing `catch:` block had the block dropped, so fmt declined the whole file. Latent because shell was the common carrier of `catch:` and used to be emitted verbatim.\n\nNot blessed, as agreed: ``$`cmd`.ok`` as a bare statement works and is undocumented.\n\nEvidence the statement form is untouched: of 7 syntax-tree snapshots that moved, every AST is byte-identical - only parse trees changed. One exception, a span that grew to cover parens that used to belong to lambda body syntax.\n\nRED-10 written (Implemented). Migration guide, error docs RAD40025/40026/20048, SYNTAX.md, both guides.\n\nBLOCKED ON YOU: go.mod still carries a local `replace` for tree-sitter-rad, uncommitted per AGENTS.md. Tag the grammar v0.10.0 and bump the dep to make the branch build standalone.",
-      "created_at_millis": 1786652339313,
-      "id": "c_27TGEV4cJ"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786652339313
     }
   ],
   "created_at_millis": 1786448228319,

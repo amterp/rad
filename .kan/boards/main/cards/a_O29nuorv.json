@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "think-about-or",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_O2fYZNId",
       "body": "My (tentative) conclusion is we dont need optional types in Rad, we're dynamic and we can just use null and leverage operators like ??, or, ?., and catch.",
-      "created_at_millis": 1770778284677,
-      "id": "c_O2fYZNId"
+      "author": "Alexander Terp",
+      "created_at_millis": 1770778284677
     }
   ],
   "created_at_millis": 1770777064140,

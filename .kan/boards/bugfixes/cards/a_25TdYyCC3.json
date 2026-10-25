@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "re-propagated-errors",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25TgdVfa7",
       "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): confirmed on the current build. The re-propagation from `relay(stored)` on line 9 is reported as `error[RAD20000]: boom --\u003e :4:10`, pointing at the `fail()` call inside the original catch line. The relay site appears nowhere in the output.",
-      "created_at_millis": 1786357827539,
-      "id": "c_25TgdVfa7"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786357827539
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_25Tmat031",
       "body": "Fixed 2026-08-10 in 68bb2791 (branch rad-sprint1).\n\nWent with \"both sites\", as the card proposed. `RadPanic` now carries a `RaiseSpan` recording where the panic fired when that differs from where the error was constructed; `NewRadPanic` sets it only when the error already had a span, so an ordinary first raise leaves it nil. `handlePanicRecovery` renders the two-span form via the existing `NewDiagnosticWithLabels` machinery - primary label \"re-raised here\", secondary \"originally raised here\".\n\nThe repro now renders:\n\n    error[RAD20000]: boom\n      --\u003e :11:10\n       |\n     5 | stored = fail() catch:\n       |          ------ originally raised here\n    ...\n    11 | result = relay(stored)\n       |          ^^^^^^^^^^^^^ re-raised here\n\nMulti-hop relays report the innermost re-arm point, which is where the panic actually fired.\n\nNo existing snapshot changed - origin and raise site coincide on a first raise, so single-span rendering is byte-identical. Regression test added to core/testing/snapshots/control_flow/catch.snap. Full suite green.",
-      "created_at_millis": 1786358056557,
-      "id": "c_25Tmat031"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786358056557
     }
   ],
   "created_at_millis": 1786357709410,

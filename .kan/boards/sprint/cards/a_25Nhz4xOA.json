@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "add-a-min-version",
   "alias_explicit": false,
   "column": "big-rocks",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25czNuEjA",
       "body": "I have this idea, not sure if documented anywhere, of allowing Rad to behind the scenes lazily download specific binaries as needed if a script declares it needs a certain version. Rad can know the breaking semantics between versions and decide if a nearby version is also compatible with the declared version of Rad according to the script's macro.\nMaybe that would be a better design here",
-      "created_at_millis": 1786379997749,
-      "id": "c_25czNuEjA"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786379997749
     }
   ],
   "created_at_millis": 1786343579665,

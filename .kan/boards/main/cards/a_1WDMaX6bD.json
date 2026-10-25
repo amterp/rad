@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "docs-guarantee",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25UPcNOoX",
       "body": "Narrowed by the sprint-board brace work (a_25S3ICERd). The guarantee still holds for everything issue #139 hit - `\"{tokens.join(\" \")}\"` and the ternary form both still work - but a nested same-delimiter string is no longer allowed *immediately* after the `{`.\n\nReason: `\"{\"` is now also how a literal opening brace at the end of a string is written, and the two readings share that exact prefix. Alex's call was that `\"{\"ERROR\".red()}\"` should be unidiomatic anyway - switch quote types.\n\n`docs-web/docs/guide/strings-advanced.md` updated with the exception, since it stated the guarantee unconditionally.",
-      "created_at_millis": 1786359556635,
-      "id": "c_25UPcNOoX"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359556635
     }
   ],
   "created_at_millis": 1781147206818,

@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "clear-the-four",
   "alias_explicit": false,
   "column": "p0-tier1",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25USkIPI0",
       "body": "Progress 2026-08-10 (branch rad-sprint1).\n\n**Done:**\n- a_25TdYyCC3 - re-propagated errors name where they re-fired. 68bb2791.\n- a_sBQtDAsa - deleting during list iteration no longer duplicates an element. ccc16900. Landed as live+bounds-checked (Python semantics) rather than the snapshot the card leaned toward - snapshotting would have silently killed mid-loop element visibility, a change beyond the bug. See the card.\n- a_sBPzQCcM - `?? -1` parses. 9d180293 here, plus 4e554f2 and 649637a upstream. **Not yet landable**: needs the grammar released, now tracked as a_25USSBSSk.\n\n**Left:**\n- a_sBQ8LS6p - chained calls. Deliberately not started: the `?? -1` grammar work is still unreleased and `stash@{0}` upstream holds the nested-command WIP, so stacking a third set of `parser.c` regenerations into that tree would entangle all three. Start it from a clean tree after a_25USSBSSk.\n\nTwo of the four fixes needed no `rts/` changes at all - the AST, converter, checker and formatter were already general enough. That keeps holding: the chained-call card looks the same way (see its notes).",
-      "created_at_millis": 1786359676869,
-      "id": "c_25USkIPI0"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359676869
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_25YxVzE6V",
       "body": "Three of the four have landed on `rad-sprint`: the `?? -1` parse (a_sBPzQCcM), the re-raise attribution (a_25TdYyCC3), and list mutation during iteration (a_sBQtDAsa). Chained calls (a_sBQ8LS6p) are untouched - `make_adder(5)(3)` still errors RAD10009 - so this card stays open on that one alone.",
-      "created_at_millis": 1786370392759,
-      "id": "c_25YxVzE6V"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786370392759
     }
   ],
   "created_at_millis": 1786343755432,

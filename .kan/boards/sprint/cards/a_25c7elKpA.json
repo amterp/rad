@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "reject-dash-prefixed",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_260uBAkwN",
       "body": "Already shipped before this sprint pickup: ra 3b2d1c8 (v0.9.0), documented in the v0.12 migration guide.",
-      "created_at_millis": 1786436996365,
-      "id": "c_260uBAkwN"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786436996365
     }
   ],
   "created_at_millis": 1786377932437,

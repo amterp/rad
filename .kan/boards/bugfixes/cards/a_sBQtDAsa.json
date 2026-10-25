@@ -1,20 +1,20 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "mutating-collections",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25TgdJmYz",
       "body": "RE-VERIFIED 2026-08-10 (rad v0.11.0, dev build at 117b7329): unchanged from the 2026-06-14 finding. The list repro still prints 1, 2, 4, 5, 5 (3 skipped, 5 duplicated). The map repro still traverses cleanly (a 1 / b 2 / c 3) - the map half remains not-reproducing, so the two collection types still disagree with each other.",
-      "created_at_millis": 1786357827412,
-      "id": "c_25TgdJmYz"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786357827412
     },
     {
-      "author": "Alexander Terp",
+      "id": "c_25UGvsZUY",
       "body": "Fixed 2026-08-10 in ccc16900 (branch rad-sprint1).\n\n**Decision: live, bounds-checked - matching Python.** Not the snapshot option the card leaned toward. Reasoning below.\n\nInvestigating turned up two tangled defects, not one:\n\n1. The traversal ran *past the list end*, re-reading a slot the list no longer held (the duplicated 5). Wrong under any semantics.\n2. It skipped element 3. That is inherent to walking a live list by index - Python does the same and prints 1, 2, 4, 5.\n\nOnly (1) is a defect. `runForLoopList` now indexes the live list and re-reads length and element each iteration instead of `range`-ing over a captured slice header. `del items[1]` now gives 1, 2, 4, 5.\n\n**Why not snapshot.** Verified the current behaviors first:\n\n| mid-loop mutation | before | after |\n|---|---|---|\n| `del items[1]` | 1, 2, 4, 5, 5 | 1, 2, 4, 5 |\n| `items[2] = 99` | visible to loop | visible to loop |\n| rebinding `items = items + [4]` | not seen | not seen |\n\nSnapshotting fixes row 1 but silently kills row 2 - the loop would read its own copy, so element assignment would stop being visible. That is a behavior change well beyond the reported bug, and nobody asked for it.\n\n**Maps stay as they are.** They snapshot keys, and that asymmetry is now deliberate and documented: list order is positional, so a live traversal has a well-defined place to resume after a deletion; map iteration order does not.\n\nVerified: `del` mid-loop, deleting the head each iteration (gives 1, 3, 5 leaving [4,5] - identical to Python), element assignment, rebinding, string iteration, list comprehensions, map iteration. Full suite green, no existing snapshot changed. Three cases added to control_flow/for.snap; semantics written up in docs/type_system.md beside the loop scoping rules.",
-      "created_at_millis": 1786359222766,
-      "id": "c_25UGvsZUY"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359222766
     }
   ],
   "created_at_millis": 1775232071191,

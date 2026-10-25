@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "collect-bare",
   "alias_explicit": true,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_260uB1G0V",
       "body": "Already shipped before this sprint pickup: ra 3e579ec (v0.9.0) plus rad b3297b57, documented in the v0.12 migration guide.",
-      "created_at_millis": 1786436996276,
-      "id": "c_260uB1G0V"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786436996276
     }
   ],
   "created_at_millis": 1786343755484,

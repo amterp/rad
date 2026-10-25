@@ -1,14 +1,14 @@
 {
-  "_v": 3,
+  "_v": 4,
   "alias": "flag-interpolation",
   "alias_explicit": false,
   "column": "done",
   "comments": [
     {
-      "author": "Alexander Terp",
+      "id": "c_25UMdRL9n",
       "body": "Done. RAD40017, warning tier as specified.\n\nThe rule is syntactic: it fires when the interpolated expression node is an int, float, bool, or Simple string literal. `{x}` with `x = 4`, `{1+1}` and `{f()}` stay quiet. Collections are excluded since their elements need not be constant.\n\nThe trap worth knowing: `LitString.Children()` also yields `Format.Padding` and `Format.Precision`, which are int literals on every padded format spec. The check iterates `Segments` and tests `seg.Expr` only - there is a regression case for this in `rts/check/snapshots/interpolation/constant_literal.snap`.\n\nMeasured against the invocation-log corpus: zero fires across 199 scripts.\n\nAlso fixed `core/error_docs/30002.md`, which offered `x = \"count: {5}\"` as its recommended fix, and the same shape in the v0.9 migration guide. Both were teaching the anti-pattern.",
-      "created_at_millis": 1786359441970,
-      "id": "c_25UMdRL9n"
+      "author": "Alexander Terp",
+      "created_at_millis": 1786359441970
     }
   ],
   "created_at_millis": 1786353905501,
