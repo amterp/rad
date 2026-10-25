@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "name-the-rule-when-a",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1792957703271,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 9, item 5 (and the skill-doc side in batch 10).\n\n`args:` and `command` blocks must precede every other statement. Breaking the rule gives errors that do not name it, and the two block types fail differently:\n\n```rad\nTOOL = \"widget\"\n\ncommand go:\n    ---\n    Go.\n    ---\n    calls do_go\n```\n\n```\nerror[RAD10001]: Invalid syntax    (on line 1, TOOL = ...)\nerror[RAD10009]: Unexpected 'go:'\nerror[RAD10009]: Unexpected '--- calls'\nerror[RAD10009]: Unexpected 'fn do_go():'\n```\n\nWith an `args:` block instead, the only report is `RAD10009: Unexpected 'args: name str'` anchored on the `args:` line, plus `Unexpected 'name'`. The reporter found the rule by bisecting; batch 10 says it cost two isolation rounds.\n\nWanted: one message naming the constraint (\"`args`/`command` blocks must come before any other statement\") anchored at the offending statement, without the knock-on parse errors (the cascade part overlaps bugfixes/a_28JrpwNqX).\n\nConfirmed on main (3459ddf1).\n\nWhere: rts/check syntax-error interpretation (ERROR-node heuristics).",
+  "effort": "s",
+  "id": "a_2o8vYMo7a",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "aL",
+  "related": [
+    "b_sBGk8Gtk:a_28JrpwNqX"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "Name the rule when a statement precedes an args or command block",
+  "type": "enhancement",
+  "updated_at_millis": 1792957707746,
+  "history": [
+    {"field":"column","value":"p2","at":1792957703271}
+  ]
+}

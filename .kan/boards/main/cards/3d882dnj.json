@@ -3,6 +3,14 @@
   "alias": "rad-312-switch-case-1-return",
   "alias_explicit": false,
   "column": "low",
+  "comments": [
+    {
+      "id": "c_2o8vdIltw",
+      "body": "#153 batch 10 item 4 hit this on v0.12.1: `case \"a\" -\u003e return 1` gives `error[RAD10009]: Unexpected 'return'`, which does not say switch arms take expressions. Proposed for the skill doc gotchas meanwhile.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1792957706320
+    }
+  ],
   "created_at_millis": 1767762150506,
   "creator": "Alexander Terp",
   "description": "returns in switch case expr not allowed",
@@ -13,7 +21,7 @@
   "position": "hR",
   "title": "RAD-312: switch case 1 -\u003e return 1 should be allowed",
   "type": "feature",
-  "updated_at_millis": 1770438123927,
+  "updated_at_millis": 1792957706320,
   "history": [
     {"field":"column","value":"low","at":1767762150506}
   ]

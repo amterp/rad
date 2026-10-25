@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "an-arg-error-after",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1792957703637,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 11, item 3.\n\nWith a `default` command, an arg error on a different, explicitly named command prints the default command's args:\n\n```\n$ rad cmd.rad health -z\nunknown shorthand flag: 'z' in -z\n...\nArgs for default command 'search':\n      --query str\n\n$ rad cmd.rad health -j --raw\nInvalid args: 'json' excludes 'raw', but 'raw' was set\n...\nArgs for default command 'search':\n```\n\nThe user typed `health`, so this reads as if routing went to the wrong command. Once a command is routed, an arg error should print that command's usage, as `health -h` does.\n\nConfirmed on main (3459ddf1).\n\nWhere: ra/ra_usage.go:410 (root usage on parse error); likely needs an ra release.",
+  "effort": "s",
+  "id": "a_2o8vYwdQE",
+  "position": "aO",
+  "related": [
+    "a_265linKNW"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "An arg error after routing to a command prints the default command's usage",
+  "type": "bug",
+  "updated_at_millis": 1792957708112,
+  "history": [
+    {"field":"column","value":"p2","at":1792957703637}
+  ]
+}

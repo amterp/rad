@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "rad-check-should",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1792957704547,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 13, item 4.\n\n```rad\nmatches(\"# heading\", r\"^#{1,6}\\s\")                 // false\nmatches(\"# heading\", r\"^#{1,6}\\s\", partial=true)   // true\n```\n\nThe full-match default is documented, but a pattern with a leading `^` and no `$` is how a search is written in Go, Python and JavaScript. A Markdown escaper guarding heading-like lines silently did nothing; `rad check` was clean and only a round-trip test caught it. Under a full match a leading `^` is redundant, so it signals that the author meant a search.\n\nA `rad check` hint for a literal pattern with `^` but no `$` and no `partial` would catch this. The alternative, making search the default, is a breaking change.\n\nWhere: `core/func_matches.go`; a lint would go in `rts/check/ast_checks.go`.",
+  "effort": "s",
+  "id": "a_2o8vaPbZT",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "aS",
+  "related": [
+    "a_25Nhyjagi"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "rad check should hint when a matches() pattern starts with ^ but is a full match",
+  "type": "enhancement",
+  "updated_at_millis": 1792957708886,
+  "history": [
+    {"field":"column","value":"p2","at":1792957704547}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "say-that-a",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1792957703367,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 9, item 5 (the smaller point).\n\nA one-line description, `---Go.---`, is not valid in a command block or in the script header, and the error says only that the token is unexpected:\n\n```rad\ncommand go:\n    ---Go.---\n    calls do_go\n```\n\n```\nerror[RAD10009]: Unexpected '---Go.---'\n```\n\nThe shape looks like a short form of the header, and the Rad skill doc teaches it (batch 11, item 4), so agents write it. Either accept the one-line form or give a message saying the `---` delimiters go on their own lines.\n\nConfirmed on main (3459ddf1).\n\nWhere: rts/check syntax-error interpretation, or tree-sitter-rad if the form is accepted.",
+  "effort": "s",
+  "id": "a_2o8vYVqnX",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "aM",
+  "source": [
+    "friction-153"
+  ],
+  "title": "Say that a description block needs --- on their own lines",
+  "type": "enhancement",
+  "updated_at_millis": 1792957703367,
+  "history": [
+    {"field":"column","value":"p2","at":1792957703367}
+  ]
+}

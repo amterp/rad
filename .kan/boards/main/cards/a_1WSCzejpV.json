@@ -3,6 +3,14 @@
   "alias": "rad-check-map",
   "alias_explicit": false,
   "column": "low",
+  "comments": [
+    {
+      "id": "c_2o8vdhTzS",
+      "body": "#153 batch 13 hit this again: a state map like {\"buf\": \"\", \"toks\": []} makes every `st.buf += \"x\"` a RAD30002 hint, about 30 hints on one CLI, burying the real ones. Worse on main: passing such an unannotated map to a param typed { \"buf\": str, \"toks\": str[] } is RAD30001, an error that stops the script from running at all. Also: typed locals (`x: T = ...`, commit 41d317ba) are the workaround but appear only in the RAD40011 entry of reference/errors, not in guide/type-annotations or SYNTAX.md.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1792957706572
+    }
+  ],
   "created_at_millis": 1781182587197,
   "creator": "Alexander Terp",
   "description": "fn return like 'return { \"due\": due, \"message\": \"hi\" }' types as { str: int|str } instead of struct map { \"due\": int, \"message\": str }, so parsed.due picks up a spurious str arm and draws hints like 'int|dynamic|str - int' (remind L509, last remaining #139 type hint). Builtins already produce struct-map types (e.g. parse_epoch), so the machinery exists; the gap is map literals / user fn returns. Needs design thought on when to keep literal keys vs widen (e.g. dynamic-keyed writes).",
@@ -10,7 +18,7 @@
   "position": "xRUUUUUU",
   "title": "rad check: map literals widen to value-join, losing per-key types",
   "type": "enhancement",
-  "updated_at_millis": 1781182587197,
+  "updated_at_millis": 1792957706572,
   "history": [
     {"field":"column","value":"low","at":1781182587197}
   ]

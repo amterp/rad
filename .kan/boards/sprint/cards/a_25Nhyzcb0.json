@@ -3,6 +3,14 @@
   "alias": "add-regex-capture",
   "alias_explicit": false,
   "column": "p2",
+  "comments": [
+    {
+      "id": "c_2o8vdPjaD",
+      "body": "#153 batch 13 hit this again: a ~3,200-line Markdown CLI has about ten hand-written char-by-char scanners (code spans, links, URLs, delimiter runs) built on index_of(start=), and parsing ~100 KB takes about 10 s. Workarounds used: replace(s, pat, \"$1\", regex=true) for one capture, and a NUL-separator replace-then-split trick for find-all. Asks for a find that takes a start offset and returns {start, end, groups}, plus find_all.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1792957706398
+    }
+  ],
   "created_at_millis": 1786343579613,
   "creator": "Alexander Terp",
   "description": "`matches()` returns a bool and there is no capture or find-all API. Three structurally different workarounds arose independently across the corpus:\n\n- Write to a temp file and shell out to `rg -oe`: `jmx:98-111`, roughly 14 lines plus a subprocess plus an `rg` dependency, in a script averaging 6.4 seconds.\n- Guarded `replace()` abuse with `$1`: `jira-title-sync.rad:21-24`, `argus:232-233`, `dklogs:29`. Silently returns the input on no-match.\n- Peel one match per loop iteration: `tag-macro.rad:23-30`.\n\nSketch from the reports: `match(s, pat) -\u003e {match, groups}|null` and `find_all(s, pat, *, group=0)`.\n\nAlready tracked on the main board as \"regex text match function\", in `high`. Larger than the `escape_regex()` card in p0-tier1, which is why it sits here.\n\n---\n\n### Orientation\n\n- New builtins are docs-first: the `## Signature` line in `docs/funcs/\u003cname\u003e.md` **is** the type-checker's signature. There is no parallel definition in Go. Read `docs/funcs/README.md` for the full file contract before writing anything.\n- The regex engine is already Go's `regexp` (RE2). `core/func_matches.go` compiles the user pattern directly, and `core/func_replace.go` already exposes capture groups through `$1` substitution - so capture extraction is new surface, not new machinery.\n- Runtime dispatch and arg binding live in `core/funcs.go`: a `FUNC_X` name const plus a `BuiltInFunc{Name, Execute}` entry in the registration slice.\n\n### Watch out for\n\nGo's RE2 has no backreferences or lookaround. Anyone reaching for capture extraction is likely coming from PCRE; the doc should say what is not supported rather than letting them discover it through a compile error.\n",
@@ -22,7 +30,7 @@
   ],
   "title": "Add regex capture extraction",
   "type": "feature",
-  "updated_at_millis": 1792891644403,
+  "updated_at_millis": 1792957706398,
   "history": [
     {"field":"column","value":"p2","at":1786343579613}
   ]

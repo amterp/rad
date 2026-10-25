@@ -2,18 +2,27 @@
   "_v": 4,
   "alias": "rad-261-mut-excl-wrongly",
   "alias_explicit": false,
-  "column": "low",
+  "column": "done",
+  "comments": [
+    {
+      "id": "c_2o8wYfcuU",
+      "body": "No longer reproduces on main (3459ddf1), checked 2026-10-25 while triaging #153: with 'a str = \"x\"', 'b str?' and 'a mutually excludes b', passing --b runs (a=x b=hi) and so does passing neither. Closing; reopen with a repro if it comes back.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1792957741894
+    }
+  ],
   "created_at_millis": 1767762150163,
   "creator": "Alexander Terp",
   "id": "3d87U3zz",
   "labels": [
     "ai-hi"
   ],
-  "position": "Z!",
+  "position": "!!!1",
   "title": "RAD-261: mut excl: wrongly complains if one is default",
   "type": "bug",
-  "updated_at_millis": 1770438136490,
+  "updated_at_millis": 1792957741963,
   "history": [
-    {"field":"column","value":"low","at":1767762150163}
+    {"field":"column","value":"low","at":1767762150163},
+    {"field":"column","value":"done","at":1792957741963}
   ]
 }

@@ -1,0 +1,24 @@
+{
+  "_v": 4,
+  "alias": "print-err-mangles",
+  "alias_explicit": false,
+  "column": "p0-tier1",
+  "created_at_millis": 1792957703456,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 11, item 1.\n\n`print_err` passes the message to a printf-style function as the format string, so any `%` corrupts the output with no error:\n\n```rad\nprint_err(\"a%40nb 100%d\")\nprint(\"a%40nb 100%d\")\n```\n\n```\na%!n(MISSING)b 100%!d(MISSING)\na%40nb 100%d\n```\n\nURL-encoded ids (`/api/items/foo%40bar`), SQL `LIKE` patterns and percentages all hit it. The reporter routed stderr through `printf '%s'` to work around it.\n\nConfirmed on main (3459ddf1). It is the only `ScriptStderrf` call site; the other `*Stderrf` callers pass fixed formats.\n\nWhere: core/func_print.go:43, `RP.ScriptStderrf(resolvePrintStr(f))` should be `ScriptStderrf(\"%s\", ...)`.",
+  "effort": "xs",
+  "id": "a_2o8vYejn4",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "UUUUUUX",
+  "source": [
+    "friction-153"
+  ],
+  "title": "print_err mangles any message containing %",
+  "type": "bug",
+  "updated_at_millis": 1792957703456,
+  "history": [
+    {"field":"column","value":"p0-tier1","at":1792957703456}
+  ]
+}

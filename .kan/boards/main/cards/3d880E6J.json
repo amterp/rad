@@ -2,15 +2,24 @@
   "_v": 4,
   "alias": "rad-309-implement-typing-for",
   "alias_explicit": false,
-  "column": "low",
+  "column": "done",
+  "comments": [
+    {
+      "id": "c_2o8wYulPy",
+      "body": "Shipped in 41d317ba (2026-05-23, 'feat(check): typed local declarations end-to-end'): 'x: int = 3' declares a typed local and a later 'x = \"a\"' is RAD30001. Found stale while triaging #153.",
+      "author": "Alexander Terp",
+      "created_at_millis": 1792957742040
+    }
+  ],
   "created_at_millis": 1767762150489,
   "creator": "Alexander Terp",
   "id": "3d880E6J",
-  "position": "h!",
+  "position": "!!!0",
   "title": "RAD-309: Implement typing for local variables",
   "type": "feature",
-  "updated_at_millis": 1767762150489,
+  "updated_at_millis": 1792957742111,
   "history": [
-    {"field":"column","value":"low","at":1767762150489}
+    {"field":"column","value":"low","at":1767762150489},
+    {"field":"column","value":"done","at":1792957742111}
   ]
 }

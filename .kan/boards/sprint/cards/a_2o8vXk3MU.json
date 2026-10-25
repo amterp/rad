@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "a-constraint-after",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1792957702892,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 8, item 3.\n\nIn a command block, constraints must come before `default` and `calls`. Putting one after them, as `args:` blocks allow, produces two errors that point elsewhere:\n\n```rad\ncommand go:\n    ---\n    Go.\n    ---\n    a x bool\n    b y bool\n    default\n    calls do_go\n    a mutually excludes b\n```\n\n```\nerror[RAD10022]: 'default' outside of switch statement\nerror[RAD40020]: Command 'go' does nothing\n```\n\nNeither names the constraint line, and RAD10022 names a correctly placed `default` and a switch the script does not contain. Either accept constraints after `calls`, or report the misplaced constraint.\n\nConfirmed on main (3459ddf1).\n\nWhere: tree-sitter-rad command block rule; RAD10022 comes from the ERROR-node heuristics (9b4d2e80).",
+  "effort": "s",
+  "id": "a_2o8vXk3MU",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "aJ",
+  "related": [
+    "3d0a0ABE:a_1MnEBodjH"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "A constraint after default/calls in a command block gives a switch error",
+  "type": "bug",
+  "updated_at_millis": 1792957707383,
+  "history": [
+    {"field":"column","value":"p2","at":1792957702892}
+  ]
+}

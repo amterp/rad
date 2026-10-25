@@ -1,0 +1,27 @@
+{
+  "_v": 4,
+  "alias": "clamp-with-literal",
+  "alias_explicit": false,
+  "column": "p2",
+  "created_at_millis": 1792957703181,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 9, item 4.\n\n`clamp(val, min, max) -\u003e error|int|float` fails only when `min \u003e max`, which is known statically when both bounds are literals. `--strict` still flags it:\n\n```rad\nf = clamp(0.4, 0.0, 1.0)\n```\n\n```\nwarning[RAD30011]: This call can fail; the error isn't handled and would halt the script\n```\n\nIn a repo that keeps `--strict` clean so the fallible calls that matter stand out, the reporter replaced it with a nested ternary, which is longer and hides what the line does. Same class as the done card a_25Nhy9Un4 (hints on provably-safe code). Narrowing on literal bounds fixes this one; worth sweeping the other math builtins with error-only-on-bad-literal-args for the same shape.\n\nConfirmed on main (3459ddf1).\n\nWhere: rts/check/type_check.go, refineBuiltinReturn.",
+  "effort": "s",
+  "id": "a_2o8vYDRPe",
+  "labels": [
+    "ai-hi"
+  ],
+  "position": "aK",
+  "related": [
+    "a_25Nhy9Un4"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "clamp() with literal bounds trips RAD30011 under --strict",
+  "type": "enhancement",
+  "updated_at_millis": 1792957707663,
+  "history": [
+    {"field":"column","value":"p2","at":1792957703181}
+  ]
+}
