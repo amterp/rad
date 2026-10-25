@@ -1,0 +1,29 @@
+{
+  "_v": 4,
+  "alias": "decide-whether-on-a",
+  "alias_explicit": false,
+  "column": "high",
+  "created_at_millis": 1792959022058,
+  "creator": "Alexander Terp",
+  "description": "From #153, batch 10, item 2. Alex, 2026-10-25: this looks like an issue, not just a doc gap; decide it.\n\nInside a fn, `out += [x]` on a list parameter rebinds the local name, so the caller's list is unchanged. `m[k] = v` on a map parameter mutates the caller's map. A recursive flattener that accumulated into a list parameter silently returned nothing:\n\n```rad\nfn add_list(out):\n    out += [\"x\"]\nfn add_map(m):\n    m[\"k\"] = \"v\"\nl = []\nadd_list(l)   // l is still [ ]\nd = {}\nadd_map(d)    // d is { \"k\": \"v\" }\n```\n\nConfirmed on main (3459ddf1). Python mutates the caller's list here (list += extends in place). In Rad the parameter name ends up bound to a new list, which the caller never sees.\n\nOptions: make `+=` on a list extend in place (breaking for any script that relies on the copy), keep it and have rad check warn when a parameter is rebound by `+=`, or keep it and only document it (the skill-doc card a_2o8vX4jpu already proposes the gotcha). Related: a_2o8vaDjYI, where `+=` inside a fn writes the global while `x = x + v` makes a local.",
+  "effort": "s",
+  "id": "a_2o9TrPNBV",
+  "labels": [
+    "needs-decision",
+    "breaking"
+  ],
+  "position": "zzzp",
+  "related": [
+    "a_2o8vX4jpu",
+    "a_2o8vaDjYI"
+  ],
+  "source": [
+    "friction-153"
+  ],
+  "title": "Decide whether += on a list parameter should change the caller's list",
+  "type": "decision",
+  "updated_at_millis": 1792959037827,
+  "history": [
+    {"field":"column","value":"high","at":1792959022058}
+  ]
+}
