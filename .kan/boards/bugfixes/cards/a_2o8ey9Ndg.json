@@ -1,0 +1,17 @@
+{
+  "_v": 4,
+  "alias": "macos-sometimes-asks",
+  "alias_explicit": false,
+  "column": "todo-lo",
+  "created_at_millis": 1792957065776,
+  "creator": "Alexander Terp",
+  "description": "Alex's chat note, 2026-07-05: \"macos sometimes asks for folder permission\". He sees a macOS privacy prompt for folder access, probably when running scripts. The trigger is unknown (2026-10-25); he will note it next time. Record which folder, which script, and the binary's path when it happens; until then this cannot be acted on.",
+  "id": "a_2o8ey9Ndg",
+  "position": "aE",
+  "severity": "low",
+  "title": "macOS sometimes asks for folder access when running rad",
+  "updated_at_millis": 1792957065776,
+  "history": [
+    {"field":"column","value":"todo-lo","at":1792957065776}
+  ]
+}

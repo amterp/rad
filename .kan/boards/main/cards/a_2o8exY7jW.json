@@ -1,0 +1,17 @@
+{
+  "_v": 4,
+  "alias": "let-scripts-set",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957065417,
+  "creator": "Alexander Terp",
+  "description": "Alex's chat note, 2026-07-08: \"set_debug function, prob others\". Global options such as debug, quiet and color can only be set by flags on the command line; a script cannot turn them on for itself. #153's Tier 3 asks for the same thing for quiet (a script-level default).",
+  "id": "a_2o8exY7jW",
+  "position": "zx",
+  "title": "Let scripts set global options at runtime (set_debug, set_quiet, ...)",
+  "type": "feature",
+  "updated_at_millis": 1792957065417,
+  "history": [
+    {"field":"column","value":"low","at":1792957065417}
+  ]
+}

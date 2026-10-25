@@ -1,0 +1,20 @@
+{
+  "_v": 4,
+  "alias": "live-data-playground",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957065327,
+  "creator": "Alexander Terp",
+  "description": "Alex's chat note, 2026-07-05: \"some ide native way to manipulate live data. have a json query result and see live output of your rad code manipulations\". Hold a captured JSON result in the editor and see the output of the Rad code transforming it update as you type, like a notebook or playground. Probably lives in the VS Code extension or the language server.",
+  "id": "a_2o8exPWch",
+  "labels": [
+    "ai-think"
+  ],
+  "position": "zt",
+  "title": "Live data playground: preview Rad transformations on a JSON sample in the editor",
+  "type": "feature",
+  "updated_at_millis": 1792957065327,
+  "history": [
+    {"field":"column","value":"low","at":1792957065327}
+  ]
+}

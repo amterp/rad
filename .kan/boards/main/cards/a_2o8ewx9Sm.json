@@ -1,0 +1,23 @@
+{
+  "_v": 4,
+  "alias": "rad-check-report",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957065048,
+  "creator": "Alexander Terp",
+  "description": "Alex's chat note, 2026-07-04: \"if not rad fmt, catch in rad check?\" Today the two disagree: on a badly formatted script, rad check --strict prints \"No diagnostics to report\" while rad fmt --check exits 1. rad check could report a formatting diagnostic (likely at hint or info level) so one command covers both.",
+  "id": "a_2o8ewx9Sm",
+  "labels": [
+    "ai-lo"
+  ],
+  "position": "z",
+  "related": [
+    "3d86coV6"
+  ],
+  "title": "rad check: report scripts that rad fmt would change",
+  "type": "enhancement",
+  "updated_at_millis": 1792957065899,
+  "history": [
+    {"field":"column","value":"low","at":1792957065048}
+  ]
+}

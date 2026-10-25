@@ -1,0 +1,17 @@
+{
+  "_v": 4,
+  "alias": "support-map-map-as",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1792957065604,
+  "creator": "Alexander Terp",
+  "description": "Alex's chat note, 2026-09-28: \"map + map?\" Today {\"x\": 1} + {\"y\": 2} fails with RAD30002 \"Invalid operand types\". Lists already concatenate with +. Decide which value wins when both maps hold the same key (the right side, as in most languages, is the obvious default), and whether nested maps merge or replace.",
+  "id": "a_2o8exr1np",
+  "position": "zzV",
+  "title": "Support map + map as merge",
+  "type": "feature",
+  "updated_at_millis": 1792957065604,
+  "history": [
+    {"field":"column","value":"low","at":1792957065604}
+  ]
+}
