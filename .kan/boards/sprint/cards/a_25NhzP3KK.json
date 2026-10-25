@@ -11,13 +11,16 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "UUUUUU",
+  "position": "a4",
+  "related": [
+    "3d0a0ABE:3d87NSqY"
+  ],
   "source": [
     "takehome"
   ],
   "title": "Fill the stdlib gaps that scripts shell out for",
   "type": "feature",
-  "updated_at_millis": 1786355431232,
+  "updated_at_millis": 1792891644578,
   "history": [
     {"field":"column","value":"p2","at":1786343579873}
   ]

@@ -11,13 +11,16 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUUUUUUUUUUU",
+  "position": "aA",
+  "related": [
+    "a_25NhzP3KK"
+  ],
   "source": [
     "takehome"
   ],
   "title": "Add a --format json output mode",
   "type": "feature",
-  "updated_at_millis": 1786355431752,
+  "updated_at_millis": 1792891643735,
   "history": [
     {"field":"column","value":"p2","at":1786343755726}
   ]

@@ -26,12 +26,18 @@
     "ai-lo"
   ],
   "position": "UUUUUUUUU",
+  "related": [
+    "b_sBGk8Gtk:a_sBPzQCcM",
+    "b_sBGk8Gtk:a_25TdYyCC3",
+    "b_sBGk8Gtk:a_sBQtDAsa",
+    "b_sBGk8Gtk:a_sBQ8LS6p"
+  ],
   "source": [
     "main-board"
   ],
   "title": "Clear the four shippable todo-hi bugs on the bugfixes board",
   "type": "bug",
-  "updated_at_millis": 1786386944279,
+  "updated_at_millis": 1792891643558,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786343755432},
     {"field":"column","value":"approved","at":1786356810714},

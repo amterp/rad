@@ -11,14 +11,18 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "U",
+  "position": "a0",
+  "related": [
+    "3d0a0ABE:a_cVkfn5BB",
+    "3d0a0ABE:3d85pkAG"
+  ],
   "source": [
     "takehome",
     "main-board"
   ],
   "title": "Add regex capture extraction",
   "type": "feature",
-  "updated_at_millis": 1786355431010,
+  "updated_at_millis": 1792891644403,
   "history": [
     {"field":"column","value":"p2","at":1786343579613}
   ]

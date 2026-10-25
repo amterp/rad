@@ -21,7 +21,7 @@
   "creator": "Alexander Terp",
   "description": "Split out of a_sBRDpFgU (2026-08-10). That card bundled a design question with a confirmed sub-bug; this is the sub-bug, which ships independently of whatever we decide about error defusal.\n\n**Repro:**\nfn fail():\n    return error(\"boom\")\n\nstored = fail() catch:\n    pass\n\nfn relay(x):\n    return x\n\nresult = relay(stored)  // crashes, and points at the fail() line, not relay()\n\n**Root cause:** `core/errors.go:36-44` - `NewRadPanic` fills the span only when it is nil:\n\n    unwrapped := err.RequireError(i, node)\n    if unwrapped.Span == nil {\n        unwrapped.Span = nodeSpanPtr(node)\n    }\n\nA stored error already carries the span from where it was first constructed, so re-panicking it at `core/type_fn.go:243-245` keeps the original attribution and the new call site is never recorded.\n\nThe intent to re-attribute already exists elsewhere: `core/type_fn.go:247-249` clears the span on the non-panicking propagate path, precisely so the next raise site can claim it. That just does not cover the panic path.\n\n**Decision:** report the new site, the original site, or both. Both reads best - \"raised at :3, re-raised at :9\" - and it is the only version that does not throw away information the interpreter has at hand.\n\n**Independent of the error-identity decision.** Whether or not `catch: pass` ends up defusing the value, blaming the wrong line is wrong.",
   "id": "a_25TdYyCC3",
-  "position": "u8UUUUUU",
+  "position": "aF",
   "severity": "medium",
   "title": "Re-propagated errors are blamed on the original call site",
   "updated_at_millis": 1786358056611,

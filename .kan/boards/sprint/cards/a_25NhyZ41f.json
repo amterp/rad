@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "teach-the",
   "alias_explicit": false,
+  "blocked_by": [
+    "a_25S3ICERd"
+  ],
   "column": "p1",
   "created_at_millis": 1786343579356,
   "creator": "Alexander Terp",
@@ -11,13 +14,16 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "UUUU",
+  "position": "a3",
+  "related": [
+    "3d0a0ABE:a_m0uQC1ua"
+  ],
   "source": [
     "friction-153"
   ],
   "title": "Teach the interpolation parse errors to name the rule",
   "type": "enhancement",
-  "updated_at_millis": 1786355430792,
+  "updated_at_millis": 1792891645055,
   "history": [
     {"field":"column","value":"p1","at":1786343579356}
   ]

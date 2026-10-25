@@ -11,7 +11,7 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUUUUUUUUUUU",
+  "position": "aC",
   "title": "Variadic int args render `ints`, not `[ints...]` - needs an ra release",
   "type": "bug",
   "updated_at_millis": 1786439942330,

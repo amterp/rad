@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): no recursion depth limit; deep self-recursion now hits a raw Go `fatal error: stack overflow` (exit code 2) rather than a clean rad error. (Originally reported as \"hangs forever\"; current behavior is a Go-level crash.)\n\n**Repro:**\nfn infinite():\n    return infinite()\n\ninfinite()   // -\u003e fatal error: stack overflow (Go runtime, ~1GB stack)\n\nMost languages impose a recursion limit (e.g. Python's ~1000) and raise a clean error.\n\n**Fix:** add a call-depth counter in the interpreter and emit a clean rad error past a limit. Pairs with the circular-data crash (both are unbounded recursion crashing Go).",
   "grammar": false,
   "id": "a_sBTwEeRL",
-  "position": "s6",
+  "position": "aA",
   "severity": "high",
   "title": "Infinite recursion has no depth limit - must be killed externally",
   "updated_at_millis": 1781449744256,

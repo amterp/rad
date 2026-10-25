@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. Sorting a list containing NaN produces a nonsensical order because NaN violates comparison transitivity.\n\n**Repro:**\nnan = pow(-1, 0.5)   // NaN  (note: 0.0/0 now raises RAD20036 divide-by-zero, so use pow)\nitems = [5, 4, nan, 3, nan, 2, 1]\nprint(items.sort())  // broken order - NaN not sorted to end, comparisons inconsistent\n\n**Design options:** error on NaN in sort, or define a NaN ordering (e.g. sort NaN to the end).",
   "grammar": false,
   "id": "a_sBSpTja4",
-  "position": "Mc",
+  "position": "a3",
   "severity": "medium",
   "tags": [
     "design"

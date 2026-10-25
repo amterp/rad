@@ -22,7 +22,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces (both forms error RAD10009; the `?? (-1)` workaround works).\n\nWriting a negative number literal as the fallback value for ?? or catch causes a parse error.\n\n**Repro:**\nr = parse_int(\"x\") ?? -1      // error[RAD10009]: Unexpected '-'\nr = risky() catch -1          // error[RAD10009]: Unexpected '-'\n\n**Workarounds:**\n- Parentheses: `?? (-1)`  (confirmed working)\n- A variable: `fallback = -1; r = parse_int(\"x\") ?? fallback`\n- Arithmetic: `?? (0 - 1)`\n\nThe parser does not recognize unary minus in this position. Natural to write - any user using ?? / catch with negative defaults hits it.\n\n**Fix (slam dunk):** allow a unary-minus literal as the RHS of `??` / `catch` in the parser. The parens workaround proves it is purely a parsing gap.",
   "grammar": true,
   "id": "a_sBPzQCcM",
-  "position": "u8UUUUUUUU",
+  "position": "aH",
   "severity": "medium",
   "tags": [
     "quick-win"

@@ -8,36 +8,42 @@ default_column = "uncommitted"
   color = "#6b7280"
   description = "Ideas and thoughts not yet committed to"
   limit = 0
+  category = "idea"
 
 [[columns]]
   name = "low"
   color = "#94a3b8"
   description = "Low priority planned work"
   limit = 0
+  category = "open"
 
 [[columns]]
   name = "high"
   color = "#f59e0b"
   description = "High priority planned work"
   limit = 10
+  category = "open"
 
 [[columns]]
   name = "next"
   color = "#3b82f6"
   description = "Ready to be picked up next"
   limit = 10
+  category = "open"
 
 [[columns]]
   name = "in-progress"
   color = "#ec4899"
   description = "Currently being worked on"
   limit = 5
+  category = "active"
 
 [[columns]]
   name = "done"
   color = "#9333ea"
   description = "Completed work"
   limit = 0
+  category = "done"
 
 [custom_fields]
   [custom_fields.labels]

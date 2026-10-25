@@ -19,13 +19,17 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "UUUUU",
+  "position": "UUUUUUT",
+  "related": [
+    "3d0a0ABE:3d89BfD3",
+    "3d0a0ABE:3d88aOxC"
+  ],
   "source": [
     "friction-153"
   ],
   "title": "Add a @min_version header macro",
   "type": "feature",
-  "updated_at_millis": 1786397552516,
+  "updated_at_millis": 1792891644674,
   "history": [
     {"field":"column","value":"p2","at":1786343579665},
     {"field":"column","value":"big-rocks","at":1786397552516}

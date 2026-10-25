@@ -7,10 +7,11 @@
   "creator": "Alexander Terp",
   "description": "Right now, json path elements are technically required to be identifiers, which cannot have spaces in them.\n\nWe need to allow spaces!\n\nSome ideas:\n\n```\na = json.name[\"bob smith\"]\na = json.name.\"bob smith\"\n```",
   "id": "3d85nJ1T",
+  "parent": "3d8AKFEv",
   "position": "8K",
   "title": "RAD-48: Allow JSON paths with spaces in them",
   "type": "feature",
-  "updated_at_millis": 1767762149119,
+  "updated_at_millis": 1792891645268,
   "history": [
     {"field":"column","value":"low","at":1767762149119}
   ]

@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "add-reply-env-so",
   "alias_explicit": false,
+  "blocked_by": [
+    "a_25Rcu1uOI"
+  ],
   "column": "p1",
   "created_at_millis": 1786464906935,
   "creator": "Alexander Terp",
@@ -11,13 +14,13 @@
   "labels": [
     "security"
   ],
-  "position": "UUUUUUUUUUUUU",
+  "position": "aD",
   "source": [
     "agent-redteam"
   ],
   "title": "Add --reply-env so secret prompts have a non-interactive path",
   "type": "feature",
-  "updated_at_millis": 1786464906935,
+  "updated_at_millis": 1792891641806,
   "history": [
     {"field":"column","value":"p1","at":1786464906935}
   ]

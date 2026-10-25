@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nCalling zip() with fill=null truncates to the shortest list - same as no fill. But fill=0, fill=false, fill=\"\" all correctly pad to the longest.\n\n**Repro:**\na = [1, 2, 3]\nb = [4, 5]\nprint(zip(a, b, fill=null))\n// Actual:   [[1, 4], [2, 5]]            (truncated, same as no fill)\n// Expected: [[1, 4], [2, 5], [3, null]]\n\n**Root cause:** `core/funcs.go:~966` (was cited as :950) - the fill default is null and the code checks IsNull() to decide truncate-vs-pad, so explicit fill=null is indistinguishable from \"not provided.\"\n\n**Design/impl:** track whether the fill arg was explicitly passed rather than using null as the sentinel.",
   "grammar": false,
   "id": "a_sBTYIo6x",
-  "position": "gI",
+  "position": "a7",
   "severity": "medium",
   "tags": [
     "design"

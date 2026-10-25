@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "epoch-to-string-date",
   "alias_explicit": false,
+  "blocked_by": [
+    "b_25NZSqFz2:a_25Nhxf1jZ"
+  ],
   "column": "high",
   "created_at_millis": 1781147184373,
   "creator": "Alexander Terp",
@@ -10,7 +13,7 @@
   "position": "t!UUUU",
   "title": "Epoch-to-string date formatting (inverse of parse_date)",
   "type": "feature",
-  "updated_at_millis": 1781147184373,
+  "updated_at_millis": 1792891642005,
   "history": [
     {"field":"column","value":"high","at":1781147184373}
   ]

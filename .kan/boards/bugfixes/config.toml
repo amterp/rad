@@ -8,24 +8,28 @@ default_column = "todo-lo"
   color = "#6b7280"
   description = "Low priority bugs to fix eventually"
   limit = 0
+  category = "open"
 
 [[columns]]
   name = "todo-hi"
   color = "#ef4444"
   description = "High priority bugs to fix soon"
   limit = 0
+  category = "open"
 
 [[columns]]
   name = "in-progress"
   color = "#f59e0b"
   description = "Bugs currently being worked on"
   limit = 0
+  category = "active"
 
 [[columns]]
   name = "done"
   color = "#10b981"
   description = "Fixed and verified"
   limit = 0
+  category = "done"
 
 [custom_fields]
   [custom_fields.grammar]

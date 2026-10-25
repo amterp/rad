@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "rad-107-add-rad-block-syntax",
   "alias_explicit": false,
+  "blocked_by": [
+    "b_25NZSqFz2:a_25Ni00cAk"
+  ],
   "column": "low",
   "created_at_millis": 1767762149462,
   "creator": "Alexander Terp",
@@ -10,7 +13,7 @@
   "position": "Gm",
   "title": "RAD-107: Add rad block syntax for deriving new columns",
   "type": "feature",
-  "updated_at_millis": 1767762149462,
+  "updated_at_millis": 1792891642896,
   "history": [
     {"field":"column","value":"low","at":1767762149462}
   ]

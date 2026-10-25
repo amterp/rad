@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nWhen the left and right sides of a multiple assignment have different counts, no error is raised: extra values are silently dropped, missing values become null.\n\n**Repro:**\na, b = 1, 2, 3\nprint(a, b)     // 1 2      (3 silently dropped)\n\nc, d, e = 1, 2\nprint(c, d, e)  // 1 2 null (e silently set to null)\n\n**Design question:** both should arguably error to catch typos and logic mistakes (vs the current asymmetric drop/null-fill).",
   "grammar": false,
   "id": "a_sBTqWVMa",
-  "position": "oA",
+  "position": "a9",
   "severity": "medium",
   "tags": [
     "design"

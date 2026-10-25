@@ -11,7 +11,7 @@
   "labels": [
     "security"
   ],
-  "position": "UUUUUUUUUU",
+  "position": "aA",
   "title": "🐚 --shell export mode emits unescaped values into an eval",
   "type": "bug",
   "updated_at_millis": 1786375488447,

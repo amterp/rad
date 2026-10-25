@@ -11,13 +11,20 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUUUUUUUUUUUU",
+  "position": "aB",
+  "related": [
+    "3d0a0ABE:a_dpgQ5KqD",
+    "3d0a0ABE:a_lJarzcUb",
+    "3d0a0ABE:a_m0uQC1ua",
+    "3d0a0ABE:a_m0vosQ81",
+    "3d0a0ABE:a_m0xSHTFY"
+  ],
   "source": [
     "main-board"
   ],
   "title": "Rescue the five orphaned cards on the main board",
   "type": "chore",
-  "updated_at_millis": 1786355431796,
+  "updated_at_millis": 1792891644097,
   "history": [
     {"field":"column","value":"p2","at":1786343755788}
   ]

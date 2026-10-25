@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "rad-117-import-functions-from",
   "alias_explicit": false,
+  "blocked_by": [
+    "b_25NZSqFz2:a_25Ni06X2R"
+  ],
   "column": "uncommitted",
   "created_at_millis": 1767762151406,
   "creator": "Alexander Terp",
@@ -10,7 +13,7 @@
   "position": "RH",
   "title": "RAD-117: Import functions from other scripts (SEO: std lib, stdlib)",
   "type": "feature",
-  "updated_at_millis": 1767762151406,
+  "updated_at_millis": 1792891642630,
   "history": [
     {"field":"column","value":"uncommitted","at":1767762151406}
   ]

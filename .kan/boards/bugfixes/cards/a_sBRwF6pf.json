@@ -16,7 +16,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. The indentation rule (content cannot have less indentation than the closing \"\"\") is documented and intentional - but the error message is unhelpful and gives no indication of the actual problem.\n\n**The problem:**\ns = \"\"\"\nhi\n    \"\"\"\n// error[RAD10009]: Unexpected ... (generic \"look for extra symbols\")\n\nThe generic RAD10009 gives zero indication this is about multi-line string indentation. The user cannot understand what went wrong without already knowing the rule.\n\n**Expected:** a specific message like \"Content line has less indentation than the closing triple-quote\", pointing at the relevant lines.\n\n**Fix (slam dunk):** detect the content-less-indented-than-closing-quote case and emit a targeted error. Error-message-only, no behavior change.",
   "grammar": false,
   "id": "a_sBRwF6pf",
-  "position": "u8UUU",
+  "position": "aC",
   "severity": "low",
   "tags": [
     "quick-win"

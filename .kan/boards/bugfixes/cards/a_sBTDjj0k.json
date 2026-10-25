@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\n`and` always returns a boolean, but `or` returns the actual operand value (short-circuit semantics). These are inconsistent.\n\n**Repro:**\nprint(1 and 2)   // true  (boolean)\nprint(1 or 2)    // 1     (the operand value)\nprint(0 or 2)    // 2     (the operand value)\n\n**Source:** `core/expr_ops.go:61-75` (and returns bool; or returns the operand).\n\nUsers from Python/JS expect both to return operand values (short-circuit), or both to return booleans.\n\n**Design question:** unify the two - and changing either is a potentially breaking semantic change.",
   "grammar": false,
   "id": "a_sBTDjj0k",
-  "position": "YQ",
+  "position": "a6",
   "severity": "medium",
   "tags": [
     "design"

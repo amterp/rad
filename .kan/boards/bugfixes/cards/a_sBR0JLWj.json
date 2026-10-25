@@ -16,7 +16,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces.\n\nWhen a nested for loop reuses the outer loop's iteration variable name, the inner loop overwrites the outer variable. After the inner loop completes, the outer variable holds the inner loop's final value.\n\n**Repro:**\nfor i in range(3):\n    for i in range(2):\n        pass\n    print(i)\n// Expected: 0, 1, 2\n// Actual:   1, 1, 1   (inner loop's final value)\n\nThe outer loop still iterates the right number of times (its internal index is separate), but any code referencing the variable after the inner loop sees the wrong value. Realistic with common names like i, x, item.\n\n**Design:** shadow inner loop vars in a child scope, or save/restore the outer var (same save/restore family as the loop-context bug).",
   "grammar": false,
   "id": "a_sBR0JLWj",
-  "position": "u8UUUUU",
+  "position": "aE",
   "severity": "high",
   "tags": [
     "design"

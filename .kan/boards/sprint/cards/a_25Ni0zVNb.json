@@ -8,7 +8,7 @@
   "description": "Flags that work as both `-m` and `-m 2`. Deliberately split off from the passthrough-args case by the review so its thinner evidence wouldn't ride the strong one: two scripts, `cct`'s hand-parse and `bro:41` (\"Rad flags can't declare an optional value\").",
   "effort": "m",
   "id": "a_25Ni0zVNb",
-  "position": "UUUUUUUU",
+  "position": "a6",
   "source": [
     "takehome"
   ],

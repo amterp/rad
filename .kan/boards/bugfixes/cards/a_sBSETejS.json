@@ -16,7 +16,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still a raw Go panic.\n\nWriting an integer literal that exceeds int64 range causes an unrecoverable Go panic instead of a user-friendly error.\n\n**Repro:**\nx = 9223372036854775808   // max int64 + 1\n// panic: converter: failed to parse int \"9223372036854775808\": strconv.ParseInt: ... value out of range\n\nAlso cannot express the minimum int64 value as a literal: -9223372036854775808 panics.\n\n**Source:** `rts/converter.go:1212` (was cited as :1151) - `convertInt()` calls `panic()` on parse failure.\n\n**Fix (slam dunk):** replace the `panic()` with a clean rad compile error; the converter already emits errors elsewhere, so callers handle it. Kills a raw Go panic.",
   "grammar": false,
   "id": "a_sBSETejS",
-  "position": "u8UU",
+  "position": "aB",
   "severity": "high",
   "tags": [
     "quick-win"

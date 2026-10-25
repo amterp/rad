@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. All integer arithmetic silently wraps on overflow (Go int64 semantics) - no error, no warning, just wrong results.\n\n**Repro:**\nmax_int = 9223372036854775807\nprint(max_int + 1)    // -9223372036854775808 (wrapped)\nprint(max_int * 2)    // -2\n\nLow priority because most users will not work near int64 bounds, but when they do, the failure is silent.\n\n**Design question:** error on overflow / promote to float / bigint / warn-and-wrap. Each has a performance or semantic cost.",
   "grammar": false,
   "id": "a_sBSZN4IY",
-  "position": "Ig",
+  "position": "a2",
   "severity": "medium",
   "tags": [
     "design"

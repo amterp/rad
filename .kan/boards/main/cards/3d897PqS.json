@@ -8,9 +8,12 @@
   "description": "```\ncommand add:\n  verbose bool\n  command file:  // \u003c\u003c This\n    on_call on_add_file\n```",
   "id": "3d897PqS",
   "position": "UU",
+  "related": [
+    "b_25NZSqFz2:a_25Rcu72Hl"
+  ],
   "title": "RAD-394: cmds: support nested command definitions (rad4)",
   "type": "feature",
-  "updated_at_millis": 1783561694916,
+  "updated_at_millis": 1792891686857,
   "history": [
     {"field":"column","value":"low","at":1767762151182},
     {"field":"column","value":"in-progress","at":1781147619453}

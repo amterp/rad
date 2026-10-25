@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. This is documented intended behavior (the basics guide states \"if you divide two ints, you will get back a float\"), but the UX is poor.\n\n**The problem:**\nitems = [\"a\", \"b\", \"c\", \"d\"]\nmid = 4 / 2     // 2.0 (float)\nitems[mid]      // error[RAD30001]: Expected int, got float: 2\n\nThe display hides the float nature (shows `2` not `2.0`), making the subsequent error confusing. There is no integer-division operator (`//` is a comment in Rad).\n\n**Workaround:** `int(a / b)`\n\n**Design options:**\n1. Add a `//` integer-division operator (would need different comment syntax)\n2. Return int when division is exact (6/3 -\u003e 2, 7/3 -\u003e 2.333)\n3. Add a `div()` / `idiv()` builtin",
   "grammar": false,
   "id": "a_sBPpKYdk",
-  "position": "2w",
+  "position": "a0",
   "severity": "medium",
   "tags": [
     "design"

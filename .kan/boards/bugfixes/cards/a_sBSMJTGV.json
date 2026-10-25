@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still a hard crash.\n\nCreating a circular reference (e.g. a map containing itself) and then printing or comparing it causes a Go runtime stack overflow - a hard crash, not a recoverable error.\n\n**Repro:**\nm = {}\nm[\"self\"] = m\nprint(m)   // fatal error: stack overflow\n\na = [1]\na[0] = a\nprint(a)   // fatal error: stack overflow\n\nNo cycle detection exists in print or equality (the value visitor in core/type_visitor.go / type_rad_value.go recurses without a visited-set). Unlikely in normal usage, but a hard crash is always bad.\n\n**Fix:** add a depth guard or cycle detection in print + equality. Pairs with the infinite-recursion crash (both are unbounded recursion crashing Go).",
   "grammar": false,
   "id": "a_sBSMJTGV",
-  "position": "Ek",
+  "position": "a1",
   "severity": "high",
   "title": "Circular data structures cause stack overflow crash",
   "updated_at_millis": 1781449744169,

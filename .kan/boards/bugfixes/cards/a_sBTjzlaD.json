@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. (Note: real case syntax is single-line `case X -\u003e body`, not the `case X:` originally shown.)\n\nAll case expressions in a switch are evaluated before matching, including those after the matching case. Functions with side effects in case expressions execute for every case.\n\n**Repro:**\nfn log_(x):\n    print(\"evaluating: {x}\")\n    return x\n\nswitch 1:\n    case log_(1) -\u003e print(\"matched 1\")\n    case log_(2) -\u003e print(\"matched 2\")\n// prints \"evaluating: 1\" AND \"evaluating: 2\", then \"matched 1\"\n\n**Source:** `core/interpreter.go:451-459` loops through all cases and calls eval(key) on every case key before matching.\n\n**Design:** switch to lazy evaluation (stop after the first match) - a control-flow change.",
   "grammar": false,
   "id": "a_sBTjzlaD",
-  "position": "kE",
+  "position": "a8",
   "severity": "medium",
   "tags": [
     "design"

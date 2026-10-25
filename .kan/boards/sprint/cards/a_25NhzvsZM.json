@@ -11,13 +11,16 @@
   "labels": [
     "needs-decision"
   ],
-  "position": "UU",
+  "position": "a0",
+  "related": [
+    "3d0a0ABE:3d89pFwG"
+  ],
   "source": [
     "takehome"
   ],
   "title": "Decide how http_* failures enter the error model",
   "type": "decision",
-  "updated_at_millis": 1786343580196,
+  "updated_at_millis": 1792891644952,
   "history": [
     {"field":"column","value":"stretch","at":1786343580196}
   ]

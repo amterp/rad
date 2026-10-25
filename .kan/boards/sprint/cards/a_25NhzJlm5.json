@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "sweep-the-docs-for",
   "alias_explicit": false,
+  "blocked_by": [
+    "a_25Nhxb3F4"
+  ],
   "column": "p2",
   "created_at_millis": 1786343579820,
   "creator": "Alexander Terp",
@@ -11,14 +14,14 @@
   "labels": [
     "ai-hi"
   ],
-  "position": "UUUUU",
+  "position": "a3",
   "source": [
     "friction-153",
     "takehome"
   ],
   "title": "Sweep the docs for wrong and missing rules",
   "type": "docs",
-  "updated_at_millis": 1786355431189,
+  "updated_at_millis": 1792891641439,
   "history": [
     {"field":"column","value":"p2","at":1786343579820}
   ]

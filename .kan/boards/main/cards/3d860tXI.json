@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "rad-76-pass-csv-or-map-column",
   "alias_explicit": false,
+  "blocked_by": [
+    "3d87re33"
+  ],
   "column": "low",
   "created_at_millis": 1767762149249,
   "creator": "Alexander Terp",
@@ -10,7 +13,7 @@
   "position": "Bt",
   "title": "RAD-76: Pass csv or map\u003ccolumn, values\u003e to display block",
   "type": "feature",
-  "updated_at_millis": 1767762149249,
+  "updated_at_millis": 1792891643473,
   "history": [
     {"field":"column","value":"low","at":1767762149249}
   ]

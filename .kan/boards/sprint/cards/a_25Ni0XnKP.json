@@ -11,7 +11,11 @@
   "labels": [
     "needs-decision"
   ],
-  "position": "UU",
+  "position": "UUUUUUR",
+  "related": [
+    "3d0a0ABE:3d88GExh",
+    "3d0a0ABE:a_1WDfo1wKo"
+  ],
   "source": [
     "takehome",
     "vision",
@@ -19,7 +23,7 @@
   ],
   "title": "Add a parallelism primitive",
   "type": "feature",
-  "updated_at_millis": 1786355431491,
+  "updated_at_millis": 1792891644174,
   "history": [
     {"field":"column","value":"parked","at":1786343580575},
     {"field":"column","value":"big-rocks","at":1786352917354}

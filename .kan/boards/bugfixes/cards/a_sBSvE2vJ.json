@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces. Comparing a large int to its float representation gives a wrong result because the int is converted to float, losing precision.\n\n**Repro:**\nx = 9223372036854775807\nprint(x == 9223372036854775807.0)  // true (WRONG)\n// the float is actually 9223372036854776000 (rounded up)\n\nEdge case, only relevant at int64 bounds.\n\n**Design question:** stricter cross-type equality, arbitrary precision, or accept/document this IEEE-754 behavior.",
   "grammar": false,
   "id": "a_sBSvE2vJ",
-  "position": "QY",
+  "position": "a4",
   "severity": "medium",
   "tags": [
     "design"

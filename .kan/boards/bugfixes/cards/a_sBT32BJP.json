@@ -8,7 +8,7 @@
   "description": "RE-VERIFIED 2026-06-14 (rad v0.10.1): still reproduces in all three forms (list, map, comprehension).\n\nWhen a void function result is placed in a list or map literal, the entry is silently removed rather than producing an error.\n\n**Repro:**\nfn do_nothing():\n    pass\n\nitems = [do_nothing(), 1, 2]\nprint(items)   // [1, 2]   (void element silently dropped)\n\nm = {\"a\": do_nothing(), \"b\": 2}\nprint(m)       // {\"b\": 2}  (void entry silently dropped)\n\nresult = [do_nothing() for x in [1, 2, 3]]\nprint(result)  // []        (all void results dropped)\n\nThis can hide confusing bugs when a function was supposed to return a value but does not.\n\n**Design question:** error on void in a collection literal, or keep the silent-filter behavior.",
   "grammar": false,
   "id": "a_sBT32BJP",
-  "position": "UU",
+  "position": "a5",
   "severity": "medium",
   "tags": [
     "design"

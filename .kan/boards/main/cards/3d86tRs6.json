@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "rad-156-shell-confirm-don-t",
   "alias_explicit": false,
+  "blocked_by": [
+    "a_1TG4d1ZL6"
+  ],
   "column": "low",
   "created_at_millis": 1767762149801,
   "creator": "Alexander Terp",
@@ -10,7 +13,7 @@
   "position": "Pf",
   "title": "RAD-156: shell confirm: don't fail if not critical command",
   "type": "feature",
-  "updated_at_millis": 1767762149801,
+  "updated_at_millis": 1792891643387,
   "history": [
     {"field":"column","value":"low","at":1767762149801}
   ]

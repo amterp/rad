@@ -2,6 +2,9 @@
   "_v": 4,
   "alias": "decide-the-table",
   "alias_explicit": false,
+  "blocked_by": [
+    "a_25Nhxb3F4"
+  ],
   "column": "stretch",
   "created_at_millis": 1786343580251,
   "creator": "Alexander Terp",
@@ -11,13 +14,13 @@
   "labels": [
     "needs-decision"
   ],
-  "position": "UUU",
+  "position": "a1",
   "source": [
     "takehome"
   ],
   "title": "Decide the table-from-records syntax",
   "type": "decision",
-  "updated_at_millis": 1786343580251,
+  "updated_at_millis": 1792891641636,
   "history": [
     {"field":"column","value":"stretch","at":1786343580251}
   ]

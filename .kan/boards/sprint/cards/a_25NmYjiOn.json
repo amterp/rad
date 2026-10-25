@@ -11,13 +11,16 @@
   "labels": [
     "ai-lo"
   ],
-  "position": "UUUUUUUUU",
+  "position": "a9",
+  "related": [
+    "3d0a0ABE:a_1WDfo1wKo"
+  ],
   "source": [
     "takehome"
   ],
   "title": "Close the stash lost-update with a locked update_state()",
   "type": "feature",
-  "updated_at_millis": 1786355431623,
+  "updated_at_millis": 1792891644251,
   "history": [
     {"field":"column","value":"p1","at":1786343755541}
   ]

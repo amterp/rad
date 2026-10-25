@@ -9,9 +9,12 @@
   "effort": "s",
   "id": "a_265linKNW",
   "position": "UUUUUUUUUU",
+  "related": [
+    "b_1QxU4mriV:a_1QxUtGFzH"
+  ],
   "title": "Nested commands drop their path from the usage line - needs an ra release",
   "type": "bug",
-  "updated_at_millis": 1786448587657,
+  "updated_at_millis": 1792891645201,
   "history": [
     {"field":"column","value":"p0-tier1","at":1786448587657}
   ]
