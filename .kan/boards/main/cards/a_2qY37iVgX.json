@@ -1,0 +1,21 @@
+{
+  "_v": 4,
+  "alias": "rad-fmt-cannot-parse",
+  "alias_explicit": false,
+  "column": "low",
+  "created_at_millis": 1793313103023,
+  "creator": "Alexander Terp",
+  "description": "Seen 2026-10-28 on rad v0.12.1, still so on 2026-10-29. The one-line script `a, b = 1, 2` runs, and `rad check` on it prints \"No diagnostics to report\", but `rad fmt` prints `\u003cfile\u003e: could not parse, skipping.` and leaves the file unformatted. The same assignment inside a `fn` body formats fine, as does `a, b = [1, 2]` at top level.\n\nThe message names no line and no parse error, so in a longer script the only way to find the cause was bisecting the file by hand.\n\nRelated: a_2o8ewx9Sm, another case of rad check and rad fmt disagreeing about a script.\n\nPossibly: make rad fmt's parser accept a top-level multi-value assignment, and have \"could not parse\" print the line and the parse error.",
+  "effort": "s",
+  "id": "a_2qY37iVgX",
+  "position": "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+  "related": [
+    "a_2o8ewx9Sm"
+  ],
+  "title": "rad fmt cannot parse a top-level multi-value assignment that rad runs and rad check passes",
+  "type": "bug",
+  "updated_at_millis": 1793313116261,
+  "history": [
+    {"field":"column","value":"low","at":1793313103023}
+  ]
+}
